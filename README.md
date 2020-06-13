@@ -2,7 +2,7 @@
 
 ## 预览截图 screenshot
 
-![课程页](http://p.ananas.chaoxing.com/star3/origin/0cfe987a1338a0484d5dd433798248f1.png "课程页")
+<img src="http://p.ananas.chaoxing.com/star3/origin/0cfe987a1338a0484d5dd433798248f1.png" alt="课程页" title="课程页" >
 
 ## 简介 describe
 
