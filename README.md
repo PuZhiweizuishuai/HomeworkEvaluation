@@ -1,3 +1,7 @@
+<div align="center">
+    <img src="http://p.ananas.chaoxing.com/star3/origin/3b432cacff18301899f8d7832bd5cba8.png" alt="logo" title="logo" width="50%" style="text-align:center;">
+</div>
+
 # 作业互评系统
 
 ## 预览截图 screenshot
