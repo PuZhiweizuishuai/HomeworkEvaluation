@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.buguagaoshu.homework.evaluation.dao.HomeworkDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.buguagaoshu.homework.evaluation.entity.HomeworkEntity" id="homeworkMap">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="fileUrl" column="file_url"/>
+        <result property="openTime" column="open_time"/>
+        <result property="closeTime" column="close_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createTeacher" column="create_teacher"/>
+        <result property="classNumber" column="class_number"/>
+        <result property="submitCount" column="submit_count"/>
+        <result property="type" column="type"/>
+        <result property="time" column="time"/>
+        <result property="limitTime" column="limit_time"/>
+    </resultMap>
+
+
+</mapper>

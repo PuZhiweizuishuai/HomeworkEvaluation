@@ -1,0 +1,18 @@
+{
+  "properties": [
+    {
+      "name": "web.base-info.webName",
+      "type": "java.lang.String",
+      "description": "网站名."
+    },
+    {
+      "name": "web.base-info.logoUrl",
+      "type": "java.lang.String",
+      "description": "网站 Logo 地址."
+    },
+    {
+      "name": "web.base-info.faviconUrl",
+      "type": "java.lang.String",
+      "description": "网站 favicon 图标地址."
+    }
+  ] }

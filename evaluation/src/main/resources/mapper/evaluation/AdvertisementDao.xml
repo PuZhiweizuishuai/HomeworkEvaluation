@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.buguagaoshu.homework.evaluation.dao.AdvertisementDao">
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.buguagaoshu.homework.evaluation.entity.AdvertisementEntity" id="advertisementMap">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="url" column="url"/>
+        <result property="image" column="image"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createUser" column="create_user"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="type" column="type"/>
+        <result property="viewCount" column="view_count"/>
+    </resultMap>
+</mapper>

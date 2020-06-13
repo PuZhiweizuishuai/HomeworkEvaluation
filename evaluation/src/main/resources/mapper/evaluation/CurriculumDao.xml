@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.buguagaoshu.homework.evaluation.dao.CurriculumDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.buguagaoshu.homework.evaluation.entity.CurriculumEntity" id="curriculumMap">
+        <result property="id" column="id"/>
+        <result property="createTeacher" column="create_teacher"/>
+        <result property="teacherName" column="teacher_name"/>
+        <result property="curriculumName" column="curriculum_name"/>
+        <result property="classNumber" column="class_number"/>
+        <result property="openingTime" column="opening_time"/>
+        <result property="closeTime" column="close_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="simpleInfo" column="simple_info"/>
+        <result property="curriculumInfo" column="curriculum_info"/>
+        <result property="curriculumImageUrl" column="curriculum_image_url"/>
+        <result property="studentNumber" column="student_number"/>
+        <result property="accessMethod" column="access_method"/>
+        <result property="password" column="password"/>
+        <result property="joinTimeLimit" column="join_time_limit"/>
+        <result property="joinTime" column="join_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="courseTag" column="course_tag" />
+        <result property="score" column="score"/>
+        <result property="fatherCourseTag" column="father_course_tag"/>
+    </resultMap>
+
+
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.buguagaoshu.homework.evaluation.dao.QuestionsDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.buguagaoshu.homework.evaluation.entity.QuestionsEntity" id="questionsMap">
+        <result property="id" column="id"/>
+        <result property="question" column="question"/>
+        <result property="type" column="type"/>
+        <result property="answer" column="answer"/>
+        <result property="tips" column="tips"/>
+        <result property="shareStatus" column="share_status"/>
+        <result property="createTeacher" column="create_teacher"/>
+        <result property="createTime" column="create_time"/>
+        <result property="submitCount" column="submit_count"/>
+        <result property="rightCount" column="right_count"/>
+    </resultMap>
+
+
+</mapper>

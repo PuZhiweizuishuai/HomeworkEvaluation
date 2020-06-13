@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.buguagaoshu.homework.evaluation.dao.InviteCodeDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.buguagaoshu.homework.evaluation.entity.InviteCodeEntity" id="inviteCodeMap">
+        <result property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="generatorId" column="generator_id"/>
+        <result property="expireTime" column="expire_time"/>
+        <result property="createTime" column="create_time"/>
+        <result property="useCount" column="use_count"/>
+        <result property="linkUrl" column="link_url"/>
+        <result property="status" column="status"/>
+        <result property="memo" column="memo"/>
+        <result property="classNumber" column="class_number"/>
+        <result property="type" column="type"/>
+        <result property="role" column="role"/>
+    </resultMap>
+
+
+</mapper>

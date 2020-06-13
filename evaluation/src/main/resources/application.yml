@@ -1,0 +1,78 @@
+web:
+  base-info:
+    webName: 吉林师范大学作业互评系统
+    logoUrl: logoUrl
+    faviconUrl: faviconUrl
+    # 如需其它文件存储服务，需要自行修改代码
+    # 该属性设计为切换存储方式， 暂未启用
+    # uploadFileService: 0
+    # 文件上传格式验证，可以上传的文件格式,逗号隔开，如 .png,.jpg 不填则为不限制
+    fileSuffix:
+    # 服务器域名或网络IP
+    website: http://127.0.0.1:8080/api
+
+minio:
+  server: http://192.168.147.132:9000
+  accessKey: admin
+  secretKey: pzw123456
+  bucketName: homework
+  # 300 秒
+  expiry: 300
+
+server:
+  port: 8080
+  http2:
+    enabled: true
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.147.132:3306/homework_evaluation?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 1024000MB
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  redis:
+    host: 192.168.147.132
+    port: 6379
+    timeout: 1000ms
+    jedis:
+      pool:
+        # 最小空闲连接数
+        min-idle: 0
+        # 最大空闲连接数
+        max-idle: 20
+        # 等待可用连接的最大时间，负数为不限制
+        max-wait: -1
+        # 最大活跃连接数，负数为不限制
+        max-active: -1
+    # password: 123456
+  cache:
+    redis:
+      time-to-live: 2h
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  # 配置主键自增
+#  global-config:
+#    db-config:
+#      id-type: auto
+
+
+
+
+logging:
+  level:
+    com:
+      buguagaoshu:
+        homework:
+          evaluation: debug
+
