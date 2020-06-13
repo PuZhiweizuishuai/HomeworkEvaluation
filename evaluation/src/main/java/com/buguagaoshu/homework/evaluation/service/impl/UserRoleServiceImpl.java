@@ -3,7 +3,14 @@ package com.buguagaoshu.homework.evaluation.service.impl;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
+import com.buguagaoshu.homework.evaluation.entity.CurriculumEntity;
+import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
+import com.buguagaoshu.homework.evaluation.service.CurriculumService;
+import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
+import com.buguagaoshu.homework.evaluation.vo.UserRoleInClassVo;
+import io.jsonwebtoken.Claims;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -24,6 +31,21 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Service("userRoleService")
 public class UserRoleServiceImpl extends ServiceImpl<UserRoleDao, UserRoleEntity> implements UserRoleService {
+
+
+    private CurriculumService curriculumService;
+
+    private final StudentsCurriculumService studentsCurriculumService;
+
+    @Autowired
+    public void setCurriculumService(CurriculumService curriculumService) {
+        this.curriculumService = curriculumService;
+    }
+
+    @Autowired
+    public UserRoleServiceImpl(StudentsCurriculumService studentsCurriculumService) {
+        this.studentsCurriculumService = studentsCurriculumService;
+    }
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -61,6 +83,35 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleDao, UserRoleEntity
             return ReturnCodeEnum.USER_ROLE_BAD;
         }
 
+    }
+
+    @Override
+    public ReturnCodeEnum teacherAlterUserRole(UserRoleInClassVo userRoleInClassVo, HttpServletRequest request) {
+        Claims teacher = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        if (RoleTypeEnum.check(userRoleInClassVo.getRole(), (String) teacher.get("authorities"))) {
+            CurriculumEntity curriculumEntity = curriculumService.getById(userRoleInClassVo.getCourseNumber());
+            if (curriculumEntity == null) {
+                return ReturnCodeEnum.NOO_FOUND;
+            }
+            if (teacher.getId().equals(userRoleInClassVo.getUserId())) {
+                return ReturnCodeEnum.CANNOT_BE_ALTER_YOUR_ROLE;
+            }
+            if (curriculumEntity.getCreateTeacher().equals(teacher.getId())) {
+                StudentsCurriculumEntity studentsCurriculumEntity =
+                        studentsCurriculumService.selectStudentByCurriculumId(userRoleInClassVo.getUserId(),
+                                curriculumEntity.getId());
+                if (studentsCurriculumEntity == null) {
+                    return ReturnCodeEnum.USER_NOT_FIND;
+                }
+                studentsCurriculumEntity.setRole(userRoleInClassVo.getRole());
+                // 更新课程内角色
+                studentsCurriculumService.updateById(studentsCurriculumEntity);
+                return ReturnCodeEnum.SUCCESS;
+            } else {
+                return ReturnCodeEnum.NO_ALTER_ROLE_POWER;
+            }
+        }
+        return ReturnCodeEnum.ROLE_TYPE_ERROR;
     }
 
 }

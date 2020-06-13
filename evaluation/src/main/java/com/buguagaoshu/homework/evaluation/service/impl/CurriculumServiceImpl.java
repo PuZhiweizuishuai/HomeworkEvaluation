@@ -3,6 +3,7 @@ package com.buguagaoshu.homework.evaluation.service.impl;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.buguagaoshu.homework.common.enums.CurriculumAccessTypeEnum;
 import com.buguagaoshu.homework.common.enums.CurriculumJoinTimLimitEnum;
+import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.cache.CourseTagCache;
 import com.buguagaoshu.homework.evaluation.cache.WebsiteIndexMessageCache;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
@@ -49,17 +50,22 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
 
     private final StudentsCurriculumService studentsCurriculumService;
 
-    private final UserService userService;
+    private UserService userService;
 
     private final CourseTagCache courseTagCache;
 
     private final WebsiteIndexMessageCache indexMessageCache;
 
     @Autowired
-    public CurriculumServiceImpl(BCryptPasswordEncoder encoder, StudentsCurriculumService studentsCurriculumService, UserService userService, CourseTagCache courseTagCache, WebsiteIndexMessageCache indexMessageCache) {
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public CurriculumServiceImpl(BCryptPasswordEncoder encoder, StudentsCurriculumService studentsCurriculumService, CourseTagCache courseTagCache, WebsiteIndexMessageCache indexMessageCache) {
         this.encoder = encoder;
         this.studentsCurriculumService = studentsCurriculumService;
-        this.userService = userService;
+
         this.courseTagCache = courseTagCache;
         this.indexMessageCache = indexMessageCache;
     }
@@ -103,6 +109,7 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
         studentsCurriculumEntity.setCreateTime(System.currentTimeMillis());
         studentsCurriculumEntity.setStudentId(teacher.getId());
         studentsCurriculumEntity.setCurriculumId(curriculumEntity.getId());
+        studentsCurriculumEntity.setRole(RoleTypeEnum.TEACHER.getRole());
         studentsCurriculumService.save(studentsCurriculumEntity);
 
         // 脱敏
@@ -286,7 +293,7 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
         // 获取其它教师列表
         List<SimpleTeacherInfo> teacherInfos = new ArrayList<>();
         List<StudentsCurriculumEntity> userEntityList =
-                studentsCurriculumService.teacherList(info.getId());
+                studentsCurriculumService.teacherList(info.getId(), info.getCreateTeacher());
         if (userEntityList != null && userEntityList.size() != 0) {
             List<String> ids = userEntityList
                     .stream()

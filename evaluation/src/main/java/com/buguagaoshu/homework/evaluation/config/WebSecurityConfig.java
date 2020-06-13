@@ -5,6 +5,7 @@ import com.buguagaoshu.homework.evaluation.filter.JwtAuthenticationFilter;
 import com.buguagaoshu.homework.evaluation.filter.JwtLoginFilter;
 import com.buguagaoshu.homework.evaluation.service.UserRoleService;
 import com.buguagaoshu.homework.evaluation.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -30,9 +31,20 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private final UserService userService;
+    private UserService userService;
 
-    private final UserRoleService userRoleService;
+    private UserRoleService userRoleService;
+
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setUserRoleService(UserRoleService userRoleService) {
+        this.userRoleService = userRoleService;
+    }
 
     /**
      * 开放访问的请求
@@ -47,10 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/uploads/file/**",
     };
 
-    public WebSecurityConfig(UserService userService, UserRoleService userRoleService) {
-        this.userService = userService;
-        this.userRoleService = userRoleService;
-    }
+
 
     /**
      * 跨域配置

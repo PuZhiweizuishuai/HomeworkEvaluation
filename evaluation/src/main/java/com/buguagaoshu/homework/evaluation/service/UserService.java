@@ -73,5 +73,14 @@ public interface UserService extends IService<UserEntity> {
      * @return 分页后的结果
      * */
     PageUtils selectClassUser(Map<String, Object> params, Claims nowLoginUser);
+
+
+    /**
+     * 添加学生和课程之间的关系
+     * @param userList 学生列表
+     * @param teacher 操作的老师 ID
+     * @return  结果
+     * */
+    Map<String, String> addStudentCurriculumRelationship(List<AdminAddUser> userList, Claims teacher);
 }
 

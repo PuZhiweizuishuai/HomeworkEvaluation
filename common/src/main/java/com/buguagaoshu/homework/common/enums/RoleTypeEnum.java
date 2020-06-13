@@ -22,13 +22,36 @@ public enum  RoleTypeEnum {
         this.role = role;
     }
 
+    public static boolean check(String role, String nowUserRole) {
+        String[] strings = nowUserRole.split(",");
+        boolean flag = false;
+        // 如果是管理员，可以授予所有权限
+        for (String s: strings) {
+            if (RoleTypeEnum.ADMIN.getRole().equals(s)) {
+                return check(role);
+            }
+            if (RoleTypeEnum.TEACHER.getRole().equals(s)) {
+                flag = true;
+            }
+        }
+        // 如果是老师，不能给管理员权限
+        if (flag) {
+            if (RoleTypeEnum.ADMIN.getRole().equals(role)) {
+                return false;
+            }
+            return check(role);
+        }
+        // 无权限
+        return false;
+    }
+
     public String getRole() {
         return role;
     }
 
     public static boolean check(String role) {
         for (RoleTypeEnum r : RoleTypeEnum.values()) {
-            if (role.equals(r.getRole())) {
+            if (r.getRole().equals(role)) {
                 return true;
             }
         }

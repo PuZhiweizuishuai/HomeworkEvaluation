@@ -22,6 +22,8 @@ public enum ReturnCodeEnum {
 
 
     CANNOT_BE_ALTER_YOUR_ROLE(2000, "不能自己修改自己的角色"),
+    NO_ALTER_ROLE_POWER(2001, "没有修改角色的权限！"),
+    ROLE_TYPE_ERROR(2002, "角色类型设置错误!"),
 
     NOT_SELECT_THIS_COURSE(3000, "未加入这门课程"),
 

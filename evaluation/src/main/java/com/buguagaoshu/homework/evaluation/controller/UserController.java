@@ -12,6 +12,7 @@ import com.buguagaoshu.homework.evaluation.entity.UserRoleEntity;
 import com.buguagaoshu.homework.evaluation.service.UserRoleService;
 import com.buguagaoshu.homework.evaluation.service.UserService;
 import com.buguagaoshu.homework.evaluation.vo.AlterUserStatus;
+import com.buguagaoshu.homework.evaluation.vo.UserRoleInClassVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
@@ -66,6 +67,20 @@ public class UserController {
         return ResponseDetails.ok(ReturnCodeEnum.NOO_FOUND);
     }
 
+    /**
+     * 教师将学生导入课程
+     * */
+    @PostMapping("/teacher/user/join")
+    public ResponseDetails studentJoinClass(@RequestBody List<AdminAddUser> userList,
+                                            HttpServletRequest request) {
+        Map<String, String> map = userService.addStudentCurriculumRelationship(userList,
+                JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY));
+        if (map == null) {
+            return ResponseDetails.ok(ReturnCodeEnum.NOO_FOUND.getCode(), "输入数据有误或没有权限!");
+        }
+        return ResponseDetails.ok().put("data", map);
+    }
+
 
     /**
      * 添加用户
@@ -96,6 +111,17 @@ public class UserController {
                                          HttpServletRequest request) {
         ReturnCodeEnum returnCodeEnum = userRoleService.alterUserRole(userRoleEntity, request);
         return ResponseDetails.ok(returnCodeEnum.getCode(), returnCodeEnum.getMsg());
+    }
+
+
+    /**
+     * 教师修改课程内的角色
+     * */
+    @PostMapping("/teacher/user/alter/role")
+    public ResponseDetails teacherAlterCourseRole(@RequestBody UserRoleInClassVo userRoleInClassVo,
+                                                  HttpServletRequest request) {
+        ReturnCodeEnum returnCodeEnum = userRoleService.teacherAlterUserRole(userRoleInClassVo, request);
+        return ResponseDetails.ok(returnCodeEnum);
     }
 
 

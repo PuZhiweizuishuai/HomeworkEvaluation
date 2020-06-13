@@ -40,7 +40,10 @@ public class UserRoleEntity {
      * 创建人，默认初始状态为system
      */
     private String operator;
+
     /**
+     * @deprecated 弃用，助教权限已经在班级与学生表后进行关联
+     *
      * 助教权限所在的班级
      * 只在role值为ROLE_ASSISTANT时使用
      * 一串数字，中间用英文逗号分隔

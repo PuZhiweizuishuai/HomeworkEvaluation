@@ -22,6 +22,7 @@ import com.buguagaoshu.homework.evaluation.utils.IpUtil;
 import com.buguagaoshu.homework.evaluation.utils.TimeUtils;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -55,7 +58,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     public final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public final UserRoleService userRoleService;
+    public UserRoleService userRoleService;
 
     public final UserRoleDao userRoleDao;
 
@@ -69,9 +72,14 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Autowired
-    public UserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, UserRoleService userRoleService, UserRoleDao userRoleDao, StudentsCurriculumService studentsCurriculumService) {
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    public void setUserRoleService(UserRoleService userRoleService) {
         this.userRoleService = userRoleService;
+    }
+
+    @Autowired
+    public UserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, UserRoleDao userRoleDao, StudentsCurriculumService studentsCurriculumService) {
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+
 
         this.userRoleDao = userRoleDao;
         this.studentsCurriculumService = studentsCurriculumService;
@@ -116,10 +124,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
         List<UserEntity> userEntityList = (List<UserEntity>) pageUtils.getList();
 
-        // 处理封禁状态
-        userEntityList.forEach(this::checkUserStatus);
 
         if (userEntityList.size() > 0) {
+            // 处理封禁状态
+            userEntityList.forEach(this::checkUserStatus);
             List<UserRoleEntity> roleEntityList =
                     userRoleDao.selectRoleByUserList(userEntityList);
 
@@ -187,7 +195,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         // 保存要插入的用户权限
         List<UserRoleEntity> userRoleEntityList = new ArrayList<>();
 
-        for (UserEntity userEntity: validUser) {
+        for (UserEntity userEntity : validUser) {
             AdminAddUser addUser = new AdminAddUser();
             String password = InviteCodeUtil.createInviteCode().substring(0, 6);
             // 自动填充时间IP等参数
@@ -235,6 +243,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         adminAddUser.setUserId(user.getUserId());
         return adminAddUser;
     }
+
 
     @Override
     public ReturnCodeEnum alterUserStatus(AlterUserStatus alterUserStatus) {
@@ -288,10 +297,12 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                         studentsCurriculumService.findUserByIdAndCurriculumId(userEntityList,
                                 curriculumEntity.getId());
                 // 补全角色
-                addRoleAndCleanPassword(studentsCurriculumEntities);
-                page.setRecords(studentsCurriculumEntities);
-                page.setTotal(studentsCurriculumEntities.size());
-                return new PageUtils(page);
+                if (studentsCurriculumEntities != null && studentsCurriculumEntities.size() > 0) {
+                    List<UserAndRole> userAndRoles = addRoleAndCleanPassword(studentsCurriculumEntities, nowLoginUser.getId(), null);
+
+                    return new PageUtils(userAndRoleIPage(userAndRoles, page));
+                }
+                return null;
             }
             return null;
 
@@ -302,64 +313,134 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                 new QueryWrapper<>();
         studentsCurriculumEntityQueryWrapper.eq("curriculum_id", courseId);
         if (!StringUtils.isEmpty(userId)) {
-            studentsCurriculumEntityQueryWrapper.eq("student_id", userId);
+            studentsCurriculumEntityQueryWrapper.like("student_id", userId);
         }
         IPage<StudentsCurriculumEntity> page = studentsCurriculumService.page(
                 new Query<StudentsCurriculumEntity>().getPage(params),
                 studentsCurriculumEntityQueryWrapper
         );
-        List<String> userIds = page.getRecords().stream().map(StudentsCurriculumEntity::getStudentId).collect(Collectors.toList());
-        List<UserEntity> userEntities = this.listByIds(userIds);
+        // 补全班级内角色信息
+//        List<String> userIds =
+//                page.getRecords()
+//                        .stream()
+//                        .map(StudentsCurriculumEntity::getStudentId)
+//                        .collect(Collectors.toList());
+        Map<String, StudentsCurriculumEntity> rolesMap =
+                page.getRecords()
+                .stream()
+                .collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, u -> u));
 
-        // 补全角色
-        addRoleAndCleanPassword(userEntities);
-        IPage<UserEntity> iPage = new IPage<UserEntity>() {
-            @Override
-            public List<OrderItem> orders() {
+        List<UserEntity> userEntities = this.listByIds(rolesMap.keySet());
+        if (userEntities != null && userEntities.size() > 0) {
+            // 补全角色
+            List<UserAndRole> userAndRoles = addRoleAndCleanPassword(userEntities, nowLoginUser.getId(), rolesMap);
+
+            return new PageUtils(userAndRoleIPage(userAndRoles, page));
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = {})
+    public Map<String, String> addStudentCurriculumRelationship(List<AdminAddUser> userList, Claims teacher) {
+        Map<String, String> map = new HashMap<>(16);
+        if (userList != null && userList.size() != 0) {
+            // 获取要添加的课程号
+            Long courseNumber = userList.get(0).getCourseNumber();
+            CurriculumEntity curriculumEntity = curriculumService.getById(courseNumber);
+            if (courseNumber == null) {
                 return null;
             }
-
-            @Override
-            public List<UserEntity> getRecords() {
-                return userEntities;
-            }
-
-            @Override
-            public IPage<UserEntity> setRecords(List<UserEntity> records) {
+            // 判断当前用户是否有权限进行此操作
+            if (checkRole(curriculumEntity, teacher)) {
+                // 查找当前课程学生列表，避免重复加入
+                List<UserEntity> userEntities = this.listByIds(userList.stream().map(AdminAddUser::getUserId).collect(Collectors.toList()));
+                if (userEntities == null) {
+                    return null;
+                }
+                Map<String, UserEntity> userEntityMap = userEntities.stream().collect(Collectors.toMap(UserEntity::getUserId, u -> u));
+                List<StudentsCurriculumEntity> studentsCurriculumEntities =
+                        studentsCurriculumService.list(new QueryWrapper<StudentsCurriculumEntity>().eq("curriculum_id", courseNumber));
+                // 直接导入
+                if (studentsCurriculumEntities == null && studentsCurriculumEntities.size() == 0) {
+                    // 记录学生数
+                    AtomicInteger count = new AtomicInteger(0);
+                    List<StudentsCurriculumEntity> students = new ArrayList<>();
+                    userList.forEach((u) -> {
+                        if (userEntityMap.get(u.getUserId()) != null) {
+                            count.getAndIncrement();
+                            map.put(u.getUserId(), "加入成功!");
+                            students.add(initStudentsCurriculumEntity(u, courseNumber));
+                        } else {
+                            map.put(u.getUserId(), "学生不存在");
+                        }
+                    });
+                    studentsCurriculumService.saveBatch(students);
+                    // 保存课程人数
+                    curriculumEntity.setStudentNumber(count.get());
+                    // 导入部分
+                } else {
+                    assert studentsCurriculumEntities != null;
+                    Map<String, StudentsCurriculumEntity> stringStudentsCurriculumEntityMap
+                            = studentsCurriculumEntities.stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, u -> u));
+                    List<StudentsCurriculumEntity> students = new ArrayList<>();
+                    AtomicInteger count = new AtomicInteger(0);
+                    userList.forEach((u) -> {
+                        if (stringStudentsCurriculumEntityMap.get(u.getUserId()) != null) {
+                            map.put(u.getUserId(), "已经在班级中，无需加入!");
+                        } else {
+                            if (userEntityMap.get(u.getUserId()) != null) {
+                                students.add(initStudentsCurriculumEntity(u, courseNumber));
+                                count.getAndIncrement();
+                                map.put(u.getUserId(), "加入成功!");
+                            } else {
+                                map.put(u.getUserId(), "学生不存在");
+                            }
+                        }
+                    });
+                    studentsCurriculumService.saveBatch(students);
+                    // 保存课程人数
+                    curriculumEntity.setStudentNumber(count.get() + curriculumEntity.getStudentNumber());
+                }
+            } else {
                 return null;
             }
+            CurriculumEntity entity = new CurriculumEntity();
+            entity.setId(curriculumEntity.getId());
+            entity.setStudentNumber(curriculumEntity.getStudentNumber());
+            curriculumService.updateById(entity);
+            return map;
+        }
+        return null;
+    }
 
-            @Override
-            public long getTotal() {
-                return page.getTotal();
-            }
+    private boolean checkRole(CurriculumEntity curriculumEntity, Claims teacher) {
+        if (curriculumEntity.getCreateTeacher().equals(teacher.getId())) {
+            return true;
+        }
+        StudentsCurriculumEntity studentsCurriculumEntity =
+                studentsCurriculumService.selectStudentByCurriculumId(teacher.getId(), curriculumEntity.getId());
+        if (studentsCurriculumEntity != null) {
+            return RoleTypeEnum.TEACHER.getRole().equals(studentsCurriculumEntity.getRole());
+        }
+        return false;
+    }
 
-            @Override
-            public IPage<UserEntity> setTotal(long total) {
-                return null;
-            }
 
-            @Override
-            public long getSize() {
-                return page.getSize();
-            }
+    public StudentsCurriculumEntity initStudentsCurriculumEntity(AdminAddUser adminAddUser, long courseNumber) {
+        StudentsCurriculumEntity studentsCurriculumEntity = new StudentsCurriculumEntity();
+        studentsCurriculumEntity.setCurriculumId(courseNumber);
+        studentsCurriculumEntity.setStudentId(adminAddUser.getUserId());
+        studentsCurriculumEntity.setCreateTime(System.currentTimeMillis());
+        studentsCurriculumEntity.setRole(RoleTypeEnum.USER.getRole());
+        return studentsCurriculumEntity;
+    }
 
-            @Override
-            public IPage<UserEntity> setSize(long size) {
-                return null;
-            }
+    public void addStudentCurriculumRelationship(String id,
+                                                 String role,
+                                                 String curriculumId,
+                                                 String teacher) {
 
-            @Override
-            public long getCurrent() {
-                return page.getCurrent();
-            }
-
-            @Override
-            public IPage<UserEntity> setCurrent(long current) {
-                return null;
-            }
-        };
-        return new PageUtils(iPage);
     }
 
 
@@ -375,8 +456,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
      * 判断用户状态
      * 如果是禁言或者封禁状态，则判断禁言时间是否已过，如时间已过
      * 则变回正常状态
+     *
      * @param userEntity 用户
-     * */
+     */
     private void checkUserStatus(UserEntity userEntity) {
         if (userEntity.getStatus() != UserStatusEnum.NORMAL.getCode()) {
             if (System.currentTimeMillis() >= userEntity.getLockTime() + userEntity.getStartLockTime()) {
@@ -388,18 +470,92 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         }
     }
 
-    public void addRoleAndCleanPassword(List<UserEntity> userEntityList) {
+    /**
+     * 负责返回班级学生列表已经班级内的角色信息
+     * @param userEntityList 要返回的学生列表
+     * @param teacher 当前班级班主任
+     * @param role 负责填充班级角色内信息
+     * @return 班级学生列表
+     * */
+    public List<UserAndRole> addRoleAndCleanPassword(List<UserEntity> userEntityList, String teacher, Map<String, StudentsCurriculumEntity> role) {
         List<UserRoleEntity> roleEntityList = userRoleDao.selectRoleByUserList(userEntityList);
         Map<String, UserRoleEntity> roleMap = new HashMap<>();
         for (UserRoleEntity userRoleEntity : roleEntityList) {
             roleMap.put(userRoleEntity.getUserId(), userRoleEntity);
         }
-        // TODO 排除老师本人
-        userEntityList.forEach((u)->{
-            u.setPassword("");
-            u.setRole(roleMap.get(u.getUserId()).getRole());
-            u.setRoleEntity(roleMap.get(u.getUserId()));
+        boolean flag = false;
+        if (role == null) {
+            flag = true;
+        }
+        List<UserAndRole> userAndRoles = new ArrayList<>();
+        boolean finalFlag = flag;
+        userEntityList.forEach((u) -> {
+            if (!u.getUserId().equals(teacher)) {
+                UserAndRole userAndRole = new UserAndRole();
+                BeanUtils.copyProperties(u, userAndRole);
+                if (finalFlag) {
+                    userAndRole.setClassRole(u.getRole());
+                } else {
+                    userAndRole.setClassRole(role.get(u.getUserId()).getRole());
+                }
+
+                userAndRole.setRole(roleMap.get(u.getUserId()));
+                userAndRole.setCreateTime(TimeUtils.formatTime(u.getCreateTime()));
+                userAndRole.setLatestLoginTime(TimeUtils.formatTime(u.getLatestLoginTime()));
+                userAndRoles.add(userAndRole);
+            }
         });
+        return userAndRoles;
     }
 
+
+    public IPage<UserAndRole> userAndRoleIPage(List<UserAndRole> userAndRoles, IPage<?> page) {
+        IPage<UserAndRole> userAndRoleIPage = new IPage<UserAndRole>() {
+            @Override
+            public List<OrderItem> orders() {
+                return null;
+            }
+
+            @Override
+            public List<UserAndRole> getRecords() {
+                return userAndRoles;
+            }
+
+            @Override
+            public IPage<UserAndRole> setRecords(List<UserAndRole> records) {
+                return null;
+            }
+
+            @Override
+            public long getTotal() {
+                return page.getTotal() - 1;
+            }
+
+            @Override
+            public IPage<UserAndRole> setTotal(long total) {
+                return null;
+            }
+
+            @Override
+            public long getSize() {
+                return page.getSize();
+            }
+
+            @Override
+            public IPage<UserAndRole> setSize(long size) {
+                return null;
+            }
+
+            @Override
+            public long getCurrent() {
+                return page.getCurrent();
+            }
+
+            @Override
+            public IPage<UserAndRole> setCurrent(long current) {
+                return null;
+            }
+        };
+        return userAndRoleIPage;
+    }
 }

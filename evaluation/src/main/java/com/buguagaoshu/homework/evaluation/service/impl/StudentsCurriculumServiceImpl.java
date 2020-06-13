@@ -45,11 +45,13 @@ public class StudentsCurriculumServiceImpl extends ServiceImpl<StudentsCurriculu
     }
 
     @Override
-    public List<StudentsCurriculumEntity> teacherList(Long id) {
+    public List<StudentsCurriculumEntity> teacherList(Long id, String teacher) {
         QueryWrapper<StudentsCurriculumEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("curriculum_id", id);
         wrapper.eq("role", RoleTypeEnum.TEACHER.getRole());
-        return this.list(wrapper);
+        return this.list(wrapper).stream().filter((t)->{
+            return !t.getStudentId().equals(teacher);
+        }).collect(Collectors.toList());
 
     }
 
@@ -71,6 +73,8 @@ public class StudentsCurriculumServiceImpl extends ServiceImpl<StudentsCurriculu
                 map.put(u.getStudentId(), u);
             });
             List<UserEntity> userEntities = userEntityList.stream().filter((u)->{
+                // 补充班级内权限
+                u.setRole(map.get(u.getUserId()).getRole());
                 return map.get(u.getUserId()) != null;
             }).collect(Collectors.toList());
             return userEntities;

@@ -105,4 +105,6 @@ public class UserAndRole {
 
 
     private UserRoleEntity role;
+
+    private String classRole;
 }

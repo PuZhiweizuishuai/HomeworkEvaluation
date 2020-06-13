@@ -4,19 +4,13 @@ import lombok.Data;
 
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
- * create          2020-06-05 11:42
+ * create          2020-06-13 20:22
  */
 @Data
-public class AdminAddUser {
+public class UserRoleInClassVo {
     private String userId;
 
-    private String password;
-
     private String role;
-
-    private Integer status;
-
-    private String msg;
 
     private Long courseNumber;
 }

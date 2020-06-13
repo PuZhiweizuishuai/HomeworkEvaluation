@@ -32,9 +32,10 @@ public interface StudentsCurriculumService extends IService<StudentsCurriculumEn
     /**
      * 通过课程ID查找这门课的其他老师
      * @param id 课程ID
+     * @param teacher 班主任，班级创建者
      * @return 老师列表
      * */
-    List<StudentsCurriculumEntity> teacherList(Long id);
+    List<StudentsCurriculumEntity> teacherList(Long id, String teacher);
 
 
     /**
