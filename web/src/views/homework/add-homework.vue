@@ -1,0 +1,209 @@
+<template>
+  <div>
+    <a-page-header
+      style="margin-bottom: 24px;"
+      title="创建作业"
+      sub-title="为课程创建新的作业/测验/考试"
+    />
+
+    <a-steps :current="current">
+      <a-step v-for="item in steps" :key="item.title" :title="item.title" />
+    </a-steps>
+    <a-divider />
+    <div class="steps-content">
+      <div v-if="current === 0">
+        <a-form-model :model="homeworkFrom" :label-col="{span: 4}" :wrapper-col="{span: 14}">
+          <a-form-model-item label="作业标题">
+            <a-input v-model="homeworkFrom.title" />
+          </a-form-model-item>
+
+          <a-form-model-item label="作业要求或描述">
+            <Vditor :placeholder="'详细的作业要求，可以包含图片，视频，文件等'" :markdown="homeworkFrom.content" :uploadurl="uploadurl" @vditor-input="setVditorInput" />
+          </a-form-model-item>
+
+          <a-form-model-item label="作业时间">
+            <a-range-picker
+              :locale="locale"
+              :input-read-only="true"
+              :disabled-date="disabledDate"
+              :show-time="{
+                hideDisabledOptions: true,
+                defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('00:00:00', 'HH:mm:ss')],
+              }"
+              format="YYYY-MM-DD HH:mm:ss"
+              @change="startAndEndTime"
+            />
+          </a-form-model-item>
+          <a-form-model-item label="作业类型">
+            <a-radio-group v-model="homeworkFrom.type">
+              <a-radio value="0">
+                普通作业(在时间区间内完成即可，可重复进入)
+              </a-radio>
+              <a-radio value="1">
+                测验（进入后需在规定时间内完成）
+              </a-radio>
+              <a-radio value="2">
+                考试（在时间区间内完成，设置开考后几分钟不能进入）
+              </a-radio>
+            </a-radio-group>
+          </a-form-model-item>
+
+          <!--  @change="showlimitTime()" -->
+
+          <a-form-model-item v-if="homeworkFrom.type == 1 || homeworkFrom.type == 2" label="测验或考试时间(单位：分钟)">
+            <a-input v-model="homeworkFrom.time" placeholder="(单位：分钟)" type="number" />
+          </a-form-model-item>
+          <a-form-model-item v-if="homeworkFrom.type == 2" label="开考后几分钟不能进入">
+            <a-input v-model="homeworkFrom.limitTime" placeholder="(单位：分钟)" type="number" />
+          </a-form-model-item>
+        </a-form-model>
+      </div>
+      <div v-if="current === 1">
+        <ImportQuestion :questionlist="homeworkFrom.questionsModels" @question-list="setQuestionList" />
+      </div>
+      <div v-if="current === 2" style="text-align: center;">
+        <a-row>
+          <a-divider>作业标题</a-divider>
+          <h4 v-text="homeworkFrom.title" /><br>
+          <a-divider>作业要求</a-divider>
+          <ShowMarkdown :markdown="homeworkFrom.content" /><br>
+          <a-divider>基本信息</a-divider>
+          <p>
+            时间： <span v-text="getTime()" />
+          </p>
+          <p>
+            类型： <span v-text="getType()" />
+          </p>
+          <p>
+            总分： <span v-text="getScoreNumber()" />
+          </p>
+        </a-row><br>
+        <a-divider>题目列表</a-divider>
+        <div v-for="(item, index) in homeworkFrom.questionsModels" :key="index">
+          题目： {{ item.question }}  分值：{{ item.score }}<br><br>
+        </div>
+      </div>
+    </div>
+
+    <div class="steps-action" style="margin-top: 24px;text-align: center;">
+      <a-button v-if="current < steps.length - 1" type="primary" @click="next">
+        下一步
+      </a-button>
+      <a-button
+        v-if="current == steps.length - 1"
+        type="primary"
+        @click="publishHomework()"
+      >
+        发布作业
+      </a-button>
+      <a-button v-if="current > 0" style="margin-left: 8px" @click="prev">
+        上一步
+      </a-button>
+    </div>
+  </div>
+</template>
+
+<script>
+import Vditor from '@/components/vditor/vditor.vue'
+import ShowMarkdown from '@/components/vditor/show-markdown.vue'
+import ImportQuestion from '@/views/homework/import-question.vue'
+import moment from 'moment'
+import 'moment/locale/zh-cn'
+import locale from 'ant-design-vue/es/date-picker/locale/zh_CN'
+import TimeUtil from '@/utils/time-util.vue'
+export default {
+  name: 'AddHomework',
+  components: { Vditor, ImportQuestion, ShowMarkdown },
+  data() {
+    return {
+      id: 0,
+      uploadurl: this.SERVER_API_URL + '/upload/file',
+      homeworkFrom: {
+        id: Number,
+        title: '',
+        content: '',
+        openTime: 0,
+        closeTime: 0,
+        classNumber: this.id,
+        type: 0,
+        limitTime: 0,
+        time: 0,
+        questionsModels: []
+      },
+      locale,
+      moment,
+      current: 0,
+      steps: [
+        {
+          title: '创建作业',
+          content: 'First-content'
+        },
+        {
+          title: '导入题目',
+          content: 'Second-content'
+        },
+        {
+          title: '提交数据',
+          content: '提交数据'
+        }
+      ]
+    }
+  },
+  created() {
+    this.id = this.$route.params.id
+  },
+  methods: {
+    publishHomework() {
+      this.homeworkFrom.classNumber = this.id
+      console.log(this.homeworkFrom)
+    },
+    setQuestionList(data) {
+      this.homeworkFrom.questionsModels = data
+    },
+    setVditorInput(data) {
+      this.homeworkFrom.content = data
+    },
+    next() {
+      this.current++
+    },
+    prev() {
+      this.current--
+    },
+    disabledDate(current) {
+      return current && current < moment().startOf('day')
+    },
+    startAndEndTime(data, str) {
+      const start = new Date(data[0]._d.toString()).getTime()
+      const endTime = new Date(data[1]._d.toString()).getTime()
+      this.homeworkFrom.openTime = start
+      this.homeworkFrom.endTime = endTime
+    },
+    getTime() {
+      return TimeUtil.formateTime(this.homeworkFrom.openTime, this.homeworkFrom.endTime)
+    },
+    getType() {
+      if (this.homeworkFrom.type === '0') {
+        return '普通作业'
+      } else if (this.homeworkFrom.type === '1') {
+        return '测验'
+      } else {
+        return '考试'
+      }
+    },
+    getScoreNumber() {
+      let score = 0
+      this.homeworkFrom.questionsModels.forEach((s) => {
+        score = score + s.score
+      })
+      return score
+    }
+  }
+}
+</script>
+
+<style scoped>
+.steps-content {
+  margin-top: 24px;
+
+}
+</style>

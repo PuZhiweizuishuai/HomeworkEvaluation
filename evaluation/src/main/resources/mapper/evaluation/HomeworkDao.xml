@@ -19,6 +19,7 @@
         <result property="time" column="time"/>
         <result property="limitTime" column="limit_time"/>
         <result property="status" column="status"/>
+        <result property="score" column="score"/>
     </resultMap>
 
 

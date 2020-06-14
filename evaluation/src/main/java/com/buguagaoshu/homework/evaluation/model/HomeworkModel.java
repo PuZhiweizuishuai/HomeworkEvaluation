@@ -1,26 +1,13 @@
-package com.buguagaoshu.homework.evaluation.entity;
+package com.buguagaoshu.homework.evaluation.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 
-import lombok.Data;
+import java.util.List;
 
 /**
- * 作业表
- *
- * @author Pu Zhiwei
- * @email puzhiweipuzhiwei@foxmail.com
- * @date 2020-06-03 22:57:42
+ * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
+ * create          2020-06-14 17:47
  */
-@Data
-@TableName("homework")
-public class HomeworkEntity {
-    /**
-     * 作业ID
-     */
-    @TableId(type = IdType.AUTO)
-    private Long id;
+public class HomeworkModel {
     /**
      * 作业标题
      */
@@ -78,5 +65,8 @@ public class HomeworkEntity {
 
     private Integer status;
 
-    private Integer score;
+    /**
+     * 问题列表
+     * */
+    List<QuestionsModel> questionsModels;
 }

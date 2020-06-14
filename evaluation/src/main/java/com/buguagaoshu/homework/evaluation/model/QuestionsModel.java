@@ -1,25 +1,13 @@
-package com.buguagaoshu.homework.evaluation.entity;
+package com.buguagaoshu.homework.evaluation.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
-import lombok.Data;
+import java.util.List;
 
 /**
- * 问题表，需要与作业表关联
- *
- * @author Pu Zhiwei
- * @email puzhiweipuzhiwei@foxmail.com
- * @date 2020-06-03 22:57:42
+ * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
+ * create          2020-06-14 17:47
  */
-@Data
-@TableName("questions")
-public class QuestionsEntity {
-
-    @TableId(type = IdType.AUTO)
+public class QuestionsModel {
     private Long id;
-
     /**
      * 题目
      */
@@ -31,13 +19,19 @@ public class QuestionsEntity {
     private Integer type;
 
     /**
-     * 答案，保存为json对象，方便判断
+     * 选择题选项
+     * */
+    private List<String> options;
+
+    /**
+     * 选择题答案，保存为json对象，方便判断
      */
-    private String answer;
+    private List<String> answer;
 
+    /**
+     * 判断，问答，填空题答案
+     * */
     private String otherAnswer;
-
-    private String options;
 
     /**
      * 提示
@@ -68,4 +62,8 @@ public class QuestionsEntity {
      */
     private Long rightCount;
 
+    /**
+     * 题目分值
+     * */
+    private Integer score;
 }

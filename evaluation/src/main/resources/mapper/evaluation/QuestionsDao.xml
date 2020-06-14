@@ -15,6 +15,8 @@
         <result property="createTime" column="create_time"/>
         <result property="submitCount" column="submit_count"/>
         <result property="rightCount" column="right_count"/>
+        <result property="otherAnswer" column="other_answer"/>
+        <result property="options" column="options"/>
     </resultMap>
 
 
