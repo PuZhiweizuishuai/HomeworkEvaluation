@@ -20,38 +20,38 @@ import java.util.List;
 @Data
 @TableName("course_tag")
 public class CourseTagEntity {
-	/**
-	 *
-	 */
-	@TableId(type = IdType.AUTO)
-	private Long id;
+    /**
+     *
+     */
+    @TableId(type = IdType.AUTO)
+    private Long id;
 
-	/**
-	 * 课程专业
-	 */
-	private String courseMajor;
+    /**
+     * 课程专业
+     */
+    private String courseMajor;
 
-	/**
-	 * 排序，数字越大越靠前
-	 */
-	private Integer sort;
+    /**
+     * 排序，数字越大越靠前
+     */
+    private Integer sort;
 
-	/**
-	 * 描述
-	 */
-	private String descript;
+    /**
+     * 描述
+     */
+    private String descript;
 
-	/**
-	 * 图标
-	 */
-	private String icon;
+    /**
+     * 图标
+     */
+    private String icon;
 
-	/**
-	 * 所属分类层级 【0 父分类， 其它数字为该数字下的子 子分类】
-	 */
-	private Long catelogId;
+    /**
+     * 所属分类层级 【0 父分类， 其它数字为该数字下的子 子分类】
+     */
+    private Long catelogId;
 
-	@JsonInclude(JsonInclude.Include.NON_EMPTY)
-	@TableField(exist = false)
-	private List<CourseTagEntity> children;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @TableField(exist = false)
+    private List<CourseTagEntity> children;
 }

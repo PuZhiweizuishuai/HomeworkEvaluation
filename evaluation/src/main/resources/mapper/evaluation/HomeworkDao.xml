@@ -18,6 +18,7 @@
         <result property="type" column="type"/>
         <result property="time" column="time"/>
         <result property="limitTime" column="limit_time"/>
+        <result property="status" column="status"/>
     </resultMap>
 
 

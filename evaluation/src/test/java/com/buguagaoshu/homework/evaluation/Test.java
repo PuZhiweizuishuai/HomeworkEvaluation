@@ -13,10 +13,8 @@ import java.util.*;
  */
 public class Test {
     public static void main(String[] args) throws ParseException {
-        Map<Integer, Integer> map = new HashMap<>();
-        map.put(1, 2);
-        map.put(2, 4);
-        map.remove(3);
+        System.out.println(TimeUtils.formatTime( 1592150400000L));
+        System.out.println(TimeUtils.formatTime(1592064000000L));
 
     }
 }

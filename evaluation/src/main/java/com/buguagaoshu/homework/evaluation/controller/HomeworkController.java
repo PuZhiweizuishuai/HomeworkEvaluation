@@ -1,7 +1,7 @@
 package com.buguagaoshu.homework.evaluation.controller;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
+import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.HomeworkEntity;
 import com.buguagaoshu.homework.evaluation.service.HomeworkService;
@@ -32,8 +32,12 @@ public class HomeworkController {
     @PostMapping("/homework/add")
     public ResponseDetails add(@RequestBody HomeworkEntity homeworkEntity,
                                 HttpServletRequest request) {
-        HomeworkEntity homework = homeworkService.add(homeworkEntity,
-                JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY));
-        return ResponseDetails.ok();
+        System.out.println(homeworkEntity);
+//        HomeworkEntity homework = homeworkService.add(homeworkEntity,
+//                JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY));
+//        if (homework != null) {
+//            return ResponseDetails.ok().put("data", homework);
+//        }
+        return ResponseDetails.ok(ReturnCodeEnum.NO_ROLE_OR_NO_FOUND);
     }
 }

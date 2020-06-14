@@ -16,24 +16,24 @@ import lombok.Data;
 @Data
 @TableName("students_curriculum")
 public class StudentsCurriculumEntity {
-	@TableId(type = IdType.AUTO)
-	private Long id;
-	/**
-	 * 学生学号
-	 */
-	private String studentId;
-	/**
-	 * 学生加入的课程ID
-	 */
-	private Long curriculumId;
-	/**
-	 * 加入时间
-	 */
-	private Long createTime;
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    /**
+     * 学生学号
+     */
+    private String studentId;
+    /**
+     * 学生加入的课程ID
+     */
+    private Long curriculumId;
+    /**
+     * 加入时间
+     */
+    private Long createTime;
 
-	/**
-	 * 在课程内的角色
-	 * */
-	private String role;
+    /**
+     * 在课程内的角色
+     * */
+    private String role;
 
 }

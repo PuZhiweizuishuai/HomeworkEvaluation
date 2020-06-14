@@ -19,53 +19,53 @@ import lombok.Data;
 @TableName("invite_code")
 public class InviteCodeEntity {
 
-	@TableId(type = IdType.AUTO)
-	private Long id;
-	/**
-	 * 邀请码
-	 */
-	private String code;
-	/**
-	 * 生成者ID
-	 */
-	private String generatorId;
-	/**
-	 * 过期时间
-	 */
-	private Long expireTime;
-	/**
-	 * 创建时间
-	 */
-	private Long createTime;
-	/**
-	 * 使用次数，即当前邀请码可使用次数，默认为 1
-	 */
-	private Long useCount;
-	/**
-	 * 生成的邀请链接
-	 */
-	private String linkUrl;
-	/**
-	 * 状态  0：可使用，1 停用
-	 */
-	private Integer status;
-	/**
-	 * 描述
-	 */
-	private String memo;
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    /**
+     * 邀请码
+     */
+    private String code;
+    /**
+     * 生成者ID
+     */
+    private String generatorId;
+    /**
+     * 过期时间
+     */
+    private Long expireTime;
+    /**
+     * 创建时间
+     */
+    private Long createTime;
+    /**
+     * 使用次数，即当前邀请码可使用次数，默认为 1
+     */
+    private Long useCount;
+    /**
+     * 生成的邀请链接
+     */
+    private String linkUrl;
+    /**
+     * 状态  0：可使用，1 停用
+     */
+    private Integer status;
+    /**
+     * 描述
+     */
+    private String memo;
 
-	/**
-	 * 邀请码类型 【0 课程邀请码】【1 用户邀请码】
-	 * */
-	private Integer type;
+    /**
+     * 邀请码类型 【0 课程邀请码】【1 用户邀请码】
+     * */
+    private Integer type;
 
-	/**
-	 * 对应的班级
-	 */
-	private Long classNumber;
+    /**
+     * 对应的班级
+     */
+    private Long classNumber;
 
-	/**
-	 * 角色
-	 * */
-	private String role;
+    /**
+     * 角色
+     * */
+    private String role;
 }

@@ -15,9 +15,9 @@ import java.util.Map;
 public class ResponseDetails extends HashMap<String, Object> {
 
     private ResponseDetails() {
-        put("code", ReturnCodeEnum.SUCCESS.getCode());
-        put("msg", ReturnCodeEnum.SUCCESS.getMsg());
-        put("time", LocalDateTime.now());
+        put("status", ReturnCodeEnum.SUCCESS.getCode());
+        put("message", ReturnCodeEnum.SUCCESS.getMsg());
+        put("timestamp", LocalDateTime.now());
     }
 
     public static ResponseDetails ok() {
@@ -26,21 +26,21 @@ public class ResponseDetails extends HashMap<String, Object> {
 
     public static ResponseDetails ok(Integer code, String msg) {
         ResponseDetails r = new ResponseDetails();
-        r.put("code", code);
-        r.put("msg", msg);
+        r.put("status", code);
+        r.put("message", msg);
         return r;
     }
 
     public static ResponseDetails ok(String msg) {
         ResponseDetails r = new ResponseDetails();
-        r.put("msg", msg);
+        r.put("message", msg);
         return r;
     }
 
     public static ResponseDetails ok(ReturnCodeEnum codeEnum) {
         ResponseDetails r = new ResponseDetails();
-        r.put("code", codeEnum.getCode());
-        r.put("msg", codeEnum.getMsg());
+        r.put("status", codeEnum.getCode());
+        r.put("message", codeEnum.getMsg());
         return r;
     }
 
