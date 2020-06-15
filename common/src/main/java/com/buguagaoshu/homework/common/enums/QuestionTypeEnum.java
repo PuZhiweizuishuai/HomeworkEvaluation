@@ -13,7 +13,11 @@ public enum QuestionTypeEnum {
     MULTIPLE_CHOICE(1, "多选"),
     FILL_IN_THE_BLANKS(2, "填空"),
     QUESTIONS_ANSWERS(3, "问答，客观题"),
-    JUDGE(4, "判断")
+    JUDGE(4, "判断"),
+    JUDGE_RIGHT(1, "判断题是对的"),
+    JUDGE_ERROR(0, "判断题是错的"),
+    SHARE_QUESTION(1, "分享这道问题"),
+    NO_SHARE(0, "私有问题")
     ;
     int code;
     String msg;

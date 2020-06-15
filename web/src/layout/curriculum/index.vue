@@ -31,13 +31,15 @@
           <span class="nav-text">课件</span>
         </a-menu-item>
         <a-menu-item key="测验与作业">
-          <a-icon type="read" />
-          <span class="nav-text">测验与作业</span>
+          <router-link :to="`/curriculum/learn/${id}/homework`">
+            <a-icon type="read" />
+            <span class="nav-text">测验与作业</span>
+          </router-link>
         </a-menu-item>
-        <a-menu-item key="考试">
+        <!-- <a-menu-item key="考试">
           <a-icon type="carry-out" />
           <span class="nav-text">考试</span>
-        </a-menu-item>
+        </a-menu-item> -->
         <a-menu-item key="讨论区">
           <a-icon type="appstore-o" />
           <span class="nav-text">讨论区</span>

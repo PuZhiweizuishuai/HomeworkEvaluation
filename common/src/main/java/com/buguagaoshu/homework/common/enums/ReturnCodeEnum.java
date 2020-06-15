@@ -13,6 +13,8 @@ public enum ReturnCodeEnum {
 
     NOO_FOUND(404, "没有找到"),
 
+    SYSTEM_ERROR(500, "系统异常，请重试"),
+
     USER_ALREADY_EXISTS(1000, "用户已经存在！"),
     USER_NOT_FIND(1001, "用户不存在！"),
     USER_ID_BAD(1002, "输入学号或ID不符合要求"),
@@ -29,7 +31,8 @@ public enum ReturnCodeEnum {
     NOT_SELECT_THIS_COURSE(3000, "未加入这门课程"),
 
     LACK_ID(4000, "缺少ID"),
-    NOT_RUN(4001, "没有在运行")
+    NOT_RUN(4001, "没有在运行"),
+    DATA_VALID_EXCEPTION(4002, "数据校验错误")
     ;
     int code;
     String msg;

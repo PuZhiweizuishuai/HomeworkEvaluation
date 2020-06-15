@@ -16,5 +16,13 @@ import java.util.Map;
 public interface QuestionsService extends IService<QuestionsEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 检查有没有导入这道题的权限
+     * @param questionId 问题 ID
+     * @param teacherId 教师 ID
+     * @return 结果
+     * */
+    boolean checkUseQuestionPower(Long questionId, String teacherId);
 }
 

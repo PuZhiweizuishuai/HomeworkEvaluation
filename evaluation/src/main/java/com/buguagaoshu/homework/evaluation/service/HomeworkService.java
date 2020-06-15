@@ -3,6 +3,7 @@ package com.buguagaoshu.homework.evaluation.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.HomeworkEntity;
+import com.buguagaoshu.homework.evaluation.model.HomeworkModel;
 import io.jsonwebtoken.Claims;
 
 import java.util.Map;
@@ -20,10 +21,10 @@ public interface HomeworkService extends IService<HomeworkEntity> {
 
     /**
      * 添加作业
-     * @param homeworkEntity 作业
+     * @param homeworkModel 作业
      * @param nowLoginUser 现在操作的用户
      * @return 结果
      * */
-    HomeworkEntity add(HomeworkEntity homeworkEntity, Claims nowLoginUser);
+    HomeworkModel add(HomeworkModel homeworkModel, Claims nowLoginUser);
 }
 

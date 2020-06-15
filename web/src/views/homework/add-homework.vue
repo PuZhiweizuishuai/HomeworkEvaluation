@@ -12,8 +12,9 @@
     <a-divider />
     <div class="steps-content">
       <div v-if="current === 0">
-        <a-form-model :model="homeworkFrom" :label-col="{span: 4}" :wrapper-col="{span: 14}">
-          <a-form-model-item label="作业标题">
+        <a-form-model ref="homeworkForm" :rules="homeworkRules" :model="homeworkFrom" :label-col="{span: 4}" :wrapper-col="{span: 14}">
+
+          <a-form-model-item prop="title" label="作业标题">
             <a-input v-model="homeworkFrom.title" />
           </a-form-model-item>
 
@@ -119,13 +120,13 @@ export default {
       id: 0,
       uploadurl: this.SERVER_API_URL + '/upload/file',
       homeworkFrom: {
-        id: Number,
+        id: null,
         title: '',
         content: '',
         openTime: 0,
         closeTime: 0,
         classNumber: this.id,
-        type: 0,
+        type: '0',
         limitTime: 0,
         time: 0,
         questionsModels: []
@@ -146,7 +147,14 @@ export default {
           title: '提交数据',
           content: '提交数据'
         }
-      ]
+      ],
+      // 数据校验规则
+      homeworkRules: {
+        title: [
+          { required: true, message: '标题不能为空', trigger: 'blur' },
+          { min: 3, max: 50, message: '长度再3到50个字符', trigger: 'blur' }
+        ]
+      }
     }
   },
   created() {
@@ -155,7 +163,32 @@ export default {
   methods: {
     publishHomework() {
       this.homeworkFrom.classNumber = this.id
-      console.log(this.homeworkFrom)
+
+      fetch(this.SERVER_API_URL + '/homework/add', {
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')
+        },
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify(this.homeworkFrom)
+      }).then(response => response.json())
+        .then(json => {
+          if (json.status === 200) {
+            this.$notification['success']({
+              message: '创建作业成功',
+              description:
+          '即将为您跳转到作业页面'
+            })
+            this.$router.push(`/curriculum/learn/${this.id}/homework`)
+          } else {
+            this.$message.warning(`创建作业失败：${json.message}`)
+            return null
+          }
+        })
+        .catch(e => {
+          return null
+        })
     },
     setQuestionList(data) {
       this.homeworkFrom.questionsModels = data
@@ -164,7 +197,43 @@ export default {
       this.homeworkFrom.content = data
     },
     next() {
-      this.current++
+      if (this.current === 0) {
+        if (this.homeworkFrom.openTime === 0 || this.homeworkFrom.closeTime === 0) {
+          this.$message.warning('作业时间不能为空')
+          return
+        }
+        if (this.homeworkFrom.type === '2') {
+          if (parseInt(this.homeworkFrom.limitTime) === 0 || parseInt(this.homeworkFrom.time) === 0) {
+            this.$message.warning('时间限制不能为空')
+            return
+          }
+        } else if (this.homeworkFrom.type === '1') {
+          if (parseInt(this.homeworkFrom.time) === 0) {
+            this.$message.warning('测验时间不能为空')
+            return
+          }
+        }
+        this.homeworkSubmit()
+        return
+      }
+      if (this.current === 1) {
+        if (this.homeworkFrom.questionsModels.length === 0) {
+          this.$message.warning('请导入或添加题目')
+          return
+        }
+        this.current++
+      }
+      // this.current++
+    },
+    homeworkSubmit() {
+      this.$refs.homeworkForm.validate(valid => {
+        if (valid) {
+          this.current++
+          return true
+        } else {
+          return false
+        }
+      })
     },
     prev() {
       this.current--
@@ -176,7 +245,7 @@ export default {
       const start = new Date(data[0]._d.toString()).getTime()
       const endTime = new Date(data[1]._d.toString()).getTime()
       this.homeworkFrom.openTime = start
-      this.homeworkFrom.endTime = endTime
+      this.homeworkFrom.closeTime = endTime
     },
     getTime() {
       return TimeUtil.formateTime(this.homeworkFrom.openTime, this.homeworkFrom.endTime)

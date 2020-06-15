@@ -162,8 +162,8 @@
         <!-- 添加判断题答案 -->
         <el-form-item v-if="question.type == 4" label="答案">
           <el-select v-model="question.otherAnswer" style="width:200px" placeholder="答案">
-            <el-option label="对" value="0" />
-            <el-option label="错" value="1" />
+            <el-option label="对" value="1" />
+            <el-option label="错" value="0" />
           </el-select>
         </el-form-item>
 
@@ -218,6 +218,7 @@ export default {
       inputAnswerVisible: false,
       questionTableData: this.questionlist,
       question: {
+        id: null,
         question: '',
         type: '0',
         answer: [],
