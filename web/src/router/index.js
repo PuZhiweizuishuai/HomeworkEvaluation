@@ -133,6 +133,12 @@ const routes = [
         name: 'HomeworkIndex',
         component: () => import('@/views/homework/homework-index.vue'),
         meta: { title: '作业' }
+      },
+      {
+        path: '/curriculum/learn/:id/homework/:hid',
+        name: 'ShowHomework',
+        component: () => import('@/views/homework/show-homework.vue'),
+        meta: { title: '做作业' }
       }
     ]
   }

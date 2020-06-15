@@ -1,18 +1,17 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.buguagaoshu.homework.common.enums.EvaluationType;
-import com.buguagaoshu.homework.common.enums.HomeworkSubmitStatusEnum;
 import com.buguagaoshu.homework.common.enums.HomeworkTypeEnum;
 import com.buguagaoshu.homework.common.enums.QuestionTypeEnum;
 import com.buguagaoshu.homework.evaluation.entity.*;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
 import com.buguagaoshu.homework.evaluation.model.HomeworkModel;
 import com.buguagaoshu.homework.evaluation.model.QuestionsModel;
-import com.buguagaoshu.homework.evaluation.model.User;
 import com.buguagaoshu.homework.evaluation.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * @author puzhiwei
  */
+@Slf4j
 @Service("homeworkService")
 public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity> implements HomeworkService {
 
@@ -165,6 +166,99 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
             return homeworkModel;
         }
         return null;
+    }
+
+    @Override
+    public List<HomeworkEntity> courseHomeworkList(long courseId, String userId) {
+        if (!judgeUserIsInCourse(courseId, userId)) {
+            return null;
+        }
+        List<HomeworkEntity> list =
+                this.list(new QueryWrapper<HomeworkEntity>().eq("class_number", courseId));
+        if (list == null || list.size() == 0) {
+            return new ArrayList<HomeworkEntity>();
+        }
+        list.forEach(this::calculationStatus);
+        return list;
+    }
+
+    @Override
+    public List<QuestionsModel> courseQuestionList(Long homeworkId, String userId) {
+        HomeworkEntity homeworkEntity = this.getById(homeworkId);
+        if (homeworkEntity == null) {
+            return null;
+        }
+        Long courseId = homeworkEntity.getClassNumber();
+        if (judgeUserIsInCourse(courseId, userId)) {
+            List<HomeworkWithQuestionsEntity> homeworkWithQuestionsEntities
+                    = homeworkWithQuestionsService
+                    .list(new QueryWrapper<HomeworkWithQuestionsEntity>().eq("homework_id", homeworkId));
+            if (homeworkWithQuestionsEntities == null) {
+                return null;
+            }
+            Map<Long, HomeworkWithQuestionsEntity> questionsMaps =
+                    homeworkWithQuestionsEntities
+                    .stream().collect(Collectors.toMap(HomeworkWithQuestionsEntity::getQuestionId, h->h));
+
+            List<QuestionsEntity> questionsEntityList =
+                    questionsService.listByIds(questionsMaps.keySet());
+            if (questionsEntityList == null) {
+                return null;
+            }
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<QuestionsModel> questionsModels = new ArrayList<>();
+            questionsEntityList.forEach((q)->{
+                try {
+                    questionsModels.add(questionEntityToModel(q, questionsMaps, objectMapper));
+                } catch (JsonProcessingException e) {
+                    log.error("题目反序列化失败，请检查id为 {} 的题目!", q.getId());
+                    throw new UserDataFormatException("题目反序列化失败,请稍后重试！");
+                }
+            });
+            return questionsModels;
+        }
+        return null;
+    }
+
+    private QuestionsModel questionEntityToModel(QuestionsEntity questionsEntity,
+                                                Map<Long, HomeworkWithQuestionsEntity> questionsMaps,
+                                                ObjectMapper objectMapper) throws JsonProcessingException {
+        QuestionsModel questionsModel = new QuestionsModel();
+        BeanUtils.copyProperties(questionsEntity, questionsModel);
+        if (QuestionTypeEnum.SINGLE_CHOICE.getCode() == questionsEntity.getType() ||
+            QuestionTypeEnum.MULTIPLE_CHOICE.getCode() == questionsEntity.getType()) {
+            questionsModel.setOptions((List<String>) objectMapper.readValue(questionsEntity.getOptions(), List.class));
+        }
+        questionsModel.setScore(questionsMaps.get(questionsEntity.getId()).getScore());
+        questionsModel.setAnswer(null);
+        questionsModel.setOtherAnswer("");
+        return questionsModel;
+    }
+
+    /**
+     * 判断用户有没有加入这门课程
+     * */
+    private boolean judgeUserIsInCourse(Long courseId, String userId) {
+        StudentsCurriculumEntity studentsCurriculumEntity =
+                studentsCurriculumService.selectStudentByCurriculumId(userId, courseId);
+        if (studentsCurriculumEntity == null) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 计算作业状态
+     * */
+    public int calculationStatus(HomeworkEntity homeworkEntity) {
+        long time = System.currentTimeMillis();
+        if (homeworkEntity.getOpenTime() <= time && time <= homeworkEntity.getCloseTime()) {
+            return EvaluationType.EVALUATION_NO_START.getCode();
+        }
+        if (time > homeworkEntity.getCloseTime()) {
+            return EvaluationType.EVALUATION_START.getCode();
+        }
+        return EvaluationType.HOMEWORK_NO_START.getCode();
     }
 
     public HomeworkWithQuestionsEntity getHomeworkWithQuestionsEntity(long homeworkId, long questionId, String teacher, int score) {

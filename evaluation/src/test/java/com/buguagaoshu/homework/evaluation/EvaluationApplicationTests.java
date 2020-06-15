@@ -7,11 +7,15 @@ import com.buguagaoshu.homework.evaluation.service.UserRoleService;
 import com.buguagaoshu.homework.evaluation.service.UserService;
 import com.buguagaoshu.homework.evaluation.utils.InviteCodeUtil;
 import com.buguagaoshu.homework.evaluation.utils.TimeUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.util.unit.DataUnit;
+
+import java.util.List;
 
 @SpringBootTest
 class EvaluationApplicationTests {
@@ -25,7 +29,7 @@ class EvaluationApplicationTests {
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Test
-    void contextLoads() {
+    void contextLoads() throws JsonProcessingException {
 //        UserEntity userEntity = new UserEntity();
 //        userEntity.setUserId("201741010102");
 //        userEntity.setPassword(bCryptPasswordEncoder.encode("123456"));
@@ -53,7 +57,11 @@ class EvaluationApplicationTests {
 //        userEntity.setPassword(bCryptPasswordEncoder.encode("123456"));
 //        userService.updateById(userEntity);
 //        System.out.println(InviteCodeUtil.createInviteCode());
-
+        String test = "[\"超级牛逼\",\"牛逼\"]";
+        List<String> list = new ObjectMapper().readValue(test, List.class);
+        list.forEach((e)->{
+            System.out.println(e);
+        });
     }
 
 }

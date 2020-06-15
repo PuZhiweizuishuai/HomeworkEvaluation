@@ -21,6 +21,7 @@ public enum ReturnCodeEnum {
     USER_ROLE_BAD(1003, "权限设置错误！"),
     USER_LOCK_TYPE_BAD(1004, "账号锁定或禁言类型错误"),
     NOT_LOGGED_IN(1005, "未登陆"),
+    NO_POWER(1006, "没有权限"),
 
 
     CANNOT_BE_ALTER_YOUR_ROLE(2000, "不能自己修改自己的角色"),
