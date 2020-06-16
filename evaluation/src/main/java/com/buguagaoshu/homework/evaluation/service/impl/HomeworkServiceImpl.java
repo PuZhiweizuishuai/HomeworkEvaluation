@@ -247,6 +247,9 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         if (homeworkEntity == null) {
             return ReturnCodeEnum.NOO_FOUND;
         }
+        // TODO 时间判定，是否在作业提交的时间内
+        // 包含测验与考试时间的判定
+        // 计划将进入考试的时间和测验的时间写入 Session 进行判断
         if (judgeUserIsInCourse(homeworkEntity.getClassNumber(), nowLoginUser.getId())) {
             // 判断用户作业是否已经提交过
             SubmitHomeworkStatusEntity submitHomeworkStatusEntity =
