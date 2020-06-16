@@ -80,4 +80,6 @@ public class HomeworkEntity {
     private Integer status;
 
     private Integer score;
+
+    private Integer sourceType;
 }

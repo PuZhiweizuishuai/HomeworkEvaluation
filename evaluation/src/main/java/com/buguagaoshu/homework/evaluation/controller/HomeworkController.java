@@ -4,11 +4,11 @@ import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.HomeworkEntity;
-import com.buguagaoshu.homework.evaluation.entity.QuestionsEntity;
+import com.buguagaoshu.homework.evaluation.model.HomeworkAnswer;
 import com.buguagaoshu.homework.evaluation.model.HomeworkModel;
-import com.buguagaoshu.homework.evaluation.model.QuestionsModel;
 import com.buguagaoshu.homework.evaluation.service.HomeworkService;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +45,7 @@ public class HomeworkController {
         return ResponseDetails.ok(ReturnCodeEnum.NO_ROLE_OR_NO_FOUND);
     }
 
-    @GetMapping("/homework/list/{id}")
+    @GetMapping("/homework/info/{id}")
     public ResponseDetails list(@PathVariable("id") Long courseId,
                                 HttpServletRequest request) {
         List<HomeworkEntity> list = homeworkService.courseHomeworkList(courseId,
@@ -59,11 +59,23 @@ public class HomeworkController {
     @GetMapping("/homework/question/{id}")
     public ResponseDetails homeworkQuestionList(@PathVariable("id") Long homeworkId,
                                                 HttpServletRequest request) {
-        List<QuestionsModel> list = homeworkService.courseQuestionList(homeworkId,
+        HomeworkModel homeworkModel = homeworkService.courseQuestionList(homeworkId,
                 JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY).getId());
-        if (list == null) {
+        if (homeworkModel == null) {
             return ResponseDetails.ok(ReturnCodeEnum.NO_POWER);
         }
-        return ResponseDetails.ok().put("data", list);
+        return ResponseDetails.ok().put("data", homeworkModel);
+    }
+
+
+    /**
+     * 作业提交接口
+     * */
+    @PostMapping("/homework/submit")
+    public ResponseDetails submitUserHomework(@Validated @RequestBody HomeworkAnswer homeworkAnswer,
+                                              HttpServletRequest request) throws JsonProcessingException {
+        ReturnCodeEnum returnCodeEnum = homeworkService.submitUserHomework(homeworkAnswer,
+                JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY));
+        return ResponseDetails.ok(returnCodeEnum);
     }
 }

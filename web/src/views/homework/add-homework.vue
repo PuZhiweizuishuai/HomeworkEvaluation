@@ -35,6 +35,16 @@
               @change="startAndEndTime"
             />
           </a-form-model-item>
+          <a-form-model-item label="多选半对给分">
+            <a-radio-group v-model="homeworkFrom.sourceType">
+              <a-radio value="0">
+                给一半分
+              </a-radio>
+              <a-radio value="1">
+                不给分
+              </a-radio>
+            </a-radio-group>
+          </a-form-model-item>
           <a-form-model-item label="作业类型">
             <a-radio-group v-model="homeworkFrom.type">
               <a-radio value="0">
@@ -127,6 +137,7 @@ export default {
         closeTime: 0,
         classNumber: this.id,
         type: '0',
+        sourceType: '0',
         limitTime: 0,
         time: 0,
         questionsModels: []

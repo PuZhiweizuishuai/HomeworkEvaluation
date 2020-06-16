@@ -34,4 +34,11 @@ public enum QuestionTypeEnum {
     public String getMsg() {
         return msg;
     }
+
+    /**
+     * 判断是不是选择题
+     * */
+    public static boolean isChoice(int code) {
+        return code == 0 || code == 1;
+    }
 }

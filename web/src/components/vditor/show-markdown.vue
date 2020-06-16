@@ -13,28 +13,38 @@ export default {
     markdown: {
       type: String,
       default: ''
+    },
+    speech: {
+      type: Boolean,
+      default: true
+    },
+    anchor: {
+      type: Number,
+      default: 1
     }
   },
   data() {
     return {
-      markdownText: this.markdown
+      markdownText: this.markdown,
+      speechValue: this.speech,
+      anchorNum: this.anchor
     }
   },
   mounted() {
     this.previevMarkdown()
   },
   updated() {
-    // this.previevMarkdown()
+
   },
   methods: {
     previevMarkdown() {
       Vditor.preview(this.$refs.markdownView,
         this.markdownText, {
           speech: {
-            enable: true
+            enable: this.speech
           },
           emojiPath: '/emoji',
-          anchor: 1
+          anchor: this.anchorNum
         })
     }
   }

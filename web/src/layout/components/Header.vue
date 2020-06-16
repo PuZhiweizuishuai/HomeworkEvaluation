@@ -20,11 +20,11 @@
             :style="{ lineHeight: '62px', width: '90%' }"
             @click="nowSelectKey"
           >
-            <a-menu-item key="bbs">
-              <router-link to="/">社区</router-link>
-            </a-menu-item>
             <a-menu-item key="curriculum">
-              <router-link to="/curriculum">课程</router-link>
+              <router-link to="/">课程</router-link>
+            </a-menu-item>
+            <a-menu-item key="bbs">
+              <router-link to="/bbs">社区</router-link>
             </a-menu-item>
 
             <a-menu-item key="about">
@@ -58,7 +58,7 @@ export default {
   data() {
     return {
       isShowLogin: false,
-      selectKey: ['bbs']
+      selectKey: ['curriculum']
     }
   },
   created() {

@@ -1,10 +1,9 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
-import com.buguagaoshu.homework.common.enums.EvaluationType;
-import com.buguagaoshu.homework.common.enums.HomeworkTypeEnum;
-import com.buguagaoshu.homework.common.enums.QuestionTypeEnum;
+import com.buguagaoshu.homework.common.enums.*;
 import com.buguagaoshu.homework.evaluation.entity.*;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
+import com.buguagaoshu.homework.evaluation.model.HomeworkAnswer;
 import com.buguagaoshu.homework.evaluation.model.HomeworkModel;
 import com.buguagaoshu.homework.evaluation.model.QuestionsModel;
 import com.buguagaoshu.homework.evaluation.service.*;
@@ -14,6 +13,7 @@ import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -45,6 +45,20 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
     private QuestionsService questionsService;
 
     private HomeworkWithQuestionsService homeworkWithQuestionsService;
+
+    private SubmitHomeworkStatusService submitHomeworkStatusService;
+
+    private SubmitQuestionsService submitQuestionsService;
+
+    @Autowired
+    public void setQuestionsService(SubmitQuestionsService submitQuestionsService) {
+        this.submitQuestionsService = submitQuestionsService;
+    }
+
+    @Autowired
+    public void setSubmitHomeworkStatusService(SubmitHomeworkStatusService submitHomeworkStatusService) {
+        this.submitHomeworkStatusService = submitHomeworkStatusService;
+    }
 
     @Autowired
     public void setHomeworkWithQuestionsService(HomeworkWithQuestionsService homeworkWithQuestionsService) {
@@ -183,11 +197,13 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
     }
 
     @Override
-    public List<QuestionsModel> courseQuestionList(Long homeworkId, String userId) {
+    public HomeworkModel courseQuestionList(Long homeworkId, String userId) {
+        // 判断作业是否存在
         HomeworkEntity homeworkEntity = this.getById(homeworkId);
         if (homeworkEntity == null) {
             return null;
         }
+        // 获取课程 ID
         Long courseId = homeworkEntity.getClassNumber();
         if (judgeUserIsInCourse(courseId, userId)) {
             List<HomeworkWithQuestionsEntity> homeworkWithQuestionsEntities
@@ -215,9 +231,71 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                     throw new UserDataFormatException("题目反序列化失败,请稍后重试！");
                 }
             });
-            return questionsModels;
+            HomeworkModel homeworkModel = new HomeworkModel();
+            BeanUtils.copyProperties(homeworkEntity, homeworkModel);
+            homeworkModel.setQuestionsModels(questionsModels);
+            return homeworkModel;
         }
         return null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = JsonProcessingException.class)
+    public ReturnCodeEnum submitUserHomework(HomeworkAnswer homeworkAnswer, Claims nowLoginUser) throws JsonProcessingException {
+        // 鉴权，查看当前用户有没有提交权限
+        HomeworkEntity homeworkEntity = this.getById(homeworkAnswer.getHomeworkId());
+        if (homeworkEntity == null) {
+            return ReturnCodeEnum.NOO_FOUND;
+        }
+        if (judgeUserIsInCourse(homeworkEntity.getClassNumber(), nowLoginUser.getId())) {
+            // 判断用户作业是否已经提交过
+            SubmitHomeworkStatusEntity submitHomeworkStatusEntity =
+                    submitHomeworkStatusService.findUserSubmit(nowLoginUser.getId(), homeworkEntity.getId());
+            // 没有提交过
+            if (submitHomeworkStatusEntity == null) {
+                // 暂时保存，不判断答案
+                if (HomeworkSubmitStatusEnum.TEMPORARY_STORAGE.getCode() == homeworkAnswer.getType()) {
+                    // 设置暂时提交状态
+                    submitHomeworkStatusEntity = submitHomeworkStatusService
+                            .saveSubmitStatus(homeworkEntity, nowLoginUser.getId(), HomeworkSubmitStatusEnum.TEMPORARY_STORAGE.getCode());
+                    // 保存提交的答案
+                    submitQuestionsService.saveQuestions(homeworkAnswer, nowLoginUser.getId(), homeworkEntity);
+                    return ReturnCodeEnum.SUCCESS;
+                } else {
+                    // 正式提交，判断答案
+                    // 设置正式提交的状态
+                    submitHomeworkStatusEntity = submitHomeworkStatusService
+                            .saveSubmitStatus(homeworkEntity, nowLoginUser.getId(), HomeworkSubmitStatusEnum.SUBMIT.getCode());
+                    // 保存并判断答案
+                    double score = submitQuestionsService.saveWithJudgeQuestions(homeworkAnswer, nowLoginUser.getId(), homeworkEntity);
+                    submitHomeworkStatusEntity.setScore(score);
+                    submitHomeworkStatusService.updateById(submitHomeworkStatusEntity);
+                    return ReturnCodeEnum.SUCCESS;
+                }
+            } else {
+                // 已经提交过,还可以提交
+                if (HomeworkSubmitStatusEnum.isSubmit(submitHomeworkStatusEntity.getStatus())) {
+                    if (HomeworkSubmitStatusEnum.TEMPORARY_STORAGE.getCode() == homeworkAnswer.getType()) {
+                        submitHomeworkStatusEntity.setStatus(HomeworkSubmitStatusEnum.TEMPORARY_STORAGE.getCode());
+                        submitHomeworkStatusEntity.setUpdateTime(System.currentTimeMillis());
+                        submitHomeworkStatusService.updateById(submitHomeworkStatusEntity);
+                        submitQuestionsService.updateSaveQuestions(homeworkAnswer, nowLoginUser.getId(), homeworkEntity);
+                        return ReturnCodeEnum.SUCCESS;
+                    } else {
+                        // 更新提交
+                        double score = submitQuestionsService.updateSubmitJudgeQuestion(homeworkAnswer, nowLoginUser.getId(), homeworkEntity);
+                        submitHomeworkStatusEntity.setStatus(HomeworkSubmitStatusEnum.TEMPORARY_STORAGE.getCode());
+                        submitHomeworkStatusEntity.setUpdateTime(System.currentTimeMillis());
+                        submitHomeworkStatusEntity.setScore(score);
+                        return ReturnCodeEnum.SUCCESS;
+                    }
+                } else {
+                    // 不能提交
+                    return ReturnCodeEnum.CANNOT_SUBMIT_HOMEWORK;
+                }
+            }
+        }
+        return ReturnCodeEnum.NOT_SELECT_THIS_COURSE;
     }
 
     private QuestionsModel questionEntityToModel(QuestionsEntity questionsEntity,

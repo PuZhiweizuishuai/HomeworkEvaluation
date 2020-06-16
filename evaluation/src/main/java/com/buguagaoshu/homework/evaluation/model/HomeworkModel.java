@@ -70,6 +70,9 @@ public class HomeworkModel {
      */
     private Integer time;
 
+    @ListValue(value = {0, 1}, message = "多选给分策略设置错误")
+    private Integer sourceType;
+
 
     private Integer status;
 

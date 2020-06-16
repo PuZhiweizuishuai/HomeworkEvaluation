@@ -36,19 +36,17 @@ public class FileUtil {
      * 头像特殊处理
      * /uploads/avatars
      * */
-    public FileModel filePath(String objectName, String userId, Map<String, String> params) {
-        if (params == null) {
-            params = new HashMap<String, String>(2);
+    public FileModel filePath(String objectName, String userId, String type, String homework) {
+        if (type == null) {
+            type = "";
         }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String type = params.get("type");
         FileModel fileModel = new FileModel();
         fileModel.setFilename(InviteCodeUtil.createInviteCode() + getFileSuffix(objectName));
         if("avatars".equals(type)) {
             fileModel.setPath("uploads/avatars/" + userId);
             return fileModel;
         } else if ("homework".equals(type)) {
-            String homework = params.get("homework");
             if (homework == null) {
                 throw new FilePathException("文件请求路径异常");
             }

@@ -1,10 +1,13 @@
 package com.buguagaoshu.homework.evaluation.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.HomeworkEntity;
+import com.buguagaoshu.homework.evaluation.model.HomeworkAnswer;
 import com.buguagaoshu.homework.evaluation.model.HomeworkModel;
 import com.buguagaoshu.homework.evaluation.model.QuestionsModel;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.Claims;
 
 import java.util.List;
@@ -48,6 +51,15 @@ public interface HomeworkService extends IService<HomeworkEntity> {
      * @param userId   用户 ID
      * @return 题目列表
      */
-    List<QuestionsModel> courseQuestionList(Long homeworkId, String userId);
+    HomeworkModel courseQuestionList(Long homeworkId, String userId);
+
+    /**
+     * 用户提交作业
+     *
+     * @param homeworkAnswer 提交的作业数据
+     * @param nowLoginUser 当前登陆用户
+     * @return 提交结果
+     * */
+    ReturnCodeEnum submitUserHomework(HomeworkAnswer homeworkAnswer, Claims nowLoginUser) throws JsonProcessingException;
 }
 

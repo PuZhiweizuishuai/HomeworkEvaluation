@@ -51,6 +51,7 @@ public class FileSystemFileStorageServiceImpl implements FileStorageRepository {
         }
         // 检查文件上传格式
         // TODO 如果时头像，格式必须是图片
+        // TODO 检查上传作业时的上传权限
         for (MultipartFile file : files) {
             String fileName = file.getOriginalFilename();
             if (!fileUtil.checkSuffix(fileName)) {
@@ -64,7 +65,7 @@ public class FileSystemFileStorageServiceImpl implements FileStorageRepository {
         List<String> errFiles = new ArrayList<>();
         for (MultipartFile file : files) {
             String fileName = file.getOriginalFilename();
-            FileModel fileModel = fileUtil.filePath(fileName, userId, params);
+            FileModel fileModel = fileUtil.filePath(fileName, userId, params.get("type"), params.get("homework"));
 
             String pathName = fileModel.getPath() + "/" + fileModel.getFilename();
             File dest = new File(fileModel.getPath());

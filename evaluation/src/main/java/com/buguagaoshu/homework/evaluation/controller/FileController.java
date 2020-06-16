@@ -59,12 +59,15 @@ public class FileController {
 
     @PostMapping("/upload/file")
     public VditorFiles upload(@RequestParam(value = "file[]", required = false) MultipartFile[] files,
-                              @RequestParam(value = "type", required = false) Map<String, String> type,
+                              @RequestParam(value = "type", required = false) String type,
+                              @RequestParam(value = "homework", required = false) Long homework,
                               HttpServletRequest request) {
-
+        Map<String, String> map = new HashMap<>(2);
+        map.put("type", type);
+        map.put("homework", String.valueOf(homework));
         VditorFiles vditorFiles = repository.save(files,
                 JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY).getId(),
-                type, request);
+                map, request);
         return vditorFiles;
     }
 

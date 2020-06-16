@@ -43,7 +43,7 @@ public class MinIOStorageRepositoryImpl implements FileStorageRepository {
     @Override
     public Map<String, String> createUploadUrl(String objectName, String userId, Map<String, String> params) {
         try {
-            FileModel fileModel = fileUtil.filePath(objectName, userId, params);
+            FileModel fileModel = fileUtil.filePath(objectName, userId, params.get("type"), params.get("homework"));
             String filename = fileModel.getPath() + "/" + fileModel.getFilename();
             String url = minioClient.presignedPutObject(properties.getBucketName(), filename, properties.getExpiry());
             HashMap<String, String> map = new HashMap<>(2);

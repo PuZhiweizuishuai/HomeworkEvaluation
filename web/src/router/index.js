@@ -11,19 +11,20 @@ const routes = [
     path: '/',
     name: 'Index',
     component: () => import('@/views/Index.vue'),
+
     meta: { title: '首页' },
     children: [
       {
         path: '/',
         name: 'Home',
-        component: () => import('@/views/home/index.vue'),
+        component: () => import('@/views/curriculum/index.vue'),
         meta: { title: '首页' }
       },
       {
-        path: '/curriculum',
-        name: 'CurriculumList',
-        component: () => import('@/views/curriculum/index.vue'),
-        meta: { title: '课程列表' }
+        path: '/bbs',
+        name: 'BBS',
+        component: () => import('@/views/home/index.vue'),
+        meta: { title: '社区' }
       },
       {
         path: '/about',

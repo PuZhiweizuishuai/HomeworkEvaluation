@@ -10,10 +10,9 @@ public enum  HomeworkSubmitStatusEnum {
      * 作业提交后处理状态
      * */
     HOMEWORK_ERROR(-1, "作业不符合要求，被打回。"),
-    NOT_SUBMITTED(0, "暂未提交"),
-    TEMPORARY_STORAGE(1, "暂时保存，但未提交"),
-    SUBMIT(2, "已经提交，但老师没有批改"),
-    CORRECTION(3, "老师批改完成")
+    TEMPORARY_STORAGE(0, "暂时保存，但未提交"),
+    SUBMIT(1, "已经提交，但老师没有批改"),
+    CORRECTION(2, "老师批改完成")
     ;
 
     int code;
@@ -31,5 +30,13 @@ public enum  HomeworkSubmitStatusEnum {
 
     public String getMsg() {
         return msg;
+    }
+
+    /**
+     * 判断是否还能提交
+     *
+     * */
+    public static boolean isSubmit(int code) {
+        return code == -1 || code == 0;
     }
 }

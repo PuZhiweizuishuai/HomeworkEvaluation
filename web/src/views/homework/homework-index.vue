@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     getHomeworkList() {
-      fetch(this.SERVER_API_URL + `/homework/list/${this.id}`, {
+      fetch(this.SERVER_API_URL + `/homework/info/${this.id}`, {
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')

@@ -3,7 +3,7 @@
     <a-collapse>
       <a-collapse-panel key="1" :header="setHeader()">
         <div>
-          <ShowMarkdown :markdown="homeworkData.content" />
+          <ShowMarkdown :anchor="0" :markdown="homeworkData.content" />
         </div>
         <a-divider />
         <div>

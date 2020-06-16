@@ -30,6 +30,7 @@ public enum ReturnCodeEnum {
     NO_ROLE_OR_NO_FOUND(2003, "没有找到或没有权限"),
 
     NOT_SELECT_THIS_COURSE(3000, "未加入这门课程"),
+    CANNOT_SUBMIT_HOMEWORK(3001, "作业已经提交，不能重复提交！" ),
 
     LACK_ID(4000, "缺少ID"),
     NOT_RUN(4001, "没有在运行"),

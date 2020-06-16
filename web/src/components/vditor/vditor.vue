@@ -1,6 +1,6 @@
 <template>
 
-  <div id="Vditor" />
+  <div :id="idName" />
 </template>
 
 <script>
@@ -10,6 +10,10 @@ import 'vditor/src/assets/scss/index.scss'
 export default {
   name: 'Vditor',
   props: {
+    idname: {
+      type: String,
+      default: 'Vditor'
+    },
     placeholder: {
       type: String,
       default: '请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。'
@@ -29,13 +33,24 @@ export default {
     cacheid: {
       type: String,
       default: 'Vditor'
+    },
+    height: {
+      type: Number,
+      default: 500
+    },
+    hide: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
+      idName: this.idname,
       cacheId: this.cacheid,
       cacheEnable: this.cache,
       markdownStr: this.markdown,
+      minHeight: this.height,
+      hideBar: this.hide,
       contentEditor: '',
       defaultPlaceholder: '请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。',
       emojis: {
@@ -104,9 +119,10 @@ export default {
     }
   },
   mounted() {
-    this.contentEditor = new Vditor('Vditor', {
+    this.contentEditor = new Vditor(this.idName, {
       toolbarConfig: {
-        pin: true
+        pin: false,
+        hide: this.hideBar
       },
       hint: {
         emojiPath: '/emoji',
@@ -116,7 +132,7 @@ export default {
         enable: this.cacheEnable,
         id: this.cacheId
       },
-      minHeight: 500,
+      minHeight: this.minHeight,
       placeholder: this.placeholder, // '请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。',
       upload: {
         withCredentials: true,
