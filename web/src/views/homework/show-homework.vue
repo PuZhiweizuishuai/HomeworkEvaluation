@@ -32,9 +32,15 @@
     </div>
     <a-divider>已经到底了</a-divider>
     <div style="text-align: center;">
-      <a-button size="large" type="primary">
-        提交
-      </a-button>
+      <a-popconfirm
+        title="你只有一次提交机会，请检查无误后再提交！"
+        ok-text="是的，我已经检查过，没有问题了"
+        cancel-text="我还要再检查一遍"
+      >
+        <a-button size="large" type="primary">
+          提交
+        </a-button>
+      </a-popconfirm>
       <a-button style="margin-left: 80px;" size="large" @click="saveAnswer">暂时保存</a-button>
     </div>
   </div>
@@ -111,8 +117,6 @@ export default {
         answer.otherAnswer = ans
       }
       this.unique(answer)
-
-      console.log(this.submitData.answers)
     },
     unique(answer) {
       for (let i = 0; i < this.submitData.answers.length; i++) {

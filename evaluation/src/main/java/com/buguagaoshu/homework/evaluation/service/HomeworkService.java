@@ -10,6 +10,7 @@ import com.buguagaoshu.homework.evaluation.model.QuestionsModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.Claims;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
@@ -50,8 +51,9 @@ public interface HomeworkService extends IService<HomeworkEntity> {
      * @param homeworkId 作业 ID
      * @param userId   用户 ID
      * @return 题目列表
+     * @throws JsonProcessingException json 序列化异常
      */
-    HomeworkModel courseQuestionList(Long homeworkId, String userId);
+    HomeworkModel courseQuestionList(Long homeworkId, String userId) throws JsonProcessingException;
 
     /**
      * 用户提交作业

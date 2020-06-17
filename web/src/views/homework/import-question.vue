@@ -61,7 +61,7 @@
     </el-table>
 
     <!-- 导入题目需要显示的题目列表 -->
-    <el-dialog title="题目列表" :visible.sync="questionListVisible">
+    <el-dialog title="题目列表" :visible.sync="questionListVisible" width="80%">
       <el-form :inline="true" :model="selectKey">
         <el-form-item label="题目内容：">
           <a-input v-model="selectKey.title" placeholder="题目关键字" />
@@ -69,6 +69,7 @@
 
         <el-form-item label="类型：">
           <el-select v-model="selectKey.type" style="width:200px" placeholder="题目类型">
+            <el-option label="不限" value="" />
             <el-option label="单选" value="0" />
             <el-option label="多选" value="1" />
             <el-option label="填空" value="2" />
@@ -78,18 +79,63 @@
         </el-form-item>
         <a-button
           type="primary"
-          :disabled="selectKey.title === '' || selectKey.type == 0"
+          @click="importMyCreateQuestion()"
         >
           查找
         </a-button>
+        <a-button
+          style="margin-left: 24px;"
+          @click="importOld"
+        >
+          导入
+        </a-button>
       </el-form>
 
-      <el-table>
+      <el-table :data="oldQuestionList" width="100%" @selection-change="selectQuestionValue">>
         <!-- 查找题目部分 -->
-        <el-table-column property="date" label="题目" width="150" />
-        <el-table-column property="name" label="类型" width="200" />
-        <el-table-column property="address" label="答案" />
+        <el-table-column
+          type="selection"
+          width="55"
+        />
+        <el-table-column property="question" label="题目" width="400" />
+        <el-table-column
+          label="类型"
+          width="150"
+        >
+          <template slot-scope="scope">
+            <el-tag
+              :type="'primary'"
+              disable-transitions
+            >
+              <span v-text="getQuestionType(scope.row.type)" />
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="答案">
+          <template slot-scope="scope">
+            <span v-text="getQuestionAnswer(scope.row)" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="submitCount" label="提交人数" />
+        <el-table-column prop="rightCount" label="正确人数" />
+        <el-table-column label="正确率">
+          <template slot-scope="scope">
+            <span v-text="rigthPercentage(scope.row)" />
+          </template>
+        </el-table-column>
+        <el-table-column label="设置分数" width="150">
+          <template slot-scope="scope">
+            <el-input-number v-model="scope.row.score" size="small" :min="1" :max="10000" />
+          </template>
+        </el-table-column>
       </el-table>
+      <el-pagination
+        :current-page="currPage"
+        :page-size="pageSize"
+        layout="prev, pager, next, jumper"
+        :total="totalCount"
+        @current-change="handleCurrentChange"
+      />
     </el-dialog>
 
     <!-- 新建题目需要显示的题目列表 -->
@@ -228,21 +274,83 @@ export default {
         score: 1,
         shareStatus: '0'
       },
+      oldQuestionList: [],
       questionListVisible: false,
       newQuestionVisible: false,
       selectKey: {
         title: '',
-        type: '0'
+        type: ''
       },
       showError: false,
       uploadurl: this.SERVER_API_URL + '/upload/file',
-      editType: false
+      editType: false,
+      currPage: 1,
+      totalCount: 0,
+      pageSize: 0,
+      oldImportQuestion: []
     }
   },
   created() {
-
+    this.importMyCreateQuestion()
   },
   methods: {
+    // 导入旧的题目
+    importOld() {
+      if (this.oldImportQuestion.length === 0) {
+        this.$message.info('未选中任何题目')
+        return
+      }
+      this.oldImportQuestion.forEach((q) => {
+        this.duplicateRemoval(q)
+      })
+      this.$emit('question-list', this.questionTableData)
+      this.questionListVisible = false
+    },
+    duplicateRemoval(val) {
+      for (let i = 0; i < this.questionTableData.length; i++) {
+        if (this.questionTableData[i].id === val.id) {
+          this.questionTableData[i] = val
+
+          return
+        }
+      }
+      this.questionTableData.push(val)
+    },
+    selectQuestionValue(val) {
+      this.oldImportQuestion = val
+    },
+    rigthPercentage(data) {
+      if (data.submitCount === 0) {
+        return 0
+      } else {
+        return data.rightCount / data.submitCount
+      }
+    },
+    handleCurrentChange(page) {
+      this.currPage = page
+      this.importMyCreateQuestion()
+    },
+    importMyCreateQuestion() {
+      fetch(this.SERVER_API_URL + `/questions/list?page=${this.currPage}&limit=10&key=${this.selectKey.title}&type=${this.selectKey.type}`, {
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')
+        },
+        method: 'GET',
+        credentials: 'include'
+      }).then(response => response.json())
+        .then(json => {
+          if (json.status === 200) {
+            this.oldQuestionList = json.page.list
+            this.pageSize = json.page.pageSize
+            this.totalCount = json.page.totalCount
+            this.currPage = json.page.currPage
+          }
+        })
+        .catch(e => {
+          return null
+        })
+    },
     editQuestion(index, data) {
       this.question = data
       this.newQuestionVisible = true
@@ -253,11 +361,13 @@ export default {
       this.questionTableData = dataSource.filter(item => {
         return item.question !== data.question
       })
+      this.$emit('question-list', this.questionTableData)
     },
     getQuestionAnswer(data) {
-      if (data.type === '0' || data.type === '1') {
+      const type = parseInt(data.type)
+      if (type === 0 || type === 1) {
         return data.answer.toString()
-      } else if (data.type === '2' || data.type === '3') {
+      } else if (type === 2 || type === 3) {
         return data.otherAnswer
       } else {
         if (data.otherAnswer === '0') {
@@ -268,13 +378,13 @@ export default {
       }
     },
     getQuestionType(type) {
-      if (type === '0') {
+      if (parseInt(type) === 0) {
         return '单选'
-      } else if (type === '1') {
+      } else if (parseInt(type) === 1) {
         return '多选'
-      } else if (type === '2') {
+      } else if (parseInt(type) === 2) {
         return '填空'
-      } else if (type === '3') {
+      } else if (parseInt(type) === 3) {
         return '问答，客观题'
       } else {
         return '判断'

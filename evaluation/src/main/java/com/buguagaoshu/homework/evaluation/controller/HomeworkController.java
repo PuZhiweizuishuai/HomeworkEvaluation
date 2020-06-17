@@ -45,6 +45,10 @@ public class HomeworkController {
         return ResponseDetails.ok(ReturnCodeEnum.NO_ROLE_OR_NO_FOUND);
     }
 
+
+    /**
+     * 获取当前课程作业列表
+     * */
     @GetMapping("/homework/info/{id}")
     public ResponseDetails list(@PathVariable("id") Long courseId,
                                 HttpServletRequest request) {
@@ -56,13 +60,16 @@ public class HomeworkController {
         return ResponseDetails.ok().put("data", list);
     }
 
+    /**
+     * 获取当前作业问题列表
+     * */
     @GetMapping("/homework/question/{id}")
     public ResponseDetails homeworkQuestionList(@PathVariable("id") Long homeworkId,
-                                                HttpServletRequest request) {
+                                                HttpServletRequest request) throws JsonProcessingException {
         HomeworkModel homeworkModel = homeworkService.courseQuestionList(homeworkId,
                 JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY).getId());
         if (homeworkModel == null) {
-            return ResponseDetails.ok(ReturnCodeEnum.NO_POWER);
+            return ResponseDetails.ok(ReturnCodeEnum.NO_POWER.getCode(), "没有获取题目的权力，或者是你已经迟到太久，超过了最迟可进入的时间");
         }
         return ResponseDetails.ok().put("data", homeworkModel);
     }

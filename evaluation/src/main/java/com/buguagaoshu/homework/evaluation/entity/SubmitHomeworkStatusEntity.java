@@ -49,6 +49,7 @@ HOMEWORK_ERROR(-1, "作业不符合要求，被打回。"),
 
 	/**
 	 * 创建时间
+	 * 第一次进入的时间
 	 */
 	private Long createTime;
 
@@ -56,5 +57,4 @@ HOMEWORK_ERROR(-1, "作业不符合要求，被打回。"),
 	 * 更新时间
 	 */
 	private Long updateTime;
-
 }

@@ -12,7 +12,7 @@
     <a-row>
       <a-col :span="1">答：</a-col>
       <a-col style="margin-left: 15px" :span="15">
-        <Vditor :height="300" :hide="false" :idname="`Vditor-${number}`" :uploadurl="uploadurl" @vditor-input="getAnswer" />
+        <Vditor :markdown="questionData.otherAnswer" :height="300" :hide="false" :idname="`Vditor-${number}`" :uploadurl="uploadurl" @vditor-input="getAnswer" />
       </a-col>
     </a-row>
     <br>

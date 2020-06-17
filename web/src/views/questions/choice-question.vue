@@ -14,21 +14,22 @@
         <a-col :span="1" />
 
         <a-col :span="23">
-          <a-radio-group v-if="questionData.type == 0" style="margin-left: 15px" @change="changeAnswerRadio">
+          <a-radio-group v-if="questionData.type == 0" :default-value="questionData.answer[0]" style="margin-left: 15px" @change="changeAnswerRadio">
             <a-radio v-for="(item, index) in questionData.options" :key="index" :value="item">
               {{ item }}
             </a-radio>
           </a-radio-group>
-          <a-radio-group v-if="questionData.type == 4" style="margin-left: 15px" @change="JudgeAnswer">
-            <a-radio :value="1">
+          <a-radio-group v-if="questionData.type == 4" v-model="questionData.otherAnswer" style="margin-left: 15px" @change="JudgeAnswer">
+            <a-radio value="1">
               对
             </a-radio>
-            <a-radio :value="0">
+            <a-radio value="0">
               错
             </a-radio>
           </a-radio-group>
           <a-checkbox-group
             v-if="questionData.type == 1"
+            v-model="questionData.answer"
             style="margin-left: 15px"
             :options="questionData.options"
             @change="changeAnswer"

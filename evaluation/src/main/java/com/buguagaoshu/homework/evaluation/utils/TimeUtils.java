@@ -11,6 +11,10 @@ import java.util.regex.Pattern;
  */
 public class TimeUtils {
 
+    public final static long MINUTE = 60000;
+
+    public final static long HOUR = 3600000;
+
     public final static String FORMAT_STRING = "yyyy-MM-dd HH:mm:ss";
 
     public final static String FORMAT_STRING2 = "EEE MMM dd yyyy HH:mm:ss z";

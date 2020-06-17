@@ -60,24 +60,19 @@ public class SubmitQuestionsServiceImpl extends ServiceImpl<SubmitQuestionsDao, 
     }
 
     @Override
-    public void saveQuestions(HomeworkAnswer homeworkAnswer, String id, HomeworkEntity homeworkEntity) throws JsonProcessingException {
+    public Map<Long, SubmitQuestionsEntity> saveQuestions(List<QuestionsEntity> questionsEntityList, String id, HomeworkEntity homeworkEntity) throws JsonProcessingException {
         // 要保存的作业列表
         List<SubmitQuestionsEntity> submitQuestionsEntities = new ArrayList<>();
         // 问题列表
-        List<QuestionsEntity> questionsEntityList = getQuestionList(homeworkEntity.getId());
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<Long, UserSubmitQuestion> submitQuestionsEntityMap = homeworkAnswer.getAnswers().stream()
-                .collect(Collectors.toMap(UserSubmitQuestion::getQuestionId, q -> q));
-
-
         // 存入问题列表
         for (QuestionsEntity question : questionsEntityList) {
-            UserSubmitQuestion userSubmitQuestion = submitQuestionsEntityMap.get(question.getId());
-            SubmitQuestionsEntity s = build(question, userSubmitQuestion, id, homeworkEntity.getId(), 0.0, objectMapper);
+            SubmitQuestionsEntity s = build(question, null, id, homeworkEntity.getId(), 0.0, objectMapper);
             s.setCreateTime(System.currentTimeMillis());
             submitQuestionsEntities.add(s);
         }
         this.saveBatch(submitQuestionsEntities);
+        return submitQuestionsEntities.stream().collect(Collectors.toMap(SubmitQuestionsEntity::getQuestionId, s -> s));
     }
 
     @Override
@@ -139,11 +134,9 @@ public class SubmitQuestionsServiceImpl extends ServiceImpl<SubmitQuestionsDao, 
                                 .eq("user_id", id)
                                 .eq("homework_id", homeworkEntity.getId())
                 );
-//        Map<Long, SubmitQuestionsEntity> questionsEntityMap = submitQuestionsEntities.stream()
-//                .collect(Collectors.toMap(SubmitQuestionsEntity::getQuestionId, q->q));
         ObjectMapper objectMapper = new ObjectMapper();
         Map<Long, UserSubmitQuestion> submitQuestionMap = homeworkAnswer.getAnswers().stream()
-                .collect(Collectors.toMap(UserSubmitQuestion::getQuestionId, q->q));
+                .collect(Collectors.toMap(UserSubmitQuestion::getQuestionId, q -> q));
         for (SubmitQuestionsEntity submitQuestionsEntity : submitQuestionsEntities) {
             UserSubmitQuestion userSubmitQuestion = submitQuestionMap.get(submitQuestionsEntity.getQuestionId());
             if (userSubmitQuestion != null) {
@@ -171,7 +164,7 @@ public class SubmitQuestionsServiceImpl extends ServiceImpl<SubmitQuestionsDao, 
                                 .eq("homework_id", homeworkEntity.getId())
                 );
         Map<Long, SubmitQuestionsEntity> submitQuestionsEntityMap =
-                submitQuestionsEntities.stream().collect(Collectors.toMap(SubmitQuestionsEntity::getQuestionId, q->q));
+                submitQuestionsEntities.stream().collect(Collectors.toMap(SubmitQuestionsEntity::getQuestionId, q -> q));
         List<HomeworkWithQuestionsEntity> homeworkWithQuestionsEntities =
                 homeworkWithQuestionsService.list(
                         new QueryWrapper<HomeworkWithQuestionsEntity>().eq("homework_id", homeworkEntity.getId())
@@ -190,30 +183,46 @@ public class SubmitQuestionsServiceImpl extends ServiceImpl<SubmitQuestionsDao, 
         for (QuestionsEntity question : questionsEntityList) {
             question.setSubmitCount(question.getSubmitCount() + 1);
             UserSubmitQuestion submit = submitMap.get(question.getId());
-            if (submit != null) {
-                double score = 0.0;
-                if (QuestionTypeEnum.isChoice(question.getType()) || question.getType() == QuestionTypeEnum.JUDGE.getCode()) {
-                    int goodScore = homeworkWithQuestionsEntityMap.get(question.getId()).getScore();
-                    score =
-                            judgeQuestion(submit, question, goodScore, homeworkEntity.getSourceType(), objectMapper);
-                    SubmitQuestionsEntity submitQuestionsEntity = submitQuestionsEntityMap.get(question.getId());
-                    submitQuestionsEntity.setAnswer(objectMapper.writeValueAsString(submit.getAnswer()));
-                    submitQuestionsEntity.setUpdateTime(System.currentTimeMillis());
-                    submitQuestionsEntity.setScore(score);
-                    getScore += score;
-                } else {
-                    SubmitQuestionsEntity submitQuestionsEntity = submitQuestionsEntityMap.get(question.getId());
-                    submitQuestionsEntity.setUpdateTime(System.currentTimeMillis());
-                    submitQuestionsEntity.setOtherAnswer(submit.getOtherAnswer());
-                }
-            }
 
+            double score = 0.0;
+            if (QuestionTypeEnum.isChoice(question.getType()) || question.getType() == QuestionTypeEnum.JUDGE.getCode()) {
+                int goodScore = homeworkWithQuestionsEntityMap.get(question.getId()).getScore();
+                SubmitQuestionsEntity submitQuestionsEntity = submitQuestionsEntityMap.get(question.getId());
+                // 如果没有提交这道题的数据，则使用数据库中已经保存的数据进行对比
+                if (submit == null) {
+                    submit = new UserSubmitQuestion();
+                    submit.setQuestionId(question.getId());
+                    submit.setAnswer(objectMapper.readValue(submitQuestionsEntity.getAnswer(), List.class));
+                }
+                score =
+                        judgeQuestion(submit, question, goodScore, homeworkEntity.getSourceType(), objectMapper);
+
+                submitQuestionsEntity.setAnswer(objectMapper.writeValueAsString(submit.getAnswer()));
+                submitQuestionsEntity.setUpdateTime(System.currentTimeMillis());
+                submitQuestionsEntity.setScore(score);
+                getScore += score;
+            } else {
+                SubmitQuestionsEntity submitQuestionsEntity = submitQuestionsEntityMap.get(question.getId());
+                submitQuestionsEntity.setUpdateTime(System.currentTimeMillis());
+                submitQuestionsEntity.setOtherAnswer(submit.getOtherAnswer());
+            }
         }
 
         this.updateBatchById(submitQuestionsEntityMap.values());
         // 更新题目正确错误数据
         questionsService.updateBatchById(questionsEntityList);
         return getScore;
+    }
+
+    @Override
+    public Map<Long, SubmitQuestionsEntity> findUserSubmit(String userId, HomeworkEntity homeworkEntity) {
+        List<SubmitQuestionsEntity> entities = this.list(
+                new QueryWrapper<SubmitQuestionsEntity>()
+                        .eq("user_id", userId)
+                        .eq("homework_id", homeworkEntity.getId())
+        );
+
+        return entities.stream().collect(Collectors.toMap(SubmitQuestionsEntity::getQuestionId, s -> s));
     }
 
 
@@ -252,7 +261,7 @@ public class SubmitQuestionsServiceImpl extends ServiceImpl<SubmitQuestionsDao, 
         if (questionsEntity.getType() == QuestionTypeEnum.MULTIPLE_CHOICE.getCode()) {
             List<String> answer = objectMapper.readValue(questionsEntity.getAnswer(), List.class);
             if (submitQuestion.getAnswer() != null && submitQuestion.getAnswer().size() != 0) {
-                Map<String, String> map = answer.stream().collect(Collectors.toMap(m->m,m->m));
+                Map<String, String> map = answer.stream().collect(Collectors.toMap(m -> m, m -> m));
                 int size = 0;
                 for (String str : submitQuestion.getAnswer()) {
                     if (!str.equals(map.get(str))) {
@@ -313,6 +322,9 @@ public class SubmitQuestionsServiceImpl extends ServiceImpl<SubmitQuestionsDao, 
             } else {
                 submitQuestionsEntity.setOtherAnswer(userSubmitQuestion.getOtherAnswer());
             }
+        } else {
+            submitQuestionsEntity.setAnswer("[\"\"]");
+            submitQuestionsEntity.setOtherAnswer("");
         }
         submitQuestionsEntity.setScore(score);
         submitQuestionsEntity.setUpdateTime(System.currentTimeMillis());

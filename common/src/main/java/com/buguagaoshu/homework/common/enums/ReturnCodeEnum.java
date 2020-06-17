@@ -31,6 +31,8 @@ public enum ReturnCodeEnum {
 
     NOT_SELECT_THIS_COURSE(3000, "未加入这门课程"),
     CANNOT_SUBMIT_HOMEWORK(3001, "作业已经提交，不能重复提交！" ),
+    NOT_READ_QUESTION(3002, "请先阅读题目后再提交作业"),
+    MISS_SUBMIT_TIME(3003, "你已经错过了提交时间，作业已经无法提交。"),
 
     LACK_ID(4000, "缺少ID"),
     NOT_RUN(4001, "没有在运行"),
