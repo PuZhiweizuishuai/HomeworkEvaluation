@@ -181,8 +181,7 @@
       :with-header="false"
     >
       <h2>&nbsp;&nbsp;用户信息控制页面</h2>
-      <br>
-      &nbsp;&nbsp;<el-button type="warning" @click="restPassword">重置密码</el-button>
+
       <br><br><br><br>
       <el-row>
         <el-form :inline="true">
@@ -422,51 +421,6 @@ export default {
       this.drawer = true
       this.editUserData = row
       this.updateRole = row.role.role
-    },
-    restPassword() {
-      MessageBox.confirm(`此操作将重置用户 ${this.editUserData.userId} 的密码 , 是否继续?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.sendrestPassword()
-      }).catch(() => {
-        Message({
-          type: 'info',
-          message: '已取消重置'
-        })
-      })
-    },
-    sendrestPassword() {
-      fetch(this.SERVER_API_URL + `/admin/user/rest/password`, {
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')
-        },
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({
-          'userId': this.editUserData.userId
-        })
-      }).then(response => response.json())
-        .then(json => {
-          if (json.data.status === 200) {
-            this.$alert(`请将重置后的密码：${json.data.password} 发送给用户： ${json.data.userId}，点击确定后该消息自动删除`, '修改成功', {
-              confirmButtonText: '确定',
-              callback: action => {
-                Message({
-                  type: 'success',
-                  message: `重置成功`
-                })
-              }
-            })
-          } else {
-            Notification.error({
-              title: '错误',
-              message: '请检查用户ID'
-            })
-          }
-        })
     },
     // 修改角色
     alterUserRole() {

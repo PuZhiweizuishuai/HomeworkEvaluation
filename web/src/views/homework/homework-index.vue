@@ -16,7 +16,7 @@
     </a-row>
     <a-divider />
     <div v-for="item in homeworkList" :key="item.id">
-      <b-row>
+      <b-row style="margin-top: 24px;">
         <b-col cols="8">
           <HomeworkInfo :homework="item" />
         </b-col>
@@ -31,7 +31,7 @@
             作业
           </a-tag>
           <el-button v-if="item.status === 1" type="success" @click="goToTest(item.id)">前往测验</el-button>
-          <el-button v-if="item.status === 0">暂无开始</el-button>
+          <el-button v-if="item.status === 0">暂未开始</el-button>
         </b-col>
       </b-row>
     </div>

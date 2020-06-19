@@ -52,16 +52,10 @@ class EvaluationApplicationTests {
 //        userRoleEntity.setRole(RoleTypeEnum.ADMIN.getRole());
 //        userRoleEntity.setCreateTime(System.currentTimeMillis());
 //        userRoleService.save(userRoleEntity);
-//        UserEntity userEntity = new UserEntity();
-//        userEntity.setUserId("201741010103");
-//        userEntity.setPassword(bCryptPasswordEncoder.encode("123456"));
-//        userService.updateById(userEntity);
-//        System.out.println(InviteCodeUtil.createInviteCode());
-        String test = "[\"超级牛逼\",\"牛逼\"]";
-        List<String> list = new ObjectMapper().readValue(test, List.class);
-        list.forEach((e)->{
-            System.out.println(e);
-        });
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUserId("201741010126");
+        userEntity.setPassword(bCryptPasswordEncoder.encode("123456"));
+        userService.updateById(userEntity);
     }
 
 }

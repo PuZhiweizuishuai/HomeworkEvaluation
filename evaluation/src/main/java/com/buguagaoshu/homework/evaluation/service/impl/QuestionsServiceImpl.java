@@ -24,7 +24,6 @@ import com.buguagaoshu.homework.evaluation.entity.QuestionsEntity;
 import com.buguagaoshu.homework.evaluation.service.QuestionsService;
 import org.springframework.util.StringUtils;
 
-import javax.xml.crypto.Data;
 
 
 /**
@@ -52,7 +51,7 @@ public class QuestionsServiceImpl extends ServiceImpl<QuestionsDao, QuestionsEnt
                 wrapper
         );
         List<QuestionsModel> serializeMode = serializeAnswer(page.getRecords());
-        IPage<QuestionsModel> modelIPage = new IPage<QuestionsModel>() {
+        IPage<QuestionsModel> modelPage = new IPage<QuestionsModel>() {
             @Override
             public List<OrderItem> orders() {
                 return null;
@@ -98,7 +97,7 @@ public class QuestionsServiceImpl extends ServiceImpl<QuestionsDao, QuestionsEnt
                 return null;
             }
         };
-        return new PageUtils(modelIPage);
+        return new PageUtils(modelPage);
     }
 
     @Override
@@ -107,11 +106,8 @@ public class QuestionsServiceImpl extends ServiceImpl<QuestionsDao, QuestionsEnt
         if (questionsEntity == null) {
             return false;
         }
-        if (questionsEntity.getCreateTeacher().equals(teacherId)
-                || questionsEntity.getShareStatus() == QuestionTypeEnum.SHARE_QUESTION.getCode()) {
-            return true;
-        }
-        return false;
+        return questionsEntity.getCreateTeacher().equals(teacherId)
+                || questionsEntity.getShareStatus() == QuestionTypeEnum.SHARE_QUESTION.getCode();
     }
 
     public List<QuestionsModel> serializeAnswer(List<QuestionsEntity> questionsEntities) {

@@ -77,6 +77,16 @@ public class HomeworkModel {
     private Integer status;
 
     /**
+     * 进入作业时间
+     * */
+    private Long intoTime;
+
+    /**
+     * 是否已经提交
+     * */
+    private Boolean submit;
+
+    /**
      * 问题列表
      * */
     @NotEmpty(message = "问题不能为空")

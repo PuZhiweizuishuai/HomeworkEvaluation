@@ -52,6 +52,7 @@ public class HomeworkController {
     @GetMapping("/homework/info/{id}")
     public ResponseDetails list(@PathVariable("id") Long courseId,
                                 HttpServletRequest request) {
+        // TODO 返回用户作业提交信息
         List<HomeworkEntity> list = homeworkService.courseHomeworkList(courseId,
                 JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY).getId());
         if (list == null) {

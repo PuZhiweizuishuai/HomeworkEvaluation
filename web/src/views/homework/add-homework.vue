@@ -61,7 +61,7 @@
 
           <!--  @change="showlimitTime()" -->
 
-          <a-form-model-item v-if="homeworkFrom.type == 1 || homeworkFrom.type == 2" label="测验或考试时间(单位：分钟)">
+          <a-form-model-item v-if="homeworkFrom.type == 1" label="测验时间(单位：分钟)">
             <a-input v-model="homeworkFrom.time" placeholder="(单位：分钟)" type="number" />
           </a-form-model-item>
           <a-form-model-item v-if="homeworkFrom.type == 2" label="开考后几分钟不能进入">

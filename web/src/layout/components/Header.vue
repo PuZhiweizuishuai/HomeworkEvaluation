@@ -20,7 +20,7 @@
             :style="{ lineHeight: '62px', width: '90%' }"
             @click="nowSelectKey"
           >
-            <a-menu-item key="curriculum">
+            <a-menu-item key="index">
               <router-link to="/">课程</router-link>
             </a-menu-item>
             <a-menu-item key="bbs">
@@ -58,11 +58,10 @@ export default {
   data() {
     return {
       isShowLogin: false,
-      selectKey: ['curriculum']
+      selectKey: ['index']
     }
   },
   created() {
-    console.log(window.location.pathname)
     this.setSelectKey()
   },
   methods: {
@@ -75,7 +74,7 @@ export default {
       if (key) {
         this.selectKey = [key]
       } else {
-        this.selectKey = ['bbs']
+        this.selectKey = ['index']
       }
     },
     isClassShow() {

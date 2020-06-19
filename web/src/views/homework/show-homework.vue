@@ -1,5 +1,14 @@
 <template>
   <div>
+    <div v-if="countdownIsShow" id="countdown">
+      <a-tag color="#f50">
+        倒计时
+      </a-tag>
+      <span v-if="countdownTextShow == false"> {{ stopTime.minute }} 分  {{ stopTime.second }}  秒</span>
+      <span v-if="countdownTextShow">
+        测验结束，无法提交
+      </span>
+    </div>
     <a-divider>标题</a-divider>
 
     <h3 style="text-align: center;">
@@ -31,17 +40,21 @@
 
     </div>
     <a-divider>已经到底了</a-divider>
-    <div style="text-align: center;">
+    <div v-if="homeworkData.submit" style="text-align: center;">
       <a-popconfirm
         title="你只有一次提交机会，请检查无误后再提交！"
         ok-text="是的，我已经检查过，没有问题了"
         cancel-text="我还要再检查一遍"
+        @confirm="submitHomework"
       >
         <a-button size="large" type="primary">
           提交
         </a-button>
       </a-popconfirm>
       <a-button style="margin-left: 80px;" size="large" @click="saveAnswer">暂时保存</a-button>
+    </div>
+    <div v-if="homeworkData.submit == false" style="text-align: center;">
+      作业已提交，等待老师批阅中
     </div>
   </div>
 </template>
@@ -65,7 +78,13 @@ export default {
         homeworkId: 0,
         type: 0,
         answers: []
-      }
+      },
+      stopTime: {
+        minute: 0,
+        second: 0
+      },
+      countdownIsShow: false,
+      countdownTextShow: false
     }
   },
   created() {
@@ -74,6 +93,10 @@ export default {
     this.getHomeworkData()
   },
   updated() {
+    this.autoSubmit()
+    this.countdownShowController()
+    // console.log(new Date().getTime())
+    // console.log(this.homeworkData.intoTime + this.homeworkData.time * 60000)
     Vditor.preview(this.$refs.homeworkContent,
       this.homeworkData.content, {
         speech: {
@@ -84,6 +107,66 @@ export default {
       })
   },
   methods: {
+    countdownShowController() {
+      if (this.homeworkData.type === 1 || this.homeworkData.type === 2) {
+        this.countdownIsShow = true
+        return
+      }
+      this.countdownIsShow = false
+    },
+    autoSubmit() {
+      if (this.homeworkData.type === 1 || this.homeworkData.type === 2) {
+        const interval = window.setInterval(() => {
+          const date = new Date().getTime() + 60000
+          let endTime = 0
+          if (this.homeworkData.type === 1) {
+            endTime = this.homeworkData.intoTime + this.homeworkData.time * 60000
+          } else {
+            endTime = this.homeworkData.closeTime
+          }
+          const seconds = parseInt((endTime - date) / 1000)
+          this.stopTime.minute = parseInt(seconds / 60 % 60)
+          this.stopTime.second = parseInt(seconds % 60)
+
+          if (endTime < date) {
+            this.countdownIsShow = false
+            this.countdownTextShow = true
+            if (this.homeworkData.submit === true) {
+              this.homeworkData.submit = false
+              window.clearInterval(interval)
+              this.submitHomework()
+            }
+          } else {
+            // console.log(date)
+          }
+        }, 1000)
+      }
+    },
+    submitHomework() {
+      this.submitData.type = 1
+      console.log(this.submitData)
+      fetch(this.SERVER_API_URL + '/homework/submit', {
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')
+        },
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify(this.submitData)
+      }).then(response => response.json())
+        .then(json => {
+          if (json.status === 200) {
+            this.homeworkData.submit
+            this.countdownTextShow = true
+            this.$message.success('提交成功，等待老师批阅！')
+          } else {
+            this.$message.error('提交失败失败：' + json.message)
+          }
+        })
+        .catch(e => {
+          this.$message.error('请检查网络后重试！')
+        })
+    },
     saveAnswer() {
       this.submitData.type = 0
       console.log(this.submitData)
@@ -97,10 +180,14 @@ export default {
         body: JSON.stringify(this.submitData)
       }).then(response => response.json())
         .then(json => {
-          console.log(json)
+          if (json.status === 200) {
+            this.$message.success('保存成功')
+          } else {
+            this.$message.error('保存失败：' + json.message)
+          }
         })
         .catch(e => {
-          return null
+          this.$message.error('请检查网络后重试！')
         })
     },
     getAnswer(ans, id, type) {
@@ -140,6 +227,22 @@ export default {
           if (json.status === 200) {
             this.homeworkData = json.data
             this.submitData.homeworkId = json.data.id
+            for (let i = 0; i < json.data.questionsModels.length; i++) {
+              let sysAns = []
+              let othAns = ''
+              if (json.data.questionsModels[i].type === 0 || json.data.questionsModels[i].type === 1) {
+                sysAns = json.data.questionsModels[i].answer
+              } else {
+                othAns = json.data.questionsModels[i].otherAnswer
+              }
+              const ans = {
+                questionId: json.data.questionsModels[i].id,
+                otherAnswer: othAns,
+                answer: sysAns
+
+              }
+              this.submitData.answers.push(ans)
+            }
           } else {
             this.$notification['error']({
               message: '发生异常，请退出重试！',
@@ -158,3 +261,13 @@ export default {
   }
 }
 </script>
+
+<style>
+#countdown {
+    position: fixed;
+    right: 5%;
+    top: 20%;
+    font-weight: bold;
+    font-size: 20px;
+}
+</style>
