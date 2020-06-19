@@ -201,8 +201,9 @@
         </el-form-item>
 
         <!-- 添加填空与问答题答案 -->
-        <el-form-item v-if="question.type == 2 || question.type == 3" label="答案">
-          <el-input v-model="question.otherAnswer" type="textarea" style="width:80%" placeholder="填空问答题不支持自动判题，需要教师手都判题打分，此处只是参考答案，所以暂不支持图片文件上传，如有需要，请自行输入链接" />
+        <el-form-item v-if="question.type == 2 || question.type == 3" label="参考答案">
+          <!-- <el-input v-model="question.otherAnswer" type="textarea" style="width:80%" placeholder="填空问答题不支持自动判题，需要教师手都判题打分，此处只是参考答案，所以暂不支持图片文件上传，如有需要，请自行输入链接" /> -->
+          <Vditor :idname="'Vditor-answer'" :placeholder="'填空问答题不支持自动判题，需要教师手都判题打分'" :uploadurl="uploadurl" @vditor-input="setAnswerInput" />
         </el-form-item>
 
         <!-- 添加判断题答案 -->
@@ -294,6 +295,9 @@ export default {
     this.importMyCreateQuestion()
   },
   methods: {
+    setAnswerInput(data) {
+      this.question.otherAnswer = data
+    },
     // 导入旧的题目
     importOld() {
       if (this.oldImportQuestion.length === 0) {
