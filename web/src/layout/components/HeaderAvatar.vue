@@ -66,7 +66,7 @@ export default {
         .then(json => {
           window.localStorage.clear()
           this.$store.commit('setUserInfo', null)
-          window.sessionStorage.setItem('headerSelectKey', 'bbs')
+          window.sessionStorage.setItem('headerSelectKey', '/')
           this.$router.push('/')
         })
         .catch(e => {

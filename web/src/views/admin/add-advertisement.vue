@@ -104,13 +104,13 @@
               <a-form-model-item ref="type" label="显示位置" prop="type">
                 <a-select v-model="advertisementFrom.type" placeholder="请选择显示位置">
                   <a-select-option value="0">
-                    首页顶部轮播大图
+                    社区顶部轮播大图
                   </a-select-option>
                   <a-select-option value="1">
                     课程页顶部轮播大图
                   </a-select-option>
                   <a-select-option value="2">
-                    首页广告
+                    社区广告
                   </a-select-option>
                   <a-select-option value="3">
                     课程页广告

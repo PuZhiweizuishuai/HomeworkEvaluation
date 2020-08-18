@@ -6,11 +6,9 @@ import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.HomeworkEntity;
 import com.buguagaoshu.homework.evaluation.model.HomeworkAnswer;
 import com.buguagaoshu.homework.evaluation.model.HomeworkModel;
-import com.buguagaoshu.homework.evaluation.model.QuestionsModel;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.Claims;
 
-import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 

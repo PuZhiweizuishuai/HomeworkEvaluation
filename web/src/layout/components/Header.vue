@@ -57,6 +57,7 @@ export default {
   },
   data() {
     return {
+      path: null,
       isShowLogin: false,
       selectKey: ['index']
     }
@@ -106,8 +107,9 @@ export default {
         })
     },
     clickLogo() {
-      window.sessionStorage.setItem('headerSelectKey', 'bbs')
-      this.selectKey = ['bbs']
+      window.sessionStorage.setItem('headerSelectKey', 'index')
+      this.selectKey = ['index']
+      this.$router.push('/')
     }
   }
 }

@@ -180,6 +180,7 @@ export default {
     this.getCourseInfo()
   },
   updated() {
+    window.scrollTo(0, 0)
     this.initRender()
   },
   methods: {
@@ -250,7 +251,7 @@ export default {
 }
 </script>
 
-    <style>
+<style>
         .header {
             background-color: #fff;
             box-shadow: rgba(0, 0, 0, 0.05) 0 1px 7px;
@@ -305,4 +306,4 @@ export default {
                 margin: 0;
             }
         }
-    </style>
+</style>

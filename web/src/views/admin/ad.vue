@@ -24,13 +24,13 @@
         <a-form-model-item label="显示位置">
           <a-select v-model="type" style="width:200px" placeholder="显示位置">
             <a-select-option value="0">
-              首页顶部轮播大图
+              社区顶部轮播大图
             </a-select-option>
             <a-select-option value="1">
               课程页顶部轮播大图
             </a-select-option>
             <a-select-option value="2">
-              首页广告
+              社区广告
             </a-select-option>
             <a-select-option value="3">
               课程页广告
@@ -263,11 +263,11 @@ export default {
     },
     formatterType(row, column, cellValue, index) {
       if (cellValue === 0) {
-        return '首页顶部轮播大图'
+        return '社区顶部轮播大图'
       } else if (cellValue === 1) {
         return '课程页顶部轮播大图'
       } else if (cellValue === 2) {
-        return '首页广告'
+        return '社区广告'
       } else {
         return '课程页广告'
       }

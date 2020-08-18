@@ -98,8 +98,8 @@ export default {
       return this.nowSelec[0]
     },
     clickLogo() {
-      window.sessionStorage.setItem('headerSelectKey', 'bbs')
-      this.selectKey = ['bbs']
+      window.sessionStorage.setItem('headerSelectKey', 'index')
+      this.selectKey = ['index']
     }
   }
 }

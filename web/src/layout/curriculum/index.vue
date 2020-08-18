@@ -89,7 +89,7 @@ export default {
   },
   methods: {
     clickLogo() {
-      window.sessionStorage.setItem('headerSelectKey', 'bbs')
+      window.sessionStorage.setItem('headerSelectKey', 'index')
     },
     /**
      * 向服务器请求判断，有没有进入这门课程的权力

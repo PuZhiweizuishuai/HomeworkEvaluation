@@ -7,6 +7,7 @@ function resolve(dir) {
 const name = '作业互评系统'
 
 module.exports = {
+  productionSourceMap: false,
   // options...
   devServer: {
     port: 8000,
