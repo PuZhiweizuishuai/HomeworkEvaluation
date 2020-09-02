@@ -59,7 +59,18 @@ public interface HomeworkService extends IService<HomeworkEntity> {
      * @param homeworkAnswer 提交的作业数据
      * @param nowLoginUser 当前登陆用户
      * @return 提交结果
+     * @throws JsonProcessingException json 序列化异常
      * */
     ReturnCodeEnum submitUserHomework(HomeworkAnswer homeworkAnswer, Claims nowLoginUser) throws JsonProcessingException;
+
+
+    /**
+     * 获取当前用户有无批改作业权限
+     * @param homeworkId 作业ID
+     * @param user 当前用户
+     * @return true 有
+     *         false 无
+     * */
+    Boolean checkSettingPower(Long homeworkId, Claims user);
 }
 

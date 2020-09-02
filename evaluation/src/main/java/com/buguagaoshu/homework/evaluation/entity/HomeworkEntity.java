@@ -81,4 +81,12 @@ public class HomeworkEntity {
     private Integer score;
 
     private Integer sourceType;
+
+
+    /**
+     * 是否开启评价
+     * 0 关闭
+     * 1 开启
+     * */
+    private Integer evaluation;
 }

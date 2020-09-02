@@ -142,6 +142,16 @@ const routes = [
         meta: { title: '做作业' }
       }
     ]
+  },
+  /**
+   * 作业批改，检查，评分独立页面
+   * id 是作业 ID
+   */
+  {
+    path: '/curriculum/setting/homework/:id',
+    meta: { title: '作业批改' },
+    component: () => import('@/views/homework/homework-score-setting.vue'),
+    name: 'HomeworkScoreSetting'
   }
 ]
 
@@ -153,7 +163,10 @@ const router = new VueRouter({
 // 路由导航守卫
 router.beforeEach((to, from, next) => {
   // const token = window.localStorage.getItem('user')
-
+  // 路由发生变化修改页面title
+  if (to.meta.title) {
+    document.title = to.meta.title
+  }
   return next()
 })
 

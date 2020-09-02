@@ -124,6 +124,7 @@ export default {
         pin: false,
         hide: this.hideBar
       },
+      height: 550,
       hint: {
         emojiPath: '/emoji',
         emoji: this.emojis

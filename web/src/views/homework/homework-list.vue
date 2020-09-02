@@ -5,19 +5,110 @@
         添加作业
       </router-link>
     </a-button>
+    <el-table
+      :data="homeworkList"
+      style="width: 100%"
+    >
+      <el-table-column
+        label="标题"
+        prop="title"
+      />
+      <el-table-column
+        label="开始时间"
+      >
+        <template slot-scope="scope">
+          <span v-text="timeFormate(scope.row.openTime)" />
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="结束时间"
+      >
+        <template slot-scope="scope">
+          <span v-text="timeFormate(scope.row.closeTime)" />
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="提交人数"
+      >
+        <template slot-scope="scope">
+          <span v-text="scope.row.submitCount" />
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="状态"
+      >
+        <template slot-scope="scope">
+          <span v-text="scope.row.status" />
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="创建老师"
+      >
+        <template slot-scope="scope">
+          <span v-text="scope.row.createTeacher" />
+        </template>
+      </el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            @click="seeStudentSubmit(scope.$index, scope.row)"
+          >批改</el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+          >删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
   </div>
 </template>
 
 <script>
+import TimeUtil from '@/utils/time-util.vue'
+
 export default {
   name: 'HomeworkList',
   data() {
     return {
-      id: 0
+      id: 0,
+      homeworkList: []
     }
   },
   created() {
     this.id = this.$route.params.id
+    this.getHomeworkList()
+  },
+  methods: {
+    getHomeworkList() {
+      fetch(this.SERVER_API_URL + `/homework/info/${this.id}`, {
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')
+        },
+        method: 'GET',
+        credentials: 'include'
+      }).then(response => response.json())
+        .then(json => {
+          if (json.status === 200) {
+            this.homeworkList = json.data || []
+          } else {
+            this.$message.error(json.message)
+          }
+        })
+        .catch(e => {
+          this.$message.error('网络异常，请检查网络后重试！')
+          return null
+        })
+    },
+    timeFormate(date) {
+      return TimeUtil.formateTimeToChinese(date)
+    },
+    seeStudentSubmit(index, row) {
+      // console.log(index, row)
+      window.open('/curriculum/setting/homework/' + row.id, '_blank')
+    }
   }
 }
 </script>

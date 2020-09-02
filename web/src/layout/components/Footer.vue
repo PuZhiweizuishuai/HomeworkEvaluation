@@ -1,6 +1,6 @@
 <template>
   <a-layout-footer :style="{ textAlign: 'center' }">
-    Copyright © 2020 - {{ year }} · 作业互评系统
+    Copyright © 2020 - {{ year }} · <a href="/"> 作业互评系统</a>
   </a-layout-footer>
 </template>
 

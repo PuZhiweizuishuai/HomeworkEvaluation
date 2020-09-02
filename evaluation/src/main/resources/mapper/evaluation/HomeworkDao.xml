@@ -21,6 +21,7 @@
         <result property="status" column="status"/>
         <result property="score" column="score"/>
         <result property="sourceType" column="source_type"/>
+        <result property="evaluation" column="evaluation"/>
     </resultMap>
 
 

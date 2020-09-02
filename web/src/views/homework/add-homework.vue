@@ -45,6 +45,16 @@
               </a-radio>
             </a-radio-group>
           </a-form-model-item>
+          <a-form-model-item label="是否开启互评">
+            <a-radio-group v-model="homeworkFrom.sourceType">
+              <a-radio value="0">
+                关闭互评
+              </a-radio>
+              <a-radio value="1">
+                开启互评
+              </a-radio>
+            </a-radio-group>
+          </a-form-model-item>
           <a-form-model-item label="作业类型">
             <a-radio-group v-model="homeworkFrom.type">
               <a-radio value="0">
@@ -140,6 +150,7 @@ export default {
         sourceType: '0',
         limitTime: 0,
         time: 0,
+        evaluation: 0,
         questionsModels: []
       },
       locale,

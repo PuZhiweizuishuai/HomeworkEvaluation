@@ -160,7 +160,7 @@ export default {
         // 跳转到首页
         this.$router.push('/')
       } else {
-        this.$message.info(user.error)
+        this.$message.info(user.message + ', 请检查账号或密码！')
       }
     },
     rememberMeChange() {

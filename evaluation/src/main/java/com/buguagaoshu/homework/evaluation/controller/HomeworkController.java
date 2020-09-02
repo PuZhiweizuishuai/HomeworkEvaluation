@@ -9,6 +9,7 @@ import com.buguagaoshu.homework.evaluation.model.HomeworkModel;
 import com.buguagaoshu.homework.evaluation.service.HomeworkService;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class HomeworkController {
 
     /**
      * 添加作业，教师和管理员可访问
-     * */
+     */
     @PostMapping("/homework/add")
     public ResponseDetails add(@Validated @RequestBody HomeworkModel homeworkModel,
                                HttpServletRequest request) {
@@ -48,7 +49,7 @@ public class HomeworkController {
 
     /**
      * 获取当前课程作业列表
-     * */
+     */
     @GetMapping("/homework/info/{id}")
     public ResponseDetails list(@PathVariable("id") Long courseId,
                                 HttpServletRequest request) {
@@ -63,7 +64,7 @@ public class HomeworkController {
 
     /**
      * 获取当前作业问题列表
-     * */
+     */
     @GetMapping("/homework/question/{id}")
     public ResponseDetails homeworkQuestionList(@PathVariable("id") Long homeworkId,
                                                 HttpServletRequest request) throws JsonProcessingException {
@@ -78,12 +79,24 @@ public class HomeworkController {
 
     /**
      * 作业提交接口
-     * */
+     */
     @PostMapping("/homework/submit")
     public ResponseDetails submitUserHomework(@Validated @RequestBody HomeworkAnswer homeworkAnswer,
                                               HttpServletRequest request) throws JsonProcessingException {
         ReturnCodeEnum returnCodeEnum = homeworkService.submitUserHomework(homeworkAnswer,
                 JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY));
         return ResponseDetails.ok(returnCodeEnum);
+    }
+
+
+    /**
+     * 获取有无批改作业的权限
+     */
+    @GetMapping("/homework/setting/power/{id}")
+    public ResponseDetails checkSettingPower(@PathVariable("id") Long homeworkId,
+                                             HttpServletRequest request) {
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        return ResponseDetails.ok()
+                .put("data", homeworkService.checkSettingPower(homeworkId, user));
     }
 }

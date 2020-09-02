@@ -324,6 +324,26 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         return ReturnCodeEnum.NOT_SELECT_THIS_COURSE;
     }
 
+    @Override
+    public Boolean checkSettingPower(Long homeworkId, Claims user) {
+        HomeworkEntity id = this.getById(homeworkId);
+        if (user.getId().equals(id.getCreateTeacher())) {
+            return true;
+        }
+        CurriculumEntity curriculum = curriculumService.getById(id.getClassNumber());
+        if (user.getId().equals(curriculum.getCreateTeacher())) {
+            return true;
+        }
+        List<StudentsCurriculumEntity> teacherList
+                = studentsCurriculumService.teacherList(homeworkId, curriculum.getCreateTeacher());
+        for (StudentsCurriculumEntity s : teacherList) {
+            if (s.getStudentId().equals(user.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private QuestionsModel questionEntityToModel(QuestionsEntity questionsEntity,
                                                 Map<Long, HomeworkWithQuestionsEntity> questionsMaps,
                                                  Map<Long, SubmitQuestionsEntity> submitQuestionsEntityMap,
