@@ -59,6 +59,7 @@ public class SubmitHomeworkStatusServiceImpl extends ServiceImpl<SubmitHomeworkS
                         .or()
                         .eq("status", HomeworkSubmitStatusEnum.COMPLETE.getCode())
         );
+        wrapper.orderByDesc("update_time");
         return list(wrapper);
     }
 

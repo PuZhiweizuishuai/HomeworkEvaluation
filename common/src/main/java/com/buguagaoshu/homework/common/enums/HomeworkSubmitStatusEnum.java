@@ -5,7 +5,7 @@ package com.buguagaoshu.homework.common.enums;
  * create          2020-06-04 11:58
  * 作业提交状态
  */
-public enum  HomeworkSubmitStatusEnum {
+public enum HomeworkSubmitStatusEnum {
     /**
      * 作业提交后处理状态
      * */
@@ -38,6 +38,8 @@ public enum  HomeworkSubmitStatusEnum {
      *
      * */
     public static boolean isSubmit(int code) {
-        return code == -1 || code == 0;
+        return HomeworkSubmitStatusEnum.HOMEWORK_ERROR.getCode() == code
+                || HomeworkSubmitStatusEnum.NOT_SUBMITTED.getCode() == code
+                || HomeworkSubmitStatusEnum.TEMPORARY_STORAGE.getCode() == code;
     }
 }

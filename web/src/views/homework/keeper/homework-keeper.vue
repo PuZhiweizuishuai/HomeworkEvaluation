@@ -29,6 +29,32 @@
             {{ timeFormate(dashboardData.homework.closeTime) }}<br><br>
             是否打开互评：
             <a-switch v-model="isEvaluation" checked-children="开" un-checked-children="关" @click="setEvaluation" />
+            <br><br>
+            修改开始时间：
+            <a-date-picker
+              placeholder="请选择开始时间"
+              format="YYYY-MM-DD HH:mm:ss"
+              :locale="locale"
+              :show-time="{ defaultValue: moment('00:00:00', 'HH:mm:ss') }"
+              @change="panelChangeStartTime"
+            />
+            <a-button size="small" @click="editHomeworkTime(0)">
+              确认
+            </a-button>
+            <br><br>
+            修改结束时间：
+            <a-date-picker
+              placeholder="请选择结束时间"
+              format="YYYY-MM-DD HH:mm:ss"
+              :locale="locale"
+              :show-time="{ defaultValue: moment('00:00:00', 'HH:mm:ss') }"
+              @change="panelChangeEndTime"
+            />
+
+            <a-button size="small" @click="editHomeworkTime(1)">
+              确认
+            </a-button>
+            <br>
           </b-col>
           <b-col cols="4">
             <ve-pie :data="submitWithNoSubmitChart" :settings="chartSettings" />
@@ -53,7 +79,14 @@
         title="批改完成列表"
       />
       <Userlist :userlist="userSubmitList" />
-      <!--  -->
+      <!-- 教师提交，不计入总数，仅供参考 -->
+      <br>
+      <a-page-header
+        style="border: 1px solid rgb(235, 237, 240)"
+        title="教师提交"
+        sub-title="不计入总数，仅供测试使用!"
+      />
+      <Userlist :userlist="teacherSubmitList" />
     </a-layout-content>
     <a-layout-footer>
       <Footer />
@@ -66,6 +99,10 @@ import Footer from '@/layout/components/Footer.vue'
 import { getHomeworkStatus, getHomeworkType } from '@/utils/homework-utils.js'
 import Userlist from '@/views/homework/keeper/keeper-user-list.vue'
 import TimeUtil from '@/utils/time-util.vue'
+import moment from 'moment'
+import 'moment/locale/zh-cn'
+import locale from 'ant-design-vue/es/date-picker/locale/zh_CN'
+
 export default {
   name: '',
   components: {
@@ -73,6 +110,10 @@ export default {
   },
   data() {
     return {
+      startTime: 0,
+      endTime: 0,
+      locale,
+      moment,
       isEvaluation: false,
       getHomeworkStatus,
       getHomeworkType,
@@ -87,6 +128,7 @@ export default {
       completeList: [],
       // 待批改作业列表
       userSubmitList: [],
+      teacherSubmitList: [],
       submitWithNoSubmitChart: {
         columns: ['提交情况', '人数'],
         rows: [
@@ -97,7 +139,7 @@ export default {
       commentChart: {
         columns: ['批改情况', '人数'],
         rows: [
-          { '批改情况': '以批改', '人数': 0 },
+          { '批改情况': '已批改', '人数': 0 },
           { '批改情况': '未批改', '人数': 0 }
         ]
       },
@@ -126,7 +168,7 @@ export default {
             window.location.href = '/'
             return
           }
-          if (json.data.isPower) {
+          if (json.data.showPower === false) {
             window.location.href = '/'
             return
           }
@@ -141,9 +183,10 @@ export default {
       // 设置学生提交数据
       this.submitWithNoSubmitChart.rows[0].人数 = this.dashboardData.homework.submitCount
       this.submitWithNoSubmitChart.rows[1].人数 = this.dashboardData.studentCount - this.dashboardData.homework.submitCount
+      this.commentComplete = this.dashboardData.submitList.length
       this.commentChart.rows[0].人数 = this.commentComplete
       this.commentChart.rows[1].人数 = this.dashboardData.homework.submitCount - this.commentComplete
-      this.commentComplete = this.dashboardData.submitList.length
+
       // 设置互评按钮
       if (this.dashboardData.homework.evaluation === 0) {
         this.isEvaluation = false
@@ -157,9 +200,64 @@ export default {
           this.completeList.push(this.dashboardData.submitList[i])
         }
       }
+
+      for (let i = 0; i < this.dashboardData.teacherSubmitList.length; i++) {
+        this.teacherSubmitList.push(this.dashboardData.teacherSubmitList[i])
+      }
+    },
+    panelChangeStartTime(date) {
+      this.startTime = new Date(date._d.toString()).getTime()
+    },
+    panelChangeEndTime(date) {
+      this.endTime = new Date(date._d.toString()).getTime()
+    },
+    editHomeworkTime(type) {
+      const homework = {
+        id: this.dashboardData.homework.id
+      }
+      // 修改开始时间
+      if (type === 0) {
+        if (this.startTime === 0) {
+          return
+        }
+        homework.openTime = this.startTime
+      } else if (type === 1) {
+        // 修改结束时间
+        if (this.endTime === 0) {
+          return
+        }
+        homework.closeTime = this.endTime
+      } else if (type === 2) {
+        if (this.isEvaluation) {
+          homework.evaluation = 1
+        } else {
+          homework.evaluation = 0
+        }
+      } else {
+        return
+      }
+      fetch(this.SERVER_API_URL + `/homework/setting/update`, {
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')
+        },
+        method: 'POST',
+        credentials: 'include',
+        body: JSON.stringify(homework)
+      }).then(response => response.json())
+        .then(json => {
+          if (json.status === 200) {
+            this.$message.success(`修改成功！`)
+          } else {
+            this.$message.error(json.message)
+          }
+        })
+        .catch(e => {
+          return null
+        })
     },
     setEvaluation(click) {
-      console.log(click)
+      this.editHomeworkTime(2)
     },
     close() {
       window.opener = null

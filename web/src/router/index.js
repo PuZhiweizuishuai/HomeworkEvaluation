@@ -95,6 +95,12 @@ const routes = [
         name: 'AD',
         component: () => import('@/views/admin/ad.vue'),
         meta: { title: '广告及大图管理' }
+      },
+      {
+        path: '/admin/curriculum/question',
+        name: 'Question',
+        component: () => import('@/views/admin/question.vue'),
+        meta: { title: '问题管理' }
       }
     ]
   },

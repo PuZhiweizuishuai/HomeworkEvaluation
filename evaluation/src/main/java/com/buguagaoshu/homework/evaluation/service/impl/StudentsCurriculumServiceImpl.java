@@ -56,6 +56,15 @@ public class StudentsCurriculumServiceImpl extends ServiceImpl<StudentsCurriculu
     }
 
     @Override
+    public List<StudentsCurriculumEntity> teacherList(Long id) {
+        QueryWrapper<StudentsCurriculumEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("curriculum_id", id);
+        wrapper.eq("role", RoleTypeEnum.TEACHER.getRole());
+        return this.list(wrapper);
+
+    }
+
+    @Override
     public List<UserEntity> findUserByIdAndCurriculumId(List<UserEntity> userEntityList, Long id) {
         List<String> ids =
                 userEntityList.stream().map((u)->{

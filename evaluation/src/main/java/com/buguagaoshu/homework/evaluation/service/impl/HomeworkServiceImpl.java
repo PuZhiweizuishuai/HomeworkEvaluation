@@ -313,6 +313,8 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                         submitHomeworkStatusEntity.setStatus(HomeworkSubmitStatusEnum.SUBMIT.getCode());
                         submitHomeworkStatusEntity.setUpdateTime(time);
                         submitHomeworkStatusEntity.setScore(score);
+                        // 提交数加 1
+                        homeworkSubmitCountAdd(homeworkEntity, nowLoginUser.getId());
                         submitHomeworkStatusService.updateById(submitHomeworkStatusEntity);
                     }
                     return ReturnCodeEnum.SUCCESS;
@@ -336,7 +338,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         }
         CurriculumEntity curriculum = curriculumService.getById(homework.getClassNumber());
         List<StudentsCurriculumEntity> teacherList
-                = studentsCurriculumService.teacherList(curriculum.getId(), curriculum.getCreateTeacher());
+                = studentsCurriculumService.teacherList(curriculum.getId());
         boolean isTeacher = false;
         for (StudentsCurriculumEntity s : teacherList) {
             if (s.getStudentId().equals(user.getId())) {
@@ -349,19 +351,68 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
             keeperDashboard.setShowPower(true);
             homework.setStatus(calculationStatus(homework));
             keeperDashboard.setHomework(homework);
-
+            int teacherCount = teacherList.size();
             // 设置学生数目
             keeperDashboard.setStudentCount(
                     studentsCurriculumService.count(new QueryWrapper<StudentsCurriculumEntity>().eq("curriculum_id", curriculum.getId()))
                             // 减去教师数目
-                            - teacherList.size() - 1
+                            - teacherCount
             );
+            keeperDashboard.setTeacherCount(teacherCount);
             // 填充提交作业列表
-            keeperDashboard.setSubmitList(submitHomeworkStatusService.submitUserList(homeworkId));
+            List<SubmitHomeworkStatusEntity> submitHomeworkStatusEntities = submitHomeworkStatusService.submitUserList(homeworkId);
+            List<SubmitHomeworkStatusEntity> teacherSubmit = new ArrayList<>();
+            List<SubmitHomeworkStatusEntity> studentSubmit = new ArrayList<>();
+            Map<String, String> teacherMap = teacherList.stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, StudentsCurriculumEntity::getStudentId));
+
+            for (SubmitHomeworkStatusEntity s : submitHomeworkStatusEntities) {
+                if (s.getUserId().equals(teacherMap.get(s.getUserId()))) {
+                    teacherSubmit.add(s);
+                } else {
+                    studentSubmit.add(s);
+                }
+            }
+            keeperDashboard.setTeacherSubmitList(teacherSubmit);
+            keeperDashboard.setSubmitList(studentSubmit);
         } else {
             keeperDashboard.setShowPower(false);
         }
         return keeperDashboard;
+    }
+
+    @Override
+    public ReturnCodeEnum updateHomework(HomeworkEntity homeworkEntity, Claims user) {
+        if (homeworkEntity.getId() == null) {
+            return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
+        }
+        if (homeworkEntity.getEvaluation() == null && homeworkEntity.getCloseTime() == null && homeworkEntity.getOpenTime() == null) {
+            return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
+        }
+        HomeworkEntity homework = this.getById(homeworkEntity.getId());
+        if (homework == null) {
+            return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
+        }
+        CurriculumEntity curriculum = curriculumService.getById(homework.getClassNumber());
+        List<StudentsCurriculumEntity> teacherList
+                = studentsCurriculumService.teacherList(curriculum.getId(), curriculum.getCreateTeacher());
+        boolean isTeacher = false;
+        for (StudentsCurriculumEntity s : teacherList) {
+            if (s.getStudentId().equals(user.getId())) {
+                isTeacher = true;
+            }
+        }
+        if (user.getId().equals(homework.getCreateTeacher())
+                || user.getId().equals(curriculum.getCreateTeacher())
+                || isTeacher) {
+            HomeworkEntity entity = new HomeworkEntity();
+            entity.setId(homework.getId());
+            entity.setOpenTime(homeworkEntity.getOpenTime());
+            entity.setCloseTime(homeworkEntity.getCloseTime());
+            entity.setEvaluation(homeworkEntity.getEvaluation());
+            this.updateById(entity);
+            return ReturnCodeEnum.SUCCESS;
+        }
+        return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
     }
 
     private QuestionsModel questionEntityToModel(QuestionsEntity questionsEntity,
@@ -522,9 +573,32 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                 throw new UserDataFormatException("判断题答案设置错误！");
             }
         }
-        // 分数检擦
+        // 分数检查
         if (questionsModel.getScore() == null || questionsModel.getScore() <= 0) {
             throw new UserDataFormatException("题目分数必须大于 0");
         }
+    }
+
+    /**
+     * 作业提交数加一判断
+     * <p>
+     * 教师提交不计入提交数
+     *
+     * @param homeworkEntity 作业类型
+     * @param userId         提交用户ID
+     */
+    private void homeworkSubmitCountAdd(HomeworkEntity homeworkEntity, String userId) {
+        if (homeworkEntity.getCreateTeacher().equals(userId)) {
+            return;
+        }
+        List<StudentsCurriculumEntity> list = studentsCurriculumService.teacherList(homeworkEntity.getClassNumber());
+        list.forEach(t -> {
+            if (t.getStudentId().equals(userId)) {
+                return;
+            }
+        });
+        // 提交数加 1;
+        // TODO 修改加 1 方式
+        homeworkEntity.setSubmitCount(homeworkEntity.getSubmitCount() + 1);
     }
 }

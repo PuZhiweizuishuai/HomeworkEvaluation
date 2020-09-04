@@ -30,6 +30,12 @@ public class KeeperDashboardViewVo {
 
 
     /**
+     * 教师数目
+     * */
+    private Integer teacherCount;
+
+
+    /**
      * 点评批改数量
      * */
     private Integer commentCount;
@@ -39,5 +45,12 @@ public class KeeperDashboardViewVo {
      * 作业提交情况
      * */
     private List<SubmitHomeworkStatusEntity> submitList;
+
+
+    /**
+     * 教师提交列表
+     * 不计入最终的统计
+     * */
+    private List<SubmitHomeworkStatusEntity> teacherSubmitList;
 
 }

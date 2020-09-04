@@ -20,7 +20,7 @@ public class HomeworkAnswer {
     @NotNull(message = "提交的作业数据有误")
     private Long homeworkId;
 
-    @ListValue(value = {0, 1}, message = "提交格式错误")
+    @ListValue(value = {0, 1, 2}, message = "提交格式错误")
     private Integer type;
 
     /**

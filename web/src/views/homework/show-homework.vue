@@ -143,8 +143,8 @@ export default {
       }
     },
     submitHomework() {
-      this.submitData.type = 1
-      console.log(this.submitData)
+      this.submitData.type = 2
+
       fetch(this.SERVER_API_URL + '/homework/submit', {
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
@@ -168,7 +168,7 @@ export default {
         })
     },
     saveAnswer() {
-      this.submitData.type = 0
+      this.submitData.type = 1
       console.log(this.submitData)
       fetch(this.SERVER_API_URL + '/homework/submit', {
         headers: {

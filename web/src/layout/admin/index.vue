@@ -34,6 +34,12 @@
               <span>添加课程</span>
             </router-link>
           </a-menu-item>
+          <a-menu-item key="问题管理">
+            <router-link to="/admin/curriculum/question">
+              <a-icon type="question" />
+              <span>问题管理</span>
+            </router-link>
+          </a-menu-item>
           <a-menu-item key="课程分类修改">
             <router-link to="/admin/curriculum/tag">
               <a-icon type="tool" />

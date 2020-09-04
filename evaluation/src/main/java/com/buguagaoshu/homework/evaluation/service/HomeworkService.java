@@ -73,5 +73,14 @@ public interface HomeworkService extends IService<HomeworkEntity> {
      * @return 数据
      * */
     KeeperDashboardViewVo keeperInfo(Long homeworkId, Claims user);
+
+
+    /**
+     * 更新作业数据
+     * @param homeworkEntity 作业ID
+     * @param user 当前用户
+     * @return 更新结果
+     * */
+    ReturnCodeEnum updateHomework(HomeworkEntity homeworkEntity, Claims user);
 }
 

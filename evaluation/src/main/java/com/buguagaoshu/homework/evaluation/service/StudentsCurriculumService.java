@@ -39,6 +39,14 @@ public interface StudentsCurriculumService extends IService<StudentsCurriculumEn
 
 
     /**
+     * 通过课程ID查找这门课的所有老师，包括创建这门课的老师
+     * @param id 课程ID
+     * @return 老师列表
+     * */
+    List<StudentsCurriculumEntity> teacherList(Long id);
+
+
+    /**
      * 返回在班级内的学生数据
      * @param userEntityList 学生数据
      * @param id 课程 ID

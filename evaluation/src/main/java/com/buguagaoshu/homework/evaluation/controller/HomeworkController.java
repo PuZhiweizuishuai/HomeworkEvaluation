@@ -101,4 +101,13 @@ public class HomeworkController {
     }
 
 
+    @PostMapping("/homework/setting/update")
+    public ResponseDetails homeworkUpdate(@RequestBody HomeworkEntity homeworkEntity,
+                                          HttpServletRequest request) {
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+
+        return ResponseDetails.ok(homeworkService.updateHomework(homeworkEntity, user));
+    }
+
+
 }

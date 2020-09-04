@@ -31,13 +31,7 @@
       <!-- 个人课程信息显示 -->
       <a-col :span="4">
         <a-card hoverable>
-          <a-avatar :size="64" icon="user" />
-
-          <a-card-meta title="Europe Street beat">
-            <template slot="description">
-              www.instagram.com
-            </template>
-          </a-card-meta>
+          <h5>最新消息：</h5>
         </a-card>
       </a-col>
     </a-row>
