@@ -92,11 +92,13 @@ public class HomeworkController {
     /**
      * 获取有无批改作业的权限
      */
-    @GetMapping("/homework/setting/power/{id}")
+    @GetMapping("/homework/keeper/info/{id}")
     public ResponseDetails checkSettingPower(@PathVariable("id") Long homeworkId,
                                              HttpServletRequest request) {
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
-        return ResponseDetails.ok()
-                .put("data", homeworkService.checkSettingPower(homeworkId, user));
+
+        return ResponseDetails.ok().put("data", homeworkService.keeperInfo(homeworkId, user));
     }
+
+
 }

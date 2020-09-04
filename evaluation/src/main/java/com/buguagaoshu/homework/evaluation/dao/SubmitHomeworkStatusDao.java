@@ -3,6 +3,9 @@ package com.buguagaoshu.homework.evaluation.dao;
 import com.buguagaoshu.homework.evaluation.entity.SubmitHomeworkStatusEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * 用户作业提交状态
@@ -13,5 +16,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface SubmitHomeworkStatusDao extends BaseMapper<SubmitHomeworkStatusEntity> {
-	
+
 }

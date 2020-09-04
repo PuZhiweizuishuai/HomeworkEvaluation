@@ -1,7 +1,10 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
+import com.buguagaoshu.homework.common.enums.HomeworkSubmitStatusEnum;
 import com.buguagaoshu.homework.evaluation.entity.HomeworkEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -46,6 +49,18 @@ public class SubmitHomeworkStatusServiceImpl extends ServiceImpl<SubmitHomeworkS
         return submitHomeworkStatusEntity;
     }
 
+    @Override
+    public List<SubmitHomeworkStatusEntity> submitUserList(long homeworkID) {
+        QueryWrapper<SubmitHomeworkStatusEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("homework_id", homeworkID);
+
+        wrapper.and(
+                status -> status.eq("status", HomeworkSubmitStatusEnum.SUBMIT.getCode())
+                        .or()
+                        .eq("status", HomeworkSubmitStatusEnum.COMPLETE.getCode())
+        );
+        return list(wrapper);
+    }
 
 
 }

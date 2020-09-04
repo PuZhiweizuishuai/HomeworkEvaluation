@@ -10,7 +10,9 @@ import VueCookie from 'vue-cookies'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import { LayoutPlugin } from 'bootstrap-vue'
+import VCharts from 'v-charts'
 
+Vue.use(VCharts)
 Vue.use(LayoutPlugin)
 
 Vue.config.productionTip = false

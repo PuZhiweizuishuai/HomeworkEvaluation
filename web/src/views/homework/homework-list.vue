@@ -14,6 +14,14 @@
         prop="title"
       />
       <el-table-column
+        label="类型"
+      >
+
+        <template slot-scope="scope">
+          <span v-text="getHomeworkType(scope.row.type)" />
+        </template>
+      </el-table-column>
+      <el-table-column
         label="开始时间"
       >
         <template slot-scope="scope">
@@ -38,7 +46,7 @@
         label="状态"
       >
         <template slot-scope="scope">
-          <span v-text="scope.row.status" />
+          <span v-text="getHomeworkStatus(scope.row.status)" />
         </template>
       </el-table-column>
       <el-table-column
@@ -53,7 +61,11 @@
           <el-button
             size="mini"
             @click="seeStudentSubmit(scope.$index, scope.row)"
-          >批改</el-button>
+          >
+
+            <span v-if="scope.row.status === 4">查看</span>
+            <span v-else>批改</span>
+          </el-button>
           <el-button
             size="mini"
             type="danger"
@@ -67,11 +79,14 @@
 
 <script>
 import TimeUtil from '@/utils/time-util.vue'
+import { getHomeworkStatus, getHomeworkType } from '@/utils/homework-utils.js'
 
 export default {
   name: 'HomeworkList',
   data() {
     return {
+      getHomeworkStatus,
+      getHomeworkType,
       id: 0,
       homeworkList: []
     }
@@ -107,7 +122,7 @@ export default {
     },
     seeStudentSubmit(index, row) {
       // console.log(index, row)
-      window.open('/curriculum/setting/homework/' + row.id, '_blank')
+      window.open('/curriculum/keeper/homework/' + row.id, '_blank')
     }
   }
 }

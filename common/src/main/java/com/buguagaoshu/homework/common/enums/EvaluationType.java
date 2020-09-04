@@ -12,7 +12,14 @@ public enum  EvaluationType {
     HOMEWORK_NO_START(0, "作业未开始"),
     EVALUATION_NO_START(1, "作业开始，评价未开始"),
     EVALUATION_START(2, "评价开始"),
-    FINISH_EVALUATION(3, "评价完成")
+    FINISH_EVALUATION(3, "评价完成"),
+    HOMEWORK_END(4, "作业结束"),
+
+    /**
+     * 作业是否开启互评功能
+     * */
+    OPEN_EVALUATION(1, "作业开启评价"),
+    CLOSE_EVALUATION(0, "作业关闭评价")
     ;
     int code;
     String msg;

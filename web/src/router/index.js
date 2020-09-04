@@ -148,10 +148,10 @@ const routes = [
    * id 是作业 ID
    */
   {
-    path: '/curriculum/setting/homework/:id',
+    path: '/curriculum/keeper/homework/:id',
     meta: { title: '作业批改' },
-    component: () => import('@/views/homework/homework-score-setting.vue'),
-    name: 'HomeworkScoreSetting'
+    component: () => import('@/views/homework/keeper/homework-keeper.vue'),
+    name: 'HomeworkScoreKeeper'
   }
 ]
 

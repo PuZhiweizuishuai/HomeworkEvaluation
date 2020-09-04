@@ -55,4 +55,9 @@ public class SubmitQuestionsEntity {
 	private Long updateTime;
 
 	private Double score;
+
+	/**
+	 * 教师点评
+	 * */
+	private String teacherComment;
 }

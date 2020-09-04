@@ -6,6 +6,7 @@ import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.HomeworkEntity;
 import com.buguagaoshu.homework.evaluation.model.HomeworkAnswer;
 import com.buguagaoshu.homework.evaluation.model.HomeworkModel;
+import com.buguagaoshu.homework.evaluation.vo.KeeperDashboardViewVo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.Claims;
 
@@ -64,13 +65,13 @@ public interface HomeworkService extends IService<HomeworkEntity> {
     ReturnCodeEnum submitUserHomework(HomeworkAnswer homeworkAnswer, Claims nowLoginUser) throws JsonProcessingException;
 
 
+
     /**
-     * 获取当前用户有无批改作业权限
+     * 教师在进行评价与批改时的主页所需要显示的当前作业数据
      * @param homeworkId 作业ID
      * @param user 当前用户
-     * @return true 有
-     *         false 无
+     * @return 数据
      * */
-    Boolean checkSettingPower(Long homeworkId, Claims user);
+    KeeperDashboardViewVo keeperInfo(Long homeworkId, Claims user);
 }
 

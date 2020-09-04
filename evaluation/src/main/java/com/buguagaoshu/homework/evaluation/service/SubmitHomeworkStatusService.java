@@ -5,6 +5,7 @@ import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.HomeworkEntity;
 import com.buguagaoshu.homework.evaluation.entity.SubmitHomeworkStatusEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,5 +39,11 @@ public interface SubmitHomeworkStatusService extends IService<SubmitHomeworkStat
     SubmitHomeworkStatusEntity saveSubmitStatus(HomeworkEntity homeworkEntity, String id, int status);
 
 
+    /**
+     * 获取当前作业下，提交作业的用户列表
+     * @param homeworkID 作业ID
+     * @return 已提交作业的用户列表
+     * */
+    List<SubmitHomeworkStatusEntity> submitUserList(long homeworkID);
 }
 
