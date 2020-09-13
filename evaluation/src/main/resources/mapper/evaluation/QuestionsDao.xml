@@ -17,6 +17,8 @@
         <result property="rightCount" column="right_count"/>
         <result property="otherAnswer" column="other_answer"/>
         <result property="options" column="options"/>
+        <result property="difficulty" column="difficulty"/>
+        <result property="tag" column="tag"/>
     </resultMap>
 
 

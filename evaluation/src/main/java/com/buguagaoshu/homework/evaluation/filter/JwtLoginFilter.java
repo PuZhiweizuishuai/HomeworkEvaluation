@@ -3,6 +3,8 @@ package com.buguagaoshu.homework.evaluation.filter;
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.model.User;
+import com.buguagaoshu.homework.evaluation.service.UserLoginLogService;
+import com.buguagaoshu.homework.evaluation.service.VerifyCodeService;
 import com.buguagaoshu.homework.evaluation.vo.LoginDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
@@ -28,15 +30,22 @@ import java.io.PrintWriter;
  */
 public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
 
+    private final UserLoginLogService userLoginLogService;
+
+    private final VerifyCodeService verifyCodeService;
+
     /**
      * @param defaultFilterProcessesUrl 配置要过滤的地址，即登陆地址
      * @param authenticationManager 认证管理器，校验身份时会用到
+     * @param userLoginLogService 保存用户登录日志
      *
      * */
-    public JwtLoginFilter(String defaultFilterProcessesUrl, AuthenticationManager authenticationManager) {
+    public JwtLoginFilter(String defaultFilterProcessesUrl, AuthenticationManager authenticationManager, UserLoginLogService userLoginLogService, VerifyCodeService verifyCodeService) {
         super(new AntPathRequestMatcher(defaultFilterProcessesUrl));
         // 为 AbstractAuthenticationProcessingFilter 中的属性赋值
         setAuthenticationManager(authenticationManager);
+        this.userLoginLogService = userLoginLogService;
+        this.verifyCodeService = verifyCodeService;
     }
 
 
@@ -50,6 +59,7 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
         // readValue 第一个参数 输入流，第二个参数 要转换的对象
         User user = new ObjectMapper().readValue(httpServletRequest.getInputStream(), User.class);
         // 验证码验证
+        verifyCodeService.verify(httpServletRequest.getSession().getId(), user.getVerifyCode());
         // 对 html 标签进行转义，防止 XSS 攻击
         String userId = user.getUserId();
         userId = HtmlUtils.htmlEscape(userId);
@@ -73,7 +83,10 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         // 登陆成功
         // TODO 限制登陆错误次数
-        // TODO 添加登陆日志
+
+        // 写入登录日志
+        User user = (User) authResult.getPrincipal();
+        userLoginLogService.saveUserLoginLog(request, user.getUserId());
         TokenAuthenticationHelper.addAuthentication(request, response ,authResult);
     }
 
@@ -84,7 +97,7 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         // 错误请求次数加 1
         // 向前端写入数据
-        ResponseDetails responseDetails = ResponseDetails.ok(HttpStatus.UNAUTHORIZED.value(), "登陆失败！");
+        ResponseDetails responseDetails = ResponseDetails.ok(HttpStatus.UNAUTHORIZED.value(), failed.getLocalizedMessage());
         responseDetails.put("error", failed.getLocalizedMessage());
         responseDetails.put("path", request.getServletPath());
 

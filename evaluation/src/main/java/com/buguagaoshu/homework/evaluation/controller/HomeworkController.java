@@ -69,7 +69,7 @@ public class HomeworkController {
     public ResponseDetails homeworkQuestionList(@PathVariable("id") Long homeworkId,
                                                 HttpServletRequest request) throws JsonProcessingException {
         HomeworkModel homeworkModel = homeworkService.courseQuestionList(homeworkId,
-                JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY).getId());
+                JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY).getId(), false);
         if (homeworkModel == null) {
             return ResponseDetails.ok(ReturnCodeEnum.NO_POWER.getCode(), "没有获取题目的权力，或者是你已经迟到太久，超过了最迟可进入的时间");
         }
@@ -101,6 +101,26 @@ public class HomeworkController {
     }
 
 
+    /**
+     * 获取学生提交
+     * */
+    @GetMapping("/homework/keeper/correct/{id}")
+    public ResponseDetails teacherGetStudentSubmit(@PathVariable("id") Long homeworkId,
+                                                   @RequestParam("studentId") String studentId,
+                                                   HttpServletRequest request) throws JsonProcessingException {
+        Claims teacher = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        HomeworkModel homeworkModel = homeworkService.teacherGetStudentAnswer(homeworkId, studentId, teacher.getId());
+        if (homeworkModel == null) {
+            return ResponseDetails.ok(ReturnCodeEnum.NO_POWER.getCode(), "作业不存在或没有权限或当前学生还没有提交任何数据!");
+        }
+        return ResponseDetails.ok().put("data", homeworkModel);
+    }
+
+
+    /**
+     * 更新作业设置
+     *
+     */
     @PostMapping("/homework/setting/update")
     public ResponseDetails homeworkUpdate(@RequestBody HomeworkEntity homeworkEntity,
                                           HttpServletRequest request) {

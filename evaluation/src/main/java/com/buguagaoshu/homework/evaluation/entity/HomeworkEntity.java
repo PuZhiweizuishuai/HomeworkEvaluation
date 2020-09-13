@@ -80,6 +80,9 @@ public class HomeworkEntity {
 
     private Integer score;
 
+    /**
+     * 多选给分策略，【0 给一半， 1 不给分】
+     * */
     private Integer sourceType;
 
 

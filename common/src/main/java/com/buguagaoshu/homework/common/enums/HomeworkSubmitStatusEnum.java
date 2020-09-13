@@ -42,4 +42,10 @@ public enum HomeworkSubmitStatusEnum {
                 || HomeworkSubmitStatusEnum.NOT_SUBMITTED.getCode() == code
                 || HomeworkSubmitStatusEnum.TEMPORARY_STORAGE.getCode() == code;
     }
+
+    public static boolean teacherHaveSeePower(int code) {
+        return code == HomeworkSubmitStatusEnum.HOMEWORK_ERROR.code
+                || code == HomeworkSubmitStatusEnum.SUBMIT.code
+                || code == HomeworkSubmitStatusEnum.COMPLETE.getCode();
+    }
 }

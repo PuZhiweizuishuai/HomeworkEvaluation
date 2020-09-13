@@ -2,9 +2,10 @@ package com.buguagaoshu.homework.evaluation.config;
 
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.evaluation.model.User;
-import com.buguagaoshu.homework.evaluation.utils.InviteCodeUtil;
+import com.buguagaoshu.homework.evaluation.service.UserLoginLogService;
 import com.buguagaoshu.homework.evaluation.vo.LoginDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -50,6 +51,7 @@ public class TokenAuthenticationHelper {
     public static final String COOKIE_TOKEN = "COOKIE-TOKEN";
     public static final String XSRF = "XSRF-TOKEN";
 
+
     /**
      * 设置登陆成功后令牌返回
      * TODO 添加登陆日志
@@ -88,6 +90,7 @@ public class TokenAuthenticationHelper {
         cookie.setPath("/");
         cookie.setMaxAge(cookExpirationTime);
         response.addCookie(cookie);
+
 
         // 向前端写入数据
         ResponseDetails responseDetails = ResponseDetails.ok(HttpStatus.OK.value(), "登陆成功！");

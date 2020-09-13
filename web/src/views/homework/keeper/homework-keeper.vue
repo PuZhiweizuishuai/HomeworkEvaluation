@@ -71,14 +71,14 @@
         style="border: 1px solid rgb(235, 237, 240)"
         title="待批改列表"
       />
-      <Userlist :userlist="completeList" />
+      <Userlist :userlist="userSubmitList" />
       <!-- 批改完成列表 -->
       <br>
       <a-page-header
         style="border: 1px solid rgb(235, 237, 240)"
         title="批改完成列表"
       />
-      <Userlist :userlist="userSubmitList" />
+      <Userlist :userlist="completeList" />
       <!-- 教师提交，不计入总数，仅供参考 -->
       <br>
       <a-page-header

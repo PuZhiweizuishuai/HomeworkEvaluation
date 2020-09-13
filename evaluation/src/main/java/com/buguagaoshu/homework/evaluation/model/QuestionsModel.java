@@ -41,6 +41,13 @@ public class QuestionsModel {
      * */
     private String otherAnswer;
 
+
+    /**
+     * 做完题目后显示正确的答案
+     * */
+    private String rightAnswer;
+
+
     /**
      * 提示
      */
@@ -70,6 +77,18 @@ public class QuestionsModel {
      * 正确次数
      */
     private Long rightCount;
+
+    /**
+     * 难度
+     * */
+    private Integer difficulty;
+
+
+    /**
+     * 标签
+     * */
+    private String tag;
+
 
     /**
      * 题目分值

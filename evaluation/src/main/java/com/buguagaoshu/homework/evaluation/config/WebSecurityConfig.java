@@ -3,8 +3,10 @@ package com.buguagaoshu.homework.evaluation.config;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.filter.JwtAuthenticationFilter;
 import com.buguagaoshu.homework.evaluation.filter.JwtLoginFilter;
+import com.buguagaoshu.homework.evaluation.service.UserLoginLogService;
 import com.buguagaoshu.homework.evaluation.service.UserRoleService;
 import com.buguagaoshu.homework.evaluation.service.UserService;
+import com.buguagaoshu.homework.evaluation.service.VerifyCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,6 +37,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private UserRoleService userRoleService;
 
+    private UserLoginLogService userLoginLogService;
+
+    private VerifyCodeService verifyCodeService;
+
+    @Autowired
+    public void setVerifyCodeService(VerifyCodeService verifyCodeService) {
+        this.verifyCodeService = verifyCodeService;
+    }
+
+    @Autowired
+    public void setUserLoginLogService(UserLoginLogService userLoginLogService) {
+        this.userLoginLogService = userLoginLogService;
+    }
 
     @Autowired
     public void setUserService(UserService userService) {
@@ -99,7 +114,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 // 添加过滤器链,前一个参数过滤器， 后一个参数过滤器添加的地方
                 // 登陆过滤器
-                .addFilterBefore(new JwtLoginFilter("/login", authenticationManager()), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(
+                        new JwtLoginFilter("/login",
+                                authenticationManager(),
+                                userLoginLogService,
+                                verifyCodeService
+                        ),
+                        UsernamePasswordAuthenticationFilter.class
+                )
                 // 请求过滤器
                 .addFilterBefore(new JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 // 开启跨域

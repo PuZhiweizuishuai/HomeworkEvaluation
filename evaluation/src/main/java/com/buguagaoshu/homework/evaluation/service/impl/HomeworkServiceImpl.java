@@ -207,8 +207,11 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         return list;
     }
 
-    @Override
-    public HomeworkModel courseQuestionList(Long homeworkId, String userId) throws JsonProcessingException {
+    /**
+     * 学生是否有获取题目的权限
+     * @param homeworkId 作业ID
+     * */
+    public HomeworkEntity haveGetQuestionListPower(Long homeworkId) {
         // 判断作业是否存在
         HomeworkEntity homeworkEntity = this.getById(homeworkId);
         if (homeworkEntity == null) {
@@ -227,55 +230,101 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                 return null;
             }
         }
+        return homeworkEntity;
+    }
+
+    /**
+     * 获取作业下的题目以及用户答案
+     * */
+    public HomeworkModel homeworkQuestionList(HomeworkEntity homeworkEntity, String userId, boolean rightAnswer) throws JsonProcessingException {
+        long time = System.currentTimeMillis();
+
+        Map<Long, HomeworkWithQuestionsEntity> questionsMaps =
+                homeworkWithQuestionsService.homeworkWithQuestionMap(homeworkEntity.getId());
+        if (questionsMaps == null) {
+            return null;
+        }
+        List<QuestionsEntity> questionsEntityList =
+                questionsService.listByIds(questionsMaps.keySet());
+        if (questionsEntityList == null) {
+            return null;
+        }
+
+        SubmitHomeworkStatusEntity submitHomeworkStatusEntity =
+                submitHomeworkStatusService.findUserSubmit(userId, homeworkEntity.getId());
+        // 首次访问
+        Map<Long, SubmitQuestionsEntity> submit = submitQuestionsService.findUserSubmit(userId, homeworkEntity);
+        if (submitHomeworkStatusEntity == null) {
+            submitHomeworkStatusEntity = submitHomeworkStatusService
+                    .saveSubmitStatus(homeworkEntity, userId, HomeworkSubmitStatusEnum.TEMPORARY_STORAGE.getCode());
+            submit = submitQuestionsService.saveQuestions(questionsEntityList, userId, homeworkEntity);
+        } else {
+            submitHomeworkStatusEntity.setUpdateTime(System.currentTimeMillis());
+            submitHomeworkStatusService.updateById(submitHomeworkStatusEntity);
+        }
+        // 如果作业已经被老师批改，并且作业已经结束
+        // 那么可以直接给出正确答案
+        // 如果课程内身份是老师，也可以直接给出答案
+        if (submitHomeworkStatusEntity.getStatus() == HomeworkSubmitStatusEnum.COMPLETE.getCode()
+                && time < homeworkEntity.getCloseTime()) {
+            rightAnswer = true;
+        }
+
+
+        List<QuestionsModel> questionsModels =
+                questionsService.questionModelList(
+                        homeworkEntity.getId(),
+                        userId,
+                        questionsEntityList,
+                        questionsMaps,
+                        submit,
+                        rightAnswer
+                );
+
+        HomeworkModel homeworkModel = new HomeworkModel();
+        BeanUtils.copyProperties(homeworkEntity, homeworkModel);
+
+        homeworkModel.setSubmit(submitTimeJudge(homeworkEntity, submitHomeworkStatusEntity.getCreateTime()));
+        homeworkModel.setQuestionsModels(questionsModels);
+        homeworkModel.setIntoTime(submitHomeworkStatusEntity.getCreateTime());
+        return homeworkModel;
+    }
+
+    @Override
+    public HomeworkModel courseQuestionList(Long homeworkId, String userId, boolean rightAnswer) throws JsonProcessingException {
+        HomeworkEntity homeworkEntity = haveGetQuestionListPower(homeworkId);
+        if (homeworkEntity == null) {
+            return null;
+        }
         // 作业开始后和作业结束后都可以获取题目
+        // 老师批改完成，且作业结束后学生可以获取这次的题目答案
         // 获取课程 ID
         Long courseId = homeworkEntity.getClassNumber();
         if (judgeUserIsInCourse(courseId, userId)) {
-            List<HomeworkWithQuestionsEntity> homeworkWithQuestionsEntities
-                    = homeworkWithQuestionsService
-                    .list(new QueryWrapper<HomeworkWithQuestionsEntity>().eq("homework_id", homeworkId));
-            if (homeworkWithQuestionsEntities == null) {
+            return homeworkQuestionList(homeworkEntity, userId, rightAnswer);
+        }
+        return null;
+    }
+
+    @Override
+    public HomeworkModel teacherGetStudentAnswer(Long homeworkId, String studentId, String teacherId) throws JsonProcessingException {
+        // 判断作业是否存在
+        HomeworkEntity homeworkEntity = this.getById(homeworkId);
+        if (homeworkEntity == null) {
+            return null;
+        }
+        // 检查权限
+        // 必须是这门课的老师，并且学生也必须是这门课的学生
+        // 并且作业要是一提交状态
+        if (studentsCurriculumService.checkThisCurriculumHaveTeacher(homeworkEntity.getClassNumber(), teacherId, homeworkEntity)
+                && judgeUserIsInCourse(homeworkEntity.getClassNumber(), studentId)) {
+            SubmitHomeworkStatusEntity userSubmit = submitHomeworkStatusService.findUserSubmit(studentId, homeworkId);
+            if (userSubmit == null) {
                 return null;
             }
-            Map<Long, HomeworkWithQuestionsEntity> questionsMaps =
-                    homeworkWithQuestionsEntities
-                            .stream().collect(Collectors.toMap(HomeworkWithQuestionsEntity::getQuestionId, h -> h));
-
-            List<QuestionsEntity> questionsEntityList =
-                    questionsService.listByIds(questionsMaps.keySet());
-            if (questionsEntityList == null) {
-                return null;
+            if (HomeworkSubmitStatusEnum.teacherHaveSeePower(userSubmit.getStatus())) {
+                return homeworkQuestionList(homeworkEntity, studentId, true);
             }
-            SubmitHomeworkStatusEntity submitHomeworkStatusEntity =
-                    submitHomeworkStatusService.findUserSubmit(userId, homeworkEntity.getId());
-            // 首次访问
-            Map<Long, SubmitQuestionsEntity> submit = submitQuestionsService.findUserSubmit(userId, homeworkEntity);
-            if (submitHomeworkStatusEntity == null) {
-                submitHomeworkStatusEntity = submitHomeworkStatusService
-                        .saveSubmitStatus(homeworkEntity, userId, HomeworkSubmitStatusEnum.TEMPORARY_STORAGE.getCode());
-                submit = submitQuestionsService.saveQuestions(questionsEntityList, userId, homeworkEntity);
-            } else {
-                submitHomeworkStatusEntity.setUpdateTime(System.currentTimeMillis());
-                submitHomeworkStatusService.updateById(submitHomeworkStatusEntity);
-            }
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            List<QuestionsModel> questionsModels = new ArrayList<>();
-            for (QuestionsEntity q : questionsEntityList) {
-                try {
-                    questionsModels.add(questionEntityToModel(q, questionsMaps, submit, objectMapper));
-                } catch (JsonProcessingException e) {
-                    log.error("题目反序列化失败，请检查id为 {} 的题目!", q.getId());
-                    throw new UserDataFormatException("题目反序列化失败,请稍后重试！");
-                }
-            }
-            HomeworkModel homeworkModel = new HomeworkModel();
-            BeanUtils.copyProperties(homeworkEntity, homeworkModel);
-
-            homeworkModel.setSubmit(submitTimeJudge(homeworkEntity, submitHomeworkStatusEntity.getCreateTime()));
-            homeworkModel.setQuestionsModels(questionsModels);
-            homeworkModel.setIntoTime(submitHomeworkStatusEntity.getCreateTime());
-            return homeworkModel;
         }
         return null;
     }
@@ -289,6 +338,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
             return ReturnCodeEnum.NOO_FOUND;
         }
         long time = System.currentTimeMillis();
+
         if (judgeUserIsInCourse(homeworkEntity.getClassNumber(), nowLoginUser.getId())) {
             // 判断用户作业是否已经提交过
             SubmitHomeworkStatusEntity submitHomeworkStatusEntity =
@@ -415,22 +465,6 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
     }
 
-    private QuestionsModel questionEntityToModel(QuestionsEntity questionsEntity,
-                                                 Map<Long, HomeworkWithQuestionsEntity> questionsMaps,
-                                                 Map<Long, SubmitQuestionsEntity> submitQuestionsEntityMap,
-                                                 ObjectMapper objectMapper) throws JsonProcessingException {
-        QuestionsModel questionsModel = new QuestionsModel();
-        SubmitQuestionsEntity submitQuestionsEntity = submitQuestionsEntityMap.get(questionsEntity.getId());
-        BeanUtils.copyProperties(questionsEntity, questionsModel);
-        if (QuestionTypeEnum.isChoice(questionsEntity.getType())) {
-            questionsModel.setOptions((List<String>) objectMapper.readValue(questionsEntity.getOptions(), List.class));
-            questionsModel.setAnswer((List<String>) objectMapper.readValue(submitQuestionsEntity.getAnswer(), List.class));
-
-        }
-        questionsModel.setScore(questionsMaps.get(questionsEntity.getId()).getScore());
-        questionsModel.setOtherAnswer(submitQuestionsEntity.getOtherAnswer());
-        return questionsModel;
-    }
 
     /**
      * 判断用户有没有加入这门课程
@@ -438,10 +472,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
     private boolean judgeUserIsInCourse(Long courseId, String userId) {
         StudentsCurriculumEntity studentsCurriculumEntity =
                 studentsCurriculumService.selectStudentByCurriculumId(userId, courseId);
-        if (studentsCurriculumEntity == null) {
-            return false;
-        }
-        return true;
+        return studentsCurriculumEntity != null;
     }
 
     /**
@@ -581,7 +612,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
 
     /**
      * 作业提交数加一判断
-     * <p>
+     *
      * 教师提交不计入提交数
      *
      * @param homeworkEntity 作业类型

@@ -16,5 +16,12 @@ import java.util.Map;
 public interface HomeworkWithQuestionsService extends IService<HomeworkWithQuestionsEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    /**
+     * 返回作业与问题关联的 Map
+     * @param homeworkId 作业ID
+     * @return map
+     * */
+    Map<Long, HomeworkWithQuestionsEntity> homeworkWithQuestionMap(long homeworkId);
 }
 

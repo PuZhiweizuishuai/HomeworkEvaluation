@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.UserLoginLogEntity;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -16,5 +17,14 @@ import java.util.Map;
 public interface UserLoginLogService extends IService<UserLoginLogEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+
+    /**
+     * 写入用户登录日志
+     * @param request 请求信息
+     * @param userId 用户ID
+     * @return 保存结果
+     * */
+    boolean saveUserLoginLog(HttpServletRequest request, String userId);
 }
 

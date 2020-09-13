@@ -69,6 +69,20 @@ public class QuestionsEntity {
      */
     private Long rightCount;
 
+
+    /**
+     * 难度 0 ---- 10
+     * */
+    private Integer difficulty;
+
+
+    /**
+     * 标签
+     * */
+    private String tag;
+
+
+
     @TableField(exist = false)
     private Integer score;
 

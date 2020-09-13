@@ -2,6 +2,7 @@ package com.buguagaoshu.homework.evaluation.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.buguagaoshu.homework.common.utils.PageUtils;
+import com.buguagaoshu.homework.evaluation.entity.HomeworkEntity;
 import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 
@@ -44,6 +45,16 @@ public interface StudentsCurriculumService extends IService<StudentsCurriculumEn
      * @return 老师列表
      * */
     List<StudentsCurriculumEntity> teacherList(Long id);
+
+
+    /**
+     * 检查老师是否是这门课的老师
+     * @param classId 课程ID
+     * @param teacherId 教师ID
+     * @param homeworkEntity 作业信息
+     * @return 结果
+     * */
+    boolean checkThisCurriculumHaveTeacher(long classId, String teacherId, HomeworkEntity homeworkEntity);
 
 
     /**

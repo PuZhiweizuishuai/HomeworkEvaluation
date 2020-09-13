@@ -1,6 +1,7 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
+import com.buguagaoshu.homework.evaluation.entity.HomeworkEntity;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +63,21 @@ public class StudentsCurriculumServiceImpl extends ServiceImpl<StudentsCurriculu
         wrapper.eq("role", RoleTypeEnum.TEACHER.getRole());
         return this.list(wrapper);
 
+    }
+
+    @Override
+    public boolean checkThisCurriculumHaveTeacher(long classId, String teacherId, HomeworkEntity homeworkEntity) {
+        if (!homeworkEntity.getCreateTeacher().equals(teacherId)) {
+            List<StudentsCurriculumEntity> teacherList = this.teacherList(homeworkEntity.getClassNumber());
+            for (StudentsCurriculumEntity name : teacherList) {
+                if (name.getStudentId().equals(teacherId)) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            return true;
+        }
     }
 
     @Override

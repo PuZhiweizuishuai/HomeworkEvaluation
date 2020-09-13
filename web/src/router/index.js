@@ -152,12 +152,27 @@ const routes = [
   /**
    * 作业批改，检查，评分独立页面
    * id 是作业 ID
+   *
    */
   {
     path: '/curriculum/keeper/homework/:id',
     meta: { title: '作业批改' },
-    component: () => import('@/views/homework/keeper/homework-keeper.vue'),
-    name: 'HomeworkScoreKeeper'
+    component: () => import('@/layout/keeper/index.vue'),
+    name: 'HomeworkScoreKeeper',
+    children: [
+      {
+        path: '/curriculum/keeper/homework/:id',
+        meta: { title: '作业批改' },
+        component: () => import('@/views/homework/keeper/homework-keeper.vue'),
+        name: 'HomeworkScoreKeeper'
+      },
+      {
+        path: '/curriculum/keeper/homework/:id/correcting',
+        meta: { title: '批改' },
+        component: () => import('@/views/homework/keeper/correcting.vue'),
+        name: 'HomeworkScoreKeeper'
+      }
+    ]
   }
 ]
 

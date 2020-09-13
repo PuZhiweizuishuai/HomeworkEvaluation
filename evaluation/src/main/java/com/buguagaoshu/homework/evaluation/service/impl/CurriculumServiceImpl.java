@@ -1,6 +1,7 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.buguagaoshu.homework.common.domain.CustomPage;
 import com.buguagaoshu.homework.common.enums.CurriculumAccessTypeEnum;
 import com.buguagaoshu.homework.common.enums.CurriculumJoinTimLimitEnum;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
@@ -208,52 +209,7 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
                 c.setPassword("");
                 c.setCurriculumInfo("");
             });
-            IPage<CurriculumEntity> entityIPage = new IPage<CurriculumEntity>() {
-                @Override
-                public List<OrderItem> orders() {
-                    return page.orders();
-                }
-
-                @Override
-                public List<CurriculumEntity> getRecords() {
-                    return curriculumEntityList;
-                }
-
-                @Override
-                public IPage<CurriculumEntity> setRecords(List<CurriculumEntity> records) {
-                    return null;
-                }
-
-                @Override
-                public long getTotal() {
-                    return page.getTotal();
-                }
-
-                @Override
-                public IPage<CurriculumEntity> setTotal(long total) {
-                    return null;
-                }
-
-                @Override
-                public long getSize() {
-                    return page.getSize();
-                }
-
-                @Override
-                public IPage<CurriculumEntity> setSize(long size) {
-                    return null;
-                }
-
-                @Override
-                public long getCurrent() {
-                    return page.getCurrent();
-                }
-
-                @Override
-                public IPage<CurriculumEntity> setCurrent(long current) {
-                    return null;
-                }
-            };
+            IPage<CurriculumEntity> entityIPage = new CustomPage<>(curriculumEntityList, page.getTotal(), page.getSize(), page.getCurrent(), page.orders());
             return new PageUtils(entityIPage);
         }
         return null;

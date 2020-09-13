@@ -34,7 +34,7 @@ public class SubmitHomeworkStatusEntity {
 
 	/**
 	 * 状态
-HOMEWORK_ERROR(-1, "作业不符合要求，被打回。"),
+     HOMEWORK_ERROR(-1, "作业不符合要求，被打回。"),
     NOT_SUBMITTED(0, "暂未提交"),
     TEMPORARY_STORAGE(1, "暂时保存，但未提交"),
     SUBMIT(2, "已经提交，但老师没有批改"),

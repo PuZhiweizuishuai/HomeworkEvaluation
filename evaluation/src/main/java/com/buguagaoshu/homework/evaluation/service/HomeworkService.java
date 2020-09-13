@@ -49,10 +49,25 @@ public interface HomeworkService extends IService<HomeworkEntity> {
      *
      * @param homeworkId 作业 ID
      * @param userId   用户 ID
+     * @param rightAnswer 是否给出参考答案
      * @return 题目列表
      * @throws JsonProcessingException json 序列化异常
      */
-    HomeworkModel courseQuestionList(Long homeworkId, String userId) throws JsonProcessingException;
+    HomeworkModel courseQuestionList(Long homeworkId, String userId, boolean rightAnswer) throws JsonProcessingException;
+
+
+
+    /**
+     * 教师获取学生在这个作业下提交的作业答案
+     *
+     * @param homework 作业ID
+     * @param studentId 学生学号
+     * @param teacherId 教师ID
+     * @throws JsonProcessingException Json 序列化异常
+     * @return 该学生提交的作业数据
+     * */
+    HomeworkModel teacherGetStudentAnswer(Long homework, String studentId, String teacherId) throws JsonProcessingException;
+
 
     /**
      * 用户提交作业

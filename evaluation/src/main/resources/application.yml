@@ -19,6 +19,8 @@ minio:
   # 300 秒
   expiry: 300
 
+
+
 server:
   port: 8080
   http2:
@@ -27,6 +29,8 @@ server:
     context-path: /api
 
 spring:
+  messages:
+    basename: message/SpringSecurityMessage
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://192.168.43.128:3306/homework_evaluation?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai

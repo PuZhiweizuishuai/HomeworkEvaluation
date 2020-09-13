@@ -59,7 +59,8 @@ export default {
       return TimeUtil.formateTimeToChinese(date)
     },
     commentHomework(index, row) {
-
+      // console.log(row)
+      this.$router.push({ path: `/curriculum/keeper/homework/${row.homeworkId}/correcting`, query: { key: row.userId }})
     }
   }
 }
