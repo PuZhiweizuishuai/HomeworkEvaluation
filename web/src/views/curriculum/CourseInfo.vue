@@ -99,7 +99,9 @@
           <h5>大纲：</h5>
           <a-divider />
         </div>
+
         <div id="markdown-view-catalog" ref="catalogView" />
+
       </a-col>
 
     </a-row>
@@ -212,6 +214,7 @@ export default {
         .then(json => {
           if (json.status === 200) {
             this.courseInfo = json.data
+            document.title = json.data.curriculumName
           } else {
             this.$message.error('课程不存在')
             this.$router.push('/curriculum')
@@ -251,7 +254,7 @@ export default {
 }
 </script>
 
-<style>
+<style >
         .header {
             background-color: #fff;
             box-shadow: rgba(0, 0, 0, 0.05) 0 1px 7px;
@@ -271,6 +274,7 @@ export default {
 
         #markdown-view-catalog {
             display: none;
+            z-index: -99;
             /* position: fixed; */
             /* width: 186px; */
             top: 130px;
@@ -279,7 +283,7 @@ export default {
             overflow: auto;
             font-size: 12px;
             border-left: 1px solid #eee;
-            background-color: #fff;
+            background-color: transparent;
         }
 
         .vditor-outline__item {

@@ -283,8 +283,9 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
 
         HomeworkModel homeworkModel = new HomeworkModel();
         BeanUtils.copyProperties(homeworkEntity, homeworkModel);
-
-        homeworkModel.setSubmit(submitTimeJudge(homeworkEntity, submitHomeworkStatusEntity.getCreateTime()));
+        homeworkModel.setTotalScore(homeworkEntity.getScore());
+        homeworkModel.setScore(submitHomeworkStatusEntity.getScore());
+        homeworkModel.setSubmit(submitTimeJudge(homeworkEntity, submitHomeworkStatusEntity.getCreateTime(), submitHomeworkStatusEntity));
         homeworkModel.setQuestionsModels(questionsModels);
         homeworkModel.setIntoTime(submitHomeworkStatusEntity.getCreateTime());
         return homeworkModel;
@@ -349,7 +350,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                 return ReturnCodeEnum.NOT_READ_QUESTION;
             } else {
                 if (HomeworkSubmitStatusEnum.isSubmit(submitHomeworkStatusEntity.getStatus())) {
-                    if (!submitTimeJudge(homeworkEntity, submitHomeworkStatusEntity.getCreateTime())) {
+                    if (!submitTimeJudge(homeworkEntity, submitHomeworkStatusEntity.getCreateTime(), submitHomeworkStatusEntity)) {
                         return ReturnCodeEnum.MISS_SUBMIT_TIME;
                     }
                     if (HomeworkSubmitStatusEnum.TEMPORARY_STORAGE.getCode() == homeworkAnswer.getType()) {
@@ -498,16 +499,16 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
     /**
      * 是否有提交权限的判断
      */
-    public boolean submitTimeJudge(HomeworkEntity homeworkEntity, long intoTime) {
+    public boolean submitTimeJudge(HomeworkEntity homeworkEntity, long intoTime, SubmitHomeworkStatusEntity submitHomeworkStatusEntity) {
+        if (!HomeworkSubmitStatusEnum.isSubmit(submitHomeworkStatusEntity.getStatus())) {
+            return false;
+        }
         int code = calculationStatus(homeworkEntity);
         if (code == EvaluationType.EVALUATION_NO_START.getCode()) {
             // 如果是测验和考试
             if (homeworkEntity.getType() == HomeworkTypeEnum.TEST_HOMEWORK.getCode() ||
                     homeworkEntity.getType() == HomeworkTypeEnum.EXAM_HOMEWORK.getCode()) {
-                if (intoTime + (TimeUtils.MINUTE * homeworkEntity.getTime()) >= System.currentTimeMillis()) {
-                    return true;
-                }
-                return false;
+                return intoTime + (TimeUtils.MINUTE * homeworkEntity.getTime()) >= System.currentTimeMillis();
             } else {
                 return true;
             }
@@ -631,5 +632,6 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         // 提交数加 1;
         // TODO 修改加 1 方式
         homeworkEntity.setSubmitCount(homeworkEntity.getSubmitCount() + 1);
+        this.updateById(homeworkEntity);
     }
 }

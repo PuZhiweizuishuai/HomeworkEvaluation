@@ -109,6 +109,7 @@ export default {
         .then(json => {
           if (json.status === 200) {
             this.curriculumInfo = json.data
+            document.title = json.data.curriculumName
           } else {
             this.$router.push('/curriculum/info/' + id)
           }

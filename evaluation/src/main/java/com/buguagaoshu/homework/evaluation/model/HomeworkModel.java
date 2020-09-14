@@ -87,6 +87,16 @@ public class HomeworkModel {
     private Boolean submit;
 
     /**
+     * 作业满分
+     * */
+    private Integer totalScore;
+
+    /**
+     * 实际得分
+     * */
+    private Double score;
+
+    /**
      * 问题列表
      * */
     @NotEmpty(message = "问题不能为空")

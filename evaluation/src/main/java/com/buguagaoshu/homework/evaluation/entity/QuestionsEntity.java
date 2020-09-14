@@ -33,9 +33,13 @@ public class QuestionsEntity {
 
     /**
      * 答案，保存为json对象，方便判断
+     * 选择题答案
      */
     private String answer;
 
+    /**
+     * 问答题，填空题答案
+     * */
     private String otherAnswer;
 
     private String options;

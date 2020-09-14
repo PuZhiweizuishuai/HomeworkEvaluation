@@ -40,6 +40,7 @@ public interface SubmitQuestionsService extends IService<SubmitQuestionsEntity> 
      * @param homeworkAnswer 作业答案列表
      * @param id             用户ID
      * @param homeworkEntity 作业信息
+     * @throws JsonProcessingException Json 序列化异常
      * @return 分数
      */
     double saveWithJudgeQuestions(HomeworkAnswer homeworkAnswer, String id, HomeworkEntity homeworkEntity) throws JsonProcessingException;

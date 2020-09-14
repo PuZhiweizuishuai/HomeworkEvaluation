@@ -16,7 +16,6 @@
 
     <properties>
         <java.version>11</java.version>
-        <mybatis-plus.version>3.3.2</mybatis-plus.version>
         <jjwt.version>0.9.1</jjwt.version>
         <io.minio.version>3.0.10</io.minio.version>
     </properties>

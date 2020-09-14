@@ -16,8 +16,8 @@
 
     <properties>
         <java.version>11</java.version>
-        <mybatis-plus.version>3.3.2</mybatis-plus.version>
-        <jakarta.version>2.0.2</jakarta.version>
+        <mybatis-plus.version>3.4.0</mybatis-plus.version>
+<!--        <jakarta.version>2.0.2</jakarta.version>-->
     </properties>
 
     <dependencies>
@@ -32,9 +32,8 @@
             <version>${mybatis-plus.version}</version>
         </dependency>
         <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>${jakarta.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

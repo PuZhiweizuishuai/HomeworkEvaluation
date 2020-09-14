@@ -173,6 +173,7 @@ export default {
             return
           }
           this.dashboardData = json.data
+          document.title = json.data.homework.title + '- 批改'
           this.initSubmitCount()
         })
         .catch(e => {

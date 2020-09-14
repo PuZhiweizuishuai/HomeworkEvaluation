@@ -34,8 +34,8 @@
     <a-divider>题目</a-divider>
     <div>
       <div v-for="(item, i) in homeworkData.questionsModels" :key="i">
-        <ChoiceQuestion v-if="item.type == 1 || item.type == 0 || item.type == 4" :question="item" :number="i+1" @answer="getAnswer" />
-        <QuestionAnswer v-if="item.type == 2 || item.type == 3" :question="item" :number="i+1" @answer="getAnswer" />
+        <ChoiceQuestion v-if="item.type == 1 || item.type == 0 || item.type == 4" :question="item" :number="i+1" :disabled="isEdit" @answer="getAnswer" />
+        <QuestionAnswer v-if="item.type == 2 || item.type == 3" :question="item" :number="i+1" :disabled="isEdit" @answer="getAnswer" />
       </div>
 
     </div>
@@ -84,7 +84,8 @@ export default {
         second: 0
       },
       countdownIsShow: false,
-      countdownTextShow: false
+      countdownTextShow: false,
+      isEdit: false
     }
   },
   created() {
@@ -144,7 +145,7 @@ export default {
     },
     submitHomework() {
       this.submitData.type = 2
-
+      console.log(this.submitData)
       fetch(this.SERVER_API_URL + '/homework/submit', {
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
@@ -227,6 +228,7 @@ export default {
           if (json.status === 200) {
             this.homeworkData = json.data
             this.submitData.homeworkId = json.data.id
+            this.isEdit = !json.data.submit
             for (let i = 0; i < json.data.questionsModels.length; i++) {
               let sysAns = []
               let othAns = ''

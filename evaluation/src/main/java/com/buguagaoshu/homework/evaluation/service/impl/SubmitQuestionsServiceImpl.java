@@ -185,7 +185,7 @@ public class SubmitQuestionsServiceImpl extends ServiceImpl<SubmitQuestionsDao, 
             UserSubmitQuestion submit = submitMap.get(question.getId());
 
             double score = 0.0;
-            if (QuestionTypeEnum.isChoice(question.getType()) || question.getType() == QuestionTypeEnum.JUDGE.getCode()) {
+            if (QuestionTypeEnum.isChoice(question.getType())) {
                 int goodScore = homeworkWithQuestionsEntityMap.get(question.getId()).getScore();
                 SubmitQuestionsEntity submitQuestionsEntity = submitQuestionsEntityMap.get(question.getId());
                 // 如果没有提交这道题的数据，则使用数据库中已经保存的数据进行对比
@@ -203,8 +203,21 @@ public class SubmitQuestionsServiceImpl extends ServiceImpl<SubmitQuestionsDao, 
                 getScore += score;
             } else {
                 SubmitQuestionsEntity submitQuestionsEntity = submitQuestionsEntityMap.get(question.getId());
+                if (submit == null) {
+                    submit = new UserSubmitQuestion();
+                    submit.setQuestionId(question.getId());
+                    submit.setOtherAnswer(submitQuestionsEntity.getOtherAnswer());
+                }
+                int goodScore = homeworkWithQuestionsEntityMap.get(question.getId()).getScore();
                 submitQuestionsEntity.setUpdateTime(System.currentTimeMillis());
                 submitQuestionsEntity.setOtherAnswer(submit.getOtherAnswer());
+                // 如果是判断题，系统进行自动判题
+                if (QuestionTypeEnum.JUDGE.getCode() == question.getType()) {
+                    score = judgeQuestion(submit, question, goodScore, homeworkEntity.getSourceType(), objectMapper);
+                    submitQuestionsEntity.setScore(score);
+                    getScore += score;
+                }
+
             }
         }
 
@@ -275,7 +288,7 @@ public class SubmitQuestionsServiceImpl extends ServiceImpl<SubmitQuestionsDao, 
                     return score;
                 }
                 if (judgeType == 0) {
-                    return score / 2;
+                    return score / 2.0;
                 }
                 return 0.0;
             }

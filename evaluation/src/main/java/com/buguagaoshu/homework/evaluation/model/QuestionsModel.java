@@ -95,4 +95,9 @@ public class QuestionsModel {
      * */
     @Min(value = 1, message = "分数必须大于等于 1")
     private Integer score;
+
+    /**
+     * 实际得分
+     * */
+    private Double realityScore;
 }

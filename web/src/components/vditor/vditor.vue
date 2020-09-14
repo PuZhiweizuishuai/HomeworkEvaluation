@@ -49,7 +49,7 @@ export default {
       cacheId: this.cacheid,
       cacheEnable: this.cache,
       markdownStr: this.markdown,
-      minHeight: this.height,
+      maxHeight: this.height,
       hideBar: this.hide,
       contentEditor: '',
       defaultPlaceholder: '请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。',
@@ -124,7 +124,7 @@ export default {
         pin: false,
         hide: this.hideBar
       },
-      height: 550,
+      height: this.maxHeight,
       hint: {
         emojiPath: '/emoji',
         emoji: this.emojis
@@ -133,7 +133,7 @@ export default {
         enable: this.cacheEnable,
         id: this.cacheId
       },
-      minHeight: this.minHeight,
+      // minHeight: this.minHeight,
       placeholder: this.placeholder, // '请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。',
       upload: {
         withCredentials: true,

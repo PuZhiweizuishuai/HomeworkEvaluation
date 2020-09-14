@@ -57,4 +57,9 @@ public class SubmitHomeworkStatusEntity {
 	 * 更新时间
 	 */
 	private Long updateTime;
+
+	/**
+	 * 教师评价
+	 * */
+	private String teacherComment;
 }

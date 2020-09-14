@@ -135,6 +135,10 @@ public class QuestionsServiceImpl extends ServiceImpl<QuestionsDao, QuestionsEnt
         QuestionsModel questionsModel = new QuestionsModel();
         SubmitQuestionsEntity submitQuestionsEntity = submitQuestionsEntityMap.get(questionsEntity.getId());
         BeanUtils.copyProperties(questionsEntity, questionsModel);
+        // 题目分值
+        questionsModel.setScore(questionsEntity.getScore());
+        // 实际得分
+        questionsModel.setRealityScore(submitQuestionsEntity.getScore());
         if (QuestionTypeEnum.isChoice(questionsEntity.getType())) {
             questionsModel.setOptions((List<String>) objectMapper.readValue(questionsEntity.getOptions(), List.class));
             questionsModel.setAnswer((List<String>) objectMapper.readValue(submitQuestionsEntity.getAnswer(), List.class));
