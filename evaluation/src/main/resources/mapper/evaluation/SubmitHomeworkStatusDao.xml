@@ -13,6 +13,7 @@
         <result property="updateTime" column="update_time"/>
         <result property="score" column="score" />
         <result property="teacherComment" column="teacher_comment"/>
+        <result property="studentName" column="student_name"/>
     </resultMap>
 
 

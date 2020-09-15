@@ -8,13 +8,12 @@ package com.buguagaoshu.homework.common.enums;
 public enum HomeworkSubmitStatusEnum {
     /**
      * 作业提交后处理状态
-     * */
+     */
     HOMEWORK_ERROR(-1, "作业不符合要求，被打回。"),
     NOT_SUBMITTED(0, "暂未提交"),
     TEMPORARY_STORAGE(1, "暂时保存，但未提交"),
     SUBMIT(2, "已经提交，但老师没有批改"),
-    COMPLETE(3, "老师批改完成")
-    ;
+    COMPLETE(3, "老师批改完成");
 
     int code;
 
@@ -35,17 +34,18 @@ public enum HomeworkSubmitStatusEnum {
 
     /**
      * 判断是否还能提交
-     *
-     * */
+     */
     public static boolean isSubmit(int code) {
         return HomeworkSubmitStatusEnum.HOMEWORK_ERROR.getCode() == code
                 || HomeworkSubmitStatusEnum.NOT_SUBMITTED.getCode() == code
                 || HomeworkSubmitStatusEnum.TEMPORARY_STORAGE.getCode() == code;
     }
 
+    /**
+     * 判断老师是否有查看权限，提交后教师才可以查看
+     * */
     public static boolean teacherHaveSeePower(int code) {
-        return code == HomeworkSubmitStatusEnum.HOMEWORK_ERROR.code
-                || code == HomeworkSubmitStatusEnum.SUBMIT.code
+        return code == HomeworkSubmitStatusEnum.SUBMIT.code
                 || code == HomeworkSubmitStatusEnum.COMPLETE.getCode();
     }
 }

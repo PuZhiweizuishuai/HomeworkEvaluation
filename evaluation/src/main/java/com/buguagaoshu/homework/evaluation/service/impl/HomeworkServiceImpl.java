@@ -1,14 +1,19 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
+import com.buguagaoshu.homework.common.domain.MultipleReturnValues;
 import com.buguagaoshu.homework.common.enums.*;
+import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.*;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
 import com.buguagaoshu.homework.evaluation.model.HomeworkAnswer;
 import com.buguagaoshu.homework.evaluation.model.HomeworkModel;
 import com.buguagaoshu.homework.evaluation.model.QuestionsModel;
 import com.buguagaoshu.homework.evaluation.service.*;
+import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import com.buguagaoshu.homework.evaluation.utils.TimeUtils;
 import com.buguagaoshu.homework.evaluation.vo.KeeperDashboardViewVo;
+import com.buguagaoshu.homework.evaluation.vo.QuestionComment;
+import com.buguagaoshu.homework.evaluation.vo.TeacherCommentHomeworkData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -19,6 +24,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,6 +38,7 @@ import com.buguagaoshu.homework.common.utils.Query;
 import com.buguagaoshu.homework.evaluation.dao.HomeworkDao;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 
@@ -209,8 +216,9 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
 
     /**
      * 学生是否有获取题目的权限
+     *
      * @param homeworkId 作业ID
-     * */
+     */
     public HomeworkEntity haveGetQuestionListPower(Long homeworkId) {
         // 判断作业是否存在
         HomeworkEntity homeworkEntity = this.getById(homeworkId);
@@ -235,8 +243,8 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
 
     /**
      * 获取作业下的题目以及用户答案
-     * */
-    public HomeworkModel homeworkQuestionList(HomeworkEntity homeworkEntity, String userId, boolean rightAnswer) throws JsonProcessingException {
+     */
+    public HomeworkModel homeworkQuestionList(HomeworkEntity homeworkEntity, String userId, boolean rightAnswer, String studentName) throws JsonProcessingException {
         long time = System.currentTimeMillis();
 
         Map<Long, HomeworkWithQuestionsEntity> questionsMaps =
@@ -256,8 +264,8 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         Map<Long, SubmitQuestionsEntity> submit = submitQuestionsService.findUserSubmit(userId, homeworkEntity);
         if (submitHomeworkStatusEntity == null) {
             submitHomeworkStatusEntity = submitHomeworkStatusService
-                    .saveSubmitStatus(homeworkEntity, userId, HomeworkSubmitStatusEnum.TEMPORARY_STORAGE.getCode());
-            submit = submitQuestionsService.saveQuestions(questionsEntityList, userId, homeworkEntity);
+                    .saveSubmitStatus(homeworkEntity, userId, HomeworkSubmitStatusEnum.TEMPORARY_STORAGE.getCode(), studentName);
+            submit = submitQuestionsService.saveQuestions(questionsEntityList, userId, homeworkEntity, questionsMaps);
         } else {
             submitHomeworkStatusEntity.setUpdateTime(System.currentTimeMillis());
             submitHomeworkStatusService.updateById(submitHomeworkStatusEntity);
@@ -283,7 +291,10 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
 
         HomeworkModel homeworkModel = new HomeworkModel();
         BeanUtils.copyProperties(homeworkEntity, homeworkModel);
+        homeworkModel.setStudentId(userId);
+        homeworkModel.setStudentName(studentName);
         homeworkModel.setTotalScore(homeworkEntity.getScore());
+        homeworkModel.setTeacherComment(submitHomeworkStatusEntity.getTeacherComment());
         homeworkModel.setScore(submitHomeworkStatusEntity.getScore());
         homeworkModel.setSubmit(submitTimeJudge(homeworkEntity, submitHomeworkStatusEntity.getCreateTime(), submitHomeworkStatusEntity));
         homeworkModel.setQuestionsModels(questionsModels);
@@ -292,7 +303,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
     }
 
     @Override
-    public HomeworkModel courseQuestionList(Long homeworkId, String userId, boolean rightAnswer) throws JsonProcessingException {
+    public HomeworkModel courseQuestionList(Long homeworkId, Claims user, boolean rightAnswer) throws JsonProcessingException {
         HomeworkEntity homeworkEntity = haveGetQuestionListPower(homeworkId);
         if (homeworkEntity == null) {
             return null;
@@ -301,8 +312,10 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         // 老师批改完成，且作业结束后学生可以获取这次的题目答案
         // 获取课程 ID
         Long courseId = homeworkEntity.getClassNumber();
-        if (judgeUserIsInCourse(courseId, userId)) {
-            return homeworkQuestionList(homeworkEntity, userId, rightAnswer);
+        StudentsCurriculumEntity studentsCurriculumEntity =
+                studentsCurriculumService.selectStudentByCurriculumId(user.getId(), courseId);
+        if (studentsCurriculumEntity != null) {
+            return homeworkQuestionList(homeworkEntity, user.getId(), rightAnswer, studentsCurriculumEntity.getStudentName());
         }
         return null;
     }
@@ -324,7 +337,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                 return null;
             }
             if (HomeworkSubmitStatusEnum.teacherHaveSeePower(userSubmit.getStatus())) {
-                return homeworkQuestionList(homeworkEntity, studentId, true);
+                return homeworkQuestionList(homeworkEntity, studentId, true, userSubmit.getStudentName());
             }
         }
         return null;
@@ -379,13 +392,16 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
     }
 
 
-    @Override
-    public KeeperDashboardViewVo keeperInfo(Long homeworkId, Claims user) {
-        KeeperDashboardViewVo keeperDashboard = new KeeperDashboardViewVo();
-        keeperDashboard.setShowPower(false);
+    /**
+     * 检查是否有教师权限
+     *
+     * @param homeworkId  作业ID
+     * @param user        当前用户
+     */
+    public MultipleReturnValues checkTeacherPower(Long homeworkId, Claims user) {
         HomeworkEntity homework = this.getById(homeworkId);
         if (homework == null) {
-            return keeperDashboard;
+            return null;
         }
         CurriculumEntity curriculum = curriculumService.getById(homework.getClassNumber());
         List<StudentsCurriculumEntity> teacherList
@@ -396,6 +412,27 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                 isTeacher = true;
             }
         }
+        MultipleReturnValues multipleReturnValues = MultipleReturnValues.ok();
+        multipleReturnValues.put("teacherList", teacherList);
+        multipleReturnValues.put("isTeacher", isTeacher);
+        multipleReturnValues.put("homework", homework);
+        multipleReturnValues.put("curriculum", curriculum);
+        return multipleReturnValues;
+    }
+
+
+    @Override
+    public KeeperDashboardViewVo keeperInfo(Long homeworkId, Claims user) {
+        KeeperDashboardViewVo keeperDashboard = new KeeperDashboardViewVo();
+        keeperDashboard.setShowPower(false);
+        MultipleReturnValues multipleReturnValues = checkTeacherPower(homeworkId, user);
+        if (multipleReturnValues == null) {
+            return keeperDashboard;
+        }
+        boolean isTeacher = (Boolean) multipleReturnValues.get("isTeacher");
+        List<StudentsCurriculumEntity> teacherList = MultipleReturnValues.cast(multipleReturnValues.get("teacherList"));
+        HomeworkEntity homework = MultipleReturnValues.cast(multipleReturnValues.get("homework"));
+        CurriculumEntity curriculum = MultipleReturnValues.cast(multipleReturnValues.get("curriculum"));
         if (user.getId().equals(homework.getCreateTeacher())
                 || user.getId().equals(curriculum.getCreateTeacher())
                 || isTeacher) {
@@ -461,6 +498,88 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
             entity.setCloseTime(homeworkEntity.getCloseTime());
             entity.setEvaluation(homeworkEntity.getEvaluation());
             this.updateById(entity);
+            return ReturnCodeEnum.SUCCESS;
+        }
+        return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
+    }
+
+    @Override
+    @Transactional(rollbackFor = {})
+    public ReturnCodeEnum teacherCorrect(TeacherCommentHomeworkData teacherCommentHomeworkData, HttpServletRequest request) {
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        // 判断学生是否已经提交作业
+        SubmitHomeworkStatusEntity userSubmitHomework
+                = submitHomeworkStatusService.findUserSubmit(teacherCommentHomeworkData.getStudentId(), teacherCommentHomeworkData.getId());
+        if (userSubmitHomework == null) {
+            return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
+        }
+        if (!HomeworkSubmitStatusEnum.teacherHaveSeePower(userSubmitHomework.getStatus())) {
+            return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
+        }
+        MultipleReturnValues multipleReturnValues = checkTeacherPower(teacherCommentHomeworkData.getId(), user);
+        if (multipleReturnValues == null) {
+            return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
+        }
+        boolean isTeacher = (Boolean) multipleReturnValues.get("isTeacher");
+        HomeworkEntity homework = MultipleReturnValues.cast(multipleReturnValues.get("homework"));
+        CurriculumEntity curriculum = MultipleReturnValues.cast(multipleReturnValues.get("curriculum"));
+        if (user.getId().equals(homework.getCreateTeacher())
+                || user.getId().equals(curriculum.getCreateTeacher())
+                || isTeacher) {
+            // 进行作业批改
+            List<QuestionComment> questionList = teacherCommentHomeworkData.getQuestionList();
+            Map<Long, QuestionComment> questionCommentMap = new HashMap<>();
+            if (questionList != null) {
+                questionCommentMap = questionList.stream().collect(Collectors.toMap(QuestionComment::getId, q->q));
+            }
+
+            // 分数计算
+            double score = 0;
+            // 如果是打回，则不需要进行分数计算和判断
+            if (teacherCommentHomeworkData.getStatus() == -1) {
+                userSubmitHomework.setUpdateTime(System.currentTimeMillis());
+                userSubmitHomework.setStatus(teacherCommentHomeworkData.getStatus());
+                userSubmitHomework.setTeacherComment(teacherCommentHomeworkData.getComment());
+                // TODO 消息通知
+                submitHomeworkStatusService.updateById(userSubmitHomework);
+                return ReturnCodeEnum.SUCCESS;
+            }
+            // 1. 获取当前作业学生提交数据
+            Map<Long, SubmitQuestionsEntity> userSubmit
+                    = submitQuestionsService.findUserSubmit(teacherCommentHomeworkData.getStudentId(), homework);
+            // 2. 遍历问题数据
+            for (SubmitQuestionsEntity submitQuestionsEntity : userSubmit.values()) {
+                QuestionComment questionComment = questionCommentMap.get(submitQuestionsEntity.getQuestionId());
+                // 问答 填空分数写入
+                if (QuestionTypeEnum.noChoice(submitQuestionsEntity.getType())) {
+                    if (questionComment == null) {
+                        return ReturnCodeEnum.NO_SCORE_DATA;
+                    }
+                    if (questionComment.getScore() < 0 || questionComment.getScore() > submitQuestionsEntity.getMaxScore()) {
+                        return ReturnCodeEnum.NO_SCORE_DATA;
+                    }
+                    score += questionComment.getScore();
+                    submitQuestionsEntity.setScore(questionComment.getScore());
+                    submitQuestionsEntity.setTeacherComment(questionComment.getText());
+                // 其它题目分数重新判断
+                } else {
+                    if (questionComment != null && questionComment.getScore() != null) {
+                        if (questionComment.getScore() > 0 && questionComment.getScore() <= submitQuestionsEntity.getMaxScore()) {
+                            submitQuestionsEntity.setScore(questionComment.getScore());
+                        }
+                        submitQuestionsEntity.setTeacherComment(questionComment.getText());
+                    }
+                    score += submitQuestionsEntity.getScore();
+                }
+            }
+            // 保存批改数据
+            submitQuestionsService.updateBatchById(userSubmit.values());
+            userSubmitHomework.setUpdateTime(System.currentTimeMillis());
+            userSubmitHomework.setScore(score);
+            userSubmitHomework.setStatus(teacherCommentHomeworkData.getStatus());
+            userSubmitHomework.setTeacherComment(teacherCommentHomeworkData.getComment());
+            // TODO 消息通知
+            submitHomeworkStatusService.updateById(userSubmitHomework);
             return ReturnCodeEnum.SUCCESS;
         }
         return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
@@ -613,7 +732,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
 
     /**
      * 作业提交数加一判断
-     *
+     * <p>
      * 教师提交不计入提交数
      *
      * @param homeworkEntity 作业类型

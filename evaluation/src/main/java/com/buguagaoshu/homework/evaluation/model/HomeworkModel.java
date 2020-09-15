@@ -96,6 +96,12 @@ public class HomeworkModel {
      * */
     private Double score;
 
+    private String studentName;
+
+    private String studentId;
+
+    private String teacherComment;
+
     /**
      * 问题列表
      * */

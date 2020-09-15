@@ -20,8 +20,6 @@ public class StudentAndTeacherTest {
 
     @Test
     void contextLoads() {
-        List<StudentsCurriculumEntity> teacherList
-                = studentsCurriculumService.teacherList(8L, "201741010103");
-        System.out.println(teacherList.size());
+
     }
 }

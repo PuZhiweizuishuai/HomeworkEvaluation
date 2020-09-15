@@ -8,6 +8,7 @@ import com.buguagaoshu.homework.evaluation.model.HomeworkAnswer;
 import com.buguagaoshu.homework.evaluation.model.HomeworkModel;
 import com.buguagaoshu.homework.evaluation.service.HomeworkService;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
+import com.buguagaoshu.homework.evaluation.vo.TeacherCommentHomeworkData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -69,7 +71,7 @@ public class HomeworkController {
     public ResponseDetails homeworkQuestionList(@PathVariable("id") Long homeworkId,
                                                 HttpServletRequest request) throws JsonProcessingException {
         HomeworkModel homeworkModel = homeworkService.courseQuestionList(homeworkId,
-                JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY).getId(), false);
+                JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY), false);
         if (homeworkModel == null) {
             return ResponseDetails.ok(ReturnCodeEnum.NO_POWER.getCode(), "没有获取题目的权力，或者是你已经迟到太久，超过了最迟可进入的时间");
         }
@@ -103,7 +105,7 @@ public class HomeworkController {
 
     /**
      * 获取学生提交
-     * */
+     */
     @GetMapping("/homework/keeper/correct/{id}")
     public ResponseDetails teacherGetStudentSubmit(@PathVariable("id") Long homeworkId,
                                                    @RequestParam("studentId") String studentId,
@@ -119,13 +121,22 @@ public class HomeworkController {
 
     /**
      * 更新作业设置
-     *
      */
     @PostMapping("/homework/setting/update")
     public ResponseDetails homeworkUpdate(@RequestBody HomeworkEntity homeworkEntity,
                                           HttpServletRequest request) {
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         return ResponseDetails.ok(homeworkService.updateHomework(homeworkEntity, user));
+    }
+
+
+    /**
+     * 批改作业接口
+     */
+    @PostMapping("/homework/keeper/correct")
+    public ResponseDetails correct(@Valid @RequestBody TeacherCommentHomeworkData teacherCommentHomeworkData,
+                                   HttpServletRequest request) {
+        return ResponseDetails.ok(homeworkService.teacherCorrect(teacherCommentHomeworkData, request));
     }
 
 

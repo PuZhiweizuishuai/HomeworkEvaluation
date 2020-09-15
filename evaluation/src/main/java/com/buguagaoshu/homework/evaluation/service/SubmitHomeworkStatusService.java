@@ -34,9 +34,10 @@ public interface SubmitHomeworkStatusService extends IService<SubmitHomeworkStat
      * @param homeworkEntity 作业信息
      * @param id 用户ID
      * @param status 状态
+     * @param studentName 学生名
      * @return 处理结果
      * */
-    SubmitHomeworkStatusEntity saveSubmitStatus(HomeworkEntity homeworkEntity, String id, int status);
+    SubmitHomeworkStatusEntity saveSubmitStatus(HomeworkEntity homeworkEntity, String id, int status, String studentName);
 
 
     /**

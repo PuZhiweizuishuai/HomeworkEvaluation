@@ -41,4 +41,11 @@ public enum QuestionTypeEnum {
     public static boolean isChoice(int code) {
         return code == 0 || code == 1;
     }
+
+    /**
+     * 不是选择题
+     * */
+    public static boolean noChoice(int code) {
+        return FILL_IN_THE_BLANKS.getCode() == code || QUESTIONS_ANSWERS.getCode() == code;
+    }
 }

@@ -22,6 +22,12 @@ public class StudentsCurriculumEntity {
      * 学生学号
      */
     private String studentId;
+
+    /**
+     * 学生姓名
+     * */
+    private String studentName;
+
     /**
      * 学生加入的课程ID
      */
@@ -35,5 +41,4 @@ public class StudentsCurriculumEntity {
      * 在课程内的角色
      * */
     private String role;
-
 }

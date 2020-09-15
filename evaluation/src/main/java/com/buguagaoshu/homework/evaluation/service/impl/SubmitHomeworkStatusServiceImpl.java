@@ -36,9 +36,10 @@ public class SubmitHomeworkStatusServiceImpl extends ServiceImpl<SubmitHomeworkS
     }
 
     @Override
-    public SubmitHomeworkStatusEntity saveSubmitStatus(HomeworkEntity homeworkEntity, String id, int status) {
+    public SubmitHomeworkStatusEntity saveSubmitStatus(HomeworkEntity homeworkEntity, String id, int status, String studentName) {
         long time = System.currentTimeMillis();
         SubmitHomeworkStatusEntity submitHomeworkStatusEntity = new SubmitHomeworkStatusEntity();
+        submitHomeworkStatusEntity.setStudentName(studentName);
         submitHomeworkStatusEntity.setCreateTime(time);
         submitHomeworkStatusEntity.setHomeworkId(homeworkEntity.getId());
         submitHomeworkStatusEntity.setScore(0.0);

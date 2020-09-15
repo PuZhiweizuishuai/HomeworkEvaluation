@@ -16,50 +16,55 @@ import lombok.Data;
 @Data
 @TableName("submit_homework_status")
 public class SubmitHomeworkStatusEntity {
-	/**
-	 *
-	 */
-	@TableId(type = IdType.AUTO)
-	private Long id;
+    /**
+     *
+     */
+    @TableId(type = IdType.AUTO)
+    private Long id;
 
-	/**
-	 * 用户ID
-	 */
-	private String userId;
+    /**
+     * 用户ID
+     */
+    private String userId;
 
-	/**
-	 * 作业Id
-	 */
-	private Long homeworkId;
+    /**
+     * 学生姓名的冗余存储
+     */
+    private String studentName;
 
-	/**
-	 * 状态
-     HOMEWORK_ERROR(-1, "作业不符合要求，被打回。"),
-    NOT_SUBMITTED(0, "暂未提交"),
-    TEMPORARY_STORAGE(1, "暂时保存，但未提交"),
-    SUBMIT(2, "已经提交，但老师没有批改"),
-    CORRECTION(3, "老师批改完成")
-	 */
-	private Integer status;
+    /**
+     * 作业Id
+     */
+    private Long homeworkId;
 
-	/**
-	 * 得分
-	 * */
-	private Double score;
+    /**
+     * 状态
+     * HOMEWORK_ERROR(-1, "作业不符合要求，被打回。"),
+     * NOT_SUBMITTED(0, "暂未提交"),
+     * TEMPORARY_STORAGE(1, "暂时保存，但未提交"),
+     * SUBMIT(2, "已经提交，但老师没有批改"),
+     * CORRECTION(3, "老师批改完成")
+     */
+    private Integer status;
 
-	/**
-	 * 创建时间
-	 * 第一次进入的时间
-	 */
-	private Long createTime;
+    /**
+     * 得分
+     */
+    private Double score;
 
-	/**
-	 * 更新时间
-	 */
-	private Long updateTime;
+    /**
+     * 创建时间
+     * 第一次进入的时间
+     */
+    private Long createTime;
 
-	/**
-	 * 教师评价
-	 * */
-	private String teacherComment;
+    /**
+     * 更新时间
+     */
+    private Long updateTime;
+
+    /**
+     * 教师评价
+     */
+    private String teacherComment;
 }

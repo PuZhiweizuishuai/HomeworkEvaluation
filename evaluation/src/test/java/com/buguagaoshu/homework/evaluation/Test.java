@@ -13,8 +13,14 @@ import java.util.*;
  */
 public class Test {
     public static void main(String[] args) throws ParseException {
-        //System.out.println(TimeUtils.formatTime(1592557690330L));
-        System.out.println(TimeUtils.formatTime(1599062400000L));
+        List<String> list = new ArrayList<>();
+        update(list);
+        System.out.println(list);
+    }
 
+    public static void update(List<String> list) {
+        list = new ArrayList<>();
+        list.add("123");
+        list.add("456");
     }
 }

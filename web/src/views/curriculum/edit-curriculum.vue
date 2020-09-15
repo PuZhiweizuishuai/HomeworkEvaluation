@@ -249,6 +249,7 @@ export default {
         flag = true
       }
       const father = this.treeData[this.course.fatherCourseTag - 1]
+      // console.log(this.treeData[this.course.fatherCourseTag - 1].label)
       let label = this.treeData[this.course.fatherCourseTag - 1].label
       if (flag) {
         return label

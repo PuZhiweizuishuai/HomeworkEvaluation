@@ -14,6 +14,10 @@
       </template>
     </el-table-column>
     <el-table-column
+      label="姓名"
+      prop="studentName"
+    />
+    <el-table-column
       label="提交时间"
     >
       <template slot-scope="scope">
@@ -32,7 +36,7 @@
           size="mini"
           @click="commentHomework(scope.$index, scope.row)"
         >
-          批改
+          {{ btnlable }}
         </el-button>
       </template>
     </el-table-column>
@@ -47,6 +51,10 @@ export default {
     userlist: {
       type: Array,
       default: () => []
+    },
+    btnlable: {
+      type: String,
+      default: '批改'
     }
   },
   data() {
@@ -59,8 +67,12 @@ export default {
       return TimeUtil.formateTimeToChinese(date)
     },
     commentHomework(index, row) {
+      if (this.btnlable === '查看') {
+        this.$router.push({ path: `/curriculum/keeper/homework/${row.homeworkId}/correcting`, query: { studentId: row.userId, type: 'see' }})
+      } else {
+        this.$router.push({ path: `/curriculum/keeper/homework/${row.homeworkId}/correcting`, query: { studentId: row.userId }})
+      }
       // console.log(row)
-      this.$router.push({ path: `/curriculum/keeper/homework/${row.homeworkId}/correcting`, query: { studentId: row.userId }})
     }
   }
 }

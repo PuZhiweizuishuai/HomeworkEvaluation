@@ -56,6 +56,12 @@ public class SubmitQuestionsEntity {
 
 	private Double score;
 
+
+	private Integer type;
+
+
+	private Integer maxScore;
+
 	/**
 	 * 教师点评
 	 * */

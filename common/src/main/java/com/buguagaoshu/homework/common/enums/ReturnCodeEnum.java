@@ -36,7 +36,8 @@ public enum ReturnCodeEnum {
 
     LACK_ID(4000, "缺少ID"),
     NOT_RUN(4001, "没有在运行"),
-    DATA_VALID_EXCEPTION(4002, "数据校验错误")
+    DATA_VALID_EXCEPTION(4002, "数据校验错误"),
+    NO_SCORE_DATA(4003, "缺少成绩数据或成绩数据不合规定，请检查后重试！")
     ;
     int code;
     String msg;

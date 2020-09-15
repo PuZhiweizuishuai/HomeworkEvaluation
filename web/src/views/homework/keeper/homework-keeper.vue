@@ -78,7 +78,7 @@
         style="border: 1px solid rgb(235, 237, 240)"
         title="批改完成列表"
       />
-      <Userlist :userlist="completeList" />
+      <Userlist :userlist="completeList" :btnlable="`查看`" />
       <!-- 教师提交，不计入总数，仅供参考 -->
       <br>
       <a-page-header
@@ -184,10 +184,7 @@ export default {
       // 设置学生提交数据
       this.submitWithNoSubmitChart.rows[0].人数 = this.dashboardData.homework.submitCount
       this.submitWithNoSubmitChart.rows[1].人数 = this.dashboardData.studentCount - this.dashboardData.homework.submitCount
-      this.commentComplete = this.dashboardData.submitList.length
-      this.commentChart.rows[0].人数 = this.commentComplete
-      this.commentChart.rows[1].人数 = this.dashboardData.homework.submitCount - this.commentComplete
-
+      this.commentComplete = this.dashboardData.homework.submitCount
       // 设置互评按钮
       if (this.dashboardData.homework.evaluation === 0) {
         this.isEvaluation = false
@@ -205,6 +202,8 @@ export default {
       for (let i = 0; i < this.dashboardData.teacherSubmitList.length; i++) {
         this.teacherSubmitList.push(this.dashboardData.teacherSubmitList[i])
       }
+      this.commentChart.rows[0].人数 = this.completeList.length
+      this.commentChart.rows[1].人数 = this.userSubmitList.length
     },
     panelChangeStartTime(date) {
       this.startTime = new Date(date._d.toString()).getTime()

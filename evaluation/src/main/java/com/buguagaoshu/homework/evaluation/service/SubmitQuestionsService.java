@@ -3,6 +3,7 @@ package com.buguagaoshu.homework.evaluation.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.HomeworkEntity;
+import com.buguagaoshu.homework.evaluation.entity.HomeworkWithQuestionsEntity;
 import com.buguagaoshu.homework.evaluation.entity.QuestionsEntity;
 import com.buguagaoshu.homework.evaluation.entity.SubmitQuestionsEntity;
 import com.buguagaoshu.homework.evaluation.model.HomeworkAnswer;
@@ -28,10 +29,14 @@ public interface SubmitQuestionsService extends IService<SubmitQuestionsEntity> 
      * @param questionsEntityList 作业问题列表
      * @param id             用户ID
      * @param homeworkEntity 作业信息
+     * @param questionsEntityMap 问题作业关联数据
      * @throws JsonProcessingException 将答案序列化成json的异常
      * @return 初始化的用户提交答案列表
      */
-    Map<Long ,SubmitQuestionsEntity> saveQuestions(List<QuestionsEntity> questionsEntityList, String id, HomeworkEntity homeworkEntity) throws JsonProcessingException;
+    Map<Long ,SubmitQuestionsEntity> saveQuestions(List<QuestionsEntity> questionsEntityList,
+                                                   String id,
+                                                   HomeworkEntity homeworkEntity,
+                                                   Map<Long, HomeworkWithQuestionsEntity> questionsEntityMap) throws JsonProcessingException;
 
 
     /**

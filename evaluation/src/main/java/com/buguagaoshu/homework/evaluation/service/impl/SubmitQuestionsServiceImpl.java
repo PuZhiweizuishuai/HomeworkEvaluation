@@ -60,7 +60,10 @@ public class SubmitQuestionsServiceImpl extends ServiceImpl<SubmitQuestionsDao, 
     }
 
     @Override
-    public Map<Long, SubmitQuestionsEntity> saveQuestions(List<QuestionsEntity> questionsEntityList, String id, HomeworkEntity homeworkEntity) throws JsonProcessingException {
+    public Map<Long, SubmitQuestionsEntity> saveQuestions(List<QuestionsEntity> questionsEntityList,
+                                                          String id,
+                                                          HomeworkEntity homeworkEntity,
+                                                          Map<Long, HomeworkWithQuestionsEntity> questionsEntityMap) throws JsonProcessingException {
         // 要保存的作业列表
         List<SubmitQuestionsEntity> submitQuestionsEntities = new ArrayList<>();
         // 问题列表
@@ -69,6 +72,8 @@ public class SubmitQuestionsServiceImpl extends ServiceImpl<SubmitQuestionsDao, 
         for (QuestionsEntity question : questionsEntityList) {
             SubmitQuestionsEntity s = build(question, null, id, homeworkEntity.getId(), 0.0, objectMapper);
             s.setCreateTime(System.currentTimeMillis());
+            s.setType(question.getType());
+            s.setMaxScore(questionsEntityMap.get(question.getId()).getScore());
             submitQuestionsEntities.add(s);
         }
         this.saveBatch(submitQuestionsEntities);

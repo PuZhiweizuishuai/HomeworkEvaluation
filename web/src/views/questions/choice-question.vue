@@ -112,11 +112,15 @@ export default {
       isReScore: this.scoreedit,
       isComment: this.comment,
       commentMessage: {
+        number: this.number,
         text: '',
         id: this.question.id,
         score: null
       }
     }
+  },
+  created() {
+    this.commentMessage.text = this.questionData.teacherComment
   },
   methods: {
     changeAnswer(answer) {

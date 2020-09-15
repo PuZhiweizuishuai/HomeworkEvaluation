@@ -26,10 +26,22 @@
         </a-col>
       </a-row>
       <br>
+      <a-row>
+        <a-col :span="2">
+          当前得分：
+        </a-col>
+        <a-col>
+          <strong>{{ questionData.realityScore }}</strong>
+        </a-col>
+      </a-row>
+      <br>
       <a-row v-if="isReScore">
         <a-col :span="8"><strong>非选择判断题，系统不会自动判分，请手动打分：</strong></a-col>
         <a-col>
-          <a-icon type="edit" theme="twoTone" two-tone-color="#eb2f96" /><a-input-number v-model="commentMessage.score" :min="0" :max="questionData.score" :step="0.1" @change="onChange()" />
+          <span style="color: red;font-weight: bolder;font-size: 20px;">打分-></span>
+          <a-icon type="edit" theme="twoTone" two-tone-color="#eb2f96" />
+          <a-input-number v-model="commentMessage.score" :min="0" :max="questionData.score" :step="0.1" @change="onChange()" />
+          <a-alert :id="`question-${number}`" message="缺少成绩数据！" type="error" banner style="display: none" />
         </a-col>
       </a-row>
       <br>
@@ -37,6 +49,7 @@
         <a-col :span="2"><strong>短评</strong></a-col>
         <a-col :span="22">
           <a-textarea
+            v-model="commentMessage.text"
             placeholder="输入你对学生这道作答情况的简单评价，可以不填"
             :auto-size="{ minRows: 2, maxRows: 6 }"
             @change="onChange()"
@@ -90,6 +103,7 @@ export default {
       isReScore: this.scoreedit,
       isComment: this.comment,
       commentMessage: {
+        number: this.number,
         text: '',
         id: this.question.id,
         score: null,
@@ -99,6 +113,7 @@ export default {
   },
   created() {
     this.id = this.$route.params.id
+    this.commentMessage.text = this.questionData.teacherComment
   },
   methods: {
     getAnswer(data) {

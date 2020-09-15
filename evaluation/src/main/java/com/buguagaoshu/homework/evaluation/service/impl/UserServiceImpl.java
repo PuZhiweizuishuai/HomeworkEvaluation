@@ -1,6 +1,7 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.buguagaoshu.homework.common.domain.CustomPage;
 import com.buguagaoshu.homework.common.enums.PasswordStatusEnum;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
@@ -79,8 +80,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     @Autowired
     public UserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, UserRoleDao userRoleDao, StudentsCurriculumService studentsCurriculumService) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-
-
         this.userRoleDao = userRoleDao;
         this.studentsCurriculumService = studentsCurriculumService;
     }
@@ -300,7 +299,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                 if (studentsCurriculumEntities != null && studentsCurriculumEntities.size() > 0) {
                     List<UserAndRole> userAndRoles = addRoleAndCleanPassword(studentsCurriculumEntities, nowLoginUser.getId(), null);
 
-                    return new PageUtils(userAndRoleIPage(userAndRoles, page));
+                    return new PageUtils(new CustomPage<>(userAndRoles, page.getTotal(), page.getSize(), page.getCurrent(), page.orders()));
                 }
                 return null;
             }
@@ -327,15 +326,15 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 //                        .collect(Collectors.toList());
         Map<String, StudentsCurriculumEntity> rolesMap =
                 page.getRecords()
-                .stream()
-                .collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, u -> u));
+                        .stream()
+                        .collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, u -> u));
 
         List<UserEntity> userEntities = this.listByIds(rolesMap.keySet());
         if (userEntities != null && userEntities.size() > 0) {
             // 补全角色
             List<UserAndRole> userAndRoles = addRoleAndCleanPassword(userEntities, nowLoginUser.getId(), rolesMap);
 
-            return new PageUtils(userAndRoleIPage(userAndRoles, page));
+            return new PageUtils(new CustomPage<>(userAndRoles, page.getTotal(), page.getSize(), page.getCurrent(), page.orders()));
         }
         return null;
     }
@@ -353,55 +352,28 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             }
             // 判断当前用户是否有权限进行此操作
             if (checkRole(curriculumEntity, teacher)) {
-                // 查找当前课程学生列表，避免重复加入
+                // 获取上传学生信息
                 List<UserEntity> userEntities = this.listByIds(userList.stream().map(AdminAddUser::getUserId).collect(Collectors.toList()));
                 if (userEntities == null) {
                     return null;
                 }
                 Map<String, UserEntity> userEntityMap = userEntities.stream().collect(Collectors.toMap(UserEntity::getUserId, u -> u));
+                // 查找当前课程学生列表，避免重复加入
                 List<StudentsCurriculumEntity> studentsCurriculumEntities =
                         studentsCurriculumService.list(new QueryWrapper<StudentsCurriculumEntity>().eq("curriculum_id", courseNumber));
                 // 直接导入
-                if (studentsCurriculumEntities == null && studentsCurriculumEntities.size() == 0) {
-                    // 记录学生数
-                    AtomicInteger count = new AtomicInteger(0);
-                    List<StudentsCurriculumEntity> students = new ArrayList<>();
-                    userList.forEach((u) -> {
-                        if (userEntityMap.get(u.getUserId()) != null) {
-                            count.getAndIncrement();
-                            map.put(u.getUserId(), "加入成功!");
-                            students.add(initStudentsCurriculumEntity(u, courseNumber));
-                        } else {
-                            map.put(u.getUserId(), "学生不存在");
-                        }
-                    });
-                    studentsCurriculumService.saveBatch(students);
-                    // 保存课程人数
-                    curriculumEntity.setStudentNumber(count.get());
-                    // 导入部分
-                } else {
-                    assert studentsCurriculumEntities != null;
-                    Map<String, StudentsCurriculumEntity> stringStudentsCurriculumEntityMap
-                            = studentsCurriculumEntities.stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, u -> u));
-                    List<StudentsCurriculumEntity> students = new ArrayList<>();
-                    AtomicInteger count = new AtomicInteger(0);
-                    userList.forEach((u) -> {
-                        if (stringStudentsCurriculumEntityMap.get(u.getUserId()) != null) {
-                            map.put(u.getUserId(), "已经在班级中，无需加入!");
-                        } else {
-                            if (userEntityMap.get(u.getUserId()) != null) {
-                                students.add(initStudentsCurriculumEntity(u, courseNumber));
-                                count.getAndIncrement();
-                                map.put(u.getUserId(), "加入成功!");
-                            } else {
-                                map.put(u.getUserId(), "学生不存在");
-                            }
-                        }
-                    });
-                    studentsCurriculumService.saveBatch(students);
-                    // 保存课程人数
-                    curriculumEntity.setStudentNumber(count.get() + curriculumEntity.getStudentNumber());
-                }
+                Map<String, StudentsCurriculumEntity> stringStudentsCurriculumEntityMap
+                        = studentsCurriculumEntities.stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, u -> u));
+                List<StudentsCurriculumEntity> students = new ArrayList<>();
+                // 记录学生人数
+                AtomicInteger count = new AtomicInteger(0);
+                // 构造要导入学生列表
+                classImportUser(userList, map, stringStudentsCurriculumEntityMap, userEntityMap, students, count, courseNumber);
+                // 保存学生列表
+                studentsCurriculumService.saveBatch(students);
+                // 保存课程人数
+                curriculumEntity.setStudentNumber(count.get() + curriculumEntity.getStudentNumber());
+
             } else {
                 return null;
             }
@@ -412,6 +384,28 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             return map;
         }
         return null;
+    }
+
+    /**
+     * 向课程导入学生
+     */
+    private void classImportUser(List<AdminAddUser> userList, Map<String, String> map, Map<String,
+            StudentsCurriculumEntity> stringStudentsCurriculumEntityMap, Map<String, UserEntity> userEntityMap,
+                                 List<StudentsCurriculumEntity> students, AtomicInteger count, Long courseNumber) {
+        userList.forEach((u) -> {
+            if (stringStudentsCurriculumEntityMap.get(u.getUserId()) != null) {
+                map.put(u.getUserId(), "已经在班级中，无需加入!");
+            } else {
+                UserEntity userEntity = userEntityMap.get(u.getUserId());
+                if (userEntity != null) {
+                    students.add(initStudentsCurriculumEntity(u, courseNumber, userEntity));
+                    count.getAndIncrement();
+                    map.put(u.getUserId(), "加入成功!");
+                } else {
+                    map.put(u.getUserId(), "学生不存在，请让学生注册后再导入！");
+                }
+            }
+        });
     }
 
     private boolean checkRole(CurriculumEntity curriculumEntity, Claims teacher) {
@@ -427,20 +421,14 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
 
-    public StudentsCurriculumEntity initStudentsCurriculumEntity(AdminAddUser adminAddUser, long courseNumber) {
+    public StudentsCurriculumEntity initStudentsCurriculumEntity(AdminAddUser adminAddUser, long courseNumber, UserEntity userEntity) {
         StudentsCurriculumEntity studentsCurriculumEntity = new StudentsCurriculumEntity();
         studentsCurriculumEntity.setCurriculumId(courseNumber);
         studentsCurriculumEntity.setStudentId(adminAddUser.getUserId());
         studentsCurriculumEntity.setCreateTime(System.currentTimeMillis());
+        studentsCurriculumEntity.setStudentName(userEntity.getUsername());
         studentsCurriculumEntity.setRole(RoleTypeEnum.USER.getRole());
         return studentsCurriculumEntity;
-    }
-
-    public void addStudentCurriculumRelationship(String id,
-                                                 String role,
-                                                 String curriculumId,
-                                                 String teacher) {
-
     }
 
 
@@ -472,11 +460,12 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     /**
      * 负责返回班级学生列表已经班级内的角色信息
+     *
      * @param userEntityList 要返回的学生列表
-     * @param teacher 当前班级班主任
-     * @param role 负责填充班级角色内信息
+     * @param teacher        当前班级班主任
+     * @param role           负责填充班级角色内信息
      * @return 班级学生列表
-     * */
+     */
     public List<UserAndRole> addRoleAndCleanPassword(List<UserEntity> userEntityList, String teacher, Map<String, StudentsCurriculumEntity> role) {
         List<UserRoleEntity> roleEntityList = userRoleDao.selectRoleByUserList(userEntityList);
         Map<String, UserRoleEntity> roleMap = new HashMap<>();
@@ -506,56 +495,5 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             }
         });
         return userAndRoles;
-    }
-
-
-    public IPage<UserAndRole> userAndRoleIPage(List<UserAndRole> userAndRoles, IPage<?> page) {
-        IPage<UserAndRole> userAndRoleIPage = new IPage<UserAndRole>() {
-            @Override
-            public List<OrderItem> orders() {
-                return null;
-            }
-
-            @Override
-            public List<UserAndRole> getRecords() {
-                return userAndRoles;
-            }
-
-            @Override
-            public IPage<UserAndRole> setRecords(List<UserAndRole> records) {
-                return null;
-            }
-
-            @Override
-            public long getTotal() {
-                return page.getTotal() - 1;
-            }
-
-            @Override
-            public IPage<UserAndRole> setTotal(long total) {
-                return null;
-            }
-
-            @Override
-            public long getSize() {
-                return page.getSize();
-            }
-
-            @Override
-            public IPage<UserAndRole> setSize(long size) {
-                return null;
-            }
-
-            @Override
-            public long getCurrent() {
-                return page.getCurrent();
-            }
-
-            @Override
-            public IPage<UserAndRole> setCurrent(long current) {
-                return null;
-            }
-        };
-        return userAndRoleIPage;
     }
 }

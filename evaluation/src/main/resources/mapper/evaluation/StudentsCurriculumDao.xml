@@ -7,6 +7,7 @@
     <resultMap type="com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity" id="studentsCurriculumMap">
         <result property="id" column="id"/>
         <result property="studentId" column="student_id"/>
+        <result property="studentName" column="student_name"/>
         <result property="curriculumId" column="curriculum_id"/>
         <result property="createTime" column="create_time"/>
         <result property="role" column="role"/>

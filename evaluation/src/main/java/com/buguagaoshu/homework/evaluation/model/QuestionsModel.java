@@ -100,4 +100,10 @@ public class QuestionsModel {
      * 实际得分
      * */
     private Double realityScore;
+
+
+    /**
+     * 教师点评
+     * */
+    private String teacherComment;
 }

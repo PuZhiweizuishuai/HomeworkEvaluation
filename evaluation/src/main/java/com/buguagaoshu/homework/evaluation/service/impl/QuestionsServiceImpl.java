@@ -150,6 +150,7 @@ public class QuestionsServiceImpl extends ServiceImpl<QuestionsDao, QuestionsEnt
                 questionsModel.setRightAnswer(questionsEntity.getOtherAnswer());
             }
         }
+        questionsModel.setTeacherComment(submitQuestionsEntity.getTeacherComment());
         questionsModel.setScore(questionsMaps.get(questionsEntity.getId()).getScore());
         questionsModel.setOtherAnswer(submitQuestionsEntity.getOtherAnswer());
         return questionsModel;
