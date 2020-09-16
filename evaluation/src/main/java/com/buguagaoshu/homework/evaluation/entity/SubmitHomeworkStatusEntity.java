@@ -64,6 +64,11 @@ public class SubmitHomeworkStatusEntity {
     private Long updateTime;
 
     /**
+     * 提交时间
+     */
+    private Long submitTime;
+
+    /**
      * 教师评价
      */
     private String teacherComment;

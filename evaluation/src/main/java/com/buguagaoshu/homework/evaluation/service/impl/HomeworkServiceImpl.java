@@ -273,8 +273,9 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         // 如果作业已经被老师批改，并且作业已经结束
         // 那么可以直接给出正确答案
         // 如果课程内身份是老师，也可以直接给出答案
+
         if (submitHomeworkStatusEntity.getStatus() == HomeworkSubmitStatusEnum.COMPLETE.getCode()
-                && time < homeworkEntity.getCloseTime()) {
+                && time > homeworkEntity.getCloseTime()) {
             rightAnswer = true;
         }
 
@@ -298,6 +299,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         homeworkModel.setScore(submitHomeworkStatusEntity.getScore());
         homeworkModel.setSubmit(submitTimeJudge(homeworkEntity, submitHomeworkStatusEntity.getCreateTime(), submitHomeworkStatusEntity));
         homeworkModel.setQuestionsModels(questionsModels);
+        homeworkModel.setShowTeacherComment(rightAnswer);
         homeworkModel.setIntoTime(submitHomeworkStatusEntity.getCreateTime());
         return homeworkModel;
     }
@@ -377,6 +379,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                         submitHomeworkStatusEntity.setStatus(HomeworkSubmitStatusEnum.SUBMIT.getCode());
                         submitHomeworkStatusEntity.setUpdateTime(time);
                         submitHomeworkStatusEntity.setScore(score);
+                        submitHomeworkStatusEntity.setSubmitTime(time);
                         // 提交数加 1
                         homeworkSubmitCountAdd(homeworkEntity, nowLoginUser.getId());
                         submitHomeworkStatusService.updateById(submitHomeworkStatusEntity);

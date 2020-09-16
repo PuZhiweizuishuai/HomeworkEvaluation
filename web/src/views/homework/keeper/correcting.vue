@@ -147,7 +147,16 @@ export default {
         body: JSON.stringify(this.commentData)
       }).then(response => response.json())
         .then(json => {
-          //
+          // 批改成功
+          if (json.status === 200) {
+            this.$message.success('批改完成')
+            if (json.data.length === 0) {
+              this.$router.push(`/curriculum/keeper/homework/${this.$route.params.id}`)
+            }
+            location.replace(`/curriculum/keeper/homework/${this.$route.params.id}/correcting?studentId=${json.data[0].userId}`)
+          } else {
+            this.$message.error(json.message)
+          }
           console.log(json)
         })
         .catch(e => {

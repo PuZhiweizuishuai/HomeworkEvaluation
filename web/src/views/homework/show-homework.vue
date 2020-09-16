@@ -23,6 +23,17 @@
         作业
       </a-tag>
     </h3>
+    <div style="text-align: center;">
+      <strong>
+        总分： {{ homeworkData.totalScore }}
+      </strong>
+      <div v-if="homeworkData.showTeacherComment">
+        <strong style="color: red;">
+          实际得分： {{ homeworkData.score }}
+
+        </strong>
+      </div>
+    </div>
     <a-divider>要求</a-divider>
     <div>
       <p style="text-align: center;">时间 ： <span v-text="setTime()" />
@@ -34,8 +45,9 @@
     <a-divider>题目</a-divider>
     <div>
       <div v-for="(item, i) in homeworkData.questionsModels" :key="i">
-        <ChoiceQuestion v-if="item.type == 1 || item.type == 0 || item.type == 4" :question="item" :number="i+1" :disabled="isEdit" @answer="getAnswer" />
-        <QuestionAnswer v-if="item.type == 2 || item.type == 3" :question="item" :number="i+1" :disabled="isEdit" @answer="getAnswer" />
+        <ChoiceQuestion v-if="item.type == 1 || item.type == 0 || item.type == 4" :question="item" :teacher="homeworkData.showTeacherComment" :number="i+1" :disabled="isEdit" @answer="getAnswer" />
+        <QuestionAnswer v-if="item.type == 2 || item.type == 3" :question="item" :number="i+1" :disabled="isEdit" :teacher="homeworkData.showTeacherComment" @answer="getAnswer" />
+        <a-divider />
       </div>
 
     </div>
@@ -53,8 +65,12 @@
       </a-popconfirm>
       <a-button style="margin-left: 80px;" size="large" @click="saveAnswer">暂时保存</a-button>
     </div>
-    <div v-if="homeworkData.submit == false" style="text-align: center;">
+    <div v-if="homeworkData.submit == false && homeworkData.showTeacherComment == false" style="text-align: center;">
       作业已提交，等待老师批阅中
+    </div>
+    <div v-if="homeworkData.showTeacherComment">
+      <h5>教师总评：</h5>
+      <ShowMarkdown :anchor="0" :markdown="homeworkData.teacherComment" :speech="false" />
     </div>
   </div>
 </template>
@@ -64,11 +80,12 @@ import TimeUtil from '@/utils/time-util.vue'
 import ChoiceQuestion from '@/views/questions/choice-question.vue'
 import QuestionAnswer from '@/views/questions/question-answer.vue'
 import Vditor from 'vditor'
+import ShowMarkdown from '@/components/vditor/show-markdown.vue'
 import 'vditor/src/assets/scss/index.scss'
 
 export default {
   name: 'ShowHomework',
-  components: { ChoiceQuestion, QuestionAnswer },
+  components: { ChoiceQuestion, QuestionAnswer, ShowMarkdown },
   data() {
     return {
       id: 0,
@@ -85,7 +102,9 @@ export default {
       },
       countdownIsShow: false,
       countdownTextShow: false,
-      isEdit: false
+      isEdit: false,
+      showTeacherComment: false,
+      interval: {}
     }
   },
   created() {
@@ -117,7 +136,7 @@ export default {
     },
     autoSubmit() {
       if (this.homeworkData.type === 1 || this.homeworkData.type === 2) {
-        const interval = window.setInterval(() => {
+        this.interval = window.setInterval(() => {
           const date = new Date().getTime() + 60000
           let endTime = 0
           if (this.homeworkData.type === 1) {
@@ -134,7 +153,7 @@ export default {
             this.countdownTextShow = true
             if (this.homeworkData.submit === true) {
               this.homeworkData.submit = false
-              window.clearInterval(interval)
+              window.clearInterval(this.interval)
               this.submitHomework()
             }
           } else {
@@ -160,6 +179,7 @@ export default {
             this.homeworkData.submit
             this.countdownTextShow = true
             this.$message.success('提交成功，等待老师批阅！')
+            this.$router.push(`/curriculum/learn/${this.id}/homework`)
           } else {
             this.$message.error('提交失败失败：' + json.message)
           }
@@ -230,6 +250,7 @@ export default {
             this.submitData.homeworkId = json.data.id
             this.isEdit = !json.data.submit
             for (let i = 0; i < json.data.questionsModels.length; i++) {
+              this.showTeacherComment = json.date.showTeacherComment
               let sysAns = []
               let othAns = ''
               if (json.data.questionsModels[i].type === 0 || json.data.questionsModels[i].type === 1) {

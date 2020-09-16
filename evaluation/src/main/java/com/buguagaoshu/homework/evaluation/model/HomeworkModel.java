@@ -103,6 +103,11 @@ public class HomeworkModel {
     private String teacherComment;
 
     /**
+     * 是否显示评价信息
+     * */
+    private Boolean showTeacherComment;
+
+    /**
      * 问题列表
      * */
     @NotEmpty(message = "问题不能为空")

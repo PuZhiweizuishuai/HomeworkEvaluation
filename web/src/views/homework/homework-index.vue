@@ -32,6 +32,7 @@
           </a-tag>
           <el-button v-if="item.status === 1" type="success" @click="goToTest(item.id)">前往测验</el-button>
           <el-button v-if="item.status === 0">暂未开始</el-button>
+          <el-button v-if="item.status === 4" @click="goToTest(item.id)">查看</el-button>
         </b-col>
       </b-row>
     </div>

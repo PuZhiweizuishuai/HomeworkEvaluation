@@ -22,7 +22,7 @@
     >
       <template slot-scope="scope">
         <!-- TODO 超链接到该学生在本课程中的数据 -->
-        <span v-text="timeFormate(scope.row.updateTime)" />
+        <span v-text="timeFormate(scope.row.submitTime)" />
       </template>
 
     </el-table-column>

@@ -4,9 +4,11 @@ import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.HomeworkEntity;
+import com.buguagaoshu.homework.evaluation.entity.SubmitHomeworkStatusEntity;
 import com.buguagaoshu.homework.evaluation.model.HomeworkAnswer;
 import com.buguagaoshu.homework.evaluation.model.HomeworkModel;
 import com.buguagaoshu.homework.evaluation.service.HomeworkService;
+import com.buguagaoshu.homework.evaluation.service.SubmitHomeworkStatusService;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import com.buguagaoshu.homework.evaluation.vo.TeacherCommentHomeworkData;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,9 +29,12 @@ import java.util.List;
 public class HomeworkController {
     private final HomeworkService homeworkService;
 
+    private final SubmitHomeworkStatusService submitHomeworkStatusService;
+
     @Autowired
-    public HomeworkController(HomeworkService homeworkService) {
+    public HomeworkController(HomeworkService homeworkService, SubmitHomeworkStatusService submitHomeworkStatusService) {
         this.homeworkService = homeworkService;
+        this.submitHomeworkStatusService = submitHomeworkStatusService;
     }
 
     /**
@@ -136,7 +141,12 @@ public class HomeworkController {
     @PostMapping("/homework/keeper/correct")
     public ResponseDetails correct(@Valid @RequestBody TeacherCommentHomeworkData teacherCommentHomeworkData,
                                    HttpServletRequest request) {
-        return ResponseDetails.ok(homeworkService.teacherCorrect(teacherCommentHomeworkData, request));
+        ReturnCodeEnum returnCodeEnum = homeworkService.teacherCorrect(teacherCommentHomeworkData, request);
+        if (returnCodeEnum.equals(ReturnCodeEnum.SUCCESS)) {
+            List<SubmitHomeworkStatusEntity> list = submitHomeworkStatusService.teacherNoCommentSubmit(teacherCommentHomeworkData.getId());
+            return ResponseDetails.ok().put("data", list);
+        }
+        return ResponseDetails.ok();
     }
 
 

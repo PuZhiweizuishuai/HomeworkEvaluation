@@ -60,9 +60,19 @@ public class SubmitHomeworkStatusServiceImpl extends ServiceImpl<SubmitHomeworkS
                         .or()
                         .eq("status", HomeworkSubmitStatusEnum.COMPLETE.getCode())
         );
-        wrapper.orderByDesc("update_time");
+        wrapper.orderByDesc("submit_time");
         return list(wrapper);
     }
 
+    @Override
+    public List<SubmitHomeworkStatusEntity> teacherNoCommentSubmit(long homeworkId) {
+        QueryWrapper<SubmitHomeworkStatusEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("homework_id", homeworkId);
 
+        wrapper.and(
+                status -> status.eq("status", HomeworkSubmitStatusEnum.SUBMIT.getCode())
+        );
+        wrapper.orderByDesc("submit_time");
+        return list(wrapper);
+    }
 }

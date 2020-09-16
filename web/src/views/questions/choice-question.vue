@@ -5,7 +5,10 @@
         <a-col :span="1">
           {{ number }} :
         </a-col>
-        <a-col :span="23">
+        <a-col v-if="showComment && questionData.score != questionData.realityScore" :span="1">
+          <span style="color:red;"><strong>X</strong></span>
+        </a-col>
+        <a-col :span="22">
           <ShowMarkdown :anchor="0" :markdown="questionData.question" :speech="false" />
           ({{ questionData.score }} 分)
         </a-col>
@@ -39,6 +42,10 @@
         </a-col>
       </a-row>
       <br>
+      <div v-if="showComment" style="font-size: 20px;">
+        此题得分：{{ questionData.realityScore }}， 参考答案： <span v-text="rigthAnswer(questionData)" /> <br>
+        教师点评：<span style="color:red;"> {{ questionData.teacherComment }}</span>
+      </div>
       <div v-if="isComment">
         <a-row>
           <a-col :span="2"><strong>参考答案：</strong></a-col>
@@ -103,6 +110,11 @@ export default {
     comment: {
       type: Boolean,
       default: false
+    },
+    // 显示教师评价，成绩数据，参考答案
+    teacher: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -116,7 +128,8 @@ export default {
         text: '',
         id: this.question.id,
         score: null
-      }
+      },
+      showComment: this.teacher
     }
   },
   created() {
@@ -139,9 +152,8 @@ export default {
         } else {
           return '错'
         }
-      } else {
-        return question.rigthAnswer
       }
+      return question.rightAnswer
     },
     onChange() {
       this.$emit('commentMsg', this.commentMessage)
