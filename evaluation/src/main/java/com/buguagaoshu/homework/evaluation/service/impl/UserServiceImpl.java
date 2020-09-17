@@ -386,6 +386,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         return null;
     }
 
+    @Override
+    public UserEntity findByEmail(String s) {
+        return getOne(new QueryWrapper<UserEntity>().eq("email", s));
+    }
+
     /**
      * 向课程导入学生
      */

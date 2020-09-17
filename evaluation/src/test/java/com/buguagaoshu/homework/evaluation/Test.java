@@ -13,14 +13,8 @@ import java.util.*;
  */
 public class Test {
     public static void main(String[] args) throws ParseException {
-        List<String> list = new ArrayList<>();
-        update(list);
-        System.out.println(list);
+        System.out.println("dfadsdf".contains("@"));
     }
 
-    public static void update(List<String> list) {
-        list = new ArrayList<>();
-        list.add("123");
-        list.add("456");
-    }
+
 }

@@ -82,5 +82,11 @@ public interface UserService extends IService<UserEntity> {
      * @return  结果
      * */
     Map<String, String> addStudentCurriculumRelationship(List<AdminAddUser> userList, Claims teacher);
+
+
+    /**
+     * 通过邮箱查找用户
+     * */
+    UserEntity findByEmail(String s);
 }
 

@@ -5,7 +5,7 @@
         <Edit />
       </a-tab-pane>
       <a-tab-pane key="1" tab="公告列表">
-        Content of Tab Pane 1
+        <Bulletin />
       </a-tab-pane>
 
       <a-tab-pane key="2" tab="学生列表">
@@ -30,9 +30,15 @@
 import Edit from '@/views/curriculum/edit-curriculum.vue'
 import StudentList from '@/views/curriculum/curriculum-stundet-list.vue'
 import HomeworkList from '@/views/homework/homework-list.vue'
+import Bulletin from '@/views/curriculum/bulletin.vue'
 export default {
   name: 'Setting',
-  components: { Edit, StudentList, HomeworkList },
+  components: {
+    Edit,
+    StudentList,
+    HomeworkList,
+    Bulletin
+  },
   data() {
     return {
       id: 0

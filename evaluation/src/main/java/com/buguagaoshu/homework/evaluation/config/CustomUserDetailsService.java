@@ -34,8 +34,15 @@ public class CustomUserDetailsService  implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        // TODO 支持邮箱和手机号登陆
-        UserEntity userEntity = userService.getById(s);
+        // TODO 支持手机号登陆
+        // 如果是邮箱，采用邮箱登录
+        UserEntity userEntity = null;
+        if (s.contains("@")) {
+            userEntity = userService.findByEmail(s);
+        } else {
+            userEntity = userService.getById(s);
+        }
+
         if (userEntity != null) {
             UserRoleEntity userRoleEntity = userRoleService.selectByUserId(userEntity.getUserId());
             User user = new User();

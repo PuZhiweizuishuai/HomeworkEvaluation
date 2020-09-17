@@ -56,7 +56,7 @@
           v-if="showEditTime"
           :locale="locale"
           :input-read-only="true"
-          :disabled-date="disabledDate"
+
           :show-time="{
             hideDisabledOptions: true,
             defaultValue: [moment('00:00:00', 'HH:mm:ss'), moment('12:00:00', 'HH:mm:ss')],
@@ -64,6 +64,7 @@
           format="YYYY-MM-DD HH:mm:ss"
           @change="panelChangeTime"
         />
+        <!-- :disabled-date="disabledDate" -->
         <span v-text="formateTime()" />
         <a-button @click="() => {showEditTime = !showEditTime}">修改</a-button>
       </a-form-model-item>

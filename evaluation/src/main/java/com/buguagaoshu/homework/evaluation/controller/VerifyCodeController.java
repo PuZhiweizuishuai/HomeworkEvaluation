@@ -49,12 +49,4 @@ public class VerifyCodeController {
                 .contentType(MediaType.IMAGE_PNG)
                 .body(inputStreamResource);
     }
-
-    @PostMapping("/image/verify")
-    public HttpEntity imageVerify(HttpSession session, String code) {
-        verifyCodeService.verify(session.getId(), code);
-        return ResponseEntity
-                .status(HttpStatus.NO_CONTENT)
-                .body(null);
-    }
 }

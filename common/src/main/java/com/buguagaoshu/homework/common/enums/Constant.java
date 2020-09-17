@@ -26,4 +26,10 @@ public class Constant {
      * 课程页广告
      * */
     public static final int CURRICULUM_AD = 3;
+
+
+    /**
+     * 帖子删除后的状态值
+     * */
+    public static final int DELETE_STATUS = 1;
 }

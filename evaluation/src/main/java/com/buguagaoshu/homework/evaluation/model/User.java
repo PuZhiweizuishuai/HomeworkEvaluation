@@ -168,6 +168,11 @@ public class User implements UserDetails {
 
     private Boolean rememberMe;
 
+    /**
+     * 邀请码
+     * */
+    private String invitationCode;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
