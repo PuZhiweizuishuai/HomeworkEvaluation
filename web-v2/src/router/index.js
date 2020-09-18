@@ -21,6 +21,25 @@ const routes = [
         component: Home,
         meta: { title: store.state.webInfo.name }
       },
+      // 课程详情页
+      {
+        path: '/course/info/:id',
+
+        component: () => import('@/views/course/info.vue'),
+        meta: {
+          title: '课程'
+        }
+      },
+      // 用户主页
+      {
+        path: '/user/:id',
+        name: 'CourseInfo',
+        component: () => import('@/views/user/index.vue'),
+        meta: {
+          title: '个人主页'
+        }
+      },
+      // 关于
       {
         path: '/about',
         name: 'About',

@@ -23,7 +23,7 @@ public class FileUtil {
      * */
     public final static int ONCE_UPLOAD_FILE_NUMBER = 9;
 
-    private String website = "127.0.0.1:8080";
+    private String website = "";
 
     public FileUtil(BaseWebInfoConfig baseWebInfoConfig) {
         this.baseWebInfoConfig = baseWebInfoConfig;

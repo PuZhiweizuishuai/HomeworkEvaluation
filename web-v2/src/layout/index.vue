@@ -2,12 +2,13 @@
   <div>
     <v-navigation-drawer
       v-model="drawer"
-      :clipped="$vuetify.breakpoint.lgAndUp"
+      clipped
       app
     >
       <v-list>
         <router-link v-for="item in items" :key="item.text" :to="item.link">
           <v-list-item
+
             link
           >
             <v-list-item-action>
@@ -71,6 +72,9 @@
 </template>
 
 <script>
+/**
+ * 主要布局
+ */
 import Head from '@/layout/components/head.vue'
 import Footer from '@/layout/components/footer.vue'
 export default {
@@ -79,7 +83,7 @@ export default {
     Footer
   },
   data: () => ({
-
+    mini: false,
     drawer: false,
     items: [
       { icon: 'mdi-book-open-outline', text: '课程', link: '/' },

@@ -10,7 +10,7 @@ module.exports = {
   productionSourceMap: false,
   // options...
   devServer: {
-    port: 8000,
+    port: 8002,
     proxy: {
       '/api': {
         target: 'http://127.0.0.1:8080',
