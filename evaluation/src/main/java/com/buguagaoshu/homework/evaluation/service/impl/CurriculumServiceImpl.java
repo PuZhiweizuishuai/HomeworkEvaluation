@@ -1,9 +1,9 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.buguagaoshu.homework.common.domain.CustomPage;
 import com.buguagaoshu.homework.common.enums.CurriculumAccessTypeEnum;
 import com.buguagaoshu.homework.common.enums.CurriculumJoinTimLimitEnum;
+import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.cache.CourseTagCache;
 import com.buguagaoshu.homework.evaluation.cache.WebsiteIndexMessageCache;
@@ -11,8 +11,10 @@ import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.*;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
 import com.buguagaoshu.homework.evaluation.model.CurriculumModel;
+import com.buguagaoshu.homework.evaluation.model.JoinCourseCode;
 import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
 import com.buguagaoshu.homework.evaluation.service.UserService;
+import com.buguagaoshu.homework.evaluation.service.VerifyCodeService;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import com.buguagaoshu.homework.evaluation.utils.TimeUtils;
 import com.buguagaoshu.homework.evaluation.vo.*;
@@ -39,6 +41,7 @@ import com.buguagaoshu.homework.evaluation.service.CurriculumService;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 
 /**
@@ -55,6 +58,8 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
 
     private final CourseTagCache courseTagCache;
 
+    private final VerifyCodeService verifyCodeService;
+
     private final WebsiteIndexMessageCache indexMessageCache;
 
     @Autowired
@@ -63,11 +68,12 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
     }
 
     @Autowired
-    public CurriculumServiceImpl(BCryptPasswordEncoder encoder, StudentsCurriculumService studentsCurriculumService, CourseTagCache courseTagCache, WebsiteIndexMessageCache indexMessageCache) {
+    public CurriculumServiceImpl(BCryptPasswordEncoder encoder, StudentsCurriculumService studentsCurriculumService, CourseTagCache courseTagCache, VerifyCodeService verifyCodeService, WebsiteIndexMessageCache indexMessageCache) {
         this.encoder = encoder;
         this.studentsCurriculumService = studentsCurriculumService;
 
         this.courseTagCache = courseTagCache;
+        this.verifyCodeService = verifyCodeService;
         this.indexMessageCache = indexMessageCache;
     }
 
@@ -215,15 +221,7 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
         return null;
     }
 
-    @Override
-    public CurriculumEntity judgeThisCurriculumUserSelect(Long courseId, String userId) {
-        StudentsCurriculumEntity studentsCurriculumEntity =
-                studentsCurriculumService.selectStudentByCurriculumId(userId, courseId);
-        if (studentsCurriculumEntity == null) {
-            return null;
-        }
-        return this.getById(courseId);
-    }
+
 
     @Override
     public CurriculumInfo info(Long id) {
@@ -267,6 +265,77 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
         }
         info.setOtherTeacher(teacherInfos);
         return info;
+    }
+
+    @Override
+    public ReturnCodeEnum join(Long id, HttpServletRequest request, JoinCourseCode code) {
+        HttpSession session = request.getSession(false);
+        String verifyCodeKey = (String) session.getAttribute("verifyCodeKey");
+        // 验证码校验
+        verifyCodeService.verify(verifyCodeKey, code.getVerifyCode());
+        // 获取当前用户
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        long time = System.currentTimeMillis();
+        CurriculumEntity entity = this.getById(id);
+        if (entity == null) {
+            return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
+        }
+        if (entity.getOpeningTime() > time) {
+            return ReturnCodeEnum.NO_TIME;
+        }
+        if (entity.getCloseTime() < time) {
+            return ReturnCodeEnum.COURSE_IS_CLOSE;
+        }
+        // 限制加入时间
+        if (entity.getJoinTimeLimit() == CurriculumJoinTimLimitEnum.LIMIT_JOIN_TIME.getCode()) {
+            if (entity.getJoinTime() < time) {
+                return ReturnCodeEnum.EXCEED_JOIN_LIMIT_TIME;
+            }
+        }
+
+
+        StudentsCurriculumEntity studentsCurriculumEntity = studentsCurriculumService.selectStudentByCurriculumId(user.getId(), entity.getId());
+        if (studentsCurriculumEntity != null) {
+            return ReturnCodeEnum.ALREADY_JOINED;
+        }
+        StudentsCurriculumEntity student = new StudentsCurriculumEntity();
+        student.setStudentName(user.getSubject());
+        student.setStudentId(user.getId());
+        student.setRole(RoleTypeEnum.STUDENT.getRole());
+        student.setCurriculumId(entity.getId());
+        student.setCreateTime(System.currentTimeMillis());
+        // TODO 邀请码加入
+        // TODO 向老师发送通知
+        if (entity.getAccessMethod().equals(CurriculumAccessTypeEnum.USE_PASSWORD.getCode())) {
+            if (encoder.matches(code.getCode(), entity.getPassword())) {
+                // TODO 优化加 1 方式
+                entity.setStudentNumber(entity.getStudentNumber() + 1);
+                this.updateById(entity);
+                studentsCurriculumService.save(student);
+                return ReturnCodeEnum.SUCCESS;
+            }
+        } else if (entity.getAccessMethod().equals(CurriculumAccessTypeEnum.PUBLIC_CURRICULUM.getCode())) {
+            studentsCurriculumService.save(student);
+            // TODO 优化加 1 方式
+            entity.setStudentNumber(entity.getStudentNumber() + 1);
+            this.updateById(entity);
+            return ReturnCodeEnum.SUCCESS;
+        }
+        return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
+    }
+
+    @Override
+    public Map<String, Object> learn(Long id, HttpServletRequest request) {
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        StudentsCurriculumEntity student = studentsCurriculumService.selectStudentByCurriculumId(user.getId(), id);
+        if (student == null) {
+            return null;
+        }
+        CurriculumEntity curriculumEntity = this.getById(id);
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("course", curriculumEntity);
+        map.put("user", student);
+        return map;
     }
 
 

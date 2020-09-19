@@ -33,6 +33,10 @@ public enum ReturnCodeEnum {
     CANNOT_SUBMIT_HOMEWORK(3001, "作业已经提交，不能重复提交！" ),
     NOT_READ_QUESTION(3002, "请先阅读题目后再提交作业"),
     MISS_SUBMIT_TIME(3003, "你已经错过了提交时间，作业已经无法提交。"),
+    ALREADY_JOINED(3004, "已经加入这门课程，无需重复加入！"),
+    NO_TIME(3005, "未到开课时间！"),
+    COURSE_IS_CLOSE(3006, "课程已经结束，无法加入！"),
+    EXCEED_JOIN_LIMIT_TIME(3007, "超过课程最晚加入时间。"),
 
     LACK_ID(4000, "缺少ID"),
     NOT_RUN(4001, "没有在运行"),

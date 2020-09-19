@@ -1,0 +1,91 @@
+<template>
+  <v-container>
+    <!-- 标题 -->
+    <v-row>
+      <v-col>
+        <span style="font-size: 20px;font-weight: bolder;"> {{ course.curriculumName }} </span>
+        <span v-text="course.simpleInfo" /> --
+        <router-link :to="`/user/${course.createTeacher}`">
+          <span v-text="course.teacherName" />
+        </router-link>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-divider />
+    </v-row>
+    <!-- 公告内容 -->
+    <v-row>
+      <v-col cols="12">
+        <v-card outlined>
+          <v-card-title>公告：</v-card-title>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row v-for="item in bulletinList" :key="item.id">
+      <v-col cols="12">
+        <BulletinCard :bulletin="item" />
+      </v-col>
+    </v-row>
+    <v-row justify="center">
+      <v-pagination
+        v-model="page"
+        :length="length"
+        @input="pageChange"
+      />
+    </v-row>
+  </v-container>
+</template>
+
+<script>
+import BulletinCard from '@/components/course/bulletin-card.vue'
+
+export default {
+  name: 'Learn',
+  components: {
+    BulletinCard
+  },
+  props: {
+    course: {
+      type: Object,
+      default: null
+    },
+    role: {
+      type: Object,
+      default: null
+    }
+
+  },
+  data() {
+    return {
+      bulletinList: [],
+      id: 0,
+      page: 1,
+      size: 10,
+      length: 0
+    }
+  },
+  created() {
+    this.id = this.$route.params.id
+    this.getBulletinList()
+  },
+  methods: {
+    getBulletinList() {
+      this.httpGet(`/bulletin/list/${this.id}?page=${this.page}&limit=${this.size}`, (json) => {
+        if (json.status === 200) {
+          this.bulletinList = json.data.list
+          this.length = json.data.totalPage
+        } else {
+          console.log(json.message)
+        }
+      })
+    },
+    pageChange(value) {
+      //
+    }
+  }
+}
+</script>
+
+<style>
+
+</style>

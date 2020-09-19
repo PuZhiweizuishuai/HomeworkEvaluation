@@ -370,6 +370,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                 // 构造要导入学生列表
                 classImportUser(userList, map, stringStudentsCurriculumEntityMap, userEntityMap, students, count, courseNumber);
                 // 保存学生列表
+                // TODO 给学生发送通知
                 studentsCurriculumService.saveBatch(students);
                 // 保存课程人数
                 curriculumEntity.setStudentNumber(count.get() + curriculumEntity.getStudentNumber());
@@ -432,7 +433,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         studentsCurriculumEntity.setStudentId(adminAddUser.getUserId());
         studentsCurriculumEntity.setCreateTime(System.currentTimeMillis());
         studentsCurriculumEntity.setStudentName(userEntity.getUsername());
-        studentsCurriculumEntity.setRole(RoleTypeEnum.USER.getRole());
+        studentsCurriculumEntity.setRole(RoleTypeEnum.STUDENT.getRole());
         return studentsCurriculumEntity;
     }
 

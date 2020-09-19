@@ -16,7 +16,7 @@ export default {
     },
     speech: {
       type: Boolean,
-      default: true
+      default: false
     },
     anchor: {
       type: Number,

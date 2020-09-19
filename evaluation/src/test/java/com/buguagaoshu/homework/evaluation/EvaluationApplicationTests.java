@@ -40,10 +40,10 @@ class EvaluationApplicationTests {
 
     @Test
     void contextLoads() throws JsonProcessingException {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUserId("201741010128");
-        userEntity.setPassword(bCryptPasswordEncoder.encode("123456"));
-        userService.updateById(userEntity);
+//        UserEntity userEntity = new UserEntity();
+//        userEntity.setUserId("201741010110");
+//        userEntity.setPassword(bCryptPasswordEncoder.encode("123456"));
+//        userService.updateById(userEntity);
     }
 
 }

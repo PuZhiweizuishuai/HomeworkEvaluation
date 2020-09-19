@@ -70,30 +70,20 @@ export default {
       }
     },
     logout() {
+      console.log('退出')
       this.$store.commit('setUserInfo', null)
-      fetch(`/api/logout`, {
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')
-        },
-        method: 'GET',
-        credentials: 'include'
-      }).then(response => response.json())
-        .then(json => {
-          if (json.status === 200) {
-            this.$store.commit('setUserInfo', null)
-            if (this.$route.path === '/') {
-              location.reload()
-            } else {
-              this.$router.push('/')
-            }
+      this.httpGet(`/logInout`, (json) => {
+        if (json.status === 200) {
+          this.$store.commit('setUserInfo', null)
+          if (this.$route.path === '/') {
+            location.reload()
           } else {
-            //
+            this.$router.push('/')
           }
-        })
-        .catch(e => {
-          return null
-        })
+        } else {
+          //
+        }
+      })
     }
   }
 }

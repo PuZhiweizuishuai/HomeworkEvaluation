@@ -1,9 +1,11 @@
 package com.buguagaoshu.homework.evaluation.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.CurriculumEntity;
 import com.buguagaoshu.homework.evaluation.model.CurriculumModel;
+import com.buguagaoshu.homework.evaluation.model.JoinCourseCode;
 import com.buguagaoshu.homework.evaluation.vo.CurriculumIndexVo;
 import com.buguagaoshu.homework.evaluation.vo.CurriculumInfo;
 import io.jsonwebtoken.Claims;
@@ -66,14 +68,6 @@ public interface CurriculumService extends IService<CurriculumEntity> {
     PageUtils selectJoinCurriculumList(String userId, HttpServletRequest request);
 
 
-    /**
-     * 判断当前用户有没有选中这门课程
-     * @param courseId 课程ID
-     * @param userId 当前登陆用户 ID
-     * @return 如果选中，则返回课程信息，否则返回 null
-     * */
-    CurriculumEntity judgeThisCurriculumUserSelect(Long courseId, String userId);
-
 
     /**
      * 查找当前这门课程的基本信息
@@ -82,5 +76,25 @@ public interface CurriculumService extends IService<CurriculumEntity> {
      * */
     CurriculumInfo info(Long id);
 
+    /**
+     * 发送加入课程请求
+     * @param id 课程 ID
+     * @param request 获取请求用户
+     * @param code 密码
+     * @return 结果
+     * */
+    ReturnCodeEnum join(Long id, HttpServletRequest request, JoinCourseCode code);
+
+
+    /**
+     * 返回课程学习页需要的信息
+     * @param id 课程ID
+     * @param request 获取用户信息
+     * @return map： {
+     *     course： CurriculumEntity
+     *     user： StudentsCurriculumEntity
+     * }
+     * */
+    Map<String, Object> learn(Long id, HttpServletRequest request);
 }
 

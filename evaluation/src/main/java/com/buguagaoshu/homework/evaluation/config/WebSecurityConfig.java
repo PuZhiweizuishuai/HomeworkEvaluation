@@ -65,13 +65,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * 开放访问的请求
      */
     private final static String[] PERMIT_ALL_MAPPING = {
-            "/index/**",
-            "/verifyImage",
-            "/course/tag/list",
-            "/curriculum/list",
-            "/curriculum/info/**",
-            "/index/**",
-            "/uploads/file/**",
+//            "/index/**",
+//            "/verifyImage",
+//            "/course/tag/list",
+//            "/curriculum/list",
+//            "/curriculum/info/**",
+//            "/index/**",
+//            "/uploads/file/**",
+//            "/logout"
+            "/**"
     };
 
 
@@ -106,11 +108,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(PERMIT_ALL_MAPPING)
                 .permitAll()
                 // 需要管理员权限才可以访问的地址
-                .antMatchers("/admin/**")
-                .hasAnyAuthority(RoleTypeEnum.ADMIN.getRole())
-                // 需要管理员和教师权限才可以访问的地址
-                .anyRequest()
-                .authenticated()
                 .and()
                 // 添加过滤器链,前一个参数过滤器， 后一个参数过滤器添加的地方
                 // 登陆过滤器

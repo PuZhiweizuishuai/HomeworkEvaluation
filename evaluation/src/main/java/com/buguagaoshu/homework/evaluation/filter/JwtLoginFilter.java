@@ -69,7 +69,6 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
                 user.getAuthorities()
         );
         // 添加验证的附加信息
-        // TODO 验证码验证
         // 包括验证码信息和是否记住我
         token.setDetails(new LoginDetails(user.getRememberMe(), user.getVerifyCode()));
         // 进行登陆验证

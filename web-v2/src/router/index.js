@@ -24,10 +24,10 @@ const routes = [
       // 课程详情页
       {
         path: '/course/info/:id',
-
         component: () => import('@/views/course/info.vue'),
+        name: 'Info',
         meta: {
-          title: '课程'
+          title: '课程详情'
         }
       },
       // 用户主页
@@ -50,13 +50,74 @@ const routes = [
       }
     ]
   },
+  // 课程主页
+  {
+    path: '/course/learn/:id',
+    component: () => import('@/layout/course/index.vue'),
+    meta: {
+      title: '课程'
+    },
+    children: [
+      {
+        path: '/course/learn/:id',
+        name: 'Learn',
+        component: () => import('@/views/course/learn.vue'),
+        meta: {
+          title: '课程详情'
+        }
+      },
+      {
+        path: '/course/learn/:id/score',
+        name: 'Score',
+        component: () => import('@/views/course/score.vue'),
+        meta: {
+          title: '评分标准'
+        }
+      },
+      {
+        path: '/course/learn/:id/courseware',
+        name: 'Courseware',
+        component: () => import('@/views/course/courseware.vue'),
+        meta: {
+          title: '课件'
+        }
+      },
+      {
+        path: '/course/learn/:id/exam',
+        name: 'Exam',
+        component: () => import('@/views/course/exam.vue'),
+        meta: {
+          title: '测验与作业'
+        }
+      },
+      {
+        path: '/course/learn/:id/bbs',
+        name: 'BBS',
+        component: () => import('@/views/course/bbs.vue'),
+        meta: {
+          title: '讨论区'
+        }
+      },
+      {
+        path: '/course/learn/:id/setting',
+        name: 'Setting',
+        component: () => import('@/views/course/setting/index.vue'),
+        meta: {
+          title: '设置'
+        }
+      }
+    ]
+  },
   {
     path: '/login',
     name: 'Login',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import('@/views/login/index.vue')
+    component: () => import('@/views/login/index.vue'),
+    meta: {
+      title: store.state.webInfo.name + '- 登录'
+    }
   }
 
 ]

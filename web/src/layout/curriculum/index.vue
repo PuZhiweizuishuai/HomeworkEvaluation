@@ -81,6 +81,7 @@ export default {
     return {
       id: 0,
       curriculumInfo: []
+
     }
   },
   created() {

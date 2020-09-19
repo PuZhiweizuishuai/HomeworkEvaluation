@@ -5,10 +5,19 @@
       clipped
       app
     >
+      <router-link :to="`/course/learn/${id}`">
+        <v-row justify="center" align="center">
+          <v-col cols="11" style="text-align: center">
+
+            <v-img :aspect-ratio="16/9" :src="courseInfo.curriculumImageUrl" />
+
+          </v-col>
+        </v-row>
+      </router-link>
       <v-list>
         <router-link v-for="item in items" :key="item.text" :to="item.link">
           <v-list-item
-
+            v-if="item.show"
             link
           >
             <v-list-item-action>
@@ -68,7 +77,8 @@
       </v-btn>
     </v-app-bar>
     <v-main>
-      <router-view />
+
+      <router-view :course="courseInfo" :role="userRole" />
 
     </v-main>
     <BackToTop />
@@ -92,27 +102,49 @@ export default {
   },
   data: () => ({
     mini: false,
-    drawer: false,
+    drawer: true,
+    id: 0,
     items: [
-      { icon: 'mdi-book-open-outline', text: '课程', link: '/' },
-      { icon: 'mdi-facebook-messenger', text: '社区', link: '/bbs' },
-      { icon: 'mdi-content-copy', text: '我的课程', link: '/myclass' }
+      { icon: 'mdi-info', text: '公告', link: `/course/learn/`, type: '', teacher: false, show: true },
+      { icon: 'mdi-content-copy', text: '评分标准', link: `/course/learn/`, type: '/score', teacher: false, show: true },
+      { icon: 'mdi-facebook-messenger', text: '课件', link: `/course/learn/`, type: '/courseware', teacher: false, show: true },
+      { icon: 'mdi-content-copy', text: '测验与作业', link: `/course/learn/`, type: '/exam', teacher: false, show: true },
+      { icon: 'mdi-content-copy', text: '讨论区', link: `/course/learn/`, type: '/bbs', teacher: false, show: true },
+      { icon: 'mdi-content-copy', text: '课程管理', link: `/course/learn/`, type: '/setting', teacher: true, show: false }
     ],
-    courseTagList: []
+    courseInfo: {},
+    userRole: {}
   }),
   created() {
-  // this.getcourseTagList()
+    this.id = this.$route.params.id
+    this.getCourseInfo()
   },
   methods: {
-    getcourseTagList() {
-      this.httpGet('/course/tag/list', (json) => {
+    goToLoginPage() {
+      this.$router.push('/login')
+    },
+    getCourseInfo() {
+      this.httpGet(`/curriculum/learn/${this.id}`, (json) => {
         if (json.status === 200) {
-          this.courseTagList = json.data
+          document.title = json.data.course.curriculumName
+          this.courseInfo = json.data.course
+          this.userRole = json.data.user
+          this.setList()
+        } else {
+          this.$router.push(`/course/info/${this.id}`)
         }
       })
     },
-    goToLoginPage() {
-      this.$router.push('/login')
+    setList() {
+      for (let i = 0; i < this.items.length; i++) {
+      // 获取课程内权限
+        if (this.items[i].teacher) {
+          if (this.userRole.role === 'ROLE_TEACHER') {
+            this.items[i].show = true
+          }
+        }
+        this.items[i].link = this.items[i].link + this.id + this.items[i].type
+      }
     }
   }
 }

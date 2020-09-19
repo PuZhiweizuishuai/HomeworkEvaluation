@@ -6,6 +6,7 @@ import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.CurriculumEntity;
 import com.buguagaoshu.homework.evaluation.model.CurriculumModel;
+import com.buguagaoshu.homework.evaluation.model.JoinCourseCode;
 import com.buguagaoshu.homework.evaluation.service.CurriculumService;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import com.buguagaoshu.homework.evaluation.vo.CurriculumInfo;
@@ -41,6 +42,9 @@ public class CurriculumController {
         return ResponseDetails.ok().put("data", curriculumEntity);
     }
 
+    /**
+     * 更新课程信息
+     * */
     @PostMapping("/teacher/update/curriculum")
     public ResponseDetails update(@RequestBody CurriculumModel curriculumModel,
                                   HttpServletRequest request) {
@@ -66,6 +70,9 @@ public class CurriculumController {
     }
 
 
+    /**
+     * 课程信息
+     * */
     @GetMapping("/curriculum/info/{id}")
     public ResponseDetails info(@PathVariable("id") Long id) {
         CurriculumInfo entity = curriculumService.info(id);
@@ -75,16 +82,28 @@ public class CurriculumController {
         return ResponseDetails.ok(ReturnCodeEnum.NOO_FOUND);
     }
 
+    /**
+     * 加入课程
+     * */
+    @PostMapping("/curriculum/join/{id}")
+    public ResponseDetails join(@PathVariable("id") Long id,
+                                @RequestBody JoinCourseCode code,
+                                HttpServletRequest request) {
+        return ResponseDetails.ok(curriculumService.join(id, request, code));
+    }
 
+
+
+    /**
+     * 返回课程学习页需要的信息
+     * */
     @GetMapping("/curriculum/learn/{id}")
-    public ResponseDetails judgeUser(@PathVariable("id") Long id,
+    public ResponseDetails learn(@PathVariable("id") Long id,
                                      HttpServletRequest request) {
-        CurriculumEntity curriculumEntity = curriculumService.judgeThisCurriculumUserSelect(id,
-                JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY).getId());
-        if (curriculumEntity != null) {
-            return ResponseDetails.ok().put("data", curriculumEntity);
+        Map<String, Object> map = curriculumService.learn(id, request);
+        if (map != null) {
+            return ResponseDetails.ok().put("data", map);
         }
-        return ResponseDetails.ok(ReturnCodeEnum.NOT_SELECT_THIS_COURSE.getCode(),
-                ReturnCodeEnum.NOT_SELECT_THIS_COURSE.getMsg());
+        return ResponseDetails.ok(ReturnCodeEnum.NOT_SELECT_THIS_COURSE);
     }
 }

@@ -71,7 +71,7 @@ public class CurriculumEntity {
     private Integer studentNumber;
 
     /**
-     * 【0 邀请进入】【1 输入密码进入】【3 公开】
+     * 【0 邀请进入】【1 输入密码进入】【2 公开】
      */
     private Integer accessMethod;
 

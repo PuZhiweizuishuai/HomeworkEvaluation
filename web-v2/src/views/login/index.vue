@@ -68,8 +68,8 @@
 </template>
 
 <script>
-import LoginFrom from '@/components/login-form.vue'
-import RegisterFrom from '@/components/register-from.vue'
+import LoginFrom from '@/components/form/login-form.vue'
+import RegisterFrom from '@/components/form/register-from.vue'
 
 export default {
   name: 'Login',

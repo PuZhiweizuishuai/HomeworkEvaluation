@@ -132,7 +132,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/loginOut")
+    @GetMapping("/logInout")
     public ResponseDetails loginOut(HttpServletRequest request,
                                     HttpServletResponse response) {
         Cookie cookie = WebUtils.getCookie(request, TokenAuthenticationHelper.COOKIE_TOKEN);
