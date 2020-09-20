@@ -44,4 +44,13 @@ public class BulletinController {
                                 HttpServletRequest request) {
         return ResponseDetails.ok(bulletinService.saveBulletin(bulletinEntity, request));
     }
+
+    /**
+     * 更新公告
+     * */
+    @PostMapping("/bulletin/update")
+    public ResponseDetails update(@Valid @RequestBody BulletinEntity bulletinEntity,
+                                  HttpServletRequest request) {
+        return ResponseDetails.ok(bulletinService.updateBulletin(bulletinEntity, request));
+    }
 }

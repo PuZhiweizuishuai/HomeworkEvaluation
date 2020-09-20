@@ -105,12 +105,12 @@ export default {
     drawer: true,
     id: 0,
     items: [
-      { icon: 'mdi-info', text: '公告', link: `/course/learn/`, type: '', teacher: false, show: true },
-      { icon: 'mdi-content-copy', text: '评分标准', link: `/course/learn/`, type: '/score', teacher: false, show: true },
-      { icon: 'mdi-facebook-messenger', text: '课件', link: `/course/learn/`, type: '/courseware', teacher: false, show: true },
-      { icon: 'mdi-content-copy', text: '测验与作业', link: `/course/learn/`, type: '/exam', teacher: false, show: true },
-      { icon: 'mdi-content-copy', text: '讨论区', link: `/course/learn/`, type: '/bbs', teacher: false, show: true },
-      { icon: 'mdi-content-copy', text: '课程管理', link: `/course/learn/`, type: '/setting', teacher: true, show: false }
+      { icon: 'mdi-alert-circle-outline', text: '公告', link: `/course/learn/`, type: '', teacher: false, show: true },
+      { icon: 'mdi-calculator-variant', text: '评分标准', link: `/course/learn/`, type: '/score', teacher: false, show: true },
+      { icon: 'mdi-file-table-box-multiple-outline', text: '课件', link: `/course/learn/`, type: '/courseware', teacher: false, show: true },
+      { icon: 'mdi-file-document-edit', text: '测验与作业', link: `/course/learn/`, type: '/exam', teacher: false, show: true },
+      { icon: 'mdi-facebook-messenger', text: '讨论区', link: `/course/learn/`, type: '/bbs', teacher: false, show: true },
+      { icon: 'mdi-cog', text: '课程管理', link: `/course/learn/`, type: '/setting', teacher: true, show: false }
     ],
     courseInfo: {},
     userRole: {}

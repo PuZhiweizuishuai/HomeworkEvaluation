@@ -49,6 +49,7 @@ public class BulletinServiceImpl extends ServiceImpl<BulletinDao, BulletinEntity
         if (!student.getRole().equals(RoleTypeEnum.TEACHER.getRole())) {
             wrapper.eq("status", 0);
         }
+        wrapper.orderByDesc("update_time");
         IPage<BulletinEntity> page = this.page(
                 new Query<BulletinEntity>().getPage(params),
                 wrapper
@@ -75,6 +76,31 @@ public class BulletinServiceImpl extends ServiceImpl<BulletinDao, BulletinEntity
             }
         }
         return ReturnCodeEnum.NO_POWER;
+    }
+
+    @Override
+    public ReturnCodeEnum updateBulletin(BulletinEntity bulletinEntity, HttpServletRequest request) {
+        if (bulletinEntity.getId() == null) {
+            return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
+        }
+        BulletinEntity sys = this.getById(bulletinEntity.getId());
+        if (sys == null) {
+            return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
+        }
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        if (bulletinEntity.getUserId().equals(user.getId())) {
+            sys.setUpdateTime(System.currentTimeMillis());
+            sys.setStatus(bulletinEntity.getStatus());
+            sys.setText(bulletinEntity.getText());
+            sys.setTitle(bulletinEntity.getTitle());
+            sys.setIp(IpUtil.getIpAddr(request));
+            sys.setUa(request.getHeader("user-agent"));
+            this.updateById(sys);
+            return ReturnCodeEnum.SUCCESS;
+        } else {
+            return ReturnCodeEnum.NO_POWER;
+        }
+
     }
 
 

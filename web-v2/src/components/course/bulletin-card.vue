@@ -1,5 +1,6 @@
 <template>
   <v-card outlined>
+    <a :name="bulletin.title" />
     <v-card-title>{{ bulletin.title }}</v-card-title>
     <v-card-subtitle>发布时间：{{ TimeUtil.renderTime(bulletin.createTime) }} </v-card-subtitle>
     <v-row justify="center">

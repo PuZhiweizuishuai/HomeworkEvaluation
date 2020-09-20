@@ -51,7 +51,7 @@ export default {
       markdownStr: this.markdown,
       maxHeight: this.height,
       hideBar: this.hide,
-      contentEditor: '',
+      contentEditor: null,
       defaultPlaceholder: '请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。',
       emojis: {
         '0': '😀',
@@ -151,11 +151,20 @@ export default {
       },
       after: () => {
         this.contentEditor.setValue(this.markdownStr)
+        this.$emit('after', true)
       },
       blur: (input) => {
         this.$emit('vditor-input', this.contentEditor.getValue())
       }
     })
+  },
+  methods: {
+    setTextValue(value) {
+      this.contentEditor.setValue(value)
+    },
+    call(value) {
+      console.log(value)
+    }
   }
 }
 </script>

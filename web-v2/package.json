@@ -9,9 +9,12 @@
   },
   "dependencies": {
     "core-js": "^3.6.5",
+    "less": "^3.12.2",
+    "less-loader": "^7.0.1",
     "vditor": "^3.5.3",
     "vue": "^2.6.11",
     "vue-cookies": "^1.7.4",
+    "vue-cropper": "^0.5.5",
     "vue-router": "^3.2.0",
     "vuetify": "^2.2.11",
     "vuex": "^3.4.0"

@@ -76,7 +76,10 @@ public class FileSystemFileStorageServiceImpl implements FileStorageRepository {
             }
             try {
                 Files.copy(file.getInputStream(), Paths.get(fileModel.getPath(), fileModel.getFilename()));
-                succMap.put(fileName, fileUtil.getWebsite() + "/" + pathName);
+
+                // succMap.put(fileName, fileUtil.getWebsite() + "/" + pathName);
+                // TODO 有待优化
+                succMap.put(fileName, "/api/" + pathName);
             } catch (Exception e) {
                 errFiles.add(fileName);
             }

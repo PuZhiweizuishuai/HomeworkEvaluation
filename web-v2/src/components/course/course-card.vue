@@ -7,6 +7,7 @@
         :aspect-ratio="16/9"
         :src="course.curriculumImageUrl"
       >
+
         <v-card-title>{{ course.curriculumName }} </v-card-title>
       </v-img>
 

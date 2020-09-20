@@ -21,9 +21,25 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row v-for="item in bulletinList" :key="item.id">
-      <v-col cols="12">
-        <BulletinCard :bulletin="item" />
+    <v-row v-resize="onResize">
+      <v-col :cols="left">
+        <v-row v-for="item in bulletinList" :key="item.id">
+          <v-col cols="12">
+            <BulletinCard :bulletin="item" />
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col v-if="showCatalog" cols="2">
+        <v-row>
+          <v-col>
+            <h3>大纲：</h3>
+          </v-col>
+        </v-row>
+        <v-row v-for="item in bulletinList" :key="item.id">
+          <v-col cols="12">
+            <a :href="'#' + item.title">{{ item.title }}</a>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
     <v-row justify="center">
@@ -53,7 +69,6 @@ export default {
       type: Object,
       default: null
     }
-
   },
   data() {
     return {
@@ -61,12 +76,19 @@ export default {
       id: 0,
       page: 1,
       size: 10,
-      length: 0
+      length: 0,
+      windowSize: {
+        x: 0,
+        y: 0
+      },
+      left: 10,
+      showCatalog: true
     }
   },
   created() {
     this.id = this.$route.params.id
     this.getBulletinList()
+    this.onResize()
   },
   methods: {
     getBulletinList() {
@@ -81,6 +103,18 @@ export default {
     },
     pageChange(value) {
       //
+      this.page = value
+      this.getBulletinList()
+    },
+    onResize() {
+      this.windowSize = { x: window.innerWidth, y: window.innerHeight }
+      if (this.windowSize.x < 900) {
+        this.left = 12
+        this.showCatalog = false
+      } else {
+        this.left = 10
+        this.showCatalog = true
+      }
     }
   }
 }

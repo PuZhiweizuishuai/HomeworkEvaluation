@@ -1,5 +1,5 @@
 <template>
-  <v-container fill-height fluid>
+  <v-container fill-height>
     <v-row>
       <v-col cols="12">
         <v-tabs>
@@ -13,15 +13,25 @@
         </v-tabs>
         <v-divider />
       </v-col>
-
     </v-row>
-
+    <v-row justify="center">
+      <v-col cols="12">
+        <CourseInfoForm v-if="type == 0" />
+        <BulletinTable v-if="type == 1" />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
+import CourseInfoForm from '@/components/course/form/course-info-form.vue'
+import BulletinTable from '@/components/course/setting/bulletin-table.vue'
 export default {
   name: 'Setting',
+  components: {
+    CourseInfoForm,
+    BulletinTable
+  },
   props: {
     course: {
       type: Object,

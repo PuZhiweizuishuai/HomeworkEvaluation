@@ -27,5 +27,13 @@ public interface BulletinService extends IService<BulletinEntity> {
      * @return 保存结果
      * */
     ReturnCodeEnum saveBulletin(BulletinEntity bulletinEntity, HttpServletRequest request);
+
+    /**
+     * 更新课程公告
+     * @param bulletinEntity 公告内容
+     * @param request 获取用户信息
+     * @return 保存结果
+     * */
+    ReturnCodeEnum updateBulletin(BulletinEntity bulletinEntity, HttpServletRequest request);
 }
 
