@@ -44,12 +44,12 @@ public class UserController {
 
     /**
      * 获取用户列表
-     * 老师和助教可以获取用户列表，向课程导入学生
+     * 仅限管理员和老师获取用户列表，向课程导入学生
      * 但不能修改，老师可以课程列表里添加助教
      * */
-    @GetMapping("/teacher/user/list")
-    public PageUtils list(@RequestParam Map<String, Object> params) {
-        return userService.selectUserAndRoleList(params);
+    @GetMapping("/user/list")
+    public ResponseDetails list(@RequestParam Map<String, Object> params) {
+        return ResponseDetails.ok().put("data", userService.selectUserAndRoleList(params));
     }
 
     /**
@@ -62,7 +62,7 @@ public class UserController {
         PageUtils pageUtils = userService.selectClassUser(params,
                 JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY));
         if (pageUtils != null) {
-            return ResponseDetails.ok().put("page", pageUtils);
+            return ResponseDetails.ok().put("data", pageUtils);
         }
         return ResponseDetails.ok(ReturnCodeEnum.NOO_FOUND);
     }
@@ -95,7 +95,7 @@ public class UserController {
     /**
      * 管理员重置密码
      * */
-    @PostMapping("/admin/user/rest/password")
+    @PostMapping("/admin/user/update/password")
     public ResponseDetails restPassword(@RequestBody AdminAddUser adminAddUser) {
 
         adminAddUser = userService.restPassword(adminAddUser);
@@ -106,7 +106,7 @@ public class UserController {
     /**
      * 角色修改
      * */
-    @PostMapping("/admin/user/alter/role")
+    @PostMapping("/admin/user/update/role")
     public ResponseDetails alterUserRole(@RequestBody UserRoleEntity userRoleEntity,
                                          HttpServletRequest request) {
         ReturnCodeEnum returnCodeEnum = userRoleService.alterUserRole(userRoleEntity, request);
@@ -117,7 +117,7 @@ public class UserController {
     /**
      * 教师修改课程内的角色
      * */
-    @PostMapping("/teacher/user/alter/role")
+    @PostMapping("/teacher/user/update/role")
     public ResponseDetails teacherAlterCourseRole(@RequestBody UserRoleInClassVo userRoleInClassVo,
                                                   HttpServletRequest request) {
         ReturnCodeEnum returnCodeEnum = userRoleService.teacherAlterUserRole(userRoleInClassVo, request);
@@ -125,7 +125,10 @@ public class UserController {
     }
 
 
-    @PostMapping("/admin/user/alter/status")
+    /**
+     * 管理员更新角色状态
+     * */
+    @PostMapping("/admin/user/update/status")
     public ResponseDetails alterUserStatus(@RequestBody AlterUserStatus alterUserStatus) {
         ReturnCodeEnum returnCodeEnum = userService.alterUserStatus(alterUserStatus);
         return ResponseDetails.ok(returnCodeEnum.getCode(), returnCodeEnum.getMsg());

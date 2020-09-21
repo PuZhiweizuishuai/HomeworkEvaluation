@@ -3,14 +3,16 @@
     <v-col cols="5">
       <v-select
         :items="father"
-        :label="label"
+        :label="fatherHint"
+
         @change="getFatherCategory"
       />
     </v-col>
     <v-col cols="5">
       <v-select
         :items="children"
-        :label="label"
+        :label="hint"
+
         @change="getChildrenCategory"
       />
     </v-col>
@@ -27,6 +29,14 @@ export default {
     label: {
       type: String,
       default: ''
+    },
+    select: {
+      type: Boolean,
+      default: false
+    },
+    values: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -41,7 +51,9 @@ export default {
       },
       nowCategory: {},
       items: [],
-      tag: []
+      tag: [],
+      fatherHint: '',
+      hint: ''
     }
   },
   created() {
@@ -59,12 +71,32 @@ export default {
     initData() {
       this.father = []
       this.children = []
+      this.fatherHint = this.label
+      this.hint = this.label
       for (let i = 0; i < this.items.length; i++) {
         const name = this.items[i].courseMajor
         this.categoryMap.Set(name, this.items[i])
         this.father.push(name)
+        if (this.select) {
+          if (this.values[0] === 0) {
+            this.values[0] = this.$store.state.editCourseTag[0]
+          }
+          if (this.values[1] === 0) {
+            this.values[1] = this.$store.state.editCourseTag[1]
+          }
+          if (this.items[i].id === this.values[0]) {
+            this.fatherHint = name
+            const c = this.items[i].children
+            for (let i = 0; i < c.length; i++) {
+              if (c[i].id === this.values[1]) {
+                this.hint = c[i].courseMajor
+              }
+            }
+          }
+        }
       }
     },
+
     getFatherCategory(value) {
       this.children = []
       this.tag = []

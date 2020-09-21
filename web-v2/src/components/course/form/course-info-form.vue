@@ -19,7 +19,7 @@
         </v-col>
       </v-row>
       <!-- 课程分类 -->
-      <Cascader :label="`课程分类`" @tag="getCourseTag" />
+      <Cascader :label="`课程分类`" :select="true" :values="[course.fatherCourseTag, course.courseTag]" @tag="getCourseTag" />
       <!-- 课程号 -->
       <v-row justify="center">
         <v-col cols="10">
@@ -41,14 +41,14 @@
             ref="startTime"
             v-model="startTime"
             :close-on-content-click="false"
-            :return-value.sync="date"
+            :return-value.sync="course.openingTime"
             transition="scale-transition"
             offset-y
             min-width="290px"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="date"
+                v-model="course.openingTime"
                 label="开课时间："
                 prepend-icon="mdi-calendar-month"
                 readonly
@@ -56,10 +56,10 @@
                 v-on="on"
               />
             </template>
-            <v-date-picker v-model="date" no-title scrollable locale="zh-cn">
+            <v-date-picker v-model="course.openingTime" no-title scrollable locale="zh-cn">
               <v-spacer />
               <v-btn text color="primary" @click="startTime = false">取消</v-btn>
-              <v-btn text color="primary" @click="$refs.startTime.save(date)">确认</v-btn>
+              <v-btn text color="primary" @click="$refs.startTime.save(course.openingTime)">确认</v-btn>
             </v-date-picker>
           </v-menu>
         </v-col>
@@ -69,14 +69,14 @@
             ref="closeTime"
             v-model="closeTime"
             :close-on-content-click="false"
-            :return-value.sync="date"
+            :return-value.sync="course.closeTime"
             transition="scale-transition"
             offset-y
             min-width="290px"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="date"
+                v-model="course.closeTime"
                 label="结课时间："
                 prepend-icon="mdi-calendar-month"
                 readonly
@@ -84,10 +84,10 @@
                 v-on="on"
               />
             </template>
-            <v-date-picker v-model="date" no-title scrollable locale="zh-cn">
+            <v-date-picker v-model="course.closeTime" no-title scrollable locale="zh-cn">
               <v-spacer />
               <v-btn text color="primary" @click="closeTime = false">取消</v-btn>
-              <v-btn text color="primary" @click="$refs.closeTime.save(date)">确认</v-btn>
+              <v-btn text color="primary" @click="$refs.closeTime.save(course.closeTime)">确认</v-btn>
             </v-date-picker>
           </v-menu>
         </v-col>
@@ -113,10 +113,12 @@
       <v-row justify="center">
         <v-col cols="10">
           <Vditor
+            ref="courseInfoText"
             :placeholder="'详细的介绍，可以包含图片，视频，文件等'"
             :uploadurl="uploadurl"
             :markdown="course.curriculumInfo"
             @vditor-input="setVditorInput"
+            @after="setText"
           />
         </v-col>
       </v-row>
@@ -129,8 +131,8 @@
       <v-row justify="center">
         <v-col cols="10">
           <v-radio-group v-model="course.accessMethod" row>
-            <v-radio label="公开（注册用户均可加入）" value="2" />
-            <v-radio label="密码（使用课程密码进入）" value="1" />
+            <v-radio label="公开（注册用户均可加入）" :value="2" />
+            <v-radio label="密码（使用课程密码进入）" :value="1" />
           </v-radio-group>
         </v-col>
       </v-row>
@@ -155,8 +157,8 @@
       <v-row justify="center">
         <v-col cols="10">
           <v-radio-group v-model="course.joinTimeLimit" row>
-            <v-radio label="不限制（课程结束前均能加入课程进行学习）" value="2" />
-            <v-radio label="限制（必须在此时间之前进入学习）" value="1" />
+            <v-radio label="不限制（课程结束前均能加入课程进行学习）" :value="0" />
+            <v-radio label="限制（必须在此时间之前进入学习）" :value="1" />
           </v-radio-group>
         </v-col>
       </v-row>
@@ -167,14 +169,14 @@
             ref="datePickerTime"
             v-model="datePickerTime"
             :close-on-content-click="false"
-            :return-value.sync="date"
+            :return-value.sync="limitYearTime"
             transition="scale-transition"
             offset-y
             min-width="290px"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="date"
+                v-model="limitYearTime"
                 label="年月日"
                 prepend-icon="mdi-calendar-month"
                 readonly
@@ -182,10 +184,10 @@
                 v-on="on"
               />
             </template>
-            <v-date-picker v-model="date" no-title scrollable locale="zh-cn">
+            <v-date-picker v-model="limitYearTime" no-title scrollable locale="zh-cn">
               <v-spacer />
               <v-btn text color="primary" @click="datePickerTime = false">取消</v-btn>
-              <v-btn text color="primary" @click="$refs.datePickerTime.save(date)">确认</v-btn>
+              <v-btn text color="primary" @click="$refs.datePickerTime.save(limitYearTime)">确认</v-btn>
             </v-date-picker>
           </v-menu>
         </v-col>
@@ -196,7 +198,7 @@
             v-model="dateTime"
             :close-on-content-click="false"
             :nudge-right="40"
-            :return-value.sync="time"
+            :return-value.sync="limitHourTime"
             transition="scale-transition"
             offset-y
             max-width="290px"
@@ -204,7 +206,7 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="time"
+                v-model="limitHourTime"
                 label="时分秒"
                 prepend-icon="mdi-clock-outline"
                 readonly
@@ -214,10 +216,10 @@
             </template>
             <v-time-picker
               v-if="dateTime"
-              v-model="time"
+              v-model="limitHourTime"
               locale="zh-cn"
               full-width
-              @click:minute="$refs.dateTime.save(time)"
+              @click:minute="$refs.dateTime.save(limitHourTime)"
             />
           </v-menu>
         </v-col>
@@ -236,7 +238,7 @@
       <v-row justify="center">
         <v-col cols="10">
           <v-text-field
-            v-model="course.curriculumName"
+            v-model="course.curriculumImageUrl"
             label="上传成功的图片地址或你输入的图片地址（上传成功后图片地址会自动填充）"
             placeholder="图片URL"
             :rules="[() => course.curriculumImageUrl != null || '图片URL不能为空！']"
@@ -255,13 +257,72 @@
           &nbsp;
         </v-col>
         <v-col cols="4">
-          <v-btn block color="primary">修改</v-btn>
+          <v-btn block color="primary" @click="dialog = true">修改</v-btn>
         </v-col>
         <v-col cols="3">
           &nbsp;
         </v-col>
       </v-row>
     </v-card>
+    <v-snackbar
+      v-model="showMessage"
+      :top="true"
+      :timeout="3000"
+    >
+      {{ message }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="showMessage = false"
+        >
+          关闭
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <v-dialog
+      v-model="dialog"
+      width="500"
+    >
+
+      <v-card>
+        <v-card-title class="headline grey lighten-2">
+          提示：
+        </v-card-title>
+
+        <v-card-text>
+          为了防止误操作，请输入验证码后点击确认修改：
+        </v-card-text>
+        <v-row justify="center">
+          <v-col cols="5">
+            <img :src="verifyImageUrl" alt="验证码" title="点击刷新" style="cursor:pointer;" @click="getVerifyImage">
+          </v-col>
+          <v-col cols="5">
+            <v-text-field
+              v-model="course.verifyCode"
+              label="验证码"
+              placeholder="验证码"
+              :rules="[() => course.verifyCode != null || '验证码不能为空！']"
+              clearable
+            />
+          </v-col>
+        </v-row>
+        <v-divider />
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="primary"
+            text
+            @click="updateData"
+          >
+            确认
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -269,6 +330,7 @@
 import Cascader from '@/components/form/cascader.vue'
 import Vditor from '@/components/vditor/vditor.vue'
 import Upload from '@/components/upload/upload-cropper.vue'
+import TimeUtil from '@/utils/time-util.vue'
 /**
  * 课程信息编辑与创建新课程组件
  */
@@ -279,8 +341,16 @@ export default {
     Vditor,
     Upload
   },
+  props: {
+    update: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
+      TimeUtil,
+      id: 0,
       course: {
         curriculumName: '',
         classNumber: 0,
@@ -294,7 +364,8 @@ export default {
         joinTimeLimit: '0',
         joinTime: '',
         curriculumImageUrl: '',
-        password: ''
+        password: '',
+        verifyCode: ''
       },
       category: [],
       date: new Date().toISOString().substr(0, 10),
@@ -305,21 +376,79 @@ export default {
       datePickerTime: false,
       // 保存限制进入课程的具体时分秒
       dateTime: false,
-      time: null
+      time: null,
+      limitYearTime: '',
+      limitHourTime: '',
+      message: '',
+      showMessage: false,
+      dialog: false,
+      verifyImageUrl: this.SERVER_API_URL + '/verifyImage'
     }
   },
   created() {
-
+    this.id = this.$route.params.id
+    if (this.update) {
+      this.getInfo()
+    }
   },
   methods: {
+    getInfo() {
+      this.httpGet(`/curriculum/info/${this.id}`, (json) => {
+        if (json.status === 200) {
+          this.course = json.data
+          this.course.closeTime = TimeUtil.formateNoHours(this.course.closeTime)
+          this.course.openingTime = TimeUtil.formateNoHours(this.course.openingTime)
+          if (this.course.joinTimeLimit === 1) {
+            this.course.joinTime = TimeUtil.formateHours(this.course.joinTime)
+          }
+          this.$refs.courseInfoText.setTextValue(json.data.curriculumInfo)
+          // this.$refs.courseInfoText.setTextValue(123456)
+          this.setTag()
+        } else {
+          //
+        }
+      })
+    },
+    setText() {
+      this.$refs.courseInfoText.setTextValue(this.course.curriculumInfo)
+    },
+    updateData() {
+      if (parseInt(this.course.joinTimeLimit) === 1) {
+        this.course.joinTime = this.limitYearTime + ' ' + this.limitHourTime + ':00'
+      }
+      if (this.course.verifyCode === null || this.course.verifyCode === '') {
+        this.message = '验证码不能为空！'
+        this.showMessage = true
+        return
+      }
+
+      this.httpPost('/teacher/curriculum/update', this.course, (json) => {
+        if (json.status === 200) {
+          this.message = '修改成功！'
+          this.showMessage = true
+          this.dialog = false
+          this.getInfo()
+        } else {
+          this.message = json.message
+          this.showMessage = true
+        }
+      })
+    },
     getCourseTag(value) {
-      console.log(value)
+      this.course.fatherCourseTag = value[0]
+      this.course.courseTag = value[1]
     },
     setVditorInput(data) {
       this.course.curriculumInfo = data
     },
     showMessageFromChild(data) {
       this.course.curriculumImageUrl = data
+    },
+    setTag() {
+      this.$store.commit('setEditCourseInfoTag', [this.course.fatherCourseTag, this.course.courseTag])
+    },
+    getVerifyImage() {
+      this.verifyImageUrl = this.SERVER_API_URL + '/verifyImage?t=' + new Date().getTime()
     }
   }
 }

@@ -37,10 +37,10 @@ public interface CurriculumService extends IService<CurriculumEntity> {
     /**
      * 更新课程
      * @param curriculumModel 课程模型
-     * @param teacher 创建老师
+     * @param request 获取教师信息
      * @return 更新完成的课程
      * */
-    CurriculumEntity updateCurriculum(CurriculumModel curriculumModel, Claims teacher);
+    CurriculumEntity updateCurriculum(CurriculumModel curriculumModel, HttpServletRequest request);
 
 
     /**

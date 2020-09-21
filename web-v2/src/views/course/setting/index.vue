@@ -16,8 +16,9 @@
     </v-row>
     <v-row justify="center">
       <v-col cols="12">
-        <CourseInfoForm v-if="type == 0" />
+        <CourseInfoForm v-if="type == 0" :update="true" />
         <BulletinTable v-if="type == 1" />
+        <UserTable v-if="type == 2" />
       </v-col>
     </v-row>
   </v-container>
@@ -25,12 +26,14 @@
 
 <script>
 import CourseInfoForm from '@/components/course/form/course-info-form.vue'
-import BulletinTable from '@/components/course/setting/bulletin-table.vue'
+import BulletinTable from '@/views/course/setting/bulletin-table.vue'
+import UserTable from '@/views/course/setting/user-table.vue'
 export default {
   name: 'Setting',
   components: {
     CourseInfoForm,
-    BulletinTable
+    BulletinTable,
+    UserTable
   },
   props: {
     course: {

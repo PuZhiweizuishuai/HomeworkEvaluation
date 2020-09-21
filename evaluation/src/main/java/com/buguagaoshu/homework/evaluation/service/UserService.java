@@ -69,6 +69,7 @@ public interface UserService extends IService<UserEntity> {
      *               limit： 每页显示数量
      *               name： 学生名字
      *               nameId： 学生 ID
+     *               role: 角色
      * @param nowLoginUser 当前登陆的用户
      * @return 分页后的结果
      * */

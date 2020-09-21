@@ -64,6 +64,14 @@ export default {
     fixednumber: {
       type: Array,
       default: () => { return [16, 9] }
+    },
+    serve: {
+      type: Boolean,
+      default: false
+    },
+    url: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -91,6 +99,11 @@ export default {
       downImg: '#',
       imgFile: '',
       uploadImgRelaPath: '' // 上传后的图片的地址（不带服务器域名）
+    }
+  },
+  created() {
+    if (this.serve) {
+      this.option.img = this.url
     }
   },
   methods: {
@@ -261,7 +274,7 @@ export default {
         overflow: hidden;
         border-radius: 50%;
         border:1px solid #cccccc;
-        background: #cccccc;
+        background-color: #cccccc;
         margin-left: 40px;
       }
     }

@@ -97,11 +97,17 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
         curriculumEntity.setCreateTime(System.currentTimeMillis());
         curriculumEntity.setUpdateTime(System.currentTimeMillis());
         // 开课结课时间设置
-        curriculumEntity.setOpeningTime(TimeUtils.parseTimeZone(curriculumModel.getOpeningTime()));
-        curriculumEntity.setCloseTime(TimeUtils.parseTimeZone(curriculumModel.getCloseTime()));
+        curriculumEntity.setOpeningTime(TimeUtils.parseTimeNoHour(curriculumModel.getOpeningTime()));
+        curriculumEntity.setCloseTime(TimeUtils.parseTimeNoHour(curriculumModel.getCloseTime()));
+        if (curriculumEntity.getOpeningTime() > curriculumEntity.getCloseTime()) {
+            throw new UserDataFormatException("开课时间不能在结课时间之后");
+        }
         // 是否限制加入时间
         if (CurriculumJoinTimLimitEnum.LIMIT_JOIN_TIME.getCode() == curriculumModel.getJoinTimeLimit()) {
-            curriculumEntity.setJoinTime(TimeUtils.parseTimeZone(curriculumModel.getJoinTime()));
+            curriculumEntity.setJoinTime(TimeUtils.parseTime(curriculumModel.getJoinTime()));
+            if (curriculumEntity.getJoinTime() < curriculumEntity.getOpeningTime() || curriculumEntity.getJoinTime() > curriculumEntity.getCloseTime()) {
+                throw new UserDataFormatException("限制课程进入时间必须在开课和结课的区间，不能超过此区间！");
+            }
         }
         // 课程进入方式
         if (CurriculumAccessTypeEnum.USE_PASSWORD.getCode() == curriculumEntity.getAccessMethod()) {
@@ -125,7 +131,12 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
     }
 
     @Override
-    public CurriculumEntity updateCurriculum(CurriculumModel curriculumModel, Claims teacher) {
+    public CurriculumEntity updateCurriculum(CurriculumModel curriculumModel, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        String verifyCodeKey = (String) session.getAttribute("verifyCodeKey");
+        // 验证码校验
+        verifyCodeService.verify(verifyCodeKey, curriculumModel.getVerifyCode());
+        Claims teacher = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         CurriculumEntity curriculumEntity = this.getById(curriculumModel.getId());
         if (curriculumEntity == null) {
             return null;
@@ -134,22 +145,29 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
             return null;
         }
         BeanUtils.copyProperties(curriculumModel, curriculumEntity);
-
+        // 避免课程创建教师信息被修改
+        curriculumEntity.setCreateTeacher(teacher.getId());
+        curriculumEntity.setTeacherName(teacher.getSubject());
         curriculumEntity.setUpdateTime(System.currentTimeMillis());
 
         // 特殊处理开始结束时间
         curriculumEntity.setOpeningTime(timeHandle(curriculumModel.getOpeningTime(),
-                curriculumEntity.getOpeningTime()));
+                curriculumEntity.getOpeningTime(), false));
         curriculumEntity.setCloseTime(timeHandle(curriculumModel.getCloseTime(),
-                curriculumEntity.getCloseTime()));
-
+                curriculumEntity.getCloseTime(), false));
+        if (curriculumEntity.getOpeningTime() > curriculumEntity.getCloseTime()) {
+            throw new UserDataFormatException("开课时间不能在结课时间之后");
+        }
         // 是否限制加入时间
         if (CurriculumJoinTimLimitEnum.LIMIT_JOIN_TIME.getCode() == curriculumModel.getJoinTimeLimit()) {
-            Long limitTime = timeHandle(curriculumModel.getJoinTime(), curriculumEntity.getJoinTime());
+            Long limitTime = timeHandle(curriculumModel.getJoinTime(), curriculumEntity.getJoinTime(), true);
             if (limitTime == null) {
                 throw new UserDataFormatException("提交的限制进入时间有误！");
             }
             curriculumEntity.setJoinTime(limitTime);
+            if (curriculumEntity.getJoinTime() < curriculumEntity.getOpeningTime() || curriculumEntity.getJoinTime() > curriculumEntity.getCloseTime()) {
+                throw new UserDataFormatException("限制课程进入时间必须在开课和结课的区间，不能超过此区间！");
+            }
         }
         // 课程进入方式
         if (CurriculumAccessTypeEnum.USE_PASSWORD.getCode() == curriculumEntity.getAccessMethod()) {
@@ -175,7 +193,7 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
 
         }
         if (tag != null) {
-            wrapper.eq("father_course_tag",tag).or().eq("course_tag", tag);
+            wrapper.eq("father_course_tag", tag).or().eq("course_tag", tag);
         }
 
         String userId = (String) params.get("user");
@@ -205,13 +223,13 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
         }
         IPage<StudentsCurriculumEntity> page =
                 studentsCurriculumService.page(
-                new Query<StudentsCurriculumEntity>().getPage(new HashMap<>(2)),
-                new QueryWrapper<StudentsCurriculumEntity>().eq("student_id", userId)
-        );
+                        new Query<StudentsCurriculumEntity>().getPage(new HashMap<>(2)),
+                        new QueryWrapper<StudentsCurriculumEntity>().eq("student_id", userId)
+                );
         List<Long> ids = page.getRecords().stream().map(StudentsCurriculumEntity::getCurriculumId).collect(Collectors.toList());
         if (ids.size() != 0) {
             List<CurriculumEntity> curriculumEntityList = this.listByIds(ids);
-            curriculumEntityList.forEach((c)->{
+            curriculumEntityList.forEach((c) -> {
                 c.setPassword("");
                 c.setCurriculumInfo("");
             });
@@ -220,7 +238,6 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
         }
         return null;
     }
-
 
 
     @Override
@@ -339,16 +356,29 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
     }
 
 
-    private Long timeHandle(String time, Long systemTime) {
+    /**
+     * 更新时间时对时间的特殊处理
+     *
+     * @param time       接收到的时间
+     * @param systemTime 系统中保存的时间
+     * @param isJoinTime 是否是限制加入时间
+     */
+    private Long timeHandle(String time, Long systemTime, boolean isJoinTime) {
         Long openTime = null;
         try {
             openTime = Long.parseLong(time);
             return openTime;
         } catch (NumberFormatException e) {
             try {
-                openTime = TimeUtils.parseTimeZone(time);
+                if (isJoinTime) {
+                    openTime = TimeUtils.parseTime(time);
+                } else {
+                    openTime = TimeUtils.parseTimeNoHour(time);
+                }
+
                 return openTime;
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         return systemTime;
     }

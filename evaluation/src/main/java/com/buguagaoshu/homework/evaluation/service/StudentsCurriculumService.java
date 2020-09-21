@@ -58,6 +58,14 @@ public interface StudentsCurriculumService extends IService<StudentsCurriculumEn
 
 
     /**
+     * 检查老师是否是这门课的老师
+     * @param classId 课程ID
+     * @param teacherId 教师ID
+     * @return 结果
+     * */
+    boolean checkThisCurriculumHaveTeacher(long classId, String teacherId);
+
+    /**
      * 返回在班级内的学生数据
      * @param userEntityList 学生数据
      * @param id 课程 ID

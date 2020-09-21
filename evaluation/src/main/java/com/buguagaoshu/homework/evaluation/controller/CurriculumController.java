@@ -9,11 +9,13 @@ import com.buguagaoshu.homework.evaluation.model.CurriculumModel;
 import com.buguagaoshu.homework.evaluation.model.JoinCourseCode;
 import com.buguagaoshu.homework.evaluation.service.CurriculumService;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
+import com.buguagaoshu.homework.evaluation.utils.TimeUtils;
 import com.buguagaoshu.homework.evaluation.vo.CurriculumInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Map;
 
 /**
@@ -31,11 +33,22 @@ public class CurriculumController {
         this.curriculumService = curriculumService;
     }
 
+
+    @PostMapping("/teacher/test")
+    public ResponseDetails test(@RequestBody CurriculumModel curriculumModel) {
+        long time = TimeUtils.parseTimeNoHour(curriculumModel.getCloseTime());
+        System.out.println(time);
+        System.out.println(TimeUtils.formatTime(time));
+
+        System.out.println(TimeUtils.parseTime(curriculumModel.getJoinTime()));
+        return ResponseDetails.ok().put("data", curriculumModel);
+    }
+
     /**
      * 教师创建新的课程
      * */
-    @PostMapping("/teacher/create/curriculum")
-    public ResponseDetails createCurriculum(@RequestBody CurriculumModel curriculumModel,
+    @PostMapping("/teacher/curriculum/create")
+    public ResponseDetails createCurriculum(@Valid @RequestBody CurriculumModel curriculumModel,
                                             HttpServletRequest request) {
         CurriculumEntity curriculumEntity = curriculumService.createCurriculum(curriculumModel,
                 JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY));
@@ -45,11 +58,10 @@ public class CurriculumController {
     /**
      * 更新课程信息
      * */
-    @PostMapping("/teacher/update/curriculum")
-    public ResponseDetails update(@RequestBody CurriculumModel curriculumModel,
+    @PostMapping("/teacher/curriculum/update")
+    public ResponseDetails update(@Valid @RequestBody CurriculumModel curriculumModel,
                                   HttpServletRequest request) {
-        CurriculumEntity curriculumEntity = curriculumService.updateCurriculum(curriculumModel,
-                JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY));
+        CurriculumEntity curriculumEntity = curriculumService.updateCurriculum(curriculumModel, request);
         if (curriculumEntity == null) {
             return ResponseDetails.ok(404, "没有这个课程或没有权限！");
         }

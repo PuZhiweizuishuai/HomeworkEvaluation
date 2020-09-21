@@ -23,6 +23,14 @@ function formateNoHours(date) {
   return da.getFullYear() + '-' + (da.getMonth() + 1) + '-' + da.getDate()
 }
 
+function formateHours(date) {
+  if (date === '' || date == null) {
+    return ''
+  }
+  const da = new Date(date)
+  return da.getHours() + ':' + da.getMinutes()
+}
+
 function formateNoHoursTime(strat, end) {
   return formateNoHours(strat) + ' ~ ' + formateNoHours(end)
 }
@@ -36,6 +44,7 @@ export default {
   formateTimeToChinese,
   formateTime,
   formateNoHours,
-  formateNoHoursTime
+  formateNoHoursTime,
+  formateHours
 }
 </script>

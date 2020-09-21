@@ -48,13 +48,13 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleDao, UserRoleEntity
     }
 
     @Override
-    public PageUtils queryPage(Map<String, Object> params) {
+    public IPage<UserRoleEntity> queryPage(Map<String, Object> params, String role) {
         IPage<UserRoleEntity> page = this.page(
                 new Query<UserRoleEntity>().getPage(params),
-                new QueryWrapper<UserRoleEntity>()
+                new QueryWrapper<UserRoleEntity>().eq("role", role).orderByDesc("create_time")
         );
 
-        return new PageUtils(page);
+        return page;
     }
 
     @Override

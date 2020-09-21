@@ -104,6 +104,7 @@ public class UserAndRole {
     private Integer status;
 
 
+
     private UserRoleEntity role;
 
     private String classRole;

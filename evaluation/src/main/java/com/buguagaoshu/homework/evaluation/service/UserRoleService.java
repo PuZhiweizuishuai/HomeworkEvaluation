@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.evaluation.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.utils.PageUtils;
@@ -18,7 +19,7 @@ import java.util.Map;
  */
 public interface UserRoleService extends IService<UserRoleEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    IPage<UserRoleEntity> queryPage(Map<String, Object> params, String role);
 
     UserRoleEntity selectByUserId(String userId);
 

@@ -81,6 +81,17 @@ public class StudentsCurriculumServiceImpl extends ServiceImpl<StudentsCurriculu
     }
 
     @Override
+    public boolean checkThisCurriculumHaveTeacher(long classId, String teacherId) {
+        List<StudentsCurriculumEntity> teacherList = this.teacherList(classId);
+        for (StudentsCurriculumEntity name : teacherList) {
+            if (name.getStudentId().equals(teacherId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public List<UserEntity> findUserByIdAndCurriculumId(List<UserEntity> userEntityList, Long id) {
         List<String> ids =
                 userEntityList.stream().map((u)->{
