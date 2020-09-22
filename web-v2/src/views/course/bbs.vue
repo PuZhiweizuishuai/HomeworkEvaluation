@@ -21,6 +21,10 @@ export default {
     return {
 
     }
+  },
+  created() {
+    this.$vuetify.goTo(0)
+    document.title = '讨论区 - ' + this.course.curriculumName
   }
 }
 </script>

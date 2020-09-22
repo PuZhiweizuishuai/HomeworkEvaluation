@@ -53,12 +53,13 @@ export default {
     }
   },
   created() {
+    this.$vuetify.goTo(0)
     this.id = this.$route.params.id
     this.getHomeworkList()
   },
   methods: {
     getHomeworkList() {
-      fetch(this.SERVER_API_URL + `/homework/info/${this.id}`, {
+      fetch(this.SERVER_API_URL + `/homework/list/${this.id}`, {
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')
@@ -68,7 +69,7 @@ export default {
       }).then(response => response.json())
         .then(json => {
           if (json.status === 200) {
-            this.homeworkList = json.data || []
+            this.homeworkList = json.data.list || []
           } else {
             this.$message.error(json.message)
           }

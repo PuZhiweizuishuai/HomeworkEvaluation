@@ -21,6 +21,10 @@ export default {
     return {
 
     }
+  },
+  created() {
+    this.$vuetify.goTo(0)
+    document.title = '评分标准 - ' + this.course.curriculumName
   }
 }
 </script>

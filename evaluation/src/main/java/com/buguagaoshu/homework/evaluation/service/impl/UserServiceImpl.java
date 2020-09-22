@@ -358,6 +358,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             CurriculumEntity entity = new CurriculumEntity();
             entity.setId(curriculumEntity.getId());
             entity.setStudentNumber(curriculumEntity.getStudentNumber());
+            // TODO 更新课程人数增加方法
             curriculumService.updateById(entity);
             return map;
         }

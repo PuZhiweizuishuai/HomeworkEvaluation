@@ -19,6 +19,7 @@
         <CourseInfoForm v-if="type == 0" :update="true" />
         <BulletinTable v-if="type == 1" />
         <UserTable v-if="type == 2" />
+        <HomeworkTable v-if="type == 3" />
       </v-col>
     </v-row>
   </v-container>
@@ -28,12 +29,15 @@
 import CourseInfoForm from '@/components/course/form/course-info-form.vue'
 import BulletinTable from '@/views/course/setting/bulletin-table.vue'
 import UserTable from '@/views/course/setting/user-table.vue'
+import HomeworkTable from '@/views/course/setting/homework-table.vue'
+
 export default {
   name: 'Setting',
   components: {
     CourseInfoForm,
     BulletinTable,
-    UserTable
+    UserTable,
+    HomeworkTable
   },
   props: {
     course: {
@@ -49,6 +53,10 @@ export default {
     return {
       type: 0
     }
+  },
+  created() {
+    this.$vuetify.goTo(0)
+    document.title = '设置 - ' + this.course.curriculumName
   }
 }
 </script>

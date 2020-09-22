@@ -2,6 +2,7 @@ package com.buguagaoshu.homework.evaluation.controller;
 
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
+import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.HomeworkEntity;
 import com.buguagaoshu.homework.evaluation.entity.SubmitHomeworkStatusEntity;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
@@ -40,7 +42,7 @@ public class HomeworkController {
     /**
      * 添加作业，教师和管理员可访问
      */
-    @PostMapping("/homework/add")
+    @PostMapping("/homework/save")
     public ResponseDetails add(@Validated @RequestBody HomeworkModel homeworkModel,
                                HttpServletRequest request) {
         System.out.println(homeworkModel);
@@ -57,16 +59,16 @@ public class HomeworkController {
     /**
      * 获取当前课程作业列表
      */
-    @GetMapping("/homework/info/{id}")
+    @GetMapping("/homework/list/{id}")
     public ResponseDetails list(@PathVariable("id") Long courseId,
+                                @RequestParam Map<String, Object> params,
                                 HttpServletRequest request) {
         // TODO 返回用户作业提交信息
-        List<HomeworkEntity> list = homeworkService.courseHomeworkList(courseId,
-                JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY).getId());
-        if (list == null) {
+        PageUtils pageUtils = homeworkService.courseHomeworkList(courseId, params, request);
+        if (pageUtils == null) {
             return ResponseDetails.ok(ReturnCodeEnum.NO_POWER);
         }
-        return ResponseDetails.ok().put("data", list);
+        return ResponseDetails.ok().put("data", pageUtils);
     }
 
     /**

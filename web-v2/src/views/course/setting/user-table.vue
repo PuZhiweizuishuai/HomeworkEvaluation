@@ -179,7 +179,7 @@
       width="1000"
     >
       <v-card outlined>
-        <UserList />
+        <UserList @success="showResult" />
       </v-card>
     </v-dialog>
     <v-snackbar
@@ -257,6 +257,18 @@ export default {
     this.getUserList()
   },
   methods: {
+    showResult(value) {
+      // TODO 细化提示信息
+      if (value.status === 200) {
+        this.message = '导入成功！'
+        this.showMessage = true
+        this.getUserList()
+        this.dialog = false
+      } else {
+        this.message = value.message
+        this.showMessage = true
+      }
+    },
     searchUser() {
       if ((this.searchKey.name === '' || this.searchKey.name === null) &&
            (this.searchKey.userId === '' || this.searchKey.userId === null) &&

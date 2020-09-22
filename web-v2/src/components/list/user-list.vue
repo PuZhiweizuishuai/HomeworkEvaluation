@@ -143,8 +143,8 @@ export default {
         { text: '专业', sortable: false, value: 'major' },
         { text: '角色', sortable: false, value: 'role.role' },
         { text: '状态', sortable: false, value: 'status' }
-
-      ]
+      ],
+      message: ''
     }
   },
   created() {
@@ -165,11 +165,7 @@ export default {
         data.push(user)
       }
       this.httpPost('/teacher/user/join', data, (json) => {
-        if (json.status === 200) {
-          // TODO 处理显示结果
-        } else {
-          //
-        }
+        this.$emit('success', json)
       })
     },
     searchUser() {

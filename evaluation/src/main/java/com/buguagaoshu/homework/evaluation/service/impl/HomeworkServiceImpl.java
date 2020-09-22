@@ -196,22 +196,26 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
     }
 
     @Override
-    public List<HomeworkEntity> courseHomeworkList(long courseId, String userId) {
-        if (!judgeUserIsInCourse(courseId, userId)) {
+    public PageUtils courseHomeworkList(Long courseId, Map<String, Object> params, HttpServletRequest request) {
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        if (!judgeUserIsInCourse(courseId, user.getId())) {
             return null;
         }
         QueryWrapper<HomeworkEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("class_number", courseId);
         wrapper.orderByDesc("create_time");
-        List<HomeworkEntity> list =
-                this.list(wrapper);
-        if (list == null || list.size() == 0) {
-            return new ArrayList<HomeworkEntity>();
+        IPage<HomeworkEntity> page = this.page(
+                new Query<HomeworkEntity>().getPage(params),
+                wrapper
+        );
+        if (page.getTotal() == 0) {
+            return new PageUtils(page);
         }
-        list.forEach((l) -> {
+
+        page.getRecords().forEach((l) -> {
             l.setStatus(calculationStatus(l));
         });
-        return list;
+        return new PageUtils(page);
     }
 
     /**

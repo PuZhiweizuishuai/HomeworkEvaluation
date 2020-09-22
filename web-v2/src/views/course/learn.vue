@@ -86,7 +86,10 @@ export default {
     }
   },
   created() {
+    // document.title = document.title
+    this.$vuetify.goTo(0)
     this.id = this.$route.params.id
+    document.title = '公告 - ' + this.course.curriculumName
     this.getBulletinList()
     this.onResize()
   },

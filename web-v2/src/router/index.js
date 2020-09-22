@@ -81,7 +81,7 @@ const routes = [
         name: 'Learn',
         component: () => import('@/views/course/learn.vue'),
         meta: {
-          title: '课程详情',
+          // title: '课程详情',
           requireAuth: true
         }
       },
@@ -90,7 +90,7 @@ const routes = [
         name: 'Score',
         component: () => import('@/views/course/score.vue'),
         meta: {
-          title: '评分标准',
+          // title: '评分标准',
           requireAuth: true
         }
       },
@@ -99,16 +99,27 @@ const routes = [
         name: 'Courseware',
         component: () => import('@/views/course/courseware.vue'),
         meta: {
-          title: '课件',
+          // title: '课件',
           requireAuth: true
         }
       },
+      // 显示作业列表
       {
         path: '/course/learn/:id/exam',
         name: 'Exam',
         component: () => import('@/views/course/exam.vue'),
         meta: {
-          title: '测验与作业',
+          // title: '测验与作业',
+          requireAuth: true
+        }
+      },
+      // 显示作业内容
+      {
+        path: '/course/learn/:id/exam/homework/:homeworkId',
+        name: 'Exam',
+        component: () => import('@/views/homework/index.vue'),
+        meta: {
+          // title: '测验与作业',
           requireAuth: true
         }
       },
@@ -117,7 +128,7 @@ const routes = [
         name: 'BBS',
         component: () => import('@/views/course/bbs.vue'),
         meta: {
-          title: '讨论区',
+          // title: '讨论区',
           requireAuth: true
         }
       },
@@ -126,7 +137,7 @@ const routes = [
         name: 'Setting',
         component: () => import('@/views/course/setting/index.vue'),
         meta: {
-          title: '设置',
+          // title: '设置',
           requireAuth: true
         }
       }

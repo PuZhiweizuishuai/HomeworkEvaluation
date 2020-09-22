@@ -40,10 +40,13 @@ public interface HomeworkService extends IService<HomeworkEntity> {
      * 查找当前课程作业列表
      *
      * @param courseId 课程 ID
-     * @param userId   用户 ID
+     * @param params   查询参数
+     *                 page： 页码
+     *                 limit： 每页显示数量
+     * @param request 获取当前用户信息
      * @return 课程列表
      */
-    List<HomeworkEntity> courseHomeworkList(long courseId, String userId);
+    PageUtils courseHomeworkList(Long courseId, Map<String, Object> params, HttpServletRequest request);
 
 
     /**

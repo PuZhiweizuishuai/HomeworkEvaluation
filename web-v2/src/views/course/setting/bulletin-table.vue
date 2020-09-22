@@ -35,9 +35,21 @@
             {{ getStatus(item.status) }}
           </template>
           <template v-slot:item.actions="{ item }">
-            <v-btn small dark color="cyan" @click="edit(item)">
-              <v-icon dark>mdi-pencil</v-icon>
-            </v-btn>
+            <v-tooltip left>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  class="mr-2"
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="edit(item)"
+                >
+                  <v-icon>mdi-pencil</v-icon>
+                </v-btn>
+
+              </template>
+              <span>编辑</span>
+            </v-tooltip>
           </template>
 
           <template v-slot:no-data>
