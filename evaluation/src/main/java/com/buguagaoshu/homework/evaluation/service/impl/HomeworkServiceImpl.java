@@ -107,92 +107,81 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
     @Override
     @Transactional(rollbackFor = UserDataFormatException.class)
     public HomeworkModel add(HomeworkModel homeworkModel, Claims nowLoginUser) {
-        boolean power = false;
         // 检查有无权限进行创建作业
         CurriculumEntity curriculumEntity = curriculumService.getById(homeworkModel.getClassNumber());
         if (!nowLoginUser.getId().equals(curriculumEntity.getCreateTeacher())) {
             // 查询是否拥有班级教师权限
-            StudentsCurriculumEntity studentsCurriculumEntity =
-                    studentsCurriculumService.selectStudentByCurriculumId(nowLoginUser.getId(), curriculumEntity.getId());
-            if (studentsCurriculumEntity == null) {
+            if (!studentsCurriculumService.checkThisCurriculumHaveTeacher(curriculumEntity.getId(), nowLoginUser.getId())) {
                 return null;
-            } else {
-                power = true;
             }
         }
         // 拥有创建作业的权限，开始创建作业
-        if (nowLoginUser.getId().equals(curriculumEntity.getCreateTeacher()) || power) {
-            // 数据校验
-            homeworkHandleValid(homeworkModel);
-
-            HomeworkEntity homeworkEntity = new HomeworkEntity();
-            BeanUtils.copyProperties(homeworkModel, homeworkEntity);
-            // 需要写入创建时间，分值，教师，状态
-            homeworkEntity.setCreateTime(System.currentTimeMillis());
-            homeworkEntity.setCreateTeacher(nowLoginUser.getId());
-            homeworkEntity.setStatus(calculationStatus(homeworkEntity));
-            int score = 0;
-            // 存储作业获得主键 ID
-            this.save(homeworkEntity);
-            // 校验问题
-            // 新建的问题列表
-            List<QuestionsEntity> questionsEntityList = new ArrayList<>();
-            // 导入的问题列表
-            List<HomeworkWithQuestionsEntity> homeworkWithQuestionsEntities = new ArrayList<>();
-            if (homeworkModel.getQuestionsModels() != null && homeworkModel.getQuestionsModels().size() != 0) {
-                for (QuestionsModel questionsModel : homeworkModel.getQuestionsModels()) {
-                    score += questionsModel.getScore();
-                    // 导入已有问题
-                    if (questionsModel.getId() != null) {
-                        if (questionsService.checkUseQuestionPower(questionsModel.getId(), nowLoginUser.getId())) {
-                            // 将数据加入题目列表
-                            homeworkWithQuestionsEntities.add(getHomeworkWithQuestionsEntity(homeworkEntity.getId(),
-                                    questionsModel.getId(),
-                                    nowLoginUser.getId(),
-                                    questionsModel.getScore()));
-                        } else {
-                            throw new UserDataFormatException("没有导入这道题目的权限， 题目内容： " + questionsModel.getQuestion());
-                        }
-                        // 新建的问题
+        // 数据校验
+        HomeworkEntity homeworkEntity = homeworkHandleValid(homeworkModel);
+        // 需要写入创建时间，分值，教师，状态
+        homeworkEntity.setCreateTime(System.currentTimeMillis());
+        homeworkEntity.setCreateTeacher(nowLoginUser.getId());
+        homeworkEntity.setStatus(calculationStatus(homeworkEntity));
+        int score = 0;
+        // 存储作业获得主键 ID
+        this.save(homeworkEntity);
+        // 校验问题
+        // 新建的问题列表
+        List<QuestionsEntity> questionsEntityList = new ArrayList<>();
+        // 导入的问题列表
+        List<HomeworkWithQuestionsEntity> homeworkWithQuestionsEntities = new ArrayList<>();
+        if (homeworkModel.getQuestionsModels() != null && homeworkModel.getQuestionsModels().size() != 0) {
+            for (QuestionsModel questionsModel : homeworkModel.getQuestionsModels()) {
+                score += questionsModel.getScore();
+                // 导入已有问题
+                if (questionsModel.getId() != null) {
+                    if (questionsService.checkUseQuestionPower(questionsModel.getId(), nowLoginUser.getId())) {
+                        // 将数据加入题目列表
+                        homeworkWithQuestionsEntities.add(getHomeworkWithQuestionsEntity(homeworkEntity.getId(),
+                                questionsModel.getId(),
+                                nowLoginUser.getId(),
+                                questionsModel.getScore()));
                     } else {
-                        // 校验当前问题
-                        questionHandleValid(questionsModel);
-                        try {
-                            QuestionsEntity questionsEntity = copyQuestionModeToEntity(questionsModel, nowLoginUser.getId());
-                            questionsEntity.setScore(questionsModel.getScore());
-                            questionsEntityList.add(questionsEntity);
-                            // 保存要添加的问题
-                        } catch (JsonProcessingException e) {
-                            throw new UserDataFormatException("像数据库存入题目时序列化异常，请稍后重试！");
-                        }
+                        throw new UserDataFormatException("没有导入这道题目的权限， 题目内容： " + questionsModel.getQuestion());
+                    }
+                    // 新建的问题
+                } else {
+                    // 校验当前问题
+                    questionHandleValid(questionsModel);
+                    try {
+                        QuestionsEntity questionsEntity = copyQuestionModeToEntity(questionsModel, nowLoginUser.getId());
+                        questionsEntity.setScore(questionsModel.getScore());
+                        questionsEntityList.add(questionsEntity);
+                        // 保存要添加的问题
+                    } catch (JsonProcessingException e) {
+                        throw new UserDataFormatException("像数据库存入题目时序列化异常，请稍后重试！");
                     }
                 }
-
-            } else {
-                throw new UserDataFormatException("没有提交题目数据！");
-            }
-            // 写入成绩
-            homeworkEntity.setScore(score);
-            // 更新作业数据
-            this.updateById(homeworkEntity);
-            // 保存新建的题目
-            if (questionsEntityList.size() != 0) {
-                questionsService.saveBatch(questionsEntityList);
-                questionsEntityList.forEach((q) -> {
-                    homeworkWithQuestionsEntities.add(getHomeworkWithQuestionsEntity(homeworkEntity.getId(),
-                            q.getId(),
-                            nowLoginUser.getId(),
-                            q.getScore()));
-                });
             }
 
-            // 保存作业与题目的关联
-            homeworkWithQuestionsService.saveBatch(homeworkWithQuestionsEntities);
-            // TODO 通知班级成员
-            homeworkModel.setId(homeworkEntity.getId());
-            return homeworkModel;
+        } else {
+            throw new UserDataFormatException("没有提交题目数据！");
         }
-        return null;
+        // 写入成绩
+        homeworkEntity.setScore(score);
+        // 更新作业数据
+        this.updateById(homeworkEntity);
+        // 保存新建的题目
+        if (questionsEntityList.size() != 0) {
+            questionsService.saveBatch(questionsEntityList);
+            questionsEntityList.forEach((q) -> {
+                homeworkWithQuestionsEntities.add(getHomeworkWithQuestionsEntity(homeworkEntity.getId(),
+                        q.getId(),
+                        nowLoginUser.getId(),
+                        q.getScore()));
+            });
+        }
+
+        // 保存作业与题目的关联
+        homeworkWithQuestionsService.saveBatch(homeworkWithQuestionsEntities);
+        // TODO 通知班级成员
+        homeworkModel.setId(homeworkEntity.getId());
+        return homeworkModel;
     }
 
     @Override
@@ -402,8 +391,8 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
     /**
      * 检查是否有教师权限
      *
-     * @param homeworkId  作业ID
-     * @param user        当前用户
+     * @param homeworkId 作业ID
+     * @param user       当前用户
      */
     public MultipleReturnValues checkTeacherPower(Long homeworkId, Claims user) {
         HomeworkEntity homework = this.getById(homeworkId);
@@ -537,7 +526,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
             List<QuestionComment> questionList = teacherCommentHomeworkData.getQuestionList();
             Map<Long, QuestionComment> questionCommentMap = new HashMap<>();
             if (questionList != null) {
-                questionCommentMap = questionList.stream().collect(Collectors.toMap(QuestionComment::getId, q->q));
+                questionCommentMap = questionList.stream().collect(Collectors.toMap(QuestionComment::getId, q -> q));
             }
 
             // 分数计算
@@ -568,7 +557,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                     score += questionComment.getScore();
                     submitQuestionsEntity.setScore(questionComment.getScore());
                     submitQuestionsEntity.setTeacherComment(questionComment.getText());
-                // 其它题目分数重新判断
+                    // 其它题目分数重新判断
                 } else {
                     if (questionComment != null && questionComment.getScore() != null) {
                         if (questionComment.getScore() > 0 && questionComment.getScore() <= submitQuestionsEntity.getMaxScore()) {
@@ -683,9 +672,11 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
      * @param homeworkModel 作业数据
      *                      不返回结果，直接抛出异常，由 EvaluationControllerAdvice 处理
      */
-    public void homeworkHandleValid(HomeworkModel homeworkModel) {
+    public HomeworkEntity homeworkHandleValid(HomeworkModel homeworkModel) {
         // 开始结束时间校验
-        if (homeworkModel.getOpenTime() > homeworkModel.getCloseTime() || homeworkModel.getCloseTime() < System.currentTimeMillis()) {
+        Long openTime = TimeUtils.parseTime(homeworkModel.getOpenTime());
+        Long closeTime = TimeUtils.parseTime(homeworkModel.getCloseTime());
+        if (openTime > closeTime || closeTime < System.currentTimeMillis()) {
             throw new UserDataFormatException("作业时间设置错误!");
         }
         // 如果是测验
@@ -698,11 +689,18 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
             if (homeworkModel.getLimitTime() == null || homeworkModel.getLimitTime() <= 0) {
                 throw new UserDataFormatException("限制进入时间有误，限制进入时间必须大于 0");
             }
+            if (homeworkModel.getLimitTime() * TimeUtils.MINUTE + openTime < closeTime) {
+                throw new UserDataFormatException("限制进入时间有误，限制进入时间不能超过结束时间。");
+            }
             if (homeworkModel.getTime() == null || homeworkModel.getTime() <= 0) {
                 homeworkModel.setTime(0);
             }
         }
-
+        HomeworkEntity homeworkEntity = new HomeworkEntity();
+        BeanUtils.copyProperties(homeworkModel, homeworkEntity);
+        homeworkEntity.setOpenTime(openTime);
+        homeworkEntity.setCloseTime(closeTime);
+        return homeworkEntity;
     }
 
     /**

@@ -66,7 +66,7 @@ public class StudentsCurriculumServiceImpl extends ServiceImpl<StudentsCurriculu
     }
 
     @Override
-    public boolean checkThisCurriculumHaveTeacher(long classId, String teacherId, HomeworkEntity homeworkEntity) {
+    public boolean checkThisCurriculumHaveTeacher(Long classId, String teacherId, HomeworkEntity homeworkEntity) {
         if (!homeworkEntity.getCreateTeacher().equals(teacherId)) {
             List<StudentsCurriculumEntity> teacherList = this.teacherList(homeworkEntity.getClassNumber());
             for (StudentsCurriculumEntity name : teacherList) {
@@ -81,7 +81,7 @@ public class StudentsCurriculumServiceImpl extends ServiceImpl<StudentsCurriculu
     }
 
     @Override
-    public boolean checkThisCurriculumHaveTeacher(long classId, String teacherId) {
+    public boolean checkThisCurriculumHaveTeacher(Long classId, String teacherId) {
         List<StudentsCurriculumEntity> teacherList = this.teacherList(classId);
         for (StudentsCurriculumEntity name : teacherList) {
             if (name.getStudentId().equals(teacherId)) {

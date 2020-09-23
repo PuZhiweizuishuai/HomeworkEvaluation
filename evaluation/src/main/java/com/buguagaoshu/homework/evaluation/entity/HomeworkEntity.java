@@ -72,6 +72,7 @@ public class HomeworkEntity {
 
     /**
      * 测验时间
+     * 单位分钟
      */
     private Integer time;
 

@@ -74,7 +74,7 @@ public class HomeworkController {
     /**
      * 获取当前作业问题列表
      */
-    @GetMapping("/homework/question/{id}")
+    @GetMapping("/homework/info/{id}")
     public ResponseDetails homeworkQuestionList(@PathVariable("id") Long homeworkId,
                                                 HttpServletRequest request) throws JsonProcessingException {
         HomeworkModel homeworkModel = homeworkService.courseQuestionList(homeworkId,

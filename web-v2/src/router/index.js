@@ -116,7 +116,7 @@ const routes = [
       // 显示作业内容
       {
         path: '/course/learn/:id/exam/homework/:homeworkId',
-        name: 'Exam',
+        name: 'HomeworkInfo',
         component: () => import('@/views/homework/index.vue'),
         meta: {
           // title: '测验与作业',
@@ -136,6 +136,15 @@ const routes = [
         path: '/course/learn/:id/setting',
         name: 'Setting',
         component: () => import('@/views/course/setting/index.vue'),
+        meta: {
+          // title: '设置',
+          requireAuth: true
+        }
+      },
+      {
+        path: '/course/learn/:id/create/homework',
+        name: 'CreateHomework',
+        component: () => import('@/views/homework/create.vue'),
         meta: {
           // title: '设置',
           requireAuth: true

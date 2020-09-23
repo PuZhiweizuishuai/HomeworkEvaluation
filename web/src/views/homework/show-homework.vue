@@ -236,7 +236,7 @@ export default {
       this.submitData.answers.push(answer)
     },
     getHomeworkData() {
-      fetch(this.SERVER_API_URL + `/homework/question/${this.hid}`, {
+      fetch(this.SERVER_API_URL + `/homework/info/${this.hid}`, {
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')

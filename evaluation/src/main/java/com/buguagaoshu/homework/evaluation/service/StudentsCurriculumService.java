@@ -54,7 +54,7 @@ public interface StudentsCurriculumService extends IService<StudentsCurriculumEn
      * @param homeworkEntity 作业信息
      * @return 结果
      * */
-    boolean checkThisCurriculumHaveTeacher(long classId, String teacherId, HomeworkEntity homeworkEntity);
+    boolean checkThisCurriculumHaveTeacher(Long classId, String teacherId, HomeworkEntity homeworkEntity);
 
 
     /**
@@ -63,7 +63,7 @@ public interface StudentsCurriculumService extends IService<StudentsCurriculumEn
      * @param teacherId 教师ID
      * @return 结果
      * */
-    boolean checkThisCurriculumHaveTeacher(long classId, String teacherId);
+    boolean checkThisCurriculumHaveTeacher(Long classId, String teacherId);
 
     /**
      * 返回在班级内的学生数据

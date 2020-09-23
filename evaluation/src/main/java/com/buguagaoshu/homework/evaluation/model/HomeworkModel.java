@@ -36,13 +36,13 @@ public class HomeworkModel {
      */
     @NotNull(message = "作业开始时间不能为空")
     @Min(value = 0,message = "开始时间不能为空")
-    private Long openTime;
+    private String openTime;
     /**
      * 截止时间
      */
     @NotNull(message = "作业结束时间不能为空")
     @Min(value = 0,message = "结束时间不能为空")
-    private Long closeTime;
+    private String closeTime;
 
 
     /**
@@ -67,8 +67,10 @@ public class HomeworkModel {
 
     /**
      * 测验时间
+     * 单位分钟
      */
     private Integer time;
+
 
     @ListValue(value = {0, 1}, message = "多选给分策略设置错误")
     private Integer sourceType;
@@ -112,4 +114,11 @@ public class HomeworkModel {
      * */
     @NotEmpty(message = "问题不能为空")
     List<QuestionsModel> questionsModels;
+
+    /**
+     * 是否开启评价
+     * 0 关闭
+     * 1 开启
+     * */
+    private Integer evaluation;
 }

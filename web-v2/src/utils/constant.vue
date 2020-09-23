@@ -16,11 +16,16 @@ const HOMEWORK_STATUS_COLOR = [
   '', 'orange', 'green', 'teal', 'pink', 'indigo'
 ]
 
+const QUESTION_TYPE = [
+  '单选', '多选', '填空', '问答', '判断'
+]
+
 export default {
   HOMEWORK_TYPE,
   HOMEWORK__TYPE_COLOR,
   HOMEWORK_STATUS,
-  HOMEWORK_STATUS_COLOR
+  HOMEWORK_STATUS_COLOR,
+  QUESTION_TYPE
 
 }
 </script>

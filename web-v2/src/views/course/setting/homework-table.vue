@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col cols="12">
-        <v-btn depressed color="success">新建作业</v-btn>
+        <v-btn depressed color="success" @click="goToCreate">新建作业</v-btn>
       </v-col>
     </v-row>
     <v-row>
@@ -150,6 +150,9 @@ export default {
     pageChange(value) {
       this.page = value
       this.getHomeworkList()
+    },
+    goToCreate() {
+      this.$router.push(`/course/learn/${this.id}/create/homework`)
     }
   }
 }

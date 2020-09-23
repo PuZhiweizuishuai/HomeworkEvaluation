@@ -69,7 +69,7 @@
 
 <script>
 import LoginFrom from '@/components/form/login-form.vue'
-import RegisterFrom from '@/components/form/register-from.vue'
+import RegisterFrom from '@/components/form/register-form.vue'
 
 export default {
   name: 'Login',
