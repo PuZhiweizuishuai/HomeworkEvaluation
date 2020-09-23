@@ -269,6 +269,10 @@ export default {
           let endTime = 0
           if (this.homeworkInfo.type === 1) {
             endTime = this.homeworkInfo.intoTime + this.homeworkInfo.time * 60000
+            // 结束时间不能超过作业的结束时间
+            if (endTime > this.homeworkInfo.closeTime) {
+              endTime = this.homeworkInfo.closeTime
+            }
           } else {
             endTime = this.homeworkInfo.closeTime
           }
