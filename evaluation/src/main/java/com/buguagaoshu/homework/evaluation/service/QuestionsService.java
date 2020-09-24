@@ -7,8 +7,10 @@ import com.buguagaoshu.homework.evaluation.entity.QuestionsEntity;
 import com.buguagaoshu.homework.evaluation.entity.SubmitHomeworkStatusEntity;
 import com.buguagaoshu.homework.evaluation.entity.SubmitQuestionsEntity;
 import com.buguagaoshu.homework.evaluation.model.QuestionsModel;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.Claims;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -49,5 +51,41 @@ public interface QuestionsService extends IService<QuestionsEntity> {
                                            Map<Long, HomeworkWithQuestionsEntity> questionsMaps,
                                            Map<Long, SubmitQuestionsEntity> submit,
                                            boolean rightAnswer);
+
+    /**
+     * 保存新的问题
+     * @param questionsModel 问题数据
+     * @param request 请求的用户
+     * @return 结果
+     * */
+    Boolean saveQuestion(QuestionsModel questionsModel, HttpServletRequest request);
+
+
+
+    /**
+     * 对于题目数据的校验
+     *
+     * @param questionsModel 题目数据
+     * */
+    void questionHandleValid(QuestionsModel questionsModel);
+
+
+
+    /**
+     * 将提交的数据拷贝到需要保存到数据库的问题数据
+     * @param questionsModel 问题数据
+     * @param teacher 教师ID
+     * @throws JsonProcessingException 问题答案与标签序列化异常
+     * @return 数据库要保存的数据
+     */
+    QuestionsEntity copyQuestionModeToEntity(QuestionsModel questionsModel, String teacher) throws JsonProcessingException;
+
+    /**
+     * 更新问题
+     * @param questionsModel 问题数据
+     * @param request 获取用户信息
+     * @return 更新结果
+     * */
+    Boolean updateQuestion(QuestionsModel questionsModel, HttpServletRequest request);
 }
 

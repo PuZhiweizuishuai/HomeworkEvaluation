@@ -45,6 +45,10 @@ public enum  RoleTypeEnum {
         return false;
     }
 
+    public static boolean checkTeacher(String authorities) {
+        return ADMIN.getRole().equals(authorities) || TEACHER.getRole().equals(authorities);
+    }
+
     public String getRole() {
         return role;
     }

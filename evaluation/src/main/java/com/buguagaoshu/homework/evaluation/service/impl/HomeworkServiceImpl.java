@@ -147,9 +147,12 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                     // 新建的问题
                 } else {
                     // 校验当前问题
-                    questionHandleValid(questionsModel);
+                    questionsService.questionHandleValid(questionsModel);
+                    if (questionsModel.getScore() == null || questionsModel.getScore() <= 0) {
+                        throw new UserDataFormatException("题目分数必须大于 0");
+                    }
                     try {
-                        QuestionsEntity questionsEntity = copyQuestionModeToEntity(questionsModel, nowLoginUser.getId());
+                        QuestionsEntity questionsEntity = questionsService.copyQuestionModeToEntity(questionsModel, nowLoginUser.getId());
                         questionsEntity.setScore(questionsModel.getScore());
                         questionsEntityList.add(questionsEntity);
                         // 保存要添加的问题
@@ -644,29 +647,6 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
 
 
     /**
-     * 将提交的数据拷贝到需要保存到数据库的问题数据
-     */
-    public QuestionsEntity copyQuestionModeToEntity(QuestionsModel questionsModel, String teacher) throws JsonProcessingException {
-        QuestionsEntity questionsEntity = new QuestionsEntity();
-        questionsEntity.setQuestion(questionsModel.getQuestion());
-        questionsEntity.setCreateTeacher(teacher);
-        questionsEntity.setCreateTime(System.currentTimeMillis());
-        questionsEntity.setShareStatus(questionsModel.getShareStatus());
-        questionsEntity.setTips(questionsModel.getTips());
-        questionsEntity.setType(questionsModel.getType());
-        ObjectMapper objectMapper = new ObjectMapper();
-        if (questionsModel.getType() == QuestionTypeEnum.MULTIPLE_CHOICE.getCode()
-                || questionsModel.getType() == QuestionTypeEnum.SINGLE_CHOICE.getCode()) {
-            questionsEntity.setAnswer(objectMapper.writeValueAsString(questionsModel.getAnswer()));
-            questionsEntity.setOptions(objectMapper.writeValueAsString(questionsModel.getOptions()));
-        } else {
-            questionsEntity.setOtherAnswer(questionsModel.getOtherAnswer());
-        }
-        return questionsEntity;
-    }
-
-
-    /**
      * 作业数据有效性检验
      *
      * @param homeworkModel 作业数据
@@ -703,37 +683,6 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         return homeworkEntity;
     }
 
-    /**
-     * 对于题目数据的校验
-     *
-     * @param questionsModel 题目数据
-     */
-    public void questionHandleValid(QuestionsModel questionsModel) {
-        // 单选和多选题目处理
-        if (QuestionTypeEnum.SINGLE_CHOICE.getCode() == questionsModel.getType() ||
-                QuestionTypeEnum.MULTIPLE_CHOICE.getCode() == questionsModel.getType()) {
-            if (questionsModel.getOptions() == null || questionsModel.getOptions().size() == 0) {
-                throw new UserDataFormatException("选择题题目选项设置错误！");
-            }
-            if (questionsModel.getAnswer() == null || questionsModel.getAnswer().size() == 0) {
-                throw new UserDataFormatException("选择题题目答案设置错误！");
-            }
-            // 判断题答案处理
-        } else if (QuestionTypeEnum.JUDGE.getCode() == questionsModel.getType()) {
-            try {
-                int ans = Integer.parseInt(questionsModel.getOtherAnswer());
-                if (ans != QuestionTypeEnum.JUDGE_RIGHT.getCode() && ans != QuestionTypeEnum.JUDGE_ERROR.getCode()) {
-                    throw new UserDataFormatException("判断题答案设置错误！");
-                }
-            } catch (Exception e) {
-                throw new UserDataFormatException("判断题答案设置错误！");
-            }
-        }
-        // 分数检查
-        if (questionsModel.getScore() == null || questionsModel.getScore() <= 0) {
-            throw new UserDataFormatException("题目分数必须大于 0");
-        }
-    }
 
     /**
      * 作业提交数加一判断

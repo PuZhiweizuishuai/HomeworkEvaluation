@@ -177,10 +177,10 @@ export default {
       this.homeworkInfo.closeTime = value
     },
     backHomeworkInfo() {
-      if (this.judge()) {
-        console.log(this.homeworkInfo)
-        this.$emit('homework', this.homeworkInfo)
-      }
+      // if (this.judge()) {
+      console.log(this.homeworkInfo)
+      this.$emit('homework', this.homeworkInfo)
+      // }
     },
     judge() {
       if (this.homeworkInfo.title === null || this.homeworkInfo.title === '') {

@@ -3,6 +3,7 @@ package com.buguagaoshu.homework.evaluation.model;
 import com.buguagaoshu.homework.common.valid.ListValue;
 import lombok.Data;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -80,14 +81,17 @@ public class QuestionsModel {
 
     /**
      * 难度
+     * 整数
      * */
+    @Min(value = 0, message = "难度最低为0")
+    @Max(value = 5, message = "难度最高为5")
     private Integer difficulty;
 
 
     /**
      * 标签
      * */
-    private String tag;
+    private List<String> tag;
 
 
     /**
