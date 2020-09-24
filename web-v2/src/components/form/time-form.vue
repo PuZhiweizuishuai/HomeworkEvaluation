@@ -24,7 +24,7 @@
         <v-date-picker v-model="limitYearTime" no-title scrollable locale="zh-cn">
           <v-spacer />
           <v-btn text color="primary" @click="datePickerTime = false">取消</v-btn>
-          <v-btn text color="primary" @click="$refs.datePickerTime.save(limitYearTime)">确认</v-btn>
+          <v-btn text color="primary" @click="getTime">确认</v-btn>
         </v-date-picker>
       </v-menu>
     </v-col>
@@ -76,6 +76,7 @@ export default {
   methods: {
     getTime() {
       this.$refs.dateTime.save(this.limitHourTime)
+      this.$refs.datePickerTime.save(this.limitYearTime)
       const time = this.limitYearTime + ' ' + this.limitHourTime + ':00'
       this.$emit('time', time)
     }

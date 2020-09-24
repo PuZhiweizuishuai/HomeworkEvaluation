@@ -260,7 +260,9 @@ public class QuestionsServiceImpl extends ServiceImpl<QuestionsDao, QuestionsEnt
             }
         }
         try {
-            questionsModel.setTag((List<String>) objectMapper.readValue(questionsEntity.getTag(), List.class));
+            if (!StringUtils.isEmpty(questionsEntity.getTag())) {
+                questionsModel.setTag((List<String>) objectMapper.readValue(questionsEntity.getTag(), List.class));
+            }
         } catch (JsonProcessingException ignored) {}
 
         questionsModel.setTeacherComment(submitQuestionsEntity.getTeacherComment());

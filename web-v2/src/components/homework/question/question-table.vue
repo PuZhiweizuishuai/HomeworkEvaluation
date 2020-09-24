@@ -69,6 +69,7 @@
               v-model="item.score"
               label="设置分值"
               clearable
+              type="number"
             />
           </template>
           <!-- 题目类型 -->
@@ -116,6 +117,24 @@
         <CreateQuestion :type="1" :old="editItem" @update="updateQuestion" />
       </v-card>
     </v-dialog>
+    <v-snackbar
+      v-model="showMessage"
+      :top="true"
+      :timeout="3000"
+    >
+      {{ message }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="showMessage = false"
+        >
+          关闭
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -159,7 +178,9 @@ export default {
         { text: '判断', value: 4 }
       ],
       newQuestionDialog: false,
-      editItem: {}
+      editItem: {},
+      message: '',
+      showMessage: false
     }
   },
   created() {
@@ -199,7 +220,16 @@ export default {
       this.newQuestionDialog = true
     },
     inportQuestion() {
-      console.log(this.selected)
+      for (let i = 0; i < this.selected.length; i++) {
+        if (this.selected[i].score > 0) {
+          //
+        } else {
+          this.message = '还没有设置分数'
+          this.showMessage = true
+          return
+        }
+      }
+      this.$emit('questions', this.selected)
     },
     updateQuestion(value) {
       this.newQuestionDialog = false

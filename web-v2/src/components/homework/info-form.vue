@@ -110,6 +110,7 @@
     <v-row justify="center">
       <v-btn
         color="primary"
+        depressed
         @click="backHomeworkInfo"
       >
         下一步
@@ -177,10 +178,9 @@ export default {
       this.homeworkInfo.closeTime = value
     },
     backHomeworkInfo() {
-      // if (this.judge()) {
-      console.log(this.homeworkInfo)
-      this.$emit('homework', this.homeworkInfo)
-      // }
+      if (this.judge()) {
+        this.$emit('homework', this.homeworkInfo)
+      }
     },
     judge() {
       if (this.homeworkInfo.title === null || this.homeworkInfo.title === '') {

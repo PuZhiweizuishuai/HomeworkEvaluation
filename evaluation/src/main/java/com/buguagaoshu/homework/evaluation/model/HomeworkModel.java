@@ -5,6 +5,7 @@ import com.buguagaoshu.homework.common.valid.ListValue;
 import lombok.Data;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -34,14 +35,12 @@ public class HomeworkModel {
     /**
      * 开始时间
      */
-    @NotNull(message = "作业开始时间不能为空")
-    @Min(value = 0,message = "开始时间不能为空")
+    @NotBlank(message = "作业开始时间不能为空")
     private String openTime;
     /**
      * 截止时间
      */
-    @NotNull(message = "作业结束时间不能为空")
-    @Min(value = 0,message = "结束时间不能为空")
+    @NotBlank(message = "作业结束时间不能为空")
     private String closeTime;
 
 

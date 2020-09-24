@@ -60,12 +60,23 @@
         </v-data-table>
       </v-col>
     </v-row>
+    <v-row justify="space-around">
+      <v-btn depressed @click="back">上一步</v-btn>
+      <v-btn
+        color="primary"
+        depressed
+        @click="submitQuestionList"
+      >
+        下一步
+      </v-btn>
+
+    </v-row>
     <!-- 导入问题弹窗 -->
     <v-dialog
       v-model="tableDialog"
     >
       <v-card outlined>
-        <QuestionTable ref="QuestionTables" />
+        <QuestionTable ref="QuestionTables" @questions="importQuestion" />
       </v-card>
     </v-dialog>
     <!--  -->
@@ -76,6 +87,24 @@
         <CreateQuestion @question="getNewQuestion" />
       </v-card>
     </v-dialog>
+    <v-snackbar
+      v-model="showMessage"
+      :top="true"
+      :timeout="3000"
+    >
+      {{ message }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="showMessage = false"
+        >
+          关闭
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -101,32 +130,34 @@ export default {
         { text: '操作', value: 'actions', sortable: false }
       ],
       questionList: [],
-      question: {
-        id: null,
-        question: '',
-        // 类型
-        type: 0,
-        // 选择题选项
-        options: [],
-        // 选择题答案
-        answer: [],
-        // 问答，填空题答案
-        otherAnswer: '',
-        // 提示
-        tips: '',
-        // 是否分享 【0 私有  1 其它老师可见 】
-        shareStatus: 0,
-        // 难度
-        difficulty: 0,
-        // 标签
-        tag: [],
-        // 分值
-        score: 1
-      },
+      // question: {
+      //   id: null,
+      //   question: '',
+      //   // 类型
+      //   type: 0,
+      //   // 选择题选项
+      //   options: [],
+      //   // 选择题答案
+      //   answer: [],
+      //   // 问答，填空题答案
+      //   otherAnswer: '',
+      //   // 提示
+      //   tips: '',
+      //   // 是否分享 【0 私有  1 其它老师可见 】
+      //   shareStatus: 0,
+      //   // 难度
+      //   difficulty: 0,
+      //   // 标签
+      //   tag: [],
+      //   // 分值
+      //   score: 1
+      // },
       page: 1,
       size: 1000,
       tableDialog: false,
-      newQuestionDialog: false
+      newQuestionDialog: false,
+      message: '',
+      showMessage: false
     }
   },
   methods: {
@@ -146,6 +177,27 @@ export default {
     deleteItem(item) {
       const index = this.questionList.indexOf(item)
       this.questionList.splice(index, 1)
+    },
+    importQuestion(value) {
+      for (let i = 0; i < value.length; i++) {
+        this.questionList.push(value[i])
+      }
+      this.tableDialog = false
+    },
+    submitQuestionList() {
+      if (this.questionList.length === 0) {
+        this.message = '请先添加问题！'
+        this.showMessage = true
+        return
+      }
+      let count = 0
+      for (let i = 0; i < this.questionList.length; i++) {
+        count = count + parseInt(this.questionList[i].score)
+      }
+      this.$emit('questions', this.questionList, count)
+    },
+    back() {
+      this.$emit('back', true)
     }
   }
 }

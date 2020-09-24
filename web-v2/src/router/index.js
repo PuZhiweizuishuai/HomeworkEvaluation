@@ -141,10 +141,20 @@ const routes = [
           requireAuth: true
         }
       },
+      // 创建作业
       {
         path: '/course/learn/:id/create/homework',
         name: 'CreateHomework',
         component: () => import('@/views/homework/create.vue'),
+        meta: {
+          // title: '设置',
+          requireAuth: true
+        }
+      },
+      {
+        path: '/course/learn/:id/keeper/homework/:homeworkId',
+        name: 'CreateHomework',
+        component: () => import('@/views/keeper/index.vue'),
         meta: {
           // title: '设置',
           requireAuth: true

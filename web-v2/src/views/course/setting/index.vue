@@ -8,9 +8,8 @@
           <v-tab @click="type = 2">学生列表</v-tab>
           <v-tab @click="type = 3">作业列表</v-tab>
           <v-tab @click="type = 4">课件管理</v-tab>
-          <v-tab @click="type = 5">题目列表</v-tab>
-          <v-tab @click="type = 6">数据分析</v-tab>
-          <v-tab @click="type = 7">邀请码</v-tab>
+          <v-tab @click="type = 5">数据分析</v-tab>
+          <v-tab @click="type = 6">邀请码</v-tab>
         </v-tabs>
         <v-divider />
       </v-col>
@@ -58,12 +57,13 @@ export default {
   },
   created() {
     this.id = this.$route.params.id
+
+    this.$vuetify.goTo(0)
+    document.title = '设置 - ' + this.course.curriculumName
     // 页面拦截
     if (this.role.role !== 'ROLE_TEACHER') {
       this.$router.go(-1)
     }
-    this.$vuetify.goTo(0)
-    document.title = '设置 - ' + this.course.curriculumName
   }
 }
 </script>

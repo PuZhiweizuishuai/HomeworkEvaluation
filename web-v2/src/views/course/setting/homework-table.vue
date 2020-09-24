@@ -136,6 +136,7 @@ export default {
   methods: {
     showHomeworkStatus(value) {
       console.log(value)
+      this.$router.push(`/course/learn/${this.id}/keeper/homework/${value.id}`)
     },
     getHomeworkList() {
       this.httpGet(`/homework/list/${this.id}?page=${this.page}&limit=${this.size}`, (json) => {

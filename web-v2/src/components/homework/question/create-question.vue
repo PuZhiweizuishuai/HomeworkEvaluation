@@ -277,23 +277,30 @@ export default {
         this.question.answer = this.multipleChoice
       }
       // console.log(this.question)
-      const questions = JSON.parse(JSON.stringify(this.question))
-      this.question = {
-        question: '',
-        type: 0,
-        options: [],
-        answer: [],
-        otherAnswer: '',
-        difficulty: 0,
-        shareStatus: 0,
-        tips: '',
-        tag: [],
-        score: ''
-      }
+      if (this.questionValid()) {
+        if (this.question.score <= 0) {
+          this.message = '分数必须大于0'
+          this.showMessage = true
+          return
+        }
+        const questions = JSON.parse(JSON.stringify(this.question))
+        this.question = {
+          question: '',
+          type: 0,
+          options: [],
+          answer: [],
+          otherAnswer: '',
+          difficulty: 0,
+          shareStatus: 0,
+          tips: '',
+          tag: [],
+          score: ''
+        }
 
-      this.$emit('question', questions)
-      this.$refs.questionText.setTextValue('123456789')
-      this.$refs.questionAnswer.setTextValue('dafgdsagsdfgs')
+        this.$emit('question', questions)
+        this.$refs.questionText.setTextValue('')
+        this.$refs.questionAnswer.setTextValue('')
+      }
     },
     updateQuestion() {
       console.log(this.question)
