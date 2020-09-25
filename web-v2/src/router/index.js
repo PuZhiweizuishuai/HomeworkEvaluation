@@ -123,6 +123,7 @@ const routes = [
           requireAuth: true
         }
       },
+      // 讨论区
       {
         path: '/course/learn/:id/bbs',
         name: 'BBS',
@@ -132,6 +133,7 @@ const routes = [
           requireAuth: true
         }
       },
+      // 设置页面
       {
         path: '/course/learn/:id/setting',
         name: 'Setting',
@@ -147,16 +149,24 @@ const routes = [
         name: 'CreateHomework',
         component: () => import('@/views/homework/create.vue'),
         meta: {
-          // title: '设置',
           requireAuth: true
         }
       },
+      // 作业批改页
       {
         path: '/course/learn/:id/keeper/homework/:homeworkId',
-        name: 'CreateHomework',
+        name: 'KeeperHomework',
         component: () => import('@/views/keeper/index.vue'),
         meta: {
-          // title: '设置',
+          requireAuth: true
+        }
+      },
+      // 展示用户提交的作业，并进行批改
+      {
+        path: '/course/learn/:id/keeper/homework/:homeworkId/correct',
+        name: 'KeeperHomework',
+        component: () => import('@/views/keeper/correct.vue'),
+        meta: {
           requireAuth: true
         }
       }

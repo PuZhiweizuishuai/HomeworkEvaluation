@@ -77,7 +77,10 @@ export default {
     getTime() {
       this.$refs.dateTime.save(this.limitHourTime)
       this.$refs.datePickerTime.save(this.limitYearTime)
-      const time = this.limitYearTime + ' ' + this.limitHourTime + ':00'
+      let time = this.limitYearTime + ' ' + this.limitHourTime + ':00'
+      if (this.limitHourTime === '' || this.limitHourTime == null) {
+        time = this.limitYearTime + ' ' + '00:00:00'
+      }
       this.$emit('time', time)
     }
   }

@@ -5,7 +5,9 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import VueCookies from 'vue-cookies'
 import HttpFetch from '@/utils/fetch.js'
+import VCharts from 'v-charts'
 
+Vue.use(VCharts)
 Vue.config.productionTip = false
 Vue.use(VueCookies)
 Vue.use(HttpFetch)
