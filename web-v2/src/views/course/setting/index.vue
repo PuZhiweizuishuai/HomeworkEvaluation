@@ -10,6 +10,7 @@
           <v-tab @click="type = 4">课件管理</v-tab>
           <v-tab @click="type = 5">数据分析</v-tab>
           <v-tab @click="type = 6">邀请码</v-tab>
+          <v-tab @click="type = 7">学生评价</v-tab>
         </v-tabs>
         <v-divider />
       </v-col>

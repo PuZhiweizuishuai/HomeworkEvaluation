@@ -79,6 +79,11 @@
                 </v-col>
               </v-row>
               <TimeForm @time="getCloseTime" />
+              <v-row justify="end">
+                <v-btn depressed color="success" @click="editEndTime">
+                  修改
+                </v-btn>
+              </v-row>
 
             </v-col>
             <!-- 显示当前作业基本数据 -->
@@ -119,6 +124,24 @@
       <v-card-title>批改完成列表</v-card-title>
       <UserList :user="completeList" :lable="`查看`" />
     </v-card>
+    <v-snackbar
+      v-model="showMessage"
+      :top="true"
+      :timeout="3000"
+    >
+      {{ message }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="showMessage = false"
+        >
+          关闭
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -168,7 +191,10 @@ export default {
       },
       chartSettings: {
         radius: 70
-      }
+      },
+      closeTime: '',
+      message: '',
+      showMessage: false
     }
   },
   created() {
@@ -187,7 +213,6 @@ export default {
           return
         }
         this.dashboardData = json.data
-        this.setEvaluation()
         this.initSubmitCount()
         document.title = json.data.homework.title + '- 批改'
       })
@@ -206,6 +231,11 @@ export default {
         }
       }
 
+      if (this.dashboardData.homework.evaluation === 0) {
+        this.evaluationLable = '关闭'
+      } else {
+        this.evaluationLable = '开启'
+      }
       for (let i = 0; i < this.dashboardData.teacherSubmitList.length; i++) {
         this.teacherSubmitList.push(this.dashboardData.teacherSubmitList[i])
       }
@@ -215,12 +245,46 @@ export default {
     setEvaluation() {
       if (this.dashboardData.homework.evaluation === 0) {
         this.evaluationLable = '关闭'
+        this.editHomeWorkInfo(0)
       } else {
         this.evaluationLable = '开启'
+        this.editHomeWorkInfo(0)
       }
     },
+    /**
+     * @param value 数字： 0 修改是否开启互评
+     *                    1  修改结束时间
+     */
+    editHomeWorkInfo(value) {
+      const homework = {
+        id: this.homeworkId
+      }
+      if (value === 0) {
+        homework.evaluation = this.dashboardData.homework.evaluation
+      } else if (value === 1) {
+        if (this.closeTime === '' || this.closeTime == null) {
+          this.message = '请先输入要修改的时间'
+          this.showMessage = true
+          return
+        }
+        homework.closeTime = this.closeTime
+      }
+      this.httpPost('/homework/setting/update', homework, (json) => {
+        if (json.status === 200) {
+          this.message = '修改成功！'
+          this.showMessage = true
+        } else {
+          this.message = json.message
+          this.showMessage = true
+        }
+      })
+      // /homework/setting/update
+    },
+    editEndTime() {
+      this.editHomeWorkInfo(1)
+    },
     getCloseTime(tiem) {
-      console.log(tiem)
+      this.closeTime = tiem
     },
     onResize() {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight }
@@ -233,7 +297,7 @@ export default {
       }
     },
     back() {
-      this.$router.go(-1)
+      this.$router.push({ path: `/course/learn/${this.$route.params.id}/setting` })
     }
   }
 }

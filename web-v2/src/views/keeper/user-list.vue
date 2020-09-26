@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row justify="center">
     <v-col cols="12">
       <v-data-table
         :headers="headers"
@@ -21,7 +21,7 @@
                 class="mr-2"
                 v-bind="attrs"
                 v-on="on"
-                @click="show(item)"
+                @click="showUserHomework(item)"
               >
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
@@ -73,9 +73,31 @@ export default {
     this.id = this.$route.params.id
     this.homeworkId = this.$route.params.homeworkId
   },
-  show(row) {
-    //
-    this.$router.push({ path: `/course/learn/${this.id}/keeper/homework/${this.homeworkId}`, query: { studentId: row.userId, type: 'see' }})
+  methods: {
+    showUserHomework(row) {
+      if (this.lable === '批改') {
+        this.$router.push(
+          {
+            path: `/course/learn/${this.id}/keeper/homework/${this.homeworkId}/correct`,
+            query: {
+              studentId: row.userId,
+              t: new Date().getTime()
+            }
+          }
+        )
+      } else {
+        this.$router.push(
+          {
+            path: `/course/learn/${this.id}/keeper/homework/${this.homeworkId}/correct`,
+            query: {
+              studentId: row.userId,
+              type: 'see',
+              t: new Date().getTime()
+            }
+          }
+        )
+      }
+    }
   }
 }
 </script>

@@ -97,11 +97,11 @@ public interface HomeworkService extends IService<HomeworkEntity> {
     /**
      * 更新作业数据
      *
-     * @param homeworkEntity 作业ID
+     * @param homeworkModel 作业ID
      * @param user           当前用户
      * @return 更新结果
      */
-    ReturnCodeEnum updateHomework(HomeworkEntity homeworkEntity, Claims user);
+    ReturnCodeEnum updateHomework(HomeworkModel homeworkModel, Claims user);
 
 
     /**

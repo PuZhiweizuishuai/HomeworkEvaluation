@@ -13,6 +13,10 @@
         <ShowMarkdown v-if="disabled" :markdown="question.otherAnswer" />
       </v-col>
     </v-row>
+    <!-- 教师点评组件 -->
+    <v-row v-if="teacher">
+      <TeacherComment :question="question" />
+    </v-row>
   </v-container>
 </template>
 
@@ -20,6 +24,7 @@
 import ShowMarkdown from '@/components/vditor/show-markdown.vue'
 import Constant from '@/utils/constant.vue'
 import Vditor from '@/components/vditor/vditor.vue'
+import TeacherComment from '@/views/homework/question/teacher-comment.vue'
 /**
  *  填空，问答，论述题
  */
@@ -27,7 +32,8 @@ export default {
   name: 'Discourses',
   components: {
     ShowMarkdown,
-    Vditor
+    Vditor,
+    TeacherComment
   },
   props: {
     // 题号
@@ -42,6 +48,11 @@ export default {
     },
     // 是否可编辑
     disabled: {
+      type: Boolean,
+      default: false
+    },
+    // 是否显示教师点评组件
+    teacher: {
       type: Boolean,
       default: false
     }

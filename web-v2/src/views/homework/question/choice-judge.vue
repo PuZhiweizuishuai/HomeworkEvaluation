@@ -27,19 +27,24 @@
         </v-radio-group>
       </v-col>
     </v-row>
+    <v-row v-if="teacher">
+      <TeacherComment :question="question" />
+    </v-row>
   </v-container>
 </template>
 
 <script>
 import ShowMarkdown from '@/components/vditor/show-markdown.vue'
 import Constant from '@/utils/constant.vue'
+import TeacherComment from '@/views/homework/question/teacher-comment.vue'
 /**
  * 单选，多选，判断
  */
 export default {
   name: 'ChoiceWithJudge',
   components: {
-    ShowMarkdown
+    ShowMarkdown,
+    TeacherComment
   },
   props: {
     // 题号
@@ -53,6 +58,11 @@ export default {
     },
     // 是否可编辑
     disabled: {
+      type: Boolean,
+      default: false
+    },
+    // 是否显示教师点评组件
+    teacher: {
       type: Boolean,
       default: false
     }

@@ -130,10 +130,10 @@ public class HomeworkController {
      * 更新作业设置
      */
     @PostMapping("/homework/setting/update")
-    public ResponseDetails homeworkUpdate(@RequestBody HomeworkEntity homeworkEntity,
+    public ResponseDetails homeworkUpdate(@RequestBody HomeworkModel homeworkModel,
                                           HttpServletRequest request) {
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
-        return ResponseDetails.ok(homeworkService.updateHomework(homeworkEntity, user));
+        return ResponseDetails.ok(homeworkService.updateHomework(homeworkModel, user));
     }
 
 

@@ -164,7 +164,7 @@ const routes = [
       // 展示用户提交的作业，并进行批改
       {
         path: '/course/learn/:id/keeper/homework/:homeworkId/correct',
-        name: 'KeeperHomework',
+        name: 'CorrectHomework',
         component: () => import('@/views/keeper/correct.vue'),
         meta: {
           requireAuth: true

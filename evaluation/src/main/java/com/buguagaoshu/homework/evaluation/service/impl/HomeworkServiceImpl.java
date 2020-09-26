@@ -468,14 +468,14 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
     }
 
     @Override
-    public ReturnCodeEnum updateHomework(HomeworkEntity homeworkEntity, Claims user) {
-        if (homeworkEntity.getId() == null) {
+    public ReturnCodeEnum updateHomework(HomeworkModel homeworkModel, Claims user) {
+        if (homeworkModel.getId() == null) {
             return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
         }
-        if (homeworkEntity.getEvaluation() == null && homeworkEntity.getCloseTime() == null && homeworkEntity.getOpenTime() == null) {
+        if (homeworkModel.getEvaluation() == null && homeworkModel.getCloseTime() == null && homeworkModel.getOpenTime() == null) {
             return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
         }
-        HomeworkEntity homework = this.getById(homeworkEntity.getId());
+        HomeworkEntity homework = this.getById(homeworkModel.getId());
         if (homework == null) {
             return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
         }
@@ -493,9 +493,9 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                 || isTeacher) {
             HomeworkEntity entity = new HomeworkEntity();
             entity.setId(homework.getId());
-            entity.setOpenTime(homeworkEntity.getOpenTime());
-            entity.setCloseTime(homeworkEntity.getCloseTime());
-            entity.setEvaluation(homeworkEntity.getEvaluation());
+            // entity.setOpenTime(homeworkModel.getOpenTime());
+            entity.setCloseTime(TimeUtils.parseTime(homeworkModel.getCloseTime()));
+            entity.setEvaluation(homeworkModel.getEvaluation());
             this.updateById(entity);
             return ReturnCodeEnum.SUCCESS;
         }
