@@ -103,6 +103,15 @@ const routes = [
           requireAuth: true
         }
       },
+      {
+        path: '/course/learn/:id/courseware/:coursewareId',
+        name: 'Courseware',
+        component: () => import('@/views/course/courseware.vue'),
+        meta: {
+          // title: '课件',
+          requireAuth: true
+        }
+      },
       // 显示作业列表
       {
         path: '/course/learn/:id/exam',

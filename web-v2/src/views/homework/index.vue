@@ -40,6 +40,7 @@
     </v-row>
     <v-row justify="center">
       试卷总分：<strong> {{ homeworkInfo.totalScore }} </strong>
+      <span v-if="homeworkInfo.showTeacherComment">你的得分：<span style="color:red;font-weight: bold;"> {{ homeworkInfo.score }} </span></span>
     </v-row>
     <v-row justify="center">
       <v-col cols="12">
@@ -48,9 +49,9 @@
     </v-row>
     <!-- 详细介绍 -->
     <v-row justify="center">
-      开始时间：<strong>{{ TimeUtil.formateTimeToChinese(homeworkInfo.openTime) }} </strong>
+      开始时间：<strong>{{ homeworkInfo.openTime }} </strong>
       <span v-html="`&nbsp;&nbsp;`" />
-      结束时间：<strong>{{ TimeUtil.formateTimeToChinese(homeworkInfo.closeTime) }} </strong>
+      结束时间：<strong>{{ homeworkInfo.closeTime }} </strong>
     </v-row>
     <v-row justify="center">
       <v-col cols="12">
@@ -65,8 +66,8 @@
     <!-- 试卷题目部分 -->
     <v-row v-for="(item, index) in homeworkInfo.questionsModels" :key="item.id">
       <v-col cols="12">
-        <Choice v-if="item.type == 1 || item.type == 0 || item.type == 4" :index="index + 1" :question="item" :disabled="!homeworkInfo.submit" @answer="getAnswer" />
-        <Discourses v-if="item.type == 2 || item.type == 3" :index="index + 1" :question="item" :disabled="!homeworkInfo.submit" @answer="getAnswer" />
+        <Choice v-if="item.type == 1 || item.type == 0 || item.type == 4" :index="index + 1" :question="item" :disabled="!homeworkInfo.submit" :answer="homeworkInfo.showTeacherComment" @answer="getAnswer" />
+        <Discourses v-if="item.type == 2 || item.type == 3" :index="index + 1" :question="item" :disabled="!homeworkInfo.submit" :answer="homeworkInfo.showTeacherComment" @answer="getAnswer" />
         <v-divider />
       </v-col>
     </v-row>
@@ -77,9 +78,23 @@
       <v-btn depressed color="primary" :disabled="!homeworkInfo.submit" @click="submitHomework(1)">暂时保存</v-btn>
     </v-row>
 
+    <v-row v-if="homeworkInfo.showTeacherComment" justify="center">
+      <v-col cols="11">
+        <v-card outlined>
+          <v-card-title>教师评价：</v-card-title>
+          <v-row>
+            <v-col cols="12">
+              <ShowMarkdown :markdown="homeworkInfo.teacherComment" />
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
+
     <v-row v-if="homeworkInfo.submit == false" justify="center" align="center" style="height: 150px">
       <strong>已经提交，无法再次提交</strong>
     </v-row>
+
     <!-- 支撑底部宽度部分 -->
     <v-row justify="center" align="center" style="height: 150px">
 
@@ -143,6 +158,7 @@ import TimeUtil from '@/utils/time-util.vue'
 import ShowMarkdown from '@/components/vditor/show-markdown.vue'
 import Choice from '@/views/homework/question/choice-judge.vue'
 import Discourses from '@/views/homework/question/discourses.vue'
+
 /**
  * 显示作业内容
  */

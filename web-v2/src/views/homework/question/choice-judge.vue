@@ -28,7 +28,10 @@
       </v-col>
     </v-row>
     <v-row v-if="teacher">
-      <TeacherComment :question="question" />
+      <TeacherComment :question="question" @teacher="getComment" />
+    </v-row>
+    <v-row v-if="answer">
+      <ShowAnswerForStudent :question="question" />
     </v-row>
   </v-container>
 </template>
@@ -37,6 +40,7 @@
 import ShowMarkdown from '@/components/vditor/show-markdown.vue'
 import Constant from '@/utils/constant.vue'
 import TeacherComment from '@/views/homework/question/teacher-comment.vue'
+import ShowAnswerForStudent from '@/views/homework/question/show-answer-for-student.vue'
 /**
  * 单选，多选，判断
  */
@@ -44,7 +48,8 @@ export default {
   name: 'ChoiceWithJudge',
   components: {
     ShowMarkdown,
-    TeacherComment
+    TeacherComment,
+    ShowAnswerForStudent
   },
   props: {
     // 题号
@@ -63,6 +68,11 @@ export default {
     },
     // 是否显示教师点评组件
     teacher: {
+      type: Boolean,
+      default: false
+    },
+    // 是否显示答案
+    answer: {
       type: Boolean,
       default: false
     }
@@ -92,6 +102,9 @@ export default {
     JudgeAnswer() {
       console.log(this.judge)
       this.$emit('answer', this.judge, this.question.id, this.question.type)
+    },
+    getComment(value) {
+      this.$emit('teacher', value)
     }
   }
 }

@@ -15,7 +15,10 @@
     </v-row>
     <!-- 教师点评组件 -->
     <v-row v-if="teacher">
-      <TeacherComment :question="question" />
+      <TeacherComment :question="question" @teacher="getComment" />
+    </v-row>
+    <v-row v-if="answer">
+      <ShowAnswerForStudent :question="question" />
     </v-row>
   </v-container>
 </template>
@@ -25,6 +28,7 @@ import ShowMarkdown from '@/components/vditor/show-markdown.vue'
 import Constant from '@/utils/constant.vue'
 import Vditor from '@/components/vditor/vditor.vue'
 import TeacherComment from '@/views/homework/question/teacher-comment.vue'
+import ShowAnswerForStudent from '@/views/homework/question/show-answer-for-student.vue'
 /**
  *  填空，问答，论述题
  */
@@ -33,7 +37,8 @@ export default {
   components: {
     ShowMarkdown,
     Vditor,
-    TeacherComment
+    TeacherComment,
+    ShowAnswerForStudent
   },
   props: {
     // 题号
@@ -55,6 +60,10 @@ export default {
     teacher: {
       type: Boolean,
       default: false
+    },
+    answer: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -66,6 +75,9 @@ export default {
   methods: {
     getAnswer(value) {
       this.$emit('answer', value, this.question.id)
+    },
+    getComment(value) {
+      this.$emit('teacher', value)
     }
   }
 }

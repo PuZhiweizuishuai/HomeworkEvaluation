@@ -84,9 +84,9 @@
         </v-tabs>
         <v-divider />
         <!-- 课程详情 -->
-        <v-row>
+        <v-row v-show="showId == 0">
           <v-col>
-            <div v-if="showId == 0" id="class-markdown-view" ref="curriculumInfo" />
+            <div id="class-markdown-view" ref="curriculumInfo" />
           </v-col>
         </v-row>
       </v-col>
@@ -337,13 +337,13 @@ export default {
     }
   },
   created() {
+    window.scrollTo(0, 0)
     this.getCourseInfo()
     this.judge()
     this.onResize()
   },
   updated() {
-    window.scrollTo(0, 0)
-    this.initRender()
+
   },
   methods: {
     getCourseInfo() {
@@ -351,6 +351,7 @@ export default {
         if (json.status === 200) {
           this.courseInfo = json.data
           document.title = json.data.curriculumName
+          this.initRender()
         } else {
           this.$router.push('/')
         }

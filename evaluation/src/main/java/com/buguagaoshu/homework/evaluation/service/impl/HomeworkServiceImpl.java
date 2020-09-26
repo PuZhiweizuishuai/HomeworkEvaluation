@@ -288,6 +288,8 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
 
         HomeworkModel homeworkModel = new HomeworkModel();
         BeanUtils.copyProperties(homeworkEntity, homeworkModel);
+        homeworkModel.setCloseTime(TimeUtils.formatTime(homeworkEntity.getCloseTime()));
+        homeworkModel.setOpenTime(TimeUtils.formatTime(homeworkEntity.getCreateTime()));
         homeworkModel.setStudentId(userId);
         homeworkModel.setStudentName(studentName);
         homeworkModel.setTotalScore(homeworkEntity.getScore());

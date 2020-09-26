@@ -153,7 +153,7 @@ export default {
             if (json.data.length === 0) {
               this.$router.push(`/curriculum/keeper/homework/${this.$route.params.id}`)
             }
-            location.replace(`/curriculum/keeper/homework/${this.$route.params.id}/correcting?studentId=${json.data[0].userId}`)
+            location.replace(`/curriculum/keeper/homework/${json.data[0].homeworkId}/correcting?studentId=${json.data[0].userId}`)
           } else {
             this.$message.error(json.message)
           }

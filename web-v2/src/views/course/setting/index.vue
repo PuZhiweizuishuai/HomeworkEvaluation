@@ -21,6 +21,7 @@
         <BulletinTable v-if="type == 1" />
         <UserTable v-if="type == 2" />
         <HomeworkTable v-if="type == 3" />
+        <Courseware v-if="type == 4" />
       </v-col>
     </v-row>
   </v-container>
@@ -31,6 +32,7 @@ import CourseInfoForm from '@/components/course/form/course-info-form.vue'
 import BulletinTable from '@/views/course/setting/bulletin-table.vue'
 import UserTable from '@/views/course/setting/user-table.vue'
 import HomeworkTable from '@/views/course/setting/homework-table.vue'
+import Courseware from '@/views/course/setting/courseware.vue'
 
 export default {
   name: 'Setting',
@@ -38,7 +40,8 @@ export default {
     CourseInfoForm,
     BulletinTable,
     UserTable,
-    HomeworkTable
+    HomeworkTable,
+    Courseware
   },
   props: {
     course: {

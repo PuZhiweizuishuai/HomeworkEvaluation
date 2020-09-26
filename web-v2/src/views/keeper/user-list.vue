@@ -78,7 +78,7 @@ export default {
       if (this.lable === '批改') {
         this.$router.push(
           {
-            path: `/course/learn/${this.id}/keeper/homework/${this.homeworkId}/correct`,
+            path: `/course/learn/${this.id}/keeper/homework/${this.$route.params.homeworkId}/correct`,
             query: {
               studentId: row.userId,
               t: new Date().getTime()
@@ -88,7 +88,7 @@ export default {
       } else {
         this.$router.push(
           {
-            path: `/course/learn/${this.id}/keeper/homework/${this.homeworkId}/correct`,
+            path: `/course/learn/${this.id}/keeper/homework/${this.$route.params.homeworkId}/correct`,
             query: {
               studentId: row.userId,
               type: 'see',

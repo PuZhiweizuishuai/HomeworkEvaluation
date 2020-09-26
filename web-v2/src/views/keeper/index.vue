@@ -110,8 +110,15 @@
     </v-row>
 
     <!-- 待批改列表 -->
+
     <v-card outlined>
       <v-card-title>待批改列表</v-card-title>
+      <!-- <v-card-actions>
+        <v-btn depressed color="success">
+          一键批改
+        </v-btn>
+        在全是选择题或判断题时，你可以使用这个功能
+      </v-card-actions> -->
       <UserList :user="userSubmitList" />
     </v-card>
     <v-row>
