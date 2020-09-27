@@ -5,6 +5,7 @@ import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.config.BaseWebInfoConfig;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
+import com.buguagaoshu.homework.evaluation.model.User;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import com.buguagaoshu.homework.evaluation.vo.AdminAddUser;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
@@ -40,6 +41,16 @@ public class UserController {
         this.userService = userService;
         this.userRoleService = userRoleService;
         this.baseWebInfoConfig = baseWebInfoConfig;
+    }
+
+
+    @GetMapping("/user/info/{id}")
+    public ResponseDetails userInfo(@PathVariable("id") String userId) {
+        User user = userService.userInfo(userId);
+        if (user == null) {
+            return ResponseDetails.ok(404, "没有找到该用户！");
+        }
+        return ResponseDetails.ok().put("data", user);
     }
 
     /**

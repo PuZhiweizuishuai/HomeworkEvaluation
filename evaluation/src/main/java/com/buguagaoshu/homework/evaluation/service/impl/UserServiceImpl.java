@@ -9,6 +9,7 @@ import com.buguagaoshu.homework.common.enums.UserStatusEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.dao.UserRoleDao;
 import com.buguagaoshu.homework.evaluation.entity.*;
+import com.buguagaoshu.homework.evaluation.model.User;
 import com.buguagaoshu.homework.evaluation.service.CurriculumService;
 import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
@@ -46,6 +47,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -370,6 +372,33 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         return getOne(new QueryWrapper<UserEntity>().eq("email", s));
     }
 
+    @Override
+    public User userInfo(String userId) {
+        UserEntity userEntity = this.getById(userId);
+        if (userEntity == null) {
+            return null;
+        }
+        User user = new User();
+        BeanUtils.copyProperties(userEntity, user);
+        user.setPassword(null);
+        user.setLatestLoginIp(null);
+        if (userEntity.getUserQqStatus() == 0) {
+            user.setUserQq(null);
+        }
+        if (userEntity.getUserWechatStatus() == 0) {
+            user.setUserWechat(null);
+        }
+        if (userEntity.getUserEmailStatus() == 0) {
+            user.setEmail(null);
+        }
+        if (userEntity.getUserPhoneStatus() == 0) {
+            user.setPhoneNumber(null);
+        }
+        UserRoleEntity userRoleEntity = userRoleService.selectByUserId(userId);
+        user.setRole(userRoleEntity);
+        return user;
+    }
+
     /**
      * 向课程导入学生
      */
@@ -420,7 +449,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         userEntity.setCreateTime(System.currentTimeMillis());
         userEntity.setLatestLoginTime(System.currentTimeMillis());
         userEntity.setLatestLoginIp(IpUtil.getIpAddr(request));
-        userEntity.setUserAvatarUrl("https://ae01.alicdn.com/kf/H2c8876c2525f47fe9266aba1bf0de9b6e.png");
+        userEntity.setUserAvatarUrl("/images/head.png");
+        userEntity.setTopImgUrl("/images/top.png");
     }
 
 

@@ -89,6 +89,7 @@ export default {
           this.message = '创建成功'
           this.showMessage = true
           this.dialog = false
+          this.getCoursewareList()
         } else {
           //
           this.message = json.message

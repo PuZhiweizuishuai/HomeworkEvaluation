@@ -47,6 +47,17 @@ const routes = [
           title: '我的课程'
         }
       },
+      // 新建课程
+      {
+        path: '/course/create',
+        component: () => import('@/views/course/create/index.vue'),
+        name: 'CreateCourse',
+        meta: {
+          title: '新建课程',
+          requireAuth: true,
+          tracherPower: true
+        }
+      },
       // 用户主页
       {
         path: '/user/:id',
@@ -81,7 +92,6 @@ const routes = [
         name: 'Learn',
         component: () => import('@/views/course/learn.vue'),
         meta: {
-          // title: '课程详情',
           requireAuth: true
         }
       },
@@ -90,7 +100,6 @@ const routes = [
         name: 'Score',
         component: () => import('@/views/course/score.vue'),
         meta: {
-          // title: '评分标准',
           requireAuth: true
         }
       },
@@ -99,16 +108,14 @@ const routes = [
         name: 'Courseware',
         component: () => import('@/views/course/courseware.vue'),
         meta: {
-          // title: '课件',
           requireAuth: true
         }
       },
       {
         path: '/course/learn/:id/courseware/:coursewareId',
-        name: 'Courseware',
-        component: () => import('@/views/course/courseware.vue'),
+        name: 'CoursewareInfo',
+        component: () => import('@/views/course/courseware-info.vue'),
         meta: {
-          // title: '课件',
           requireAuth: true
         }
       },

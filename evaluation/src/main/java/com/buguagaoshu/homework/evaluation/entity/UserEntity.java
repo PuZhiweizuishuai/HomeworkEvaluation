@@ -50,6 +50,12 @@ public class UserEntity {
      * 头像地址
      */
     private String userAvatarUrl;
+
+    /**
+     * 个人主页顶部大图
+     * */
+    private String topImgUrl;
+
     /**
      * qq
      */

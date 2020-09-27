@@ -4,8 +4,8 @@
       <v-col>
         <v-text-field
           v-model="courseware.sort"
-          label="章节号"
-          placeholder="章节号，负责课件显示顺序，越小显示越靠前"
+          label="排序"
+          placeholder="排序号，负责课件显示顺序，越小显示越靠前，默认为1"
           type="number"
         />
       </v-col>
@@ -22,13 +22,13 @@
     <v-row>
       <v-col>
         <Vditor
-          :placeholder="'详细的文字介绍，可以留空，非必填'"
+          :placeholder="'详细的文字介绍，可以留空，非必填,上传课件文件请使用下面的上传接口，下面的接口支持文件预览与视频在线播放！，外部链接或一些其它资料可以写在这里！'"
           :uploadurl="uploadurl"
           @vditor-input="getText"
         />
       </v-col>
     </v-row>
-    <v-row>
+    <!-- <v-row>
       <v-col>
         <v-text-field
           v-model="courseware.level"
@@ -37,7 +37,7 @@
           type="number"
         />
       </v-col>
-    </v-row>
+    </v-row> -->
     <v-row>
       <v-col>
         上传文件，视频，课件，目前支持MP4格式的视频和PDF文件在线预览。其它如doc，docx等文件预览有待后期支持
@@ -53,9 +53,11 @@
         <v-select
           v-model="courseware.fatherId"
           :items="fatherItems"
-          label="父分级"
+          label="所属目录，不选为一级目录"
           item-text="title"
           item-value="id"
+          clearable
+          @change="fatherIdChange"
         />
       </v-col>
     </v-row>
@@ -114,6 +116,13 @@ export default {
           //
         }
       })
+    },
+    fatherIdChange() {
+      if (this.courseware.fatherId == null) {
+        this.courseware.level = 0
+      } else {
+        this.courseware.level = 1
+      }
     }
   }
 }

@@ -103,7 +103,7 @@ public class UserAndRole {
      * */
     private Integer status;
 
-
+    private String topImgUrl;
 
     private UserRoleEntity role;
 

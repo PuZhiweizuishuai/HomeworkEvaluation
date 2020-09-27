@@ -47,6 +47,10 @@ public class User implements UserDetails {
      * 头像地址
      */
     private String userAvatarUrl;
+
+
+    private String topImgUrl;
+
     /**
      * qq
      */

@@ -34,16 +34,6 @@ public class CurriculumController {
     }
 
 
-    @PostMapping("/teacher/test")
-    public ResponseDetails test(@RequestBody CurriculumModel curriculumModel) {
-        long time = TimeUtils.parseTimeNoHour(curriculumModel.getCloseTime());
-        System.out.println(time);
-        System.out.println(TimeUtils.formatTime(time));
-
-        System.out.println(TimeUtils.parseTime(curriculumModel.getJoinTime()));
-        return ResponseDetails.ok().put("data", curriculumModel);
-    }
-
     /**
      * 教师创建新的课程
      * */
@@ -78,7 +68,7 @@ public class CurriculumController {
         if (pageUtils == null) {
             return ResponseDetails.ok(ReturnCodeEnum.NOO_FOUND);
         }
-        return ResponseDetails.ok().put("page", curriculumService.selectUserCurriculumList(params, request));
+        return ResponseDetails.ok().put("data", curriculumService.selectUserCurriculumList(params, request));
     }
 
 

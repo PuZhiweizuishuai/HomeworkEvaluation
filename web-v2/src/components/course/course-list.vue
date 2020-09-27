@@ -65,7 +65,7 @@ export default {
   created() {
     this.initChildren()
     this.httpGet(`/curriculum/list?tag=${this.id}&limit=8`, (json) => {
-      this.classList = json.page.list || []
+      this.classList = json.data.list || []
     })
     this.onResize()
   },
@@ -84,7 +84,7 @@ export default {
     setTagId(value) {
       this.id = value
       this.httpGet(`/curriculum/list?tag=${this.id}&limit=8`, (json) => {
-        this.classList = json.page.list || []
+        this.classList = json.data.list || []
       })
     },
     onResize() {

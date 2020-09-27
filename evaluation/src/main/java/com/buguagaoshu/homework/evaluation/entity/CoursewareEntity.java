@@ -97,4 +97,7 @@ public class CoursewareEntity {
     @TableField(exist = false)
     private List<CoursewareEntity> children;
 
+
+    @TableField(exist = false)
+    private String key;
 }

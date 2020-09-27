@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.UserRoleEntity;
+import com.buguagaoshu.homework.evaluation.model.User;
 import com.buguagaoshu.homework.evaluation.vo.UserRoleInClassVo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,5 +41,6 @@ public interface UserRoleService extends IService<UserRoleEntity> {
      * @return 处理结果
      */
     ReturnCodeEnum teacherAlterUserRole(UserRoleInClassVo userRoleInClassVo, HttpServletRequest request);
+
 }
 

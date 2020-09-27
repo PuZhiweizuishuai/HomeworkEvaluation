@@ -3,6 +3,7 @@ package com.buguagaoshu.homework.evaluation.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.utils.PageUtils;
+import com.buguagaoshu.homework.evaluation.model.User;
 import com.buguagaoshu.homework.evaluation.vo.AdminAddUser;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import com.buguagaoshu.homework.evaluation.vo.AlterUserStatus;
@@ -89,5 +90,13 @@ public interface UserService extends IService<UserEntity> {
      * 通过邮箱查找用户
      * */
     UserEntity findByEmail(String s);
+
+
+    /**
+     * 通过用户 ID 获取用户信息
+     * @param userId 用户ID
+     * @return 用户信息
+     * */
+    User userInfo(String userId);
 }
 

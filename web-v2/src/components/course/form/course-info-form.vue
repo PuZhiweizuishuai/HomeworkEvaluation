@@ -25,9 +25,9 @@
         <v-col cols="10">
           <v-text-field
             v-model="course.classNumber"
-            label="课程号"
+            label="课程号(当前版本已不再需要，直接默认值就好)"
             placeholder="课程号"
-            :rules="[() => course.classNumber != null || '课程号不能为空！']"
+
             clearable
             type="number"
           />
@@ -252,12 +252,23 @@
           <v-divider />
         </v-col>
       </v-row>
-      <v-row justify="center">
+      <v-row v-if="update" justify="center">
         <v-col cols="3">
           &nbsp;
         </v-col>
         <v-col cols="4">
           <v-btn block color="primary" @click="dialog = true">修改</v-btn>
+        </v-col>
+        <v-col cols="3">
+          &nbsp;
+        </v-col>
+      </v-row>
+      <v-row v-if="update == false" justify="center">
+        <v-col cols="3">
+          &nbsp;
+        </v-col>
+        <v-col cols="4">
+          <v-btn block color="primary" @click="submitSave">创建</v-btn>
         </v-col>
         <v-col cols="3">
           &nbsp;
@@ -449,6 +460,45 @@ export default {
     },
     getVerifyImage() {
       this.verifyImageUrl = this.SERVER_API_URL + '/verifyImage?t=' + new Date().getTime()
+    },
+    submitSave() {
+      if (this.course.curriculumName == null || this.course.curriculumName === '') {
+        this.message = '课程名不能为空！'
+        this.showMessage = true
+        return
+      }
+      if (this.course.curriculumName.length > 50) {
+        this.message = '课程名长度不能超过50个字符'
+        this.showMessage = true
+        return
+      }
+      if (this.course.courseTag == null || this.course.courseTag === 0) {
+        this.message = '课程分类不能为空'
+        this.showMessage = true
+        return
+      }
+      if (this.course.simpleInfo == null || this.course.simpleInfo === '') {
+        this.message = '课程简介不能为空'
+        this.showMessage = true
+        return
+      }
+      if (this.course.simpleInfo.length > 50) {
+        this.message = '课程简介长度不能超过50个字符'
+        this.showMessage = true
+        return
+      }
+      if (this.course.openingTime == null || this.course.openingTime === '' || this.course.closeTime == null || this.course.closeTime === '') {
+        this.message = '课程开课与结课时间不能为空'
+        this.showMessage = true
+        return
+      }
+      if (this.course.curriculumImageUrl == null || this.course.curriculumImageUrl === '') {
+        this.message = '你还没有上传课程图'
+        this.showMessage = true
+        return
+      }
+
+      this.$emit('save', this.course)
     }
   }
 }

@@ -10,12 +10,13 @@
       label-tap-to-retry="尝试重试"
       label-file-processing-complete="文件上传成功！"
       :allow-multiple="false"
-      accepted-file-types="video/*, .flv, .mkv, image/*, .zip, .rar, .7z, .docx, .dox, .ppt, .pptx, .xls, .xlsx, .pdf, .mp3, .flac, .txt"
+
       :server="server"
       :files="myFiles"
       @init="handleFilePondInit"
       @processfile="success"
     />
+    <!-- :accepted-file-types="`.doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document`" -->
     <!-- :instant-upload="false" 关闭立即上传到服务器 -->
   </div>
 </template>

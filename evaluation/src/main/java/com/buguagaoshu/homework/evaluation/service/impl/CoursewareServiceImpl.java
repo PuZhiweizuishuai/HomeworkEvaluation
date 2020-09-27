@@ -2,8 +2,10 @@ package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
+import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
 import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
+import com.buguagaoshu.homework.evaluation.utils.AesUtil;
 import com.buguagaoshu.homework.evaluation.utils.FileUtil;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -67,10 +69,19 @@ public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, Courseware
         QueryWrapper<CoursewareEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("course_id", courseId);
         List<CoursewareEntity> list = this.list(wrapper);
+//        list.forEach(e -> {
+//            if (!StringUtils.isEmpty(e.getFileUrl())) {
+//                String strToEncrypt = user.getId() + "#" + e.getFileUrl() + "#" + System.currentTimeMillis() + WebConstant.AEX_EXPIRES_TIME;
+//                String key = AesUtil.encrypt(strToEncrypt, WebConstant.AES_KEY);
+//                e.setKey(key);
+//            }
+//        });
+
+        // TODO 观看历史记录
         List<CoursewareEntity> levelTree =
-                list.stream().filter((categoryEntity -> categoryEntity.getLevel() == 0))
+                list.stream().filter((coursewareEntity -> coursewareEntity.getLevel() == 0))
                         .peek((courseware) -> courseware.setChildren(getChildren(courseware, list)))
-                        .sorted(Comparator.comparingInt(tag -> (tag.getSort() == null ? 0 : tag.getSort())))
+                        .sorted(Comparator.comparingInt(sort -> (sort.getSort() == null ? 1 : sort.getSort())))
                         .collect(Collectors.toList());
         return levelTree;
     }
@@ -85,6 +96,16 @@ public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, Courseware
         }
         if (student.getRole().equals(RoleTypeEnum.TEACHER.getRole())) {
             long time = System.currentTimeMillis();
+            if (coursewareEntity.getFatherId() != null) {
+                CoursewareEntity byId = this.getById(coursewareEntity.getFatherId());
+                if (byId == null) {
+                    return false;
+                }
+                if (!byId.getCourseId().equals(coursewareEntity.getCourseId())) {
+                    return false;
+                }
+            }
+
 
             coursewareEntity.setCreateTeacher(user.getId());
             coursewareEntity.setCaretTime(time);
@@ -92,6 +113,7 @@ public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, Courseware
             if (coursewareEntity.getLevel() == 0) {
                 coursewareEntity.setFatherId(0L);
             }
+
             // 设置文件格式
             if (!StringUtils.isEmpty(coursewareEntity.getFileUrl())) {
                 coursewareEntity.setFileType(fileUtil.fileTypeCode(coursewareEntity.getFileUrl()));

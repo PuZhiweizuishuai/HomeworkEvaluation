@@ -1,10 +1,11 @@
-package com.buguagaoshu.homework.evaluation.controller;
+package com.buguagaoshu.homework.evaluation.file;
 
 
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.model.VditorFiles;
 import com.buguagaoshu.homework.evaluation.repository.FileStorageRepository;
+import com.buguagaoshu.homework.evaluation.utils.FileUtil;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -23,7 +24,7 @@ import java.util.Map;
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
  * create          2020-06-08 13:11
- * TODO 文件格式验证
+ * TODO 文件格式验证,此加载器有BUG，先单独搞出来
  */
 @RestController
 public class FileController {
@@ -31,10 +32,13 @@ public class FileController {
 
     private final ResourceLoader resourceLoader;
 
+    private final FileUtil fileUtil;
+
     @Autowired
-    public FileController(FileStorageRepository repository, ResourceLoader resourceLoader) {
+    public FileController(FileStorageRepository repository, ResourceLoader resourceLoader, FileUtil fileUtil) {
         this.repository = repository;
         this.resourceLoader = resourceLoader;
+        this.fileUtil = fileUtil;
     }
 
     @GetMapping("/upload/file/redirect")
@@ -81,10 +85,16 @@ public class FileController {
         try {
             Resource resource =resourceLoader.getResource("file:" + Paths.get(path, filename));
             contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+            HttpHeaders headers = new HttpHeaders();
+            // TODO AES key 验证
+            if (FileUtil.PDF.equals(fileUtil.getFileSuffix(filename))) {
+                headers.add("X-Frame-Options", "SAMEORIGIN");
+            }
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "filename=" + filename);
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .contentType(MediaType.parseMediaType(contentType))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "filename=" + filename)
+                    .headers(headers)
                     .body(resource);
         } catch (Exception ignored) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);

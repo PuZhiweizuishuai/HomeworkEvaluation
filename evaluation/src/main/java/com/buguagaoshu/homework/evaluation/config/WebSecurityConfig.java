@@ -129,7 +129,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 关闭csrf
                 .disable()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .headers()
+                .frameOptions()
+                // 设置同域名下页面可嵌套
+                .sameOrigin();
     }
 
     @Override
