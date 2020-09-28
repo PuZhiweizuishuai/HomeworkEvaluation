@@ -1,8 +1,11 @@
 package com.buguagaoshu.homework.evaluation.config;
 
+import com.buguagaoshu.homework.evaluation.cache.ArticleTagCache;
 import com.buguagaoshu.homework.evaluation.cache.CourseTagCache;
 import com.buguagaoshu.homework.evaluation.cache.WebsiteIndexMessageCache;
 import com.buguagaoshu.homework.evaluation.service.AdvertisementService;
+import com.buguagaoshu.homework.evaluation.service.ArticleService;
+import com.buguagaoshu.homework.evaluation.service.ArticleTagService;
 import com.buguagaoshu.homework.evaluation.service.CourseTagService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,8 @@ public class WebInitializationConfig {
     @Bean
     public CommandLineRunner dataLoader(CourseTagCache courseTagCache,
                                         CourseTagService courseTagService,
+                                        ArticleTagCache articleTagCache,
+                                        ArticleTagService articleTagService,
                                         AdvertisementService advertisementService) {
         return new CommandLineRunner() {
             @Override
@@ -31,6 +36,10 @@ public class WebInitializationConfig {
                 courseTagCache.setCourseTagListTree(courseTagService.listWithTree());
                 courseTagCache.setCourseTagEntityMap(courseTagService.CourseTagMap());
                 log.info("初始化课程分类树");
+                // 初始化帖子分类
+                articleTagCache.setArticleTagCaches(articleTagService.listTree());
+                articleTagCache.setIntegerArticleTagEntityMap(articleTagService.listToMap());
+                log.info("初始化话题分类！");
                 // 初始化缓存
                 advertisementService.addAdCache();
                 log.info("初始化广告以及大图缓存");

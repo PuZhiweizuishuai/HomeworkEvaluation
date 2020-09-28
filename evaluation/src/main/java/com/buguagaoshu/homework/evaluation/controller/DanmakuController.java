@@ -28,6 +28,9 @@ public class DanmakuController {
     }
 
 
+    /**
+     * TODO 加入缓存
+     * */
     @GetMapping("/danmaku/v3")
     public ResponseDetails get(@RequestParam("id") Long id,
                                @RequestParam("max") Integer max) {

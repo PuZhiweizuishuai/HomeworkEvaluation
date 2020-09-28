@@ -68,7 +68,7 @@ public class CurriculumController {
         if (pageUtils == null) {
             return ResponseDetails.ok(ReturnCodeEnum.NOO_FOUND);
         }
-        return ResponseDetails.ok().put("data", curriculumService.selectUserCurriculumList(params, request));
+        return ResponseDetails.ok().put("data", pageUtils);
     }
 
 

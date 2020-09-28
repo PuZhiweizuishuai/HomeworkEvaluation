@@ -51,9 +51,7 @@
       />
       <v-spacer />
 
-      <v-btn icon>
-        <v-icon>mdi-bell</v-icon>
-      </v-btn>
+      <Notice v-if="this.$store.state.userInfo" />
       <!-- 登陆后显示 -->
       <Head v-if="this.$store.state.userInfo" />
       <!-- 未登录显示 -->
@@ -80,13 +78,16 @@
  */
 import Head from '@/layout/components/head.vue'
 import Footer from '@/layout/components/footer.vue'
+
+import Notice from '@/layout/components/notice.vue'
 import BackToTop from '@/components/back-to-top.vue'
 
 export default {
   components: {
     Head,
     Footer,
-    BackToTop
+    BackToTop,
+    Notice
   },
   data: () => ({
     mini: false,

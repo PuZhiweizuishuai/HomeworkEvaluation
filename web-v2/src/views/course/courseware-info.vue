@@ -80,6 +80,19 @@
         <ShowMarkdown :markdown="courseware.text" />
       </v-col>
     </v-row>
+    <v-row>
+      <v-col cols="12">
+        <v-divider />
+      </v-col>
+    </v-row>
+    <v-row justify="center">
+      <v-col cols="10">
+        <v-row justify="space-between">
+          <v-btn text>上一章</v-btn>
+          <v-btn text color="primary">下一章</v-btn>
+        </v-row>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

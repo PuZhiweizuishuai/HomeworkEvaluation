@@ -1,6 +1,9 @@
 <template>
   <v-main>
     <v-container fill-height>
+      <video id="v1" autoplay loop muted>
+        <source id="videoSource" src="/video/bg.mp4" type="video/mp4">
+      </video>
       <v-row justify="center" align="center">
         <v-col cols="12">
           <v-card
@@ -131,5 +134,24 @@ export default {
 </script>
 
 <style>
-
+        #v1{
+            position: fixed;
+            right: 0px;
+            bottom: 0px;
+            width: 100%;
+            height: 100%;
+            height: auto;
+            /* width: auto; */
+            /*加滤镜*/
+            /*filter: blur(15px); //背景模糊设置 */
+            /*-webkit-filter: grayscale(100%);*/
+            /*filter:grayscale(100%); //背景灰度设置*/
+            z-index:0
+        }
+        #videoSource{
+            width: 100%;
+            height: 100%;
+            /* height: auto;
+            width: auto; */
+        }
 </style>

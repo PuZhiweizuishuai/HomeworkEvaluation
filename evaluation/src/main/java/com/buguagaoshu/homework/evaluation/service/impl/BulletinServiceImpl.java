@@ -1,9 +1,11 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
+import com.buguagaoshu.homework.common.enums.NotificationTypeEnum;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
+import com.buguagaoshu.homework.evaluation.service.NotificationService;
 import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
 import com.buguagaoshu.homework.evaluation.utils.IpUtil;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
@@ -22,6 +24,7 @@ import com.buguagaoshu.homework.common.utils.Query;
 import com.buguagaoshu.homework.evaluation.dao.BulletinDao;
 import com.buguagaoshu.homework.evaluation.entity.BulletinEntity;
 import com.buguagaoshu.homework.evaluation.service.BulletinService;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,9 +34,12 @@ public class BulletinServiceImpl extends ServiceImpl<BulletinDao, BulletinEntity
 
     private final StudentsCurriculumService studentsCurriculumService;
 
+    private final NotificationService notificationService;
+
     @Autowired
-    public BulletinServiceImpl(StudentsCurriculumService studentsCurriculumService) {
+    public BulletinServiceImpl(StudentsCurriculumService studentsCurriculumService, NotificationService notificationService) {
         this.studentsCurriculumService = studentsCurriculumService;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -59,6 +65,7 @@ public class BulletinServiceImpl extends ServiceImpl<BulletinDao, BulletinEntity
 
 
     @Override
+    @Transactional(rollbackFor = {})
     public ReturnCodeEnum saveBulletin(BulletinEntity bulletinEntity, HttpServletRequest request) {
         // 获取当前用户
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
@@ -70,7 +77,9 @@ public class BulletinServiceImpl extends ServiceImpl<BulletinDao, BulletinEntity
                 // 如果是这门课的老师
                 if (user.getId().equals(teacher.getStudentId())) {
                     save(bulletinEntity, user, IpUtil.getIpAddr(request), request.getHeader("user-agent"));
-                    // TODO 向学生发布消息通知
+                    // 向学生发布消息通知
+                    List<StudentsCurriculumEntity> list = studentsCurriculumService.findUserListInCurriculum(bulletinEntity.getCurriculumId());
+                    notificationService.sendBulletin(list,  bulletinEntity.getUserId(), bulletinEntity.getCurriculumId());
                     return ReturnCodeEnum.SUCCESS;
                 }
             }

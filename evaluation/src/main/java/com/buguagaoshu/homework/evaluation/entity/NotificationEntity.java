@@ -50,7 +50,7 @@ public class NotificationEntity {
     private Long commentId;
 
     /**
-     * 类型 【0 回复帖子， 1 回复评论，2 收到点赞  4 收到关注  5 课程通知  6 ....】
+     * 类型 ，具体内容见枚举类
      */
     private Integer type;
 
@@ -69,4 +69,8 @@ public class NotificationEntity {
      */
     private String text;
 
+    /**
+     * 跳转链接
+     * */
+    private String url;
 }

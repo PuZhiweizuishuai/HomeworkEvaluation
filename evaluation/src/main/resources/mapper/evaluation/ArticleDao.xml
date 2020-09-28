@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.buguagaoshu.homework.evaluation.dao.ArticleDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.buguagaoshu.homework.evaluation.entity.ArticleEntity" id="articleMap">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="tagId" column="tag_id"/>
+        <result property="tag" column="tag"/>
+        <result property="authorId" column="author_id"/>
+        <result property="commentCount" column="comment_count"/>
+        <result property="viewCount" column="view_count"/>
+        <result property="content" column="content"/>
+        <result property="permaLink" column="perma_link"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="latestCommentTime" column="latest_comment_time"/>
+        <result property="latestCommentName" column="latest_comment_name"/>
+        <result property="commentable" column="commentable"/>
+        <result property="status" column="status"/>
+        <result property="type" column="type"/>
+        <result property="courseId" column="course_id"/>
+        <result property="likeCount" column="like_count"/>
+        <result property="badCount" column="bad_count"/>
+        <result property="collectCount" column="collect_count"/>
+        <result property="ip" column="ip"/>
+        <result property="ua" column="ua"/>
+        <result property="articlestick" column="articleStick"/>
+        <result property="anonymous" column="anonymous"/>
+        <result property="perfect" column="perfect"/>
+        <result property="qAOfferPoint" column="q_a_offer_point"/>
+        <result property="topImgUrl" column="top_img_url"/>
+        <result property="authorName" column="author_name"/>
+    </resultMap>
+
+
+</mapper>

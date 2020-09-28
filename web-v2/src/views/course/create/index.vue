@@ -76,6 +76,24 @@
       </v-col>
     </v-row> -->
     <CourseInfo @save="getSave" />
+    <v-snackbar
+      v-model="showMessage"
+      :top="true"
+      :timeout="3000"
+    >
+      {{ message }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="showMessage = false"
+        >
+          关闭
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -89,6 +107,8 @@ export default {
   },
   data() {
     return {
+      message: '',
+      showMessage: false
     }
   },
   methods: {
@@ -99,7 +119,8 @@ export default {
           //
           this.$router.push({ path: `/course/learn/${json.data.id}` })
         } else {
-          //
+          this.message = json.message
+          this.showMessage = true
         }
       })
     }

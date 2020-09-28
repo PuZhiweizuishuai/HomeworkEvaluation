@@ -47,6 +47,14 @@ const routes = [
           title: '我的课程'
         }
       },
+      {
+        path: '/notification',
+        component: () => import('@/views/notification/index.vue'),
+        name: 'Notification',
+        meta: {
+          title: '消息通知'
+        }
+      },
       // 新建课程
       {
         path: '/course/create',
@@ -129,6 +137,16 @@ const routes = [
           requireAuth: true
         }
       },
+      // 作业互评
+      {
+        path: '/course/learn/:id/evaluation',
+        name: 'Evaluation',
+        component: () => import('@/views/course/evaluation.vue'),
+        meta: {
+          // title: '测验与作业',
+          requireAuth: true
+        }
+      },
       // 显示作业内容
       {
         path: '/course/learn/:id/exam/homework/:homeworkId',
@@ -146,6 +164,26 @@ const routes = [
         component: () => import('@/views/course/bbs.vue'),
         meta: {
           // title: '讨论区',
+          requireAuth: true
+        }
+      },
+      // 新建主题帖
+      {
+        path: '/course/learn/:id/bbs/article',
+        name: 'CreateArticle',
+        component: () => import('@/views/article/create.vue'),
+        meta: {
+          // title: '讨论区',
+          requireAuth: true
+        }
+      },
+      // 课程评价
+      {
+        path: '/course/learn/:id/comment',
+        name: 'CourseComment',
+        component: () => import('@/views/course/comment.vue'),
+        meta: {
+
           requireAuth: true
         }
       },

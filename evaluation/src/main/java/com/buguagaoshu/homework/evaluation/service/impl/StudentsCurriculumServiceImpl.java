@@ -50,7 +50,7 @@ public class StudentsCurriculumServiceImpl extends ServiceImpl<StudentsCurriculu
         QueryWrapper<StudentsCurriculumEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("curriculum_id", id);
         wrapper.eq("role", RoleTypeEnum.TEACHER.getRole());
-        return this.list(wrapper).stream().filter((t)->{
+        return this.list(wrapper).stream().filter((t) -> {
             return !t.getStudentId().equals(teacher);
         }).collect(Collectors.toList());
 
@@ -94,7 +94,7 @@ public class StudentsCurriculumServiceImpl extends ServiceImpl<StudentsCurriculu
     @Override
     public List<UserEntity> findUserByIdAndCurriculumId(List<UserEntity> userEntityList, Long id) {
         List<String> ids =
-                userEntityList.stream().map((u)->{
+                userEntityList.stream().map((u) -> {
                     u.setPassword("");
                     return u.getUserId();
                 }).collect(Collectors.toList());
@@ -105,10 +105,10 @@ public class StudentsCurriculumServiceImpl extends ServiceImpl<StudentsCurriculu
                 = this.list(wrapper);
         Map<String, StudentsCurriculumEntity> map = new HashMap<>();
         if (studentsCurriculumEntities != null && studentsCurriculumEntities.size() != 0) {
-            studentsCurriculumEntities.forEach((u)->{
+            studentsCurriculumEntities.forEach((u) -> {
                 map.put(u.getStudentId(), u);
             });
-            List<UserEntity> userEntities = userEntityList.stream().filter((u)->{
+            List<UserEntity> userEntities = userEntityList.stream().filter((u) -> {
                 // 补充班级内权限
                 u.setRole(map.get(u.getUserId()).getRole());
                 return map.get(u.getUserId()) != null;
@@ -116,6 +116,15 @@ public class StudentsCurriculumServiceImpl extends ServiceImpl<StudentsCurriculu
             return userEntities;
         }
         return null;
+    }
+
+    @Override
+    public List<StudentsCurriculumEntity> findUserListInCurriculum(Long courseId) {
+        QueryWrapper<StudentsCurriculumEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("curriculum_id", courseId);
+        wrapper.ne("role", RoleTypeEnum.TEACHER.getRole());
+
+        return list(wrapper);
     }
 
 }

@@ -63,6 +63,13 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
 
     private SubmitQuestionsService submitQuestionsService;
 
+    private NotificationService notificationService;
+
+    @Autowired
+    public void setNotificationService(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
+
     @Autowired
     public void setQuestionsService(SubmitQuestionsService submitQuestionsService) {
         this.submitQuestionsService = submitQuestionsService;
@@ -182,7 +189,9 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
 
         // 保存作业与题目的关联
         homeworkWithQuestionsService.saveBatch(homeworkWithQuestionsEntities);
-        // TODO 通知班级成员
+        // 通知班级成员
+        List<StudentsCurriculumEntity> userListInCurriculum = studentsCurriculumService.findUserListInCurriculum(homeworkEntity.getClassNumber());
+        notificationService.sendNewExam(userListInCurriculum, nowLoginUser.getId(), curriculumEntity, homeworkEntity);
         homeworkModel.setId(homeworkEntity.getId());
         return homeworkModel;
     }
@@ -266,12 +275,11 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
             submitHomeworkStatusEntity.setUpdateTime(System.currentTimeMillis());
             submitHomeworkStatusService.updateById(submitHomeworkStatusEntity);
         }
-        // 如果作业已经被老师批改，并且作业已经结束
+        // 如果作业已经被老师批改
         // 那么可以直接给出正确答案
         // 如果课程内身份是老师，也可以直接给出答案
 
-        if (submitHomeworkStatusEntity.getStatus() == HomeworkSubmitStatusEnum.COMPLETE.getCode()
-                && time > homeworkEntity.getCloseTime()) {
+        if (submitHomeworkStatusEntity.getStatus() == HomeworkSubmitStatusEnum.COMPLETE.getCode()) {
             rightAnswer = true;
         }
 
@@ -379,6 +387,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                         submitHomeworkStatusEntity.setScore(score);
                         submitHomeworkStatusEntity.setSubmitTime(time);
                         // 提交数加 1
+                        // TODO 消息通知,考虑要不要加这个提交作业的消息通知
                         homeworkSubmitCountAdd(homeworkEntity, nowLoginUser.getId());
                         submitHomeworkStatusService.updateById(submitHomeworkStatusEntity);
                     }
@@ -541,8 +550,14 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                 userSubmitHomework.setUpdateTime(System.currentTimeMillis());
                 userSubmitHomework.setStatus(teacherCommentHomeworkData.getStatus());
                 userSubmitHomework.setTeacherComment(teacherCommentHomeworkData.getComment());
-                // TODO 消息通知
+                // 消息通知
                 submitHomeworkStatusService.updateById(userSubmitHomework);
+                notificationService.send(user.getId(),
+                        userSubmitHomework.getUserId(),
+                        NotificationTypeEnum.COURSE_KEEPER_ERROR,
+                        "你在课程：" + curriculum.getCurriculumName() + " 的作业因为不符合要求，被教师打回，请及时查看！",
+                        "/course/learn/" + curriculum.getId() + "/exam/" + homework.getId(),
+                        homework.getId());
                 return ReturnCodeEnum.SUCCESS;
             }
             // 1. 获取当前作业学生提交数据
@@ -579,7 +594,13 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
             userSubmitHomework.setScore(score);
             userSubmitHomework.setStatus(teacherCommentHomeworkData.getStatus());
             userSubmitHomework.setTeacherComment(teacherCommentHomeworkData.getComment());
-            // TODO 消息通知
+            // 消息通知
+            notificationService.send(user.getId(),
+                    userSubmitHomework.getUserId(),
+                    NotificationTypeEnum.COURSE_KEEPER_ERROR,
+                    "你在课程：" + curriculum.getCurriculumName() + " 的作业,老师以及批改完成。你现在可以查看你的成绩了！",
+                    "/course/learn/" + curriculum.getId() + "/exam/" + homework.getId(),
+                    homework.getId());
             submitHomeworkStatusService.updateById(userSubmitHomework);
             return ReturnCodeEnum.SUCCESS;
         }

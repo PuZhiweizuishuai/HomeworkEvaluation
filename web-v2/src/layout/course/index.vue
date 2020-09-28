@@ -60,9 +60,8 @@
       />
       <v-spacer />
 
-      <v-btn icon>
-        <v-icon>mdi-bell</v-icon>
-      </v-btn>
+      <!-- 消息通知 -->
+      <Notice v-if="this.$store.state.userInfo" />
       <!-- 登陆后显示 -->
       <Head v-if="this.$store.state.userInfo" />
       <!-- 未登录显示 -->
@@ -91,12 +90,13 @@
 import Head from '@/layout/components/head.vue'
 import Footer from '@/layout/components/footer.vue'
 import BackToTop from '@/components/back-to-top.vue'
-
+import Notice from '@/layout/components/notice.vue'
 export default {
   components: {
     Head,
     Footer,
-    BackToTop
+    BackToTop,
+    Notice
   },
   data: () => ({
     mini: false,
@@ -107,6 +107,7 @@ export default {
       { icon: 'mdi-calculator-variant', text: '评分标准', link: `/course/learn/`, type: '/score', teacher: false, show: true },
       { icon: 'mdi-file-table-box-multiple-outline', text: '课件', link: `/course/learn/`, type: '/courseware', teacher: false, show: true },
       { icon: 'mdi-file-document-edit', text: '测验与作业', link: `/course/learn/`, type: '/exam', teacher: false, show: true },
+      { icon: 'mdi-comment', text: '作业互评', link: `/course/learn/`, type: '/evaluation', teacher: false, show: true },
       { icon: 'mdi-facebook-messenger', text: '讨论区', link: `/course/learn/`, type: '/bbs', teacher: false, show: true },
       { icon: 'mdi-cog', text: '课程管理', link: `/course/learn/`, type: '/setting', teacher: true, show: false }
     ],
@@ -138,7 +139,7 @@ export default {
       // 获取课程内权限
         if (this.items[i].teacher) {
           if (this.userRole.role === 'ROLE_TEACHER') {
-            this.items[i].show = true
+            this.items[i].show = !this.items[i].show
           }
         }
         this.items[i].link = this.items[i].link + this.id + this.items[i].type

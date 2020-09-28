@@ -41,6 +41,10 @@ export default {
     hide: {
       type: Boolean,
       default: false
+    },
+    uploadsize: {
+      type: Number,
+      default: 10 * 1024 * 1024
     }
   },
   data() {
@@ -136,13 +140,14 @@ export default {
       // minHeight: this.minHeight,
       placeholder: this.placeholder, // '请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。',
       upload: {
+        max: this.uploadsize,
         withCredentials: true,
         headers: {
           'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')
         },
         accept: 'image/*, .wav, .mp4, .zip, .rar, .7z, .docx, .dox, .ppt, .pptx, .xls, .xlsx, .pdf, .apk, .mp3, .txt',
         url: this.uploadurl,
-        linkToImgUrl: this.uploadurl,
+
         filename(name) {
           return name.replace(/[^(a-zA-Z0-9\u4e00-\u9fa5\.)]/g, '')
             .replace(/[\?\\/:|<>\*\[\]\(\)\$%\{\}@~]/g, '')

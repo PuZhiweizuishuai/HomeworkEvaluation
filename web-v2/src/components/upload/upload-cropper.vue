@@ -59,7 +59,7 @@ export default {
   props: {
     uploadurl: {
       type: String,
-      default: 'http://127.0.0.1:8080/api/upload/file'
+      default: '/api/upload/file'
     },
     fixednumber: {
       type: Array,
@@ -168,6 +168,7 @@ export default {
       })
     },
     uploadToSystemFile(form) {
+      console.log('uploadToSystemFile')
       fetch(this.uploadurl, {
         headers: {
           'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')
@@ -177,22 +178,17 @@ export default {
         body: form
       }).then(response => response.json())
         .then(json => {
-          if (json.status === 0) {
-            if (json.status === 0) {
-              this.backUploadurl = json.data.succMap[this.fileName]
-              if (this.backUploadurl != null && this.backUploadurl !== '') {
-                this.$emit('success-file', this.backUploadurl)
-                this.$message.success('上传成功！')
-              } else {
-                this.$message.error('上传失败，请重试！')
-              }
+          if (json.code === 0) {
+            this.backUploadurl = json.data.succMap[this.fileName]
+            if (this.backUploadurl != null && this.backUploadurl !== '') {
+              this.$emit('success-file', this.backUploadurl)
             } else {
-              this.$message.error('上传失败，请重试！')
+              //
             }
           }
         })
         .catch(e => {
-          this.$message.error('网络异常，请检查网络后重试！')
+          return null
         })
     },
     // 实时预览函数

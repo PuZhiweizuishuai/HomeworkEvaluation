@@ -72,5 +72,13 @@ public interface StudentsCurriculumService extends IService<StudentsCurriculumEn
      * @return 在班级内的学生数据
      * */
     List<UserEntity> findUserByIdAndCurriculumId(List<UserEntity> userEntityList, Long id);
+
+
+    /**
+     * 返回当前课程所有学生，排除教师
+     * @param courseId 课程ID
+     * @return 排除教师后的学生列表
+     * */
+    List<StudentsCurriculumEntity> findUserListInCurriculum(Long courseId);
 }
 

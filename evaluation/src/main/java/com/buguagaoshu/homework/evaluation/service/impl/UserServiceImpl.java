@@ -10,13 +10,11 @@ import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.dao.UserRoleDao;
 import com.buguagaoshu.homework.evaluation.entity.*;
 import com.buguagaoshu.homework.evaluation.model.User;
-import com.buguagaoshu.homework.evaluation.service.CurriculumService;
-import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
+import com.buguagaoshu.homework.evaluation.service.*;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import com.buguagaoshu.homework.evaluation.vo.AdminAddUser;
 import com.buguagaoshu.homework.evaluation.vo.AlterUserStatus;
 import com.buguagaoshu.homework.evaluation.vo.UserAndRole;
-import com.buguagaoshu.homework.evaluation.service.UserRoleService;
 import com.buguagaoshu.homework.evaluation.utils.InviteCodeUtil;
 import com.buguagaoshu.homework.evaluation.utils.IpUtil;
 import com.buguagaoshu.homework.evaluation.utils.TimeUtils;
@@ -42,7 +40,6 @@ import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.common.utils.Query;
 
 import com.buguagaoshu.homework.evaluation.dao.UserDao;
-import com.buguagaoshu.homework.evaluation.service.UserService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -65,6 +62,13 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     private final StudentsCurriculumService studentsCurriculumService;
 
     private CurriculumService curriculumService;
+
+    private NotificationService notificationService;
+
+    @Autowired
+    public void setNotificationService(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
 
     @Autowired
     public void setCurriculumService(CurriculumService curriculumService) {
@@ -349,8 +353,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                 // 构造要导入学生列表
                 classImportUser(userList, map, stringStudentsCurriculumEntityMap, userEntityMap, students, count, courseNumber);
                 // 保存学生列表
-                // TODO 给学生发送通知
+
                 studentsCurriculumService.saveBatch(students);
+                // 给学生发送通知
+                notificationService.sendJoinCourseToUser(students, teacher.getId(), curriculumEntity);
                 // 保存课程人数
                 curriculumEntity.setStudentNumber(count.get() + curriculumEntity.getStudentNumber());
 

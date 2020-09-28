@@ -29,6 +29,10 @@ public class CoursewareController {
     @GetMapping("/course/courseware/{id}")
     public ResponseDetails coursewareTree(@PathVariable("id") Long courseId,
                                           HttpServletRequest request) {
+
+        /**
+         * TODO 添加课件缓存，先从缓存中读取课件数据，如果缓存没有，再从数据库中获取数据，之后更新缓存
+         * */
         List<CoursewareEntity> tree = coursewareService.coursewareTree(courseId, request);
         if (tree == null) {
             return ResponseDetails.ok(ReturnCodeEnum.NO_POWER.getCode(), "没有找到这门课程或者你没有加入这门课程！");

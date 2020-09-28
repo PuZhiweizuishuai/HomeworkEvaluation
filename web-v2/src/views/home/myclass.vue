@@ -23,7 +23,7 @@
       </v-row>
       <v-row>
         <v-col v-for="item in classList" :key="item.id" :cols="colsWidth">
-          <CourseCard :course="item" />
+          <CourseCard :course="item" :src="`/course/learn/`" />
         </v-col>
       </v-row>
       <v-row justify="center">

@@ -2,11 +2,13 @@
   <v-container>
     <v-row>
       <v-col cols="12">
-        <router-link :to="`/course/tag/${tag.id}`">
-          <h3>
+
+        <h3>
+          <router-link :to="`/course/tag/${tag.id}`">
             {{ tag.courseMajor }}
-          </h3>
-        </router-link>
+          </router-link>
+        </h3>
+
       </v-col>
     </v-row>
     <v-row v-resize="onResize">

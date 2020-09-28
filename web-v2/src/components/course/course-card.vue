@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="`/course/info/${course.id}`">
+  <router-link :to="`${src}${course.id}`">
     <v-card outlined>
 
       <v-img
@@ -36,6 +36,10 @@ export default {
     course: {
       type: Object,
       default: null
+    },
+    src: {
+      type: String,
+      default: '/course/info/'
     }
   },
   data() {

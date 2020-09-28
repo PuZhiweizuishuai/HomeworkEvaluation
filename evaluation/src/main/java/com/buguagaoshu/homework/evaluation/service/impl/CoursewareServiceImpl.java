@@ -96,7 +96,7 @@ public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, Courseware
         }
         if (student.getRole().equals(RoleTypeEnum.TEACHER.getRole())) {
             long time = System.currentTimeMillis();
-            if (coursewareEntity.getFatherId() != null) {
+            if (coursewareEntity.getFatherId() != null && coursewareEntity.getFatherId() != 0) {
                 CoursewareEntity byId = this.getById(coursewareEntity.getFatherId());
                 if (byId == null) {
                     return false;

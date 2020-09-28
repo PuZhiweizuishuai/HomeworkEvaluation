@@ -1,10 +1,7 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.buguagaoshu.homework.common.domain.CustomPage;
-import com.buguagaoshu.homework.common.enums.CurriculumAccessTypeEnum;
-import com.buguagaoshu.homework.common.enums.CurriculumJoinTimLimitEnum;
-import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
-import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
+import com.buguagaoshu.homework.common.enums.*;
 import com.buguagaoshu.homework.evaluation.cache.CourseTagCache;
 import com.buguagaoshu.homework.evaluation.cache.WebsiteIndexMessageCache;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
@@ -12,9 +9,7 @@ import com.buguagaoshu.homework.evaluation.entity.*;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
 import com.buguagaoshu.homework.evaluation.model.CurriculumModel;
 import com.buguagaoshu.homework.evaluation.model.JoinCourseCode;
-import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
-import com.buguagaoshu.homework.evaluation.service.UserService;
-import com.buguagaoshu.homework.evaluation.service.VerifyCodeService;
+import com.buguagaoshu.homework.evaluation.service.*;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import com.buguagaoshu.homework.evaluation.utils.TimeUtils;
 import com.buguagaoshu.homework.evaluation.vo.*;
@@ -24,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -37,7 +29,7 @@ import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.common.utils.Query;
 
 import com.buguagaoshu.homework.evaluation.dao.CurriculumDao;
-import com.buguagaoshu.homework.evaluation.service.CurriculumService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,6 +47,13 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
     private final StudentsCurriculumService studentsCurriculumService;
 
     private UserService userService;
+
+    private NotificationService notificationService;
+
+    @Autowired
+    public void setNotificationService(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
 
     private final CourseTagCache courseTagCache;
 
@@ -88,6 +87,7 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
     }
 
     @Override
+    @Transactional(rollbackFor = {})
     public CurriculumEntity createCurriculum(CurriculumModel curriculumModel, Claims teacher) {
         CurriculumEntity curriculumEntity = new CurriculumEntity();
         BeanUtils.copyProperties(curriculumModel, curriculumEntity);
@@ -123,6 +123,7 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
         studentsCurriculumEntity.setStudentId(teacher.getId());
         studentsCurriculumEntity.setCurriculumId(curriculumEntity.getId());
         studentsCurriculumEntity.setRole(RoleTypeEnum.TEACHER.getRole());
+        studentsCurriculumEntity.setStudentName(teacher.getSubject());
         studentsCurriculumService.save(studentsCurriculumEntity);
 
         // 脱敏
@@ -183,7 +184,7 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
         QueryWrapper<CurriculumEntity> wrapper = new QueryWrapper<>();
         wrapper.orderByDesc("update_time");
         String teacher = (String) params.get("teacher");
-        if (teacher != null) {
+        if (!StringUtils.isEmpty(teacher)) {
             wrapper.eq("create_teacher", teacher);
         }
         Long tag = null;
@@ -218,13 +219,11 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
 
     @Override
     public PageUtils selectJoinCurriculumList(String userId, HttpServletRequest request) {
-        if (!userId.equals(JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY).getId())) {
-            return null;
-        }
+
         IPage<StudentsCurriculumEntity> page =
                 studentsCurriculumService.page(
                         new Query<StudentsCurriculumEntity>().getPage(new HashMap<>(2)),
-                        new QueryWrapper<StudentsCurriculumEntity>().eq("student_id", userId)
+                        new QueryWrapper<StudentsCurriculumEntity>().eq("student_id", userId).orderByDesc("create_time")
                 );
         List<Long> ids = page.getRecords().stream().map(StudentsCurriculumEntity::getCurriculumId).collect(Collectors.toList());
         if (ids.size() != 0) {
@@ -232,6 +231,12 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
             curriculumEntityList.forEach((c) -> {
                 c.setPassword("");
                 c.setCurriculumInfo("");
+            });
+            curriculumEntityList.sort(new Comparator<CurriculumEntity>() {
+                @Override
+                public int compare(CurriculumEntity o1, CurriculumEntity o2) {
+                    return o2.getUpdateTime().compareTo(o1.getUpdateTime());
+                }
             });
             IPage<CurriculumEntity> entityIPage = new CustomPage<>(curriculumEntityList, page.getTotal(), page.getSize(), page.getCurrent(), page.orders());
             return new PageUtils(entityIPage);
@@ -322,7 +327,13 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
         student.setCurriculumId(entity.getId());
         student.setCreateTime(System.currentTimeMillis());
         // TODO 邀请码加入
-        // TODO 向老师发送通知
+        // 向老师发送通知
+        notificationService.send(user.getId(),
+                entity.getCreateTeacher(),
+                NotificationTypeEnum.COURSE_JOIN,
+                "学生: " + user.getId() + "进入了课程！",
+                "/user/" + user.getId(),
+                entity.getId());
         if (entity.getAccessMethod().equals(CurriculumAccessTypeEnum.USE_PASSWORD.getCode())) {
             if (encoder.matches(code.getCode(), entity.getPassword())) {
                 // TODO 优化加 1 方式
