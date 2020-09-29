@@ -4,6 +4,7 @@ import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
+import com.buguagaoshu.homework.evaluation.model.ArticleModel;
 import com.buguagaoshu.homework.evaluation.service.ArticleService;
 import com.buguagaoshu.homework.evaluation.vo.ArticleVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,8 @@ public class ArticleController {
         return ResponseDetails.ok().put("data", entity);
     }
 
-    @GetMapping("/article/list/{courseId}")
-    public ResponseDetails list(@PathVariable("courseId") Long courseId,
+    @GetMapping("/article/list/course/{courseId}")
+    public ResponseDetails courseList(@PathVariable("courseId") Long courseId,
                                 @RequestParam Map<String, Object> params,
                                 HttpServletRequest request) {
         PageUtils courseList = articleService.getCourseList(courseId, params, request);
@@ -47,5 +48,19 @@ public class ArticleController {
             return ResponseDetails.ok(ReturnCodeEnum.NO_POWER);
         }
         return ResponseDetails.ok().put("data", courseList);
+    }
+
+
+    /**
+     * 获取课程内帖子的详细内容
+     * */
+    @GetMapping("/article/info/course/{id}")
+    public ResponseDetails info(@PathVariable("id") Long id,
+                                HttpServletRequest request) {
+        ArticleModel articleModel = articleService.courseArticleInfo(id, request);
+        if (articleModel != null) {
+            return ResponseDetails.ok().put("data", articleModel);
+        }
+        return ResponseDetails.ok(ReturnCodeEnum.NO_ROLE_OR_NO_FOUND);
     }
 }

@@ -36,5 +36,9 @@
         <result property="courseRating" column="course_rating" />
     </resultMap>
 
+    <update id="countAdd">
+        update article set ${col} = ${col} + #{count} where id = #{articleId}
+    </update>
+
 
 </mapper>

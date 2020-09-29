@@ -3,10 +3,7 @@ package com.buguagaoshu.homework.evaluation.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.buguagaoshu.homework.common.enums.NotificationTypeEnum;
 import com.buguagaoshu.homework.common.utils.PageUtils;
-import com.buguagaoshu.homework.evaluation.entity.CurriculumEntity;
-import com.buguagaoshu.homework.evaluation.entity.HomeworkEntity;
-import com.buguagaoshu.homework.evaluation.entity.NotificationEntity;
-import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
+import com.buguagaoshu.homework.evaluation.entity.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -50,6 +47,14 @@ public interface NotificationService extends IService<NotificationEntity> {
      * @return 发送结果
      * */
     void send(String notifier, String receiver, NotificationTypeEnum type, String text, String url, Long outerId);
+
+
+    /**
+     * 发送新评论通知
+     * @param notifier 消息发送者
+     * @param receiver 消息接收者
+     * */
+    void sendComment(String notifier, String receiver, ArticleEntity articleEntity, CommentEntity commentEntity, NotificationTypeEnum type);
 
 
     /**

@@ -13,14 +13,14 @@
             <v-col cols="12" style="padding-top: 0px;">
               <h3 style="color:black">
                 {{ item.title }}
-                <!-- <v-chip
-                v-if="course.createTeacher == item.authorId"
-                class="ma-2"
-                color="primary"
-                small
-              >
-                教师
-              </v-chip> -->
+                <v-chip
+                  v-if="item.isTeacher"
+                  class="ma-2"
+                  color="primary"
+                  small
+                >
+                  教师
+                </v-chip>
                 <v-chip
                   v-if="item.perfect == 1"
                   class="ma-2"

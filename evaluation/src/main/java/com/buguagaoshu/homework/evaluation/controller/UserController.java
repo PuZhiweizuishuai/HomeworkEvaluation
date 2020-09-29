@@ -21,6 +21,7 @@ import org.springframework.web.util.WebUtils;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -97,11 +98,12 @@ public class UserController {
      * 添加用户
      * */
     @PostMapping("/admin/user/add")
-    public ResponseDetails addOneUser(@RequestBody List<UserEntity> UserEntityList,
+    public ResponseDetails addOneUser(@Valid @RequestBody List<UserEntity> UserEntityList,
                                       HttpServletRequest request) {
          List<AdminAddUser> userList = userService.adminAddUser(UserEntityList, request);
          return ResponseDetails.ok().put("data", userList);
     }
+
 
     /**
      * 管理员重置密码

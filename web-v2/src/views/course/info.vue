@@ -272,7 +272,7 @@ import 'vditor/src/assets/scss/index.scss'
 
 function initOutline() {
   const headingElements = []
-  Array.from(document.getElementById('class-markdown-view').children).forEach((item) => {
+  Array.from(document.querySelector('#class-markdown-view').children).forEach((item) => {
     if (item.tagName.length === 2 && item.tagName !== 'HR' && item.tagName.indexOf('H') === 0) {
       headingElements.push(item)
     }

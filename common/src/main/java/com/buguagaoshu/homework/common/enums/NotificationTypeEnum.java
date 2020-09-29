@@ -26,6 +26,8 @@ public enum NotificationTypeEnum {
 
     COURSE_JOIN(6, "加入课程的通知！"),
 
+    COURSE_BBS_COMMENT(7, "课程讨论区收到新评论！"),
+
     /**
      * 留下数字空间，方便之后通知类型扩展
      * */

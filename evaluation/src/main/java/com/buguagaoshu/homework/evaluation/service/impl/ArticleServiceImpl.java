@@ -1,10 +1,12 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
+import com.buguagaoshu.homework.common.domain.CustomPage;
 import com.buguagaoshu.homework.common.enums.ArticleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
+import com.buguagaoshu.homework.evaluation.model.ArticleModel;
 import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
 import com.buguagaoshu.homework.evaluation.service.UserService;
 import com.buguagaoshu.homework.evaluation.service.VerifyCodeService;
@@ -19,6 +21,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -76,7 +80,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         }
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         ArticleEntity articleEntity = new ArticleEntity();
-        initArticleEntity(articleEntity);
+        articleEntity.initData();
         if (articleVo.getCourseId() != null) {
             StudentsCurriculumEntity studentsCurriculumEntity = studentsCurriculumService.selectStudentByCurriculumId(user.getId(), articleVo.getCourseId());
             if (studentsCurriculumEntity == null) {
@@ -117,6 +121,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         }
         QueryWrapper<ArticleEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("course_id", courseId);
+        wrapper.ne("status", ArticleTypeEnum.DELETE.getCode());
         wrapper.eq("type", ArticleTypeEnum.COURSE.getCode());
         String key = (String) params.get("key");
         if (!StringUtils.isEmpty(key)) {
@@ -144,11 +149,55 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         }
         Set<String> userId = page.getRecords().stream().map(ArticleEntity::getAuthorId).collect(Collectors.toSet());
         Map<String, UserEntity> maps = userService.listByIds(userId).stream().collect(Collectors.toMap(UserEntity::getUserId, u->u));
+        List<ArticleModel> articleModels = new ArrayList<>();
+        Map<String, StudentsCurriculumEntity> teacherMap = studentsCurriculumService.teacherList(courseId).stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, t->t));
+
+
         page.getRecords().forEach((a) -> {
-            a.setAvatarUrl(maps.get(a.getAuthorId()).getUserAvatarUrl());
-            a.setContent("");
+            ArticleModel articleModel = new ArticleModel();
+            BeanUtils.copyProperties(a, articleModel);
+            articleModel.setContent(null);
+            articleModel.setAvatarUrl(maps.get(a.getAuthorId()).getUserAvatarUrl());
+            articleModel.setIsTeacher(teacherMap.get(a.getAuthorId()) != null);
+            articleModels.add(articleModel);
         });
-        return new PageUtils(page);
+        return new PageUtils(new CustomPage<>(articleModels, page.getTotal(), page.getSize(), page.getCurrent(), page.orders()));
+    }
+
+    @Override
+    public ArticleModel courseArticleInfo(Long id, HttpServletRequest request) {
+        ArticleEntity articleEntity = this.getById(id);
+        if (articleEntity == null) {
+            return null;
+        }
+        if (articleEntity.getType() == ArticleTypeEnum.COURSE.getCode()) {
+            try {
+                ObjectMapper objectMapper = new ObjectMapper();
+                Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+                StudentsCurriculumEntity studentsCurriculumEntity = studentsCurriculumService.selectStudentByCurriculumId(user.getId(), articleEntity.getCourseId());
+                ArticleModel articleModel = new ArticleModel();
+                if (studentsCurriculumEntity != null) {
+                    UserEntity userEntity = userService.getById(articleEntity.getAuthorId());
+                    BeanUtils.copyProperties(articleEntity, articleModel);
+                    articleModel.setAuthorName(userEntity.getUsername());
+                    articleModel.setAvatarUrl(userEntity.getUserAvatarUrl());
+                    Map<String, StudentsCurriculumEntity> teacherMap = studentsCurriculumService.teacherList(articleEntity.getCourseId()).stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, t->t));
+                    articleModel.setIsTeacher(teacherMap.get(articleEntity.getAuthorId()) != null);
+                    try {
+                        articleModel.setTag((List<String>) objectMapper.readValue(articleEntity.getTag(), List.class));
+                    } catch (Exception ignored) { }
+                    return articleModel;
+                }
+            } catch (Exception e) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void countNumberCount(String col, Long articleId, Integer count) {
+        this.baseMapper.countAdd(col, articleId, count);
     }
 
 

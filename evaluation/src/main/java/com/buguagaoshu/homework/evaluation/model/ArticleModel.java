@@ -1,38 +1,28 @@
-package com.buguagaoshu.homework.evaluation.entity;
+package com.buguagaoshu.homework.evaluation.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
-
 import com.buguagaoshu.homework.common.valid.ListValue;
+import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 /**
- * 帖子表
- *
- * @author Pu Zhiwei
- * @email puzhiweipuzhiwei@foxmail.com
- * @date 2020-09-28 20:13:56
+ * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
+ * create          2020-09-29 19:14
+ * 返回帖子数据
  */
 @Data
-@TableName("article")
-public class ArticleEntity {
-    /**
-     * 主键
-     */
-    @TableId(type = IdType.AUTO)
+public class ArticleModel {
     private Long id;
 
     /**
      * 帖子标题
      */
-    @NotBlank(message = "帖子标题不能为空！")
-    @Length(min = 1, max = 50, message = "帖子标题最长不能超过50个字符！")
     private String title;
 
     /**
@@ -43,7 +33,7 @@ public class ArticleEntity {
     /**
      * 帖子标签，英文状态逗号分隔
      */
-    private String tag;
+    private List<String> tag;
 
     /**
      * 帖子作者 id
@@ -68,7 +58,6 @@ public class ArticleEntity {
     /**
      * 帖子正文内容
      */
-    @NotBlank(message = "帖子正文不能为空！")
     private String content;
 
     /**
@@ -109,7 +98,6 @@ public class ArticleEntity {
     /**
      * 0：普通帖子，1：课程讨论贴，2，问答贴， 3，想法
      */
-    @ListValue(value = {0, 1, 2, 3}, message = "帖子类型取值不对！")
     private Integer type;
 
     /**
@@ -132,10 +120,6 @@ public class ArticleEntity {
      */
     private Long collectCount;
 
-    /**
-     * 发帖 IP
-     */
-    private String ip;
 
     /**
      * User-Agent
@@ -168,27 +152,13 @@ public class ArticleEntity {
     private String topImgUrl;
 
 
+    private String avatarUrl;
+
+
+    private Boolean isTeacher;
+
     /**
      * 课程评分
      * */
     private Double courseRating;
-
-
-    public void initData() {
-        long time = System.currentTimeMillis();
-        this.setCommentCount(0L);
-        this.setViewCount(0L);
-        this.setCreateTime(time);
-        this.setUpdateTime(time);
-        this.setLatestCommentName(null);
-        this.setLatestCommentTime(null);
-        this.setStatus(0);
-        this.setLikeCount(0L);
-        this.setBadCount(0L);
-        this.setCollectCount(0L);
-        this.setArticlestick(0L);
-        this.setAnonymous(0);
-        this.setPerfect(0);
-        this.setQAOfferPoint(null);
-    }
 }

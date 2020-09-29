@@ -4,7 +4,12 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import com.buguagaoshu.homework.common.valid.ListValue;
+import com.buguagaoshu.homework.common.valid.OnlyNumber;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.Email;
 
 /**
  * 用户表
@@ -20,6 +25,7 @@ public class UserEntity {
      * 主键ID，学号
      */
     @TableId
+    @OnlyNumber(message = "学号必须全部是数字，并且长度小于20！")
     private String userId;
     /**
      * 密码
@@ -28,18 +34,23 @@ public class UserEntity {
     /**
      * 姓名
      */
+    @Length(max = 20, message = "姓名最长不超过20个字")
     private String username;
     /**
      * 邮箱
      */
+    @Email(message = "邮件格式不对")
     private String email;
+
     /**
      * 手机
      */
     private String phoneNumber;
+
     /**
      * 【0 男，1 女】
      */
+    @ListValue(value = {0, 1}, message = "性别设置不对")
     private Integer sex;
 
     /**
@@ -177,4 +188,5 @@ public class UserEntity {
 
     @TableField(exist = false)
     private UserRoleEntity roleEntity;
+
 }

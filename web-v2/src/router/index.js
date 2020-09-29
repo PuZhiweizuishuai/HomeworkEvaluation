@@ -163,7 +163,6 @@ const routes = [
         name: 'BBS',
         component: () => import('@/views/course/bbs.vue'),
         meta: {
-          // title: '讨论区',
           requireAuth: true
         }
       },
@@ -173,7 +172,15 @@ const routes = [
         name: 'CreateArticle',
         component: () => import('@/views/article/create.vue'),
         meta: {
-          // title: '讨论区',
+          requireAuth: true
+        }
+      },
+      // 显示主题帖
+      {
+        path: '/course/learn/:id/bbs/:articleId',
+        name: 'ShowCourseArticle',
+        component: () => import('@/views/article/show-course-article.vue'),
+        meta: {
           requireAuth: true
         }
       },

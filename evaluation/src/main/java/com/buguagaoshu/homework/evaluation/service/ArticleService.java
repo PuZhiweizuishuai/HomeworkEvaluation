@@ -3,6 +3,7 @@ package com.buguagaoshu.homework.evaluation.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
+import com.buguagaoshu.homework.evaluation.model.ArticleModel;
 import com.buguagaoshu.homework.evaluation.vo.ArticleVo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +22,7 @@ public interface ArticleService extends IService<ArticleEntity> {
 
     /**
      * 保存新的帖子
-     * @param articleEntity 帖子内容
+     * @param articleVo 帖子内容
      * @param request 用户信息
      * @return 保存结果
      * */
@@ -42,5 +43,18 @@ public interface ArticleService extends IService<ArticleEntity> {
      * @return 分页后的结果
      * */
     PageUtils getCourseList(Long courseId, Map<String, Object> params, HttpServletRequest request);
+
+    /**
+     * 获取课程内的讨论贴
+     * @param id 帖子ID
+     * @param request 用户数据
+     * @return 帖子数据
+     * */
+    ArticleModel courseArticleInfo(Long id, HttpServletRequest request);
+
+    /**
+     * 阅读数，评论数，喜欢数，关注数增加
+     * */
+    void countNumberCount(String col, Long articleId, Integer count);
 }
 

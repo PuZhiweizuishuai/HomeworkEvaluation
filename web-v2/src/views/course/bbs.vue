@@ -20,6 +20,13 @@
         <ArticleCard :article="item" :course="course" />
       </v-col>
     </v-row>
+    <v-row justify="center">
+      <v-pagination
+        v-model="page"
+        :length="length"
+        @input="pageChange"
+      />
+    </v-row>
   </v-container>
 </template>
 
@@ -58,7 +65,7 @@ export default {
   },
   methods: {
     getArticle() {
-      this.httpGet(`/article/list/${this.$route.params.id}?page=${this.page}&limit=${this.size}&sort=${this.sort}&key=${this.key}`, (json) => {
+      this.httpGet(`/article/list/course/${this.$route.params.id}?page=${this.page}&limit=${this.size}&sort=${this.sort}&key=${this.key}`, (json) => {
         if (json.status === 200) {
           this.articleList = json.data.list
           this.length = json.data.totalPage
@@ -69,6 +76,10 @@ export default {
     },
     goToArticle() {
       this.$router.push(`/course/learn/${this.$route.params.id}/bbs/article`)
+    },
+    pageChange(value) {
+      this.page = value
+      this.getArticle()
     }
   }
 }

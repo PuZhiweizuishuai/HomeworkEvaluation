@@ -19,6 +19,7 @@
         <result property="qAOffered" column="q_a_offered"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
+        <result property="commentCount" column="comment_count"/>
     </resultMap>
 
 

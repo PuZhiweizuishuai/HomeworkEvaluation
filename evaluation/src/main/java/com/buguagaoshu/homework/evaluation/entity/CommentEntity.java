@@ -53,6 +53,8 @@ public class CommentEntity {
 	 */
 	private Integer status;
 
+	private Long commentCount;
+
 	/**
 	 * IP地址
 	 */
@@ -87,5 +89,17 @@ public class CommentEntity {
 	 * 修改时间
 	 */
 	private Long updateTime;
+
+
+	public void initComment() {
+		long time = System.currentTimeMillis();
+		this.status = 0;
+		this.likeCount = 0L;
+		this.badCount = 0L;
+		this.qAOffered = 0;
+		this.createTime = time;
+		this.updateTime = time;
+		this.commentCount = 0L;
+	}
 
 }

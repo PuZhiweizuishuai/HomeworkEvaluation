@@ -12,7 +12,11 @@ public enum ArticleTypeEnum {
     COURSE(1, "课程内的讨论贴"),
     QA(2, "问答贴"),
     THINK(3, "想法"),
-    COURSE_RATING(4, "课程评分")
+    COURSE_RATING(4, "课程评分"),
+
+    NORMAL(0, "帖子正常"),
+    LOCK(1, "帖子已锁定"),
+    DELETE(2, "帖子已删除"),
     ;
 
     int code;
