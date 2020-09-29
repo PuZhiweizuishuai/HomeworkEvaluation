@@ -3,6 +3,7 @@ package com.buguagaoshu.homework.evaluation.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
+import com.buguagaoshu.homework.evaluation.vo.ArticleVo;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -24,7 +25,7 @@ public interface ArticleService extends IService<ArticleEntity> {
      * @param request 用户信息
      * @return 保存结果
      * */
-    ArticleEntity saveArticle(ArticleEntity articleEntity, HttpServletRequest request);
+    ArticleEntity saveArticle(ArticleVo articleVo, HttpServletRequest request);
 
 
     /**

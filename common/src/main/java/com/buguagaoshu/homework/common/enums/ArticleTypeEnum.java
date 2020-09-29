@@ -11,7 +11,9 @@ public enum ArticleTypeEnum {
     ORDINARY(0, "普通贴"),
     COURSE(1, "课程内的讨论贴"),
     QA(2, "问答贴"),
-    THINK(3, "想法");
+    THINK(3, "想法"),
+    COURSE_RATING(4, "课程评分")
+    ;
 
     int code;
 

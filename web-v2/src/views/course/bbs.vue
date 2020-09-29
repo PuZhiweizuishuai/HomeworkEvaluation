@@ -17,7 +17,7 @@
     </v-row>
     <v-row v-for="item in articleList" :key="item.id" justify="center">
       <v-col cols="11">
-        <ArticleCard />
+        <ArticleCard :article="item" :course="course" />
       </v-col>
     </v-row>
   </v-container>

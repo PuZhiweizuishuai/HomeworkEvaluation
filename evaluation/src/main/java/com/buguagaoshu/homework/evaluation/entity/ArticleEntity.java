@@ -170,4 +170,10 @@ public class ArticleEntity {
 
     @TableField(exist = false)
     private String avatarUrl;
+
+
+    /**
+     * 课程评分
+     * */
+    private Double courseRating;
 }

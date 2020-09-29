@@ -219,7 +219,6 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
 
     @Override
     public PageUtils selectJoinCurriculumList(String userId, HttpServletRequest request) {
-
         IPage<StudentsCurriculumEntity> page =
                 studentsCurriculumService.page(
                         new Query<StudentsCurriculumEntity>().getPage(new HashMap<>(2)),

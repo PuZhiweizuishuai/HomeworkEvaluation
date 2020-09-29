@@ -5,6 +5,7 @@ import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
 import com.buguagaoshu.homework.evaluation.service.ArticleService;
+import com.buguagaoshu.homework.evaluation.vo.ArticleVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,9 +28,10 @@ public class ArticleController {
     }
 
     @PostMapping("/article/save")
-    public ResponseDetails save(@Valid @RequestBody ArticleEntity articleEntity,
+    public ResponseDetails save(@Valid @RequestBody ArticleVo articleVo,
                                 HttpServletRequest request) {
-        ArticleEntity entity = articleService.saveArticle(articleEntity, request);
+
+        ArticleEntity entity = articleService.saveArticle(articleVo, request);
         if (entity == null) {
             return ResponseDetails.ok(ReturnCodeEnum.NO_POWER);
         }

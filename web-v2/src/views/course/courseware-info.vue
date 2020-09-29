@@ -47,7 +47,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12">
+      <v-col v-if="courseware.fileType == 2" cols="12">
         <v-divider />
       </v-col>
     </v-row>
@@ -133,7 +133,9 @@ export default {
       children: 0,
       // 对视频与文件描述组件进行重新加载
       videoKey: 0,
-      textKey: 0
+      textKey: 0,
+      next: {},
+      last: {}
     }
   },
   created() {

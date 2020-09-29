@@ -63,7 +63,7 @@
           </v-col>
         </v-row>
         <v-row justify="center">
-          <v-btn depressed color="primary">提交</v-btn>
+          <v-btn depressed color="primary" @click="submit">提交</v-btn>
         </v-row>
         <!-- 这个 col是上分界线的底部 -->
       </v-col>
@@ -133,6 +133,24 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-snackbar
+      v-model="showMessage"
+      :top="true"
+      :timeout="3000"
+    >
+      {{ message }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="showMessage = false"
+        >
+          关闭
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -160,7 +178,9 @@ export default {
       windowSize: {
         x: 0,
         y: 0
-      }
+      },
+      message: '',
+      showMessage: false
     }
   },
   methods: {
@@ -181,6 +201,44 @@ export default {
         this.colsLeft = 8
         this.showCenterDriver = true
       }
+    },
+    submit() {
+      if (this.article.title == null || this.article.title === '') {
+        this.message = '标题不能为空！'
+        this.showMessage = true
+        return
+      }
+      if (this.article.title.length > 50) {
+        this.message = '标题不能超过50字！'
+        this.showMessage = true
+        return
+      }
+      if (this.article.content == null || this.article.content === '') {
+        this.message = '正文不能为空！'
+        this.showMessage = true
+        return
+      }
+      if (this.article.verifyCode == null || this.article.verifyCode === '') {
+        this.message = '验证码不能为空！'
+        this.showMessage = true
+        return
+      }
+      if (this.article.tag.length > 6) {
+        this.message = '标签不能超过6个'
+        this.showMessage = true
+        return
+      }
+      console.log(this.article)
+      this.httpPost('/article/save', this.article, (json) => {
+        if (json.status === 200) {
+          this.message = '发布成功！'
+          this.showMessage = true
+          this.$router.push(`/course/learn/${this.$route.params.id}/bbs`)
+        } else {
+          this.message = json.message
+          this.showMessage = true
+        }
+      })
     }
   }
 }

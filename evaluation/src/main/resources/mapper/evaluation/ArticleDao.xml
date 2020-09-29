@@ -33,6 +33,7 @@
         <result property="qAOfferPoint" column="q_a_offer_point"/>
         <result property="topImgUrl" column="top_img_url"/>
         <result property="authorName" column="author_name"/>
+        <result property="courseRating" column="course_rating" />
     </resultMap>
 
 

@@ -4,16 +4,21 @@ import com.buguagaoshu.homework.common.enums.ArticleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
+import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
 import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
 import com.buguagaoshu.homework.evaluation.service.UserService;
+import com.buguagaoshu.homework.evaluation.service.VerifyCodeService;
 import com.buguagaoshu.homework.evaluation.utils.IpUtil;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
+import com.buguagaoshu.homework.evaluation.vo.ArticleVo;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,20 +35,25 @@ import com.buguagaoshu.homework.evaluation.service.ArticleService;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * @author Pu Zhiwei
  * */
 @Service("articleService")
+@Slf4j
 public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> implements ArticleService {
     private final StudentsCurriculumService studentsCurriculumService;
 
     private final UserService userService;
 
+    private final VerifyCodeService verifyCodeService;
+
     @Autowired
-    public ArticleServiceImpl(StudentsCurriculumService studentsCurriculumService, UserService userService) {
+    public ArticleServiceImpl(StudentsCurriculumService studentsCurriculumService, UserService userService, VerifyCodeService verifyCodeService) {
         this.studentsCurriculumService = studentsCurriculumService;
         this.userService = userService;
+        this.verifyCodeService = verifyCodeService;
     }
 
     @Override
@@ -57,20 +67,43 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     }
 
     @Override
-    public ArticleEntity saveArticle(ArticleEntity articleEntity, HttpServletRequest request) {
+    public ArticleEntity saveArticle(ArticleVo articleVo, HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        String verifyCodeKey = (String) session.getAttribute("verifyCodeKey");
+        verifyCodeService.verify(verifyCodeKey, articleVo.getVerifyCode());
+        if (articleVo.getTag() != null && articleVo.getTag().size() > 6) {
+            throw new UserDataFormatException("标签不能超过6个！");
+        }
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
-        if (articleEntity.getCourseId() != null) {
-            StudentsCurriculumEntity studentsCurriculumEntity = studentsCurriculumService.selectStudentByCurriculumId(user.getId(), articleEntity.getCourseId());
+        ArticleEntity articleEntity = new ArticleEntity();
+        initArticleEntity(articleEntity);
+        if (articleVo.getCourseId() != null) {
+            StudentsCurriculumEntity studentsCurriculumEntity = studentsCurriculumService.selectStudentByCurriculumId(user.getId(), articleVo.getCourseId());
             if (studentsCurriculumEntity == null) {
                 return null;
             }
-            articleEntity.setType(ArticleTypeEnum.COURSE.getCode());
+            // 检查评分
+            if (articleVo.getType() == ArticleTypeEnum.COURSE_RATING.getCode()) {
+                if (articleVo.getCourseRating() == null) {
+                    throw new UserDataFormatException("评分有误！");
+                }
+                if (articleVo.getCourseRating() > 10.0) {
+                    throw new UserDataFormatException("评分有误！");
+                }
+            }
         }
-        initArticleEntity(articleEntity);
+
         articleEntity.setAuthorId(user.getId());
-        articleEntity.setAuthorName(user.getId());
+        articleEntity.setAuthorName(user.getSubject());
         articleEntity.setIp(IpUtil.getIpAddr(request));
         articleEntity.setUa(request.getHeader("user-agent"));
+        BeanUtils.copyProperties(articleVo, articleEntity);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            articleEntity.setTag(objectMapper.writeValueAsString(articleVo.getTag()));
+        } catch (JsonProcessingException e) {
+            log.error("用户 {} 发帖， 标签出现序列化异常！{}",user.getId(), e.getMessage());
+        }
         this.save(articleEntity);
         return articleEntity;
     }
@@ -113,6 +146,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         Map<String, UserEntity> maps = userService.listByIds(userId).stream().collect(Collectors.toMap(UserEntity::getUserId, u->u));
         page.getRecords().forEach((a) -> {
             a.setAvatarUrl(maps.get(a.getAuthorId()).getUserAvatarUrl());
+            a.setContent("");
         });
         return new PageUtils(page);
     }
