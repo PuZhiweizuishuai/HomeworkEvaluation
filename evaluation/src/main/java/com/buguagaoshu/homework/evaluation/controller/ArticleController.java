@@ -7,6 +7,7 @@ import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
 import com.buguagaoshu.homework.evaluation.model.ArticleModel;
 import com.buguagaoshu.homework.evaluation.service.ArticleService;
 import com.buguagaoshu.homework.evaluation.vo.ArticleVo;
+import com.buguagaoshu.homework.evaluation.vo.DeleteVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +38,26 @@ public class ArticleController {
             return ResponseDetails.ok(ReturnCodeEnum.NO_POWER);
         }
         return ResponseDetails.ok().put("data", entity);
+    }
+
+
+    @PostMapping("/article/delete")
+    public ResponseDetails delete(@RequestBody DeleteVo deleteVo,
+                                  HttpServletRequest request) {
+        if (articleService.deleteArticle(deleteVo, request)) {
+            return ResponseDetails.ok();
+        }
+        return ResponseDetails.ok(ReturnCodeEnum.NO_ROLE_OR_NO_FOUND);
+    }
+
+
+    @PostMapping("/article/perfect")
+    public ResponseDetails perfect(@RequestBody DeleteVo deleteVo,
+                                   HttpServletRequest request) {
+        if (articleService.perfect(deleteVo, request)) {
+            return ResponseDetails.ok();
+        }
+        return ResponseDetails.ok(ReturnCodeEnum.NO_ROLE_OR_NO_FOUND);
     }
 
     @GetMapping("/article/list/course/{courseId}")

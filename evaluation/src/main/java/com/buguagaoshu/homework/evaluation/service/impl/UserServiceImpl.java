@@ -1,26 +1,24 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.buguagaoshu.homework.common.domain.CustomPage;
 import com.buguagaoshu.homework.common.enums.PasswordStatusEnum;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.common.enums.UserStatusEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
+import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.dao.UserRoleDao;
 import com.buguagaoshu.homework.evaluation.entity.*;
+import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
 import com.buguagaoshu.homework.evaluation.model.User;
 import com.buguagaoshu.homework.evaluation.service.*;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
-import com.buguagaoshu.homework.evaluation.vo.AdminAddUser;
-import com.buguagaoshu.homework.evaluation.vo.AlterUserStatus;
-import com.buguagaoshu.homework.evaluation.vo.UserAndRole;
+import com.buguagaoshu.homework.evaluation.vo.*;
 import com.buguagaoshu.homework.evaluation.utils.InviteCodeUtil;
 import com.buguagaoshu.homework.evaluation.utils.IpUtil;
 import com.buguagaoshu.homework.evaluation.utils.TimeUtils;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -42,9 +39,12 @@ import com.buguagaoshu.homework.common.utils.Query;
 import com.buguagaoshu.homework.evaluation.dao.UserDao;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.WebUtils;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 
 /**
@@ -65,6 +65,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     private NotificationService notificationService;
 
+    private final VerifyCodeService verifyCodeService;
+
     @Autowired
     public void setNotificationService(NotificationService notificationService) {
         this.notificationService = notificationService;
@@ -81,10 +83,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Autowired
-    public UserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, UserRoleDao userRoleDao, StudentsCurriculumService studentsCurriculumService) {
+    public UserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, UserRoleDao userRoleDao, StudentsCurriculumService studentsCurriculumService, VerifyCodeService verifyCodeService) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userRoleDao = userRoleDao;
         this.studentsCurriculumService = studentsCurriculumService;
+        this.verifyCodeService = verifyCodeService;
     }
 
     @Override
@@ -356,7 +359,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
                 studentsCurriculumService.saveBatch(students);
                 // 给学生发送通知
-                notificationService.sendJoinCourseToUser(students, teacher.getId(), curriculumEntity);
+                notificationService.sendJoinCourseToUser(students, teacher.getId(), teacher.getSubject(), curriculumEntity);
                 // 保存课程人数
                 curriculumEntity.setStudentNumber(count.get() + curriculumEntity.getStudentNumber());
 
@@ -403,6 +406,55 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         UserRoleEntity userRoleEntity = userRoleService.selectByUserId(userId);
         user.setRole(userRoleEntity);
         return user;
+    }
+
+    @Override
+    public ReturnCodeEnum updatePassword(PasswordVo passwordVo, HttpServletRequest request, HttpServletResponse response) {
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        HttpSession session = request.getSession(false);
+        String verifyCodeKey = (String) session.getAttribute("verifyCodeKey");
+        verifyCodeService.verify(verifyCodeKey, passwordVo.getVerifyCode());
+        UserEntity userEntity = getById(user.getId());
+        if (userEntity == null) {
+            return ReturnCodeEnum.USER_NOT_FIND;
+        }
+        if (bCryptPasswordEncoder.matches(passwordVo.getOldPassword(), userEntity.getPassword())) {
+            userEntity.setPassword(bCryptPasswordEncoder.encode(passwordVo.getNewPassword()));
+            this.updateById(userEntity);
+            Cookie cookie = WebUtils.getCookie(request, TokenAuthenticationHelper.COOKIE_TOKEN);
+            cookie.setValue(null);
+            cookie.setMaxAge(0);
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            response.addCookie(cookie);
+            return ReturnCodeEnum.SUCCESS;
+        } else {
+            throw new UserDataFormatException("原密码错误！");
+        }
+    }
+
+    @Override
+    public ReturnCodeEnum updateTopImg(UserUpdateVo userUpdateVo, HttpServletRequest request) {
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        UserEntity entity = getById(user.getId());
+        if (!StringUtils.isEmpty(userUpdateVo.getTopImgUrl())) {
+            entity.setTopImgUrl(userUpdateVo.getTopImgUrl());
+            this.updateById(entity);
+            return ReturnCodeEnum.SUCCESS;
+        }
+        return ReturnCodeEnum.DATA_VALID_EXCEPTION;
+    }
+
+    @Override
+    public ReturnCodeEnum updateAvatar(UserUpdateVo userUpdateVo, HttpServletRequest request) {
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        UserEntity entity = getById(user.getId());
+        if (!StringUtils.isEmpty(userUpdateVo.getUserAvatarUrl())) {
+            entity.setTopImgUrl(userUpdateVo.getUserAvatarUrl());
+            this.updateById(entity);
+            return ReturnCodeEnum.SUCCESS;
+        }
+        return ReturnCodeEnum.DATA_VALID_EXCEPTION;
     }
 
     /**

@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public interface UserLoginLogService extends IService<UserLoginLogEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils queryPage(Map<String, Object> params, HttpServletRequest request);
 
 
     /**

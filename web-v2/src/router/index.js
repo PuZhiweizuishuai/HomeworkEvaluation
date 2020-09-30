@@ -66,10 +66,19 @@ const routes = [
           tracherPower: true
         }
       },
+      // 用户设置
+      {
+        path: '/user/setting',
+        name: 'UserSetting',
+        component: () => import('@/views/user/setting.vue'),
+        meta: {
+          title: '个人主页'
+        }
+      },
       // 用户主页
       {
         path: '/user/:id',
-        name: 'CourseInfo',
+        name: 'UserHome',
         component: () => import('@/views/user/index.vue'),
         meta: {
           title: '个人主页'

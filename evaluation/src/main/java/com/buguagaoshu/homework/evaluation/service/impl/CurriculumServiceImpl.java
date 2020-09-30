@@ -328,9 +328,10 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
         // TODO 邀请码加入
         // 向老师发送通知
         notificationService.send(user.getId(),
+                user.getSubject(),
                 entity.getCreateTeacher(),
                 NotificationTypeEnum.COURSE_JOIN,
-                "学生: " + user.getId() + "进入了课程！",
+                "学生: " + user.getId() + " " + user.getSubject() + "进入了课程！",
                 "/user/" + user.getId(),
                 entity.getId());
         if (entity.getAccessMethod().equals(CurriculumAccessTypeEnum.USE_PASSWORD.getCode())) {

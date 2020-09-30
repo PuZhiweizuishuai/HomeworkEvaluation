@@ -495,14 +495,4 @@ export default {
             color: #4285f4;
             background-color: #f6f8fa;
         }
-
-        @media (max-width: 768px) {
-            #markdown-view-catalog {
-                display: none !important;
-            }
-
-            .wrapper--preview {
-                margin: 0;
-            }
-        }
 </style>

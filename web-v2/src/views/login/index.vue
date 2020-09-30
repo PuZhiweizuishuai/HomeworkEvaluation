@@ -141,7 +141,7 @@ export default {
             width: 100%;
             height: 100%;
             height: auto;
-            /* width: auto; */
+            width: auto;
             /*加滤镜*/
             /*filter: blur(15px); //背景模糊设置 */
             /*-webkit-filter: grayscale(100%);*/

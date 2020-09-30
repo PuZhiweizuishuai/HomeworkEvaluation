@@ -79,7 +79,7 @@ public class BulletinServiceImpl extends ServiceImpl<BulletinDao, BulletinEntity
                     save(bulletinEntity, user, IpUtil.getIpAddr(request), request.getHeader("user-agent"));
                     // 向学生发布消息通知
                     List<StudentsCurriculumEntity> list = studentsCurriculumService.findUserListInCurriculum(bulletinEntity.getCurriculumId());
-                    notificationService.sendBulletin(list,  bulletinEntity.getUserId(), bulletinEntity.getCurriculumId());
+                    notificationService.sendBulletin(list, bulletinEntity.getUserId(),user.getSubject(), bulletinEntity.getCurriculumId());
                     return ReturnCodeEnum.SUCCESS;
                 }
             }

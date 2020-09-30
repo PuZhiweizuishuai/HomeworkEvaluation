@@ -7,9 +7,12 @@ import com.buguagaoshu.homework.evaluation.model.User;
 import com.buguagaoshu.homework.evaluation.vo.AdminAddUser;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import com.buguagaoshu.homework.evaluation.vo.AlterUserStatus;
+import com.buguagaoshu.homework.evaluation.vo.PasswordVo;
+import com.buguagaoshu.homework.evaluation.vo.UserUpdateVo;
 import io.jsonwebtoken.Claims;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -98,5 +101,21 @@ public interface UserService extends IService<UserEntity> {
      * @return 用户信息
      * */
     User userInfo(String userId);
+
+
+    /**
+     * 更新用户密码
+     * */
+    ReturnCodeEnum updatePassword(PasswordVo passwordVo, HttpServletRequest request, HttpServletResponse response);
+
+    /**
+     * 更新首页大图
+     * */
+    ReturnCodeEnum updateTopImg(UserUpdateVo userUpdateVo, HttpServletRequest request);
+
+    /**
+     * 更新头像
+     * */
+    ReturnCodeEnum updateAvatar(UserUpdateVo userUpdateVo, HttpServletRequest request);
 }
 

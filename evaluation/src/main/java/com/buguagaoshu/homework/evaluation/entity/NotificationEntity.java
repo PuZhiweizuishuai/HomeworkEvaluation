@@ -73,4 +73,7 @@ public class NotificationEntity {
      * 跳转链接
      * */
     private String url;
+
+
+    private String notifierName;
 }

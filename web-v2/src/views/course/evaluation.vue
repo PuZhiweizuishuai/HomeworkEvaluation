@@ -1,6 +1,10 @@
 <template>
   <v-container>
-    学生进行作业互评
+    <v-row>
+      <v-col>
+        <h3>作业互评:</h3>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 

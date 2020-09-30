@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <!-- 年月日 -->
-    <v-col cols="10">
+    <v-col :cols="cols">
       <v-menu
         ref="datePickerTime"
         v-model="datePickerTime"
@@ -14,7 +14,7 @@
         <template v-slot:activator="{ on, attrs }">
           <v-text-field
             v-model="limitYearTime"
-            label="年月日"
+            :label="lable"
             prepend-icon="mdi-calendar-month"
             readonly
             v-bind="attrs"
@@ -33,11 +33,25 @@
 
 <script>
 export default {
+  props: {
+    cols: {
+      type: Number,
+      default: 8
+    },
+    time: {
+      type: String,
+      default: ''
+    },
+    lable: {
+      type: String,
+      default: '年月日'
+    }
+  },
   data() {
     return {
       datePickerTime: false,
       dateTime: false,
-      limitYearTime: '',
+      limitYearTime: this.time,
       limitHourTime: ''
     }
   },

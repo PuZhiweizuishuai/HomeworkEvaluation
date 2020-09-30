@@ -78,34 +78,35 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationDao, Notifi
     }
 
     @Override
-    public void send(String notifier, String receiver, NotificationTypeEnum type, String text, String url, Long outerId) {
+    public void send(String notifier, String notifierName, String receiver, NotificationTypeEnum type, String text, String url, Long outerId) {
         long time = System.currentTimeMillis();
-        NotificationEntity notificationEntity = initNotificationEntity(notifier, receiver, time, type, outerId);
+        NotificationEntity notificationEntity = initNotificationEntity(notifier, notifierName, receiver, time, type, outerId);
         notificationEntity.setText(text);
         notificationEntity.setUrl(url);
         this.save(notificationEntity);
     }
 
     @Override
-    public void sendComment(String notifier, String receiver, ArticleEntity articleEntity, CommentEntity commentEntity, NotificationTypeEnum type) {
+    public void sendComment(String notifier, String notifierName, String receiver, ArticleEntity articleEntity, CommentEntity commentEntity, NotificationTypeEnum type) {
         if (notifier.equals(receiver)) {
             return;
         }
         long time = System.currentTimeMillis();
-        NotificationEntity notificationEntity = initNotificationEntity(notifier, receiver, time, type, commentEntity.getId());
+        // 此时 目标ID应该记录为帖子ID，应为通知ID已被记录
+        NotificationEntity notificationEntity = initNotificationEntity(notifier, notifierName, receiver, time, type, articleEntity.getId());
         notificationEntity.setCommentId(commentEntity.getId());
         if (commentEntity.getContent().length() > 50) {
             notificationEntity.setCommentContent(commentEntity.getContent().substring(0, 50) + "......");
         } else {
             notificationEntity.setCommentContent(commentEntity.getContent());
         }
-        notificationEntity.setText("你在帖子《" + articleEntity.getTitle() + "》下收到一条新回复！");
+        notificationEntity.setText(articleEntity.getTitle());
         notificationEntity.setUrl(null);
         this.save(notificationEntity);
     }
 
     @Override
-    public void sendBulletin(List<StudentsCurriculumEntity> userList, String notifier, Long courseId) {
+    public void sendBulletin(List<StudentsCurriculumEntity> userList,String notifier,  String notifierName, Long courseId) {
         if (userList.size() != 0) {
             CurriculumEntity curriculumEntity = curriculumService.getById(courseId);
             long time = System.currentTimeMillis();
@@ -113,7 +114,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationDao, Notifi
             String text = "你学习的课程：《" + curriculumEntity.getCurriculumName() + "》发布了新的公告！";
             String url = "/course/learn/" + courseId;
             userList.forEach((u) -> {
-                NotificationEntity notificationEntity = initNotificationEntity(notifier, u.getStudentId(), time, NotificationTypeEnum.COURSE_BULLETIN, courseId);
+                NotificationEntity notificationEntity = initNotificationEntity(notifier, notifierName, u.getStudentId(), time, NotificationTypeEnum.COURSE_BULLETIN, courseId);
                 // 消息通知显示内容
                 notificationEntity.setText(text);
                 notificationEntity.setUrl(url);
@@ -125,14 +126,14 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationDao, Notifi
     }
 
     @Override
-    public void sendNewExam(List<StudentsCurriculumEntity> userListInCurriculum, String notifier, CurriculumEntity curriculumEntity, HomeworkEntity homeworkEntity) {
+    public void sendNewExam(List<StudentsCurriculumEntity> userListInCurriculum,String notifier, String notifierName, CurriculumEntity curriculumEntity, HomeworkEntity homeworkEntity) {
         if (userListInCurriculum.size() != 0) {
             long time = System.currentTimeMillis();
             List<NotificationEntity> notificationEntities = new LinkedList<>();
             String text = "你学习的课程：《" + curriculumEntity.getCurriculumName() + "》 发布了新的作业，" + homeworkEntity.getTitle() + "，请尽快查看！";
             String url = "/course/learn/" + curriculumEntity.getId() + "/exam";
             userListInCurriculum.forEach((u) -> {
-                NotificationEntity notificationEntity = initNotificationEntity(notifier, u.getStudentId(), time, NotificationTypeEnum.COURSE_EXAM, curriculumEntity.getId());
+                NotificationEntity notificationEntity = initNotificationEntity(notifier, notifierName, u.getStudentId(), time, NotificationTypeEnum.COURSE_EXAM, curriculumEntity.getId());
                 notificationEntity.setText(text);
                 notificationEntity.setUrl(url);
                 notificationEntities.add(notificationEntity);
@@ -142,14 +143,14 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationDao, Notifi
     }
 
     @Override
-    public void sendJoinCourseToUser(List<StudentsCurriculumEntity> students, String notifier, CurriculumEntity curriculumEntity) {
+    public void sendJoinCourseToUser(List<StudentsCurriculumEntity> students, String notifier, String notifierName, CurriculumEntity curriculumEntity) {
         if (students.size() != 0) {
             long time = System.currentTimeMillis();
             List<NotificationEntity> notificationEntities = new LinkedList<>();
             String text = "你已经被教师：" + notifier + " 导入到了课程《" + curriculumEntity.getCurriculumName() + "》，请及时进入学习";
             String url = "/course/learn/" + curriculumEntity.getId();
             students.forEach((u) -> {
-                NotificationEntity notificationEntity = initNotificationEntity(notifier, u.getStudentId(), time, NotificationTypeEnum.COURSE_JOIN, curriculumEntity.getId());
+                NotificationEntity notificationEntity = initNotificationEntity(notifier, notifierName, u.getStudentId(), time, NotificationTypeEnum.COURSE_JOIN, curriculumEntity.getId());
                 notificationEntity.setText(text);
                 notificationEntity.setUrl(url);
                 notificationEntities.add(notificationEntity);
@@ -195,6 +196,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationDao, Notifi
      * 初始化消息基础信息
      */
     private NotificationEntity initNotificationEntity(String notifier,
+                                                      String notifierName,
                                                       String receiver,
                                                       long time,
                                                       NotificationTypeEnum type,
@@ -202,6 +204,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationDao, Notifi
         NotificationEntity notificationEntity = new NotificationEntity();
         // 设置发送人
         notificationEntity.setNotifier(notifier);
+        notificationEntity.setNotifierName(notifierName);
         // 设置接收人
         notificationEntity.setReceiver(receiver);
         // 创建时间

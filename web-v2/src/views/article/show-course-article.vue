@@ -2,7 +2,7 @@
   <v-container>
     <!-- 标题头 -->
     <v-row>
-      <v-col cols="11">
+      <v-col cols="10">
         <h2>
           <v-btn
             icon
@@ -30,8 +30,12 @@
           </v-chip>
         </h2>
       </v-col>
-      <v-col cols="1">
-        <v-btn v-if="this.$store.state.userInfo.userId == article.authorId || role.role === 'ROLE_TEACHER'" outlined small color="error">删除</v-btn>
+      <v-col cols="2">
+        <v-btn v-if="this.$store.state.userInfo.userId == article.authorId || role.role === 'ROLE_TEACHER'" outlined small color="error" @click="deleteDialog = true">删除</v-btn>
+        <span v-html="`&nbsp;&nbsp;`" />
+        <v-btn v-if="role.role === 'ROLE_TEACHER'" outlined small @click="perfect">加精</v-btn>
+        <span v-html="`&nbsp;&nbsp;`" />
+        <v-btn outlined small>举报</v-btn>
       </v-col>
     </v-row>
     <v-row>
@@ -115,7 +119,7 @@
           </v-col>
         </v-row>
         <!-- 评论区 -->
-        <Comment :artice="article" :comments="comment" :total="total" />
+        <Comment :artice="article" :comments="comment" />
         <!-- 左侧底部 -->
       </v-col>
       <!-- 中间分割线 -->
@@ -172,6 +176,39 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-dialog
+      v-model="deleteDialog"
+      width="500"
+    >
+      <v-card>
+        <v-card-title>删除</v-card-title>
+        <v-card-text>你确定要删除这篇帖子吗？</v-card-text>
+        <v-card-actions>
+          <v-btn text color="error" @click="deleteArticle">
+            删除
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-snackbar
+      v-model="showMessage"
+      :top="true"
+      :timeout="3000"
+    >
+      {{ message }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="showMessage = false"
+        >
+          关闭
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -232,23 +269,21 @@ export default {
       TimeUtil,
       article: {},
       comment: [],
-      page: 1,
-      size: 20,
-      length: 0,
-      total: 0,
-      type: 0,
+
       colsRight: 2,
       colsLeft: 10,
       showCenterDriver: true,
       windowSize: {
         x: 0,
         y: 0
-      }
+      },
+      message: '',
+      showMessage: false,
+      deleteDialog: false
     }
   },
   created() {
     this.getArticle()
-    this.getComment()
   },
   methods: {
     getArticle() {
@@ -258,17 +293,6 @@ export default {
           this.initRender()
         } else {
           this.$router.push(`/course/learn/${this.$route.params.id}/bbs`)
-        }
-      })
-    },
-    getComment() {
-      this.httpGet(`/comment/list/${this.$route.params.articleId}`, (json) => {
-        if (json.status === 200) {
-          this.comment = json.data.list
-          this.length = json.data.totalPage
-          this.total = json.data.totalCount
-        } else {
-          //
         }
       })
     },
@@ -306,6 +330,41 @@ export default {
         this.colsRight = 3
         this.colsLeft = 9
       }
+    },
+    perfect() {
+      const data = {
+        id: this.article.id
+      }
+      this.httpPost('/article/perfect', data, (json) => {
+        if (json.status === 200) {
+          if (this.article.perfect === 1) {
+            this.message = '取消加精成功！'
+            this.article.perfect = 0
+          } else {
+            this.message = '已经成功设置为精品贴'
+            this.article.perfect = 1
+          }
+          this.showMessage = true
+        } else {
+          this.message = json.message
+          this.showMessage = true
+        }
+      })
+    },
+    deleteArticle() {
+      const data = {
+        id: this.article.id
+      }
+      this.httpPost('/article/delete', data, (json) => {
+        if (json.status === 200) {
+          this.message = '帖子删除成功！'
+          this.showMessage = true
+          this.$router.push(`/course/learn/${this.$route.params.id}/bbs`)
+        } else {
+          this.message = json.message
+          this.showMessage = true
+        }
+      })
     }
   }
 }

@@ -2,6 +2,7 @@ package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.buguagaoshu.homework.common.domain.CustomPage;
 import com.buguagaoshu.homework.common.enums.ArticleTypeEnum;
+import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
@@ -13,6 +14,7 @@ import com.buguagaoshu.homework.evaluation.service.VerifyCodeService;
 import com.buguagaoshu.homework.evaluation.utils.IpUtil;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import com.buguagaoshu.homework.evaluation.vo.ArticleVo;
+import com.buguagaoshu.homework.evaluation.vo.DeleteVo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -43,7 +45,7 @@ import javax.servlet.http.HttpSession;
 
 /**
  * @author Pu Zhiwei
- * */
+ */
 @Service("articleService")
 @Slf4j
 public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> implements ArticleService {
@@ -106,7 +108,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         try {
             articleEntity.setTag(objectMapper.writeValueAsString(articleVo.getTag()));
         } catch (JsonProcessingException e) {
-            log.error("用户 {} 发帖， 标签出现序列化异常！{}",user.getId(), e.getMessage());
+            log.error("用户 {} 发帖， 标签出现序列化异常！{}", user.getId(), e.getMessage());
         }
         this.save(articleEntity);
         return articleEntity;
@@ -129,12 +131,24 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         }
         String sort = (String) params.get("sort");
         if (!StringUtils.isEmpty(sort)) {
-            if ("0".equals(sort)) {
-                wrapper.orderByDesc("update_time");
-            } else if ("1".equals(sort)) {
-                wrapper.orderByDesc("latest_comment_time");
-            } else {
-                wrapper.orderByDesc("update_time");
+            switch (sort) {
+                case "0":
+                    wrapper.orderByDesc("update_time");
+                    break;
+                case "1":
+                    wrapper.orderByDesc("latest_comment_time");
+                    break;
+                case "2":
+                    wrapper.eq("perfect", 1);
+                    wrapper.orderByDesc("update_time");
+                    break;
+                case "3":
+                    wrapper.eq("comment_count", 0);
+                    wrapper.orderByDesc("update_time");
+                    break;
+                default:
+                    wrapper.orderByDesc("update_time");
+                    break;
             }
             // TODO 热门待更新
         } else {
@@ -148,9 +162,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             return new PageUtils(page);
         }
         Set<String> userId = page.getRecords().stream().map(ArticleEntity::getAuthorId).collect(Collectors.toSet());
-        Map<String, UserEntity> maps = userService.listByIds(userId).stream().collect(Collectors.toMap(UserEntity::getUserId, u->u));
+        Map<String, UserEntity> maps = userService.listByIds(userId).stream().collect(Collectors.toMap(UserEntity::getUserId, u -> u));
         List<ArticleModel> articleModels = new ArrayList<>();
-        Map<String, StudentsCurriculumEntity> teacherMap = studentsCurriculumService.teacherList(courseId).stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, t->t));
+        Map<String, StudentsCurriculumEntity> teacherMap = studentsCurriculumService.teacherList(courseId).stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, t -> t));
 
 
         page.getRecords().forEach((a) -> {
@@ -181,11 +195,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                     BeanUtils.copyProperties(articleEntity, articleModel);
                     articleModel.setAuthorName(userEntity.getUsername());
                     articleModel.setAvatarUrl(userEntity.getUserAvatarUrl());
-                    Map<String, StudentsCurriculumEntity> teacherMap = studentsCurriculumService.teacherList(articleEntity.getCourseId()).stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, t->t));
+                    Map<String, StudentsCurriculumEntity> teacherMap = studentsCurriculumService.teacherList(articleEntity.getCourseId()).stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, t -> t));
                     articleModel.setIsTeacher(teacherMap.get(articleEntity.getAuthorId()) != null);
                     try {
                         articleModel.setTag((List<String>) objectMapper.readValue(articleEntity.getTag(), List.class));
-                    } catch (Exception ignored) { }
+                    } catch (Exception ignored) {
+                    }
+                    articleEntity.setViewCount(articleEntity.getViewCount()+1);
+                    this.baseMapper.countAdd("view_count", articleEntity.getId(), 1);
                     return articleModel;
                 }
             } catch (Exception e) {
@@ -200,22 +217,59 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         this.baseMapper.countAdd(col, articleId, count);
     }
 
+    @Override
+    public boolean deleteArticle(DeleteVo deleteVo, HttpServletRequest request) {
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        ArticleEntity byId = getById(deleteVo.getId());
+        if (byId != null) {
+            if (byId.getAuthorId().equals(user.getId())) {
+                byId.setStatus(ArticleTypeEnum.DELETE.getCode());
+                this.updateById(byId);
+                return true;
+            }
+            if (user.get("authorities").equals(RoleTypeEnum.ADMIN.getRole())) {
+                byId.setStatus(ArticleTypeEnum.DELETE.getCode());
+                this.updateById(byId);
+                return true;
+            }
+            if (byId.getType().equals(ArticleTypeEnum.COURSE.getCode())) {
+                List<StudentsCurriculumEntity> studentsCurriculumEntities = studentsCurriculumService.teacherList(byId.getCourseId());
+                for (StudentsCurriculumEntity s : studentsCurriculumEntities) {
+                    if (s.getStudentId().equals(user.getId())) {
+                        byId.setStatus(1);
+                        this.updateById(byId);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
-    public void initArticleEntity(ArticleEntity articleEntity) {
-        long time = System.currentTimeMillis();
-        articleEntity.setCommentCount(0L);
-        articleEntity.setViewCount(0L);
-        articleEntity.setCreateTime(time);
-        articleEntity.setUpdateTime(time);
-        articleEntity.setLatestCommentName(null);
-        articleEntity.setLatestCommentTime(null);
-        articleEntity.setStatus(0);
-        articleEntity.setLikeCount(0L);
-        articleEntity.setBadCount(0L);
-        articleEntity.setCollectCount(0L);
-        articleEntity.setArticlestick(0L);
-        articleEntity.setAnonymous(0);
-        articleEntity.setPerfect(0);
-        articleEntity.setQAOfferPoint(null);
+    @Override
+    public boolean perfect(DeleteVo deleteVo, HttpServletRequest request) {
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        ArticleEntity articleEntity = getById(deleteVo.getId());
+        if (articleEntity != null) {
+            if (articleEntity.getPerfect() == 0) {
+                articleEntity.setPerfect(1);
+            } else {
+                articleEntity.setPerfect(0);
+            }
+            if (user.get("authorities").equals(RoleTypeEnum.ADMIN.getRole())) {
+                this.updateById(articleEntity);
+                return true;
+            }
+            if (articleEntity.getType().equals(ArticleTypeEnum.COURSE.getCode())) {
+                List<StudentsCurriculumEntity> studentsCurriculumEntities = studentsCurriculumService.teacherList(articleEntity.getCourseId());
+                for (StudentsCurriculumEntity s : studentsCurriculumEntities) {
+                    if (s.getStudentId().equals(user.getId())) {
+                        this.updateById(articleEntity);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

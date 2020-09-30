@@ -26,7 +26,7 @@
     </v-row>
     <v-row v-for="item in notification" :key="item.id" justify="center">
       <v-col cols="12">
-        <NotificatioCard :notificatio="item" />
+        <NotificatioCard :notificatio="item" @read="getNotification" />
       </v-col>
     </v-row>
     <v-row v-if="notification.length == 0" justify="center">
@@ -91,6 +91,7 @@ export default {
   },
   methods: {
     getNotification() {
+      console.log('getNotification()')
       this.httpGet(`/notification/list?page=${this.page}&limit=${this.size}&type=${this.type}`, (json) => {
         if (json.status === 200) {
           this.notification = json.data.list

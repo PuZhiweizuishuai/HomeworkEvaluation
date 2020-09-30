@@ -80,57 +80,44 @@
           </v-row>
         </v-col>
       </v-row>
-      <v-row>
-        <v-divider />
-      </v-row>
-      <!-- 通知内容显示 -->
-      <!-- <v-row v-for="item in notification" :key="item.id" justify="center">
-        <v-col cols="11">
-          <v-btn text color="primary">
-            {{ item.text }}
-            阿斯顿敢死队风格士大夫和
-          </v-btn>
-        </v-col>
-      </v-row> -->
-      <v-row>
-        <v-list>
-          <v-list-item
-            v-for="item in notification"
-            :key="item.id"
-            link
-          >
-            <v-list-item-content @click="read(item)">
-              {{ item.text }}
-            </v-list-item-content>
-          </v-list-item>
-          <v-divider />
-        </v-list>
-      </v-row>
-      <v-row v-if="notification.length === 0">
-        <v-col cols="11">
-          <v-row justify="center">
-            暂时没有新通知
-          </v-row>
-        </v-col>
-      </v-row>
-      <!-- 底部按钮 -->
+      <v-card outlined height="500">
+        <v-row v-for="item in notification" :key="item.id" justify="center">
+          <v-col style="padding-top: 0px;padding-bottom: 0px;">
+            <NotificationCard :notificatio="item" @read="readMessage" />
+          </v-col>
+        </v-row>
 
-      <v-row justify="center">
-        <v-col cols="11">
-          <v-row justify="end">
-            <v-btn text color="success" @click="goTotNotification">
-              更多通知
-            </v-btn>
-          </v-row>
-        </v-col>
-      </v-row>
+        <v-row v-if="notification.length === 0">
+          <v-col cols="11">
+            <v-row justify="center">
+              暂时没有新通知
+            </v-row>
+          </v-col>
+        </v-row>
+        <!-- 底部按钮 -->
+
+        <v-row justify="center">
+          <v-col cols="11">
+            <v-row justify="end">
+              <v-btn text color="success" @click="goTotNotification">
+                更多通知
+              </v-btn>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-card>
     </v-card>
   </v-menu>
 </template>
 
 <script>
+import NotificationCard from '@/views/notification/card.vue'
+
 export default {
   name: 'Notice',
+  components: {
+    NotificationCard
+  },
   data() {
     return {
       type: 0,
@@ -179,6 +166,10 @@ export default {
       this.type = value
       this.getNotification(value)
     },
+    readMessage(value) {
+      console.log(this.type)
+      this.getNotification(this.type)
+    },
     read(value) {
       this.httpGet(`/notification/read?id=${value.id}`, (json) => {
         this.$router.push(value.url)
@@ -195,7 +186,8 @@ export default {
     },
     readAll() {
       this.httpPost('/notification/readAll', null, (json) => {
-
+        this.notification = []
+        this.total = 0
       })
     }
   }

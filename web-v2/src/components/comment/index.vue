@@ -3,10 +3,10 @@
     <v-row>
       <v-col cols="9" style="padding-bottom: 0px;">
         <v-tabs>
-          <v-tab>热门</v-tab>
-          <v-tab>评论时间</v-tab>
+          <v-tab @click="setType(0)">评论时间</v-tab>
+          <v-tab @click="setType(1)">时间倒序</v-tab>
           <v-tab>最多点赞</v-tab>
-          <v-tab>最多评论</v-tab>
+          <v-tab @click="setType(3)">最多评论</v-tab>
         </v-tabs>
       </v-col>
       <v-col cols="3" style="padding-bottom: 0px;">
@@ -21,13 +21,20 @@
     </v-row>
     <v-row v-for="item in commentsList" :key="item.id">
       <v-col cols="12">
-        <Card />
+        <Card :comment="item" :artice="artice" />
       </v-col>
     </v-row>
-    <v-row v-if="total != 0" justify="center">
-
+    <v-row v-if="total == 0" justify="center">
       <h3> 暂无评论 </h3>
-
+    </v-row>
+    <!-- 目录 -->
+    <v-row justify="center">
+      <v-pagination
+        v-if="length != 1"
+        v-model="page"
+        :length="length"
+        @input="pageChange"
+      />
     </v-row>
     <v-row>
       <v-col>
@@ -112,22 +119,14 @@ export default {
     Vditor
   },
   props: {
-    comments: {
-      type: Array,
-      default: () => []
-    },
     artice: {
       type: Object,
       default: null
-    },
-    total: {
-      type: Number,
-      default: 0
     }
   },
   data() {
     return {
-      commentsList: this.comments,
+      commentsList: [],
       verifyImageUrl: this.SERVER_API_URL + '/verifyImage',
       uploadurl: this.SERVER_API_URL + '/upload/file',
       comment: {
@@ -137,15 +136,40 @@ export default {
         type: 0
       },
       message: '',
-      showMessage: false
+      showMessage: false,
+      page: 1,
+      size: 20,
+      length: 0,
+      total: 0,
+      type: 0
     }
   },
   created() {
-
+    this.getComment()
   },
   methods: {
     getVerifyImage() {
       this.verifyImageUrl = this.SERVER_API_URL + '/verifyImage?t=' + new Date().getTime()
+    },
+    getComment() {
+      this.httpGet(`/comment/list/${this.$route.params.articleId}?page=${this.page}&limit=${this.size}&sort=${this.type}`, (json) => {
+        if (json.status === 200) {
+          this.commentsList = json.data.list
+          this.length = json.data.totalPage
+          this.total = json.data.totalCount
+        } else {
+          //
+        }
+      })
+    },
+    pageChange(value) {
+      this.page = value
+      this.getComment()
+    },
+
+    setType(value) {
+      this.type = value
+      this.getComment()
     },
     setVditorInput(value) {
       this.comment.content = value

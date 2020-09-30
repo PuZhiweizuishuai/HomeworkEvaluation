@@ -39,6 +39,7 @@
           :center-box="true"
           :fixed-number="option.fixedNumber"
           :fixed="option.fixed"
+          :high="true"
           @realTime="realTime"
           @imgLoad="imgLoad"
         />
@@ -72,6 +73,10 @@ export default {
     url: {
       type: String,
       default: ''
+    },
+    full: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -84,10 +89,10 @@ export default {
       option: {
         img: '',
         outputSize: 1, // 剪切后的图片质量（0.1-1）
-        full: false, // 输出原图比例截图 props名full
+        full: this.full, // 输出原图比例截图 props名full
         outputType: 'png',
         canMove: true,
-        original: false,
+        original: true,
         canMoveBox: true,
         autoCrop: true,
         fixedBox: false,

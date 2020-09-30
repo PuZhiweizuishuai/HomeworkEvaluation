@@ -18,6 +18,9 @@ public class CommentVo {
     @NotNull(message = "目标帖子ID不能为空")
     private Long articleId;
 
+
+    private Long fatherId;
+
     /**
      * 回复正文
      */

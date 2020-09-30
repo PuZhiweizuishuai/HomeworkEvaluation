@@ -16,6 +16,7 @@
         <result property="status" column="status"/>
         <result property="text" column="text"/>
         <result property="url" column="url"/>
+        <result property="notifierName" column="notifier_name"/>
     </resultMap>
 
 

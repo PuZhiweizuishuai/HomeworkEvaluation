@@ -21,6 +21,8 @@ public class CommentModel {
      */
     private Long articleId;
 
+    private Long fatherId;
+
     /**
      * 回复正文
      */
@@ -87,4 +89,11 @@ public class CommentModel {
 
 
     private Boolean isTeacher;
+
+
+    private String replyUserId;
+
+    private String replyUserName;
+
+    private String replyUserAvatar;
 }

@@ -7,13 +7,11 @@ import com.buguagaoshu.homework.evaluation.config.BaseWebInfoConfig;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.model.User;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
-import com.buguagaoshu.homework.evaluation.vo.AdminAddUser;
+import com.buguagaoshu.homework.evaluation.vo.*;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import com.buguagaoshu.homework.evaluation.entity.UserRoleEntity;
 import com.buguagaoshu.homework.evaluation.service.UserRoleService;
 import com.buguagaoshu.homework.evaluation.service.UserService;
-import com.buguagaoshu.homework.evaluation.vo.AlterUserStatus;
-import com.buguagaoshu.homework.evaluation.vo.UserRoleInClassVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
@@ -145,6 +143,32 @@ public class UserController {
     public ResponseDetails alterUserStatus(@RequestBody AlterUserStatus alterUserStatus) {
         ReturnCodeEnum returnCodeEnum = userService.alterUserStatus(alterUserStatus);
         return ResponseDetails.ok(returnCodeEnum.getCode(), returnCodeEnum.getMsg());
+    }
+
+
+    @PostMapping("/user/update/password")
+    public ResponseDetails updatePassword(@RequestBody PasswordVo passwordVo,
+                                             HttpServletRequest request,
+                                             HttpServletResponse response) {
+        return ResponseDetails.ok(userService.updatePassword(passwordVo, request, response));
+    }
+
+
+    /**
+     *
+     * 更新首页大图
+     * */
+    @PostMapping("/user/update/top")
+    public ResponseDetails updateTop(@RequestBody UserUpdateVo userUpdateVo,
+                                     HttpServletRequest request) {
+        return ResponseDetails.ok(userService.updateTopImg(userUpdateVo, request));
+    }
+
+
+    @PostMapping("/user/update/avatar")
+    public ResponseDetails updateAvatar(@RequestBody UserUpdateVo userUpdateVo,
+                                        HttpServletRequest request) {
+        return ResponseDetails.ok(userService.updateAvatar(userUpdateVo, request));
     }
 
 

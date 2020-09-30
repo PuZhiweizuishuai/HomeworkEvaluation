@@ -20,7 +20,11 @@
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>
         <result property="commentCount" column="comment_count"/>
+        <result property="fatherId" column="father_id"/>
     </resultMap>
+    <update id="countAdd">
+         update comment set ${col} = ${col} + #{count} where id = #{commentId}
+    </update>
 
 
 </mapper>

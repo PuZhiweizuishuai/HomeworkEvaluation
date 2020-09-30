@@ -44,6 +44,12 @@ public class CommentEntity {
 	private Integer type;
 
 	/**
+	 * 父级评论ID
+	 * 如果没有，默认为帖子ID
+	 * */
+	private Long fatherId;
+
+	/**
 	 * 回复的帖子ID
 	 */
 	private Long commentId;

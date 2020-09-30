@@ -1,0 +1,184 @@
+<template>
+  <v-container>
+    <div id="commentTop" />
+    <v-row justify="center">
+      <v-col cols="11">
+        <v-textarea
+          v-model="comment.content"
+          :placeholder="commentPlaceholder"
+          label="评论"
+          auto-grow
+        />
+      </v-col>
+    </v-row>
+    <v-row justify="end">
+
+      <v-col cols="3">
+        <v-row justify="center">
+          <img :src="verifyImageUrl" alt="验证码" title="点击刷新" style="cursor:pointer;" @click="getVerifyImage">
+        </v-row>
+      </v-col>
+
+      <v-col cols="3">
+        <v-text-field
+          v-model="comment.verifyCode"
+          placeholder="验证码"
+          label="验证码"
+          :rules="[() => comment.verifyCode != null || '验证码不能为空']"
+          clearable
+        />
+      </v-col>
+      <v-col cols="3">
+        <v-row justify="end">
+          <v-btn depressed color="success" @click="submit">
+            评论
+          </v-btn>
+        </v-row>
+      </v-col>
+      <v-col cols="1" />
+    </v-row>
+    <v-row>
+      <v-divider />
+    </v-row>
+    <v-row v-for="item in secondList" :key="item.id" justify="center">
+      <v-col cols="11" style="padding-top: 0px;padding-bottom: 0px;">
+        <Card :comment="item" @comment="getComment" />
+      </v-col>
+    </v-row>
+
+    <v-row v-if="total == 0" justify="center">
+      <h3>暂无评论，来抢个沙发吧！</h3>
+    </v-row>
+    <v-row justify="center">
+      <v-pagination
+        v-if="length != 1"
+        v-model="page"
+        :length="length"
+        @input="pageChange"
+      />
+    </v-row>
+    <v-snackbar
+      v-model="showMessage"
+      :top="true"
+      :timeout="3000"
+    >
+      {{ message }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="showMessage = false"
+        >
+          关闭
+        </v-btn>
+      </template>
+    </v-snackbar>
+  </v-container>
+</template>
+
+<script>
+import Card from '@/components/comment/second-card.vue'
+
+export default {
+  name: 'SecondComment',
+  components: {
+    Card
+  },
+  props: {
+    father: {
+      type: Object,
+      default: null
+    }
+  },
+  data() {
+    return {
+      verifyImageUrl: this.SERVER_API_URL + '/verifyImage',
+      secondList: [],
+      page: 1,
+      size: 10,
+      length: 1,
+      total: 0,
+      comment: {
+        content: '',
+        verifyCode: '',
+        type: 1,
+        commentId: this.father.id,
+        articleId: this.father.articleId,
+        fatherId: this.father.fatherId
+      },
+      commentPlaceholder: '',
+      message: '',
+      showMessage: false
+    }
+  },
+  created() {
+    this.getSecondList()
+  },
+  methods: {
+    getComment(value) {
+      document.querySelector('#commentTop').scrollIntoView()
+      this.commentPlaceholder = '回复 @' + value.username + ': ' + value.content
+      this.comment.commentId = value.id
+      this.comment.fatherId = value.fatherId
+      console.log(this.comment)
+    },
+    getVerifyImage() {
+      this.verifyImageUrl = this.SERVER_API_URL + '/verifyImage?t=' + new Date().getTime()
+    },
+    getSecondList() {
+      this.httpGet(`/comment/second/list/${this.father.id}?page=${this.page}&limit=${this.size}`, (json) => {
+        if (json.status === 200) {
+          //
+          console.log(json)
+          this.secondList = json.data.list
+          this.length = json.data.totalPage
+          this.total = json.data.totalCount
+        } else {
+          //
+        }
+      })
+    },
+    submit() {
+      //
+      if (!this.$store.state.userInfo) {
+        this.message = '请先登录后再评论！'
+        this.showMessage = true
+        return
+      }
+      if (this.comment.content == null || this.comment.content === '') {
+        this.message = '评论内容不能为空！'
+        this.showMessage = true
+        return
+      }
+      if (this.comment.verifyCode == null || this.comment.verifyCode === '') {
+        this.message = '验证码不能为空！'
+        this.showMessage = true
+        return
+      }
+      this.httpPost('/comment/save', this.comment, (json) => {
+        if (json.status === 200) {
+          this.message = '评论成功！'
+          this.showMessage = true
+          this.comment.verifyCode = ''
+          this.comment.content = ''
+          this.getSecondList()
+        } else {
+          //
+          this.message = json.message
+          this.showMessage = true
+        }
+      })
+    },
+    pageChange(value) {
+      this.page = value
+      this.getSecondList()
+    }
+  }
+}
+</script>
+
+<style>
+
+</style>

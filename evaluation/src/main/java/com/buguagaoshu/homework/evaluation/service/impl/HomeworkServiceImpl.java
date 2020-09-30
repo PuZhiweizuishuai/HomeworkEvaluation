@@ -191,7 +191,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         homeworkWithQuestionsService.saveBatch(homeworkWithQuestionsEntities);
         // 通知班级成员
         List<StudentsCurriculumEntity> userListInCurriculum = studentsCurriculumService.findUserListInCurriculum(homeworkEntity.getClassNumber());
-        notificationService.sendNewExam(userListInCurriculum, nowLoginUser.getId(), curriculumEntity, homeworkEntity);
+        notificationService.sendNewExam(userListInCurriculum, nowLoginUser.getId(), nowLoginUser.getSubject(), curriculumEntity, homeworkEntity);
         homeworkModel.setId(homeworkEntity.getId());
         return homeworkModel;
     }
@@ -553,6 +553,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                 // 消息通知
                 submitHomeworkStatusService.updateById(userSubmitHomework);
                 notificationService.send(user.getId(),
+                        user.getSubject(),
                         userSubmitHomework.getUserId(),
                         NotificationTypeEnum.COURSE_KEEPER_ERROR,
                         "你在课程：" + curriculum.getCurriculumName() + " 的作业因为不符合要求，被教师打回，请及时查看！",
@@ -596,6 +597,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
             userSubmitHomework.setTeacherComment(teacherCommentHomeworkData.getComment());
             // 消息通知
             notificationService.send(user.getId(),
+                    user.getSubject(),
                     userSubmitHomework.getUserId(),
                     NotificationTypeEnum.COURSE_KEEPER_ERROR,
                     "你在课程：" + curriculum.getCurriculumName() + " 的作业,老师以及批改完成。你现在可以查看你的成绩了！",

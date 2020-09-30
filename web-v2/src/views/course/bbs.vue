@@ -11,8 +11,36 @@
     <v-row justify="center">
       <v-col cols="11">
         <v-row justify="end">
+          <v-text-field
+            v-model="key"
+            flat
+            prepend-inner-icon="mdi-magnify"
+            label="查找"
+            clearable
+            @keydown="search"
+          />
           <v-btn depressed color="primary" @click="goToArticle">发起主题</v-btn>
         </v-row>
+      </v-col>
+    </v-row>
+    <v-row v-if="showBack" justify="center">
+      <v-col cols="11">
+        <v-btn
+          icon
+          @click="back"
+        >
+          <v-icon>mdi-arrow-left-thick</v-icon>
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row justify="center">
+      <v-col cols="11">
+        <v-tabs>
+          <v-tab @click="setSort(0)">最新发帖</v-tab>
+          <v-tab @click="setSort(1)">最新回复</v-tab>
+          <v-tab @click="setSort(2)">精品</v-tab>
+          <v-tab @click="setSort(3)">消灭零回复</v-tab>
+        </v-tabs>
       </v-col>
     </v-row>
     <v-row v-for="item in articleList" :key="item.id" justify="center">
@@ -55,7 +83,8 @@ export default {
       length: 0,
       size: 20,
       sort: 0,
-      key: ''
+      key: '',
+      showBack: false
     }
   },
   created() {
@@ -74,11 +103,29 @@ export default {
         }
       })
     },
+    search(e) {
+      if (e.key === 'Enter') {
+        if (this.key === '' || this.key == null) {
+          return
+        }
+        this.showBack = true
+        this.getArticle()
+      }
+    },
+    back() {
+      this.key = ''
+      this.showBack = false
+      this.getArticle()
+    },
     goToArticle() {
       this.$router.push(`/course/learn/${this.$route.params.id}/bbs/article`)
     },
     pageChange(value) {
       this.page = value
+      this.getArticle()
+    },
+    setSort(value) {
+      this.sort = value
       this.getArticle()
     }
   }

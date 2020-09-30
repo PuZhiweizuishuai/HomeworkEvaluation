@@ -1,6 +1,9 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
+import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.utils.IpUtil;
+import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.net.IPv6Utils;
 import org.springframework.stereotype.Service;
@@ -26,12 +29,15 @@ import javax.servlet.http.HttpServletRequest;
 public class UserLoginLogServiceImpl extends ServiceImpl<UserLoginLogDao, UserLoginLogEntity> implements UserLoginLogService {
 
     @Override
-    public PageUtils queryPage(Map<String, Object> params) {
+    public PageUtils queryPage(Map<String, Object> params, HttpServletRequest request) {
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        QueryWrapper<UserLoginLogEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_id", user.getId());
+        wrapper.orderByDesc("login_time");
         IPage<UserLoginLogEntity> page = this.page(
                 new Query<UserLoginLogEntity>().getPage(params),
-                new QueryWrapper<UserLoginLogEntity>()
+                wrapper
         );
-
         return new PageUtils(page);
     }
 

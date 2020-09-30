@@ -99,7 +99,7 @@
                   class="mr-2"
                   v-bind="attrs"
                   v-on="on"
-                  @click="edit(item)"
+                  @click="showData(item)"
                 >
                   <v-icon>mdi-alert-circle</v-icon>
                 </v-btn>
@@ -327,6 +327,10 @@ export default {
           this.showMessage = true
         }
       })
+    },
+    showData(value) {
+      this.message = '开发中，预计下个版本上线！'
+      this.showMessage = true
     }
   }
 }
