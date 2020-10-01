@@ -116,10 +116,12 @@ export default {
       },
       isShowTeacherComment: false,
       showMessage: false,
-      message: ''
+      message: '',
+      id: 0
     }
   },
   created() {
+    this.id = this.$route.params.homeworkId
     this.$vuetify.goTo(0)
     this.getAnswer()
   },

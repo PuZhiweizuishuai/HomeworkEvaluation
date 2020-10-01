@@ -45,8 +45,6 @@ public class HomeworkController {
     @PostMapping("/homework/save")
     public ResponseDetails add(@Validated @RequestBody HomeworkModel homeworkModel,
                                HttpServletRequest request) {
-        System.out.println(homeworkModel);
-
         HomeworkModel homework = homeworkService.add(homeworkModel,
                 JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY));
         if (homework != null) {

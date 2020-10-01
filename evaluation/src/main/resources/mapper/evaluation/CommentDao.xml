@@ -21,6 +21,7 @@
         <result property="updateTime" column="update_time"/>
         <result property="commentCount" column="comment_count"/>
         <result property="fatherId" column="father_id"/>
+        <result property="rating" column="rating" />
     </resultMap>
     <update id="countAdd">
          update comment set ${col} = ${col} + #{count} where id = #{commentId}

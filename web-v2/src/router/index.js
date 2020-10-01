@@ -156,6 +156,24 @@ const routes = [
           requireAuth: true
         }
       },
+      // 作业互评提交的作业列表
+      {
+        path: '/course/learn/:id/evaluation/homework/:homeworkId',
+        name: 'EvaluationList',
+        component: () => import('@/views/homework/evaluation/list.vue'),
+        meta: {
+          requireAuth: true
+        }
+      },
+      // 作业互评详细提交的额作业内容
+      {
+        path: '/course/learn/:id/evaluation/homework/:homeworkId/comment/:submitId',
+        name: 'EvaluationInfo',
+        component: () => import('@/views/homework/evaluation/info.vue'),
+        meta: {
+          requireAuth: true
+        }
+      },
       // 显示作业内容
       {
         path: '/course/learn/:id/exam/homework/:homeworkId',

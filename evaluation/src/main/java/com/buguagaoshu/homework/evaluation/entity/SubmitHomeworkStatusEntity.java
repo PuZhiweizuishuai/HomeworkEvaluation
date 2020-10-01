@@ -72,4 +72,20 @@ public class SubmitHomeworkStatusEntity {
      * 教师评价
      */
     private String teacherComment;
+
+    /**
+     * 评价人数
+     * */
+    private Integer commentCount;
+
+    /**
+     * 喜欢数
+     * */
+    private Integer likeCount;
+
+
+    /**
+     * 评价等级
+     * */
+    private Double rating;
 }

@@ -45,7 +45,7 @@ public interface SubmitHomeworkStatusService extends IService<SubmitHomeworkStat
      * @param homeworkID 作业ID
      * @return 已提交作业的用户列表
      * */
-    List<SubmitHomeworkStatusEntity> submitUserList(long homeworkID);
+    List<SubmitHomeworkStatusEntity> submitUserList(Long homeworkID);
 
 
     /**

@@ -51,7 +51,7 @@ public class SubmitHomeworkStatusServiceImpl extends ServiceImpl<SubmitHomeworkS
     }
 
     @Override
-    public List<SubmitHomeworkStatusEntity> submitUserList(long homeworkID) {
+    public List<SubmitHomeworkStatusEntity> submitUserList(Long homeworkID) {
         QueryWrapper<SubmitHomeworkStatusEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("homework_id", homeworkID);
 

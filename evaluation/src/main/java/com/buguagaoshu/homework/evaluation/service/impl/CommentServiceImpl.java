@@ -2,6 +2,7 @@ package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.buguagaoshu.homework.common.domain.CustomPage;
 import com.buguagaoshu.homework.common.enums.ArticleTypeEnum;
+import com.buguagaoshu.homework.common.enums.CommentTypeEnum;
 import com.buguagaoshu.homework.common.enums.NotificationTypeEnum;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
@@ -103,7 +104,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
                 type = NotificationTypeEnum.BBS_COMMENT;
             }
             // 二级评论
-            if (commentVo.getCommentId() != null && commentVo.getType() == 1) {
+            if (commentVo.getCommentId() != null && commentVo.getType() == CommentTypeEnum.ORDINARY_SECOND_COMMENT.getCode()) {
                 father = getById(commentVo.getCommentId());
                 if (father != null && father.getStatus() == 0 && father.getArticleId().equals(commentVo.getArticleId())) {
                     BeanUtils.copyProperties(commentVo, commentEntity);
@@ -180,7 +181,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
         }
         wrapper.eq("article_id", articleId);
         wrapper.eq("status", 0);
-        wrapper.eq("type", 0);
+        wrapper.eq("type", CommentTypeEnum.ORDINARY_ONE_LEVEL_COMMENT.getCode());
         String sort = (String) params.get("sort");
         if (!StringUtils.isEmpty(sort)) {
             if ("1".equals(sort)) {
@@ -255,7 +256,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
         QueryWrapper<CommentEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("father_id", id);
         wrapper.eq("status", 0);
-        wrapper.eq("type", 1);
+        wrapper.eq("type", CommentTypeEnum.ORDINARY_SECOND_COMMENT.getCode());
         IPage<CommentEntity> page = this.page(
                 new Query<CommentEntity>().getPage(params),
                 wrapper
@@ -265,7 +266,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
         }
         Set<String> userIds = page.getRecords().stream().map(CommentEntity::getAuthorId).collect(Collectors.toSet());
         Map<String, UserEntity> userEntityMap = userService.listByIds(userIds).stream().collect(Collectors.toMap(UserEntity::getUserId, u -> u));
-        Map<Long, CommentEntity> commentEntityMap = page.getRecords().stream().collect(Collectors.toMap(c -> c.getId(), c -> c));
+        Map<Long, CommentEntity> commentEntityMap = page.getRecords().stream().collect(Collectors.toMap(CommentEntity::getId, c -> c));
         return pageUtils(page, userEntityMap, null, commentEntityMap);
     }
 

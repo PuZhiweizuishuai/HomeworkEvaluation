@@ -10,27 +10,21 @@
         </v-tabs>
       </v-col>
       <v-col cols="3" style="padding-bottom: 0px;">
-        <h3> {{ artice.commentCount }} 个回复</h3>
+        <h3> {{ total }} 个评价</h3>
       </v-col>
     </v-row>
     <!-- 分割线 -->
     <v-row>
-
       <v-divider />
+    </v-row>
 
-    </v-row>
-    <v-row v-for="item in commentsList" :key="item.id">
-      <v-col cols="12">
-        <Card :comment="item" :artice="artice" />
-      </v-col>
-    </v-row>
     <v-row v-if="total == 0" justify="center">
-      <h3> 暂无评论 </h3>
+      <h3> 暂无评价 </h3>
     </v-row>
     <!-- 目录 -->
     <v-row justify="center">
       <v-pagination
-        v-if="length != 1"
+        v-if="total > size"
         v-model="page"
         :length="length"
         @input="pageChange"
@@ -111,18 +105,13 @@
 </template>
 
 <script>
-import Card from '@/components/comment/card.vue'
+
 import Vditor from '@/components/vditor/vditor.vue'
 export default {
   components: {
-    Card,
     Vditor
   },
   props: {
-    artice: {
-      type: Object,
-      default: null
-    }
   },
   data() {
     return {
@@ -130,10 +119,11 @@ export default {
       verifyImageUrl: this.SERVER_API_URL + '/verifyImage',
       uploadurl: this.SERVER_API_URL + '/upload/file',
       comment: {
-        articleId: this.artice.id,
+        articleId: 0,
         content: '',
         verifyCode: '',
-        type: 0
+        // 作业一级评论
+        type: 10
       },
       message: '',
       showMessage: false,
@@ -145,14 +135,15 @@ export default {
     }
   },
   created() {
-    this.getComment()
+
+    // this.getComment()
   },
   methods: {
     getVerifyImage() {
       this.verifyImageUrl = this.SERVER_API_URL + '/verifyImage?t=' + new Date().getTime()
     },
     getComment() {
-      this.httpGet(`/comment/list/${this.$route.params.articleId}?page=${this.page}&limit=${this.size}&sort=${this.type}`, (json) => {
+      this.httpGet(`/evaluation/comment/list/${this.$route.params.submitId}?page=${this.page}&limit=${this.size}&sort=${this.type}`, (json) => {
         if (json.status === 200) {
           this.commentsList = json.data.list
           this.length = json.data.totalPage
@@ -175,8 +166,6 @@ export default {
       this.comment.content = value
     },
     submit() {
-      this.comment.articleId = this.artice.id
-
       if (!this.$store.state.userInfo) {
         this.message = '请先登录后再评论！'
         this.showMessage = true

@@ -97,6 +97,9 @@ public class CommentEntity {
 	private Long updateTime;
 
 
+	private Double rating;
+
+
 	public void initComment() {
 		long time = System.currentTimeMillis();
 		this.status = 0;

@@ -117,5 +117,10 @@ public interface UserService extends IService<UserEntity> {
      * 更新头像
      * */
     ReturnCodeEnum updateAvatar(UserUpdateVo userUpdateVo, HttpServletRequest request);
+
+    /**
+     * 更新基本信息
+     * */
+    ReturnCodeEnum updateInfo(UserUpdateVo userUpdateVo, HttpServletRequest request);
 }
 

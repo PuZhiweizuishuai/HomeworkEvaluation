@@ -171,6 +171,12 @@ public class UserController {
         return ResponseDetails.ok(userService.updateAvatar(userUpdateVo, request));
     }
 
+    @PostMapping("/user/update/info")
+    public ResponseDetails updateInfo(@RequestBody UserUpdateVo userUpdateVo,
+                                      HttpServletRequest request) {
+        return ResponseDetails.ok(userService.updateInfo(userUpdateVo, request));
+    }
+
 
     @GetMapping("/logInout")
     public ResponseDetails loginOut(HttpServletRequest request,

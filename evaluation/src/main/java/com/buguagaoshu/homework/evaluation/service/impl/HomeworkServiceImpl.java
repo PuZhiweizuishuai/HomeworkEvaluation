@@ -2,6 +2,7 @@ package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.buguagaoshu.homework.common.domain.MultipleReturnValues;
 import com.buguagaoshu.homework.common.enums.*;
+import com.buguagaoshu.homework.common.valid.OnlyNumber;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.*;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
@@ -248,10 +249,19 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
 
     /**
      * 获取作业下的题目以及用户答案
+     * @param homeworkEntity 作业信息
+     * @param userId 用户ID
+     * @param rightAnswer 是否显示正确答案
+     * @param studentName 用户名
+     * @param updateSubmit 是更新提交数据,如果是 true，则是用户自己访问，如果是 false 则代表是老师或其它人访问
+     * @return 作业模型
      */
-    public HomeworkModel homeworkQuestionList(HomeworkEntity homeworkEntity, String userId, boolean rightAnswer, String studentName) throws JsonProcessingException {
-        long time = System.currentTimeMillis();
-
+    @Override
+    public HomeworkModel homeworkQuestionList(HomeworkEntity homeworkEntity,
+                                              String userId,
+                                              boolean rightAnswer,
+                                              String studentName,
+                                              boolean updateSubmit) throws JsonProcessingException {
         Map<Long, HomeworkWithQuestionsEntity> questionsMaps =
                 homeworkWithQuestionsService.homeworkWithQuestionMap(homeworkEntity.getId());
         if (questionsMaps == null) {
@@ -272,14 +282,15 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                     .saveSubmitStatus(homeworkEntity, userId, HomeworkSubmitStatusEnum.TEMPORARY_STORAGE.getCode(), studentName);
             submit = submitQuestionsService.saveQuestions(questionsEntityList, userId, homeworkEntity, questionsMaps);
         } else {
-            submitHomeworkStatusEntity.setUpdateTime(System.currentTimeMillis());
-            submitHomeworkStatusService.updateById(submitHomeworkStatusEntity);
+            if (updateSubmit) {
+                submitHomeworkStatusEntity.setUpdateTime(System.currentTimeMillis());
+                submitHomeworkStatusService.updateById(submitHomeworkStatusEntity);
+            }
         }
-        // 如果作业已经被老师批改
+        // 如果作业已经被老师批改,或者作业已经结束
         // 那么可以直接给出正确答案
         // 如果课程内身份是老师，也可以直接给出答案
-
-        if (submitHomeworkStatusEntity.getStatus() == HomeworkSubmitStatusEnum.COMPLETE.getCode()) {
+        if (submitHomeworkStatusEntity.getStatus() == HomeworkSubmitStatusEnum.COMPLETE.getCode() || homeworkEntity.getCloseTime() <= System.currentTimeMillis()) {
             rightAnswer = true;
         }
 
@@ -310,6 +321,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         return homeworkModel;
     }
 
+
     @Override
     public HomeworkModel courseQuestionList(Long homeworkId, Claims user, boolean rightAnswer) throws JsonProcessingException {
         HomeworkEntity homeworkEntity = haveGetQuestionListPower(homeworkId);
@@ -323,7 +335,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         StudentsCurriculumEntity studentsCurriculumEntity =
                 studentsCurriculumService.selectStudentByCurriculumId(user.getId(), courseId);
         if (studentsCurriculumEntity != null) {
-            return homeworkQuestionList(homeworkEntity, user.getId(), rightAnswer, studentsCurriculumEntity.getStudentName());
+            return homeworkQuestionList(homeworkEntity, user.getId(), rightAnswer, studentsCurriculumEntity.getStudentName(), true);
         }
         return null;
     }
@@ -345,7 +357,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                 return null;
             }
             if (HomeworkSubmitStatusEnum.teacherHaveSeePower(userSubmit.getStatus())) {
-                return homeworkQuestionList(homeworkEntity, studentId, true, userSubmit.getStudentName());
+                return homeworkQuestionList(homeworkEntity, studentId, true, userSubmit.getStudentName(), false);
             }
         }
         return null;
@@ -557,7 +569,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                         userSubmitHomework.getUserId(),
                         NotificationTypeEnum.COURSE_KEEPER_ERROR,
                         "你在课程：" + curriculum.getCurriculumName() + " 的作业因为不符合要求，被教师打回，请及时查看！",
-                        "/course/learn/" + curriculum.getId() + "/exam/" + homework.getId(),
+                        "/course/learn/" + curriculum.getId() + "/exam/homework/" + homework.getId(),
                         homework.getId());
                 return ReturnCodeEnum.SUCCESS;
             }
@@ -601,7 +613,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
                     userSubmitHomework.getUserId(),
                     NotificationTypeEnum.COURSE_KEEPER_ERROR,
                     "你在课程：" + curriculum.getCurriculumName() + " 的作业,老师以及批改完成。你现在可以查看你的成绩了！",
-                    "/course/learn/" + curriculum.getId() + "/exam/" + homework.getId(),
+                    "/course/learn/" + curriculum.getId() + "/exam/homework/" + homework.getId(),
                     homework.getId());
             submitHomeworkStatusService.updateById(userSubmitHomework);
             return ReturnCodeEnum.SUCCESS;
@@ -629,11 +641,13 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         }
         if (time > homeworkEntity.getCloseTime()) {
             // 判断是否开启互评功能
-            if (homeworkEntity.getEvaluation() == EvaluationType.CLOSE_EVALUATION.getCode()) {
-                return EvaluationType.HOMEWORK_END.getCode();
-            } else {
-                return EvaluationType.EVALUATION_START.getCode();
-            }
+//            if (homeworkEntity.getEvaluation() == EvaluationType.CLOSE_EVALUATION.getCode()) {
+//                return EvaluationType.HOMEWORK_END.getCode();
+//            } else {
+//                return EvaluationType.EVALUATION_START.getCode();
+//            }
+            // 此处逻辑修改，暂时不需要作业互评状态的判断
+            return EvaluationType.HOMEWORK_END.getCode();
 
         }
         return EvaluationType.HOMEWORK_NO_START.getCode();

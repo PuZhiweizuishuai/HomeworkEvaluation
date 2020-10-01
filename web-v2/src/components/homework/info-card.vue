@@ -63,6 +63,7 @@
       <v-btn v-if="homeWorkData.status === 1" depressed color="primary" @click="goToTest">进入测验</v-btn>
       <v-btn v-if="homeWorkData.status === 0" depressed disabled>暂未开始</v-btn>
       <v-btn v-if="homeWorkData.status === 4" depressed color="success" @click="goToTest">查看</v-btn>
+      <v-btn v-if="homeWorkData.status === 2" depressed color="primary" @click="geoToEvaluation">进入互评</v-btn>
     </v-col>
   </v-row>
 </template>
@@ -106,6 +107,9 @@ export default {
   methods: {
     goToTest() {
       this.$router.push(`/course/learn/${this.homeWorkData.classNumber}/exam/homework/${this.homeWorkData.id}`)
+    },
+    geoToEvaluation() {
+      this.$router.push(`/course/learn/${this.homeWorkData.classNumber}/evaluation/homework/${this.homeWorkData.id}`)
     },
     onResize() {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight }

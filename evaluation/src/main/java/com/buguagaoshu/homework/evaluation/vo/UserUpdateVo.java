@@ -14,4 +14,28 @@ public class UserUpdateVo {
      * 头像地址
      */
     private String userAvatarUrl;
+
+
+    private String school;
+    /**
+     * 专业
+     */
+    private String major;
+    /**
+     * 年级
+     */
+    private Long grade;
+
+    /**
+     * qq
+     */
+    private String userQq;
+    /**
+     * 微信
+     */
+    private String userWechat;
+    /**
+     * 用户简介
+     */
+    private String userIntro;
 }

@@ -437,6 +437,9 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     public ReturnCodeEnum updateTopImg(UserUpdateVo userUpdateVo, HttpServletRequest request) {
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         UserEntity entity = getById(user.getId());
+        if (entity == null) {
+            return null;
+        }
         if (!StringUtils.isEmpty(userUpdateVo.getTopImgUrl())) {
             entity.setTopImgUrl(userUpdateVo.getTopImgUrl());
             this.updateById(entity);
@@ -449,12 +452,41 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     public ReturnCodeEnum updateAvatar(UserUpdateVo userUpdateVo, HttpServletRequest request) {
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         UserEntity entity = getById(user.getId());
+        if (entity == null) {
+            return null;
+        }
         if (!StringUtils.isEmpty(userUpdateVo.getUserAvatarUrl())) {
             entity.setTopImgUrl(userUpdateVo.getUserAvatarUrl());
             this.updateById(entity);
             return ReturnCodeEnum.SUCCESS;
         }
         return ReturnCodeEnum.DATA_VALID_EXCEPTION;
+    }
+
+    @Override
+    public ReturnCodeEnum updateInfo(UserUpdateVo userUpdateVo, HttpServletRequest request) {
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        UserEntity entity = getById(user.getId());
+        if (entity == null) {
+            return ReturnCodeEnum.NO_ALTER_ROLE_POWER;
+        }
+        if (!StringUtils.isEmpty(userUpdateVo.getUserIntro())) {
+            entity.setUserIntro(userUpdateVo.getUserIntro());
+        }
+        if (!StringUtils.isEmpty(userUpdateVo.getSchool())) {
+            entity.setSchool(userUpdateVo.getSchool());
+        }
+        if (!StringUtils.isEmpty(userUpdateVo.getGrade())) {
+            entity.setGrade(userUpdateVo.getGrade());
+        }
+        if (!StringUtils.isEmpty(userUpdateVo.getMajor())) {
+            entity.setMajor(userUpdateVo.getMajor());
+        }
+        if (!StringUtils.isEmpty(userUpdateVo.getUserQq())) {
+            entity.setUserQq(userUpdateVo.getUserQq());
+        }
+        this.updateById(entity);
+        return ReturnCodeEnum.SUCCESS;
     }
 
     /**

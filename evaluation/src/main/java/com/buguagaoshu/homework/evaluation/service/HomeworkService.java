@@ -62,6 +62,22 @@ public interface HomeworkService extends IService<HomeworkEntity> {
 
 
     /**
+     * 获取作业下的题目以及用户答案
+     * @param homeworkEntity 作业信息
+     * @param userId 用户ID
+     * @param rightAnswer 是否显示正确答案
+     * @param studentName 用户名
+     * @param updateSubmit 是更新提交数据,如果是 true，则是用户自己访问，如果是 false 则代表是老师或其它人访问
+     * @return 作业模型
+     */
+    HomeworkModel homeworkQuestionList(HomeworkEntity homeworkEntity,
+                                       String userId,
+                                       boolean rightAnswer,
+                                       String studentName,
+                                       boolean updateSubmit) throws JsonProcessingException;
+
+
+    /**
      * 教师获取学生在这个作业下提交的作业答案
      *
      * @param homework  作业ID

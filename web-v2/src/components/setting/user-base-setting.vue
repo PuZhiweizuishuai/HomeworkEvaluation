@@ -41,10 +41,64 @@
         </v-row>
         <v-row justify="center">
           <v-col cols="8">
-            <Time :cols="12" :time="userInfo.birthday" :lable="'生日'" />
+            <Time :cols="12" :time="userInfo.birthday" :lable="'生日'" @time="getBirthday" />
+          </v-col>
+          <v-col cols="2" />
+        </v-row>
+        <v-row justify="center">
+          <v-col cols="8">
+            <v-text-field
+              v-model="userInfo.school"
+              placeholder="学校"
+              label="学校"
+              clearable
+              :disabled="schoolAlter"
+            />
           </v-col>
           <v-col cols="2">
-            <v-btn color="primary" @click="birthdayAlter = !birthdanAlter">修改</v-btn>
+            <v-btn color="primary" @click="schoolAlter = !schoolAlter">修改</v-btn>
+          </v-col>
+        </v-row>
+        <v-row justify="center">
+          <v-col cols="8">
+            <v-text-field
+              v-model="userInfo.major"
+              placeholder="专业"
+              label="专业"
+              clearable
+              :disabled="majorAlter"
+            />
+          </v-col>
+          <v-col cols="2">
+            <v-btn color="primary" @click="majorAlter = !majorAlter">修改</v-btn>
+          </v-col>
+        </v-row>
+        <v-row justify="center">
+          <v-col cols="8">
+            <v-text-field
+              v-model="userInfo.grade"
+              placeholder="年级"
+              label="年级"
+              clearable
+              :disabled="gradeAlter"
+            />
+          </v-col>
+          <v-col cols="2">
+            <v-btn color="primary" @click="gradeAlter = !gradeAlter">修改</v-btn>
+          </v-col>
+        </v-row>
+        <v-row justify="center">
+          <v-col cols="8">
+            <v-text-field
+              v-model="userInfo.userQq"
+              placeholder="QQ"
+              label="QQ"
+              clearable
+              :disabled="userQQAlter"
+            />
+          </v-col>
+          <v-col cols="2">
+            <v-btn color="primary" @click="userQQAlter = !userQQAlter">修改</v-btn>
           </v-col>
         </v-row>
         <v-row justify="center">
@@ -89,43 +143,46 @@ export default {
   data() {
     return {
       userInfo: {
-        username: ''
+        username: '',
+        birthday: ''
       },
       usernameAlter: true,
       introductionAlter: true,
       message: '',
       showMessage: false,
       birthdayAlter: true,
-      menu: false
+      menu: false,
+      userQQAlter: true,
+      schoolAlter: true,
+      gradeAlter: true,
+      majorAlter: true
     }
   },
   created() {
     this.userInfo = this.$store.state.userInfo
   },
   methods: {
+    getBirthday(value) {
+      this.userInfo.birthday = value
+    },
     save() {
-      fetch(`/api/user/update/info`, {
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')
-        },
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify(this.userInfo)
-      }).then(response => response.json())
-        .then(json => {
-          if (json.status === 200) {
-            this.$store.commit('setUserInfo', this.userInfo)
-            this.message = '修改成功'
-            this.showMessage = true
-          } else {
-            this.message = '修改失败！' + json.message
-            this.showMessage = true
-          }
-        })
-        .catch(e => {
-          return null
-        })
+      const data = {
+        userIntro: this.userInfo.userIntro,
+        school: this.userInfo.school,
+        major: this.userInfo.major,
+        grade: this.userInfo.grade,
+        userQq: this.userInfo.userQq
+      }
+      this.httpPost('/user/update/info', data, (json) => {
+        if (json.status === 200) {
+          this.$store.commit('setUserInfo', this.userInfo)
+          this.message = '修改成功'
+          this.showMessage = true
+        } else {
+          this.message = '修改失败！' + json.message
+          this.showMessage = true
+        }
+      })
     }
   }
 }

@@ -120,4 +120,7 @@ public class HomeworkModel {
      * 1 开启
      * */
     private Integer evaluation;
+
+
+    private String userAvatar;
 }

@@ -40,7 +40,8 @@
     </v-row>
     <v-row justify="center">
       试卷总分：<strong> {{ homeworkInfo.totalScore }} </strong>
-      <span v-if="homeworkInfo.showTeacherComment">你的得分：<span style="color:red;font-weight: bold;"> {{ homeworkInfo.score }} </span></span>
+      <span v-if="homeworkInfo.showTeacherComment">你的得分：
+        <span style="color:red;font-weight: bold;"> {{ homeworkInfo.score }} </span></span>
     </v-row>
     <v-row justify="center">
       <v-col cols="12">
@@ -92,7 +93,7 @@
     </v-row>
 
     <v-row v-if="homeworkInfo.submit == false" justify="center" align="center" style="height: 150px">
-      <strong>已经提交，无法再次提交</strong>
+      <strong>已经提交或作业已经结束，无法再次提交</strong>
     </v-row>
 
     <!-- 支撑底部宽度部分 -->
