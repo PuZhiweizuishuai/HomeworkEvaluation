@@ -1,24 +1,7 @@
-# web
+# 此版本已被废弃，请访问 web-v2
 
-## Project setup
-```
-yarn install
-```
+## 此版本已被废弃，请访问 web-v2
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
 
-### Compiles and minifies for production
-```
-yarn build
-```
+### 此版本已被废弃，请访问 web-v2
 
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
