@@ -5,6 +5,7 @@ import com.buguagaoshu.homework.common.enums.*;
 import com.buguagaoshu.homework.evaluation.cache.CourseTagCache;
 import com.buguagaoshu.homework.evaluation.cache.WebsiteIndexMessageCache;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
+import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.entity.*;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
 import com.buguagaoshu.homework.evaluation.model.CurriculumModel;
@@ -133,8 +134,8 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
 
     @Override
     public CurriculumEntity updateCurriculum(CurriculumModel curriculumModel, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        String verifyCodeKey = (String) session.getAttribute("verifyCodeKey");
+        HttpSession session = request.getSession();
+        String verifyCodeKey = (String) session.getAttribute(WebConstant.VERIFY_CODE_KEY);
         // 验证码校验
         verifyCodeService.verify(verifyCodeKey, curriculumModel.getVerifyCode());
         Claims teacher = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
@@ -290,8 +291,8 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
 
     @Override
     public ReturnCodeEnum join(Long id, HttpServletRequest request, JoinCourseCode code) {
-        HttpSession session = request.getSession(false);
-        String verifyCodeKey = (String) session.getAttribute("verifyCodeKey");
+        HttpSession session = request.getSession();
+        String verifyCodeKey = (String) session.getAttribute(WebConstant.VERIFY_CODE_KEY);
         // 验证码校验
         verifyCodeService.verify(verifyCodeKey, code.getVerifyCode());
         // 获取当前用户

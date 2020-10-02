@@ -45,7 +45,7 @@
     <!-- 评论区 -->
     <v-row>
       <v-col>
-        <Comment />
+        <Comment :homework="userHomework" />
       </v-col>
     </v-row>
   </v-container>

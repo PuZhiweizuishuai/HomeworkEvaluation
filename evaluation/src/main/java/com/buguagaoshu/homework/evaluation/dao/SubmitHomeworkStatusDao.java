@@ -17,4 +17,5 @@ import java.util.List;
 @Mapper
 public interface SubmitHomeworkStatusDao extends BaseMapper<SubmitHomeworkStatusEntity> {
 
+    void addCount(@Param("col") String col, @Param("submitId") Long submitId, @Param("count") int count);
 }

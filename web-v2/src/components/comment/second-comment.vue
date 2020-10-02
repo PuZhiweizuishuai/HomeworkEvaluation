@@ -42,7 +42,7 @@
     </v-row>
     <v-row v-for="item in secondList" :key="item.id" justify="center">
       <v-col cols="11" style="padding-top: 0px;padding-bottom: 0px;">
-        <Card :comment="item" @comment="getComment" />
+        <Card :comment="item" :type="type" @comment="getComment" />
       </v-col>
     </v-row>
 
@@ -90,6 +90,10 @@ export default {
     father: {
       type: Object,
       default: null
+    },
+    type: {
+      type: Number,
+      default: 1
     }
   },
   data() {
@@ -103,7 +107,7 @@ export default {
       comment: {
         content: '',
         verifyCode: '',
-        type: 1,
+        type: this.type,
         commentId: this.father.id,
         articleId: this.father.articleId,
         fatherId: this.father.fatherId
@@ -114,6 +118,10 @@ export default {
     }
   },
   created() {
+    // 使用 type 值来判断
+    // 如果 type 值是 1，则是普通帖子的二级评论
+    // 如果 type 值是 11，则是作业互评的二级评论
+    // 如果 type 值是 101，则是课程评价的二级评论
     this.getSecondList()
   },
   methods: {
@@ -122,23 +130,34 @@ export default {
       this.commentPlaceholder = '回复 @' + value.username + ': ' + value.content
       this.comment.commentId = value.id
       this.comment.fatherId = value.fatherId
-      console.log(this.comment)
     },
     getVerifyImage() {
       this.verifyImageUrl = this.SERVER_API_URL + '/verifyImage?t=' + new Date().getTime()
     },
     getSecondList() {
-      this.httpGet(`/comment/second/list/${this.father.id}?page=${this.page}&limit=${this.size}`, (json) => {
-        if (json.status === 200) {
+      if (this.type === 1) {
+        this.httpGet(`/comment/second/list/${this.father.id}?page=${this.page}&limit=${this.size}`, (json) => {
+          if (json.status === 200) {
           //
-          console.log(json)
-          this.secondList = json.data.list
-          this.length = json.data.totalPage
-          this.total = json.data.totalCount
-        } else {
+            this.secondList = json.data.list
+            this.length = json.data.totalPage
+            this.total = json.data.totalCount
+          } else {
           //
-        }
-      })
+          }
+        })
+      } else if (this.type === 11) {
+        this.httpGet(`/evaluation/comment/second/${this.father.id}?page=${this.page}&limit=${this.size}`, (json) => {
+          if (json.status === 200) {
+          //
+            this.secondList = json.data.list
+            this.length = json.data.totalPage
+            this.total = json.data.totalCount
+          } else {
+          //
+          }
+        })
+      }
     },
     submit() {
       //
@@ -157,19 +176,44 @@ export default {
         this.showMessage = true
         return
       }
-      this.httpPost('/comment/save', this.comment, (json) => {
-        if (json.status === 200) {
-          this.message = '评论成功！'
-          this.showMessage = true
-          this.comment.verifyCode = ''
-          this.comment.content = ''
-          this.getSecondList()
-        } else {
+      if (this.type === 1) {
+        this.httpPost('/comment/save', this.comment, (json) => {
+          if (json.status === 200) {
+            this.message = '评论成功！'
+            this.showMessage = true
+            this.comment.verifyCode = ''
+            this.comment.content = ''
+            this.getSecondList()
+          } else {
           //
-          this.message = json.message
-          this.showMessage = true
+            this.message = json.message
+            this.showMessage = true
+          }
+        })
+      } else if (this.type === 11) {
+        const data = {
+          content: this.comment.content,
+          verifyCode: this.comment.verifyCode,
+          type: this.type,
+          commentId: this.father.id,
+          submitId: this.father.articleId,
+          fatherId: this.father.fatherId
         }
-      })
+
+        this.httpPost(`/evaluation/comment/submit`, data, (json) => {
+          if (json.status === 200) {
+            this.message = '评论成功！'
+            this.showMessage = true
+            this.comment.verifyCode = ''
+            this.comment.content = ''
+            this.getSecondList()
+          } else {
+          //
+            this.message = json.message
+            this.showMessage = true
+          }
+        })
+      }
     },
     pageChange(value) {
       this.page = value

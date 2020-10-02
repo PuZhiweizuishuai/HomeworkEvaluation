@@ -83,6 +83,9 @@ export default {
       TimeUtil
     }
   },
+  created() {
+
+  },
   methods: {
     setComment() {
       this.$emit('comment', this.comment)

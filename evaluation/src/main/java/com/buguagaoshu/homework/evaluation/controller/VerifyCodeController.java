@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.evaluation.controller;
 
+import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.service.VerifyCodeService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
@@ -43,7 +44,7 @@ public class VerifyCodeController {
         // TODO 与之后验证时获取到的 Session ID 不同，导致验证码始终错误，暂时先采用这种方式，后期直接将 验证码保存到 Session 中
         // 反正采用 Spring Session Redis 后，Session也是保存在 Redis 中的
         // 造成这种问题的可能原因 ： https://www.cnblogs.com/imyjy/p/9187168.html
-        session.setAttribute("verifyCodeKey", session.getId());
+        session.setAttribute(WebConstant.VERIFY_CODE_KEY, session.getId());
         Image image = verifyCodeService.image(session.getId());
         InputStreamResource inputStreamResource = imageToInputStreamResource(image, IMAGE_FORMAT);
         HttpHeaders httpHeaders = new HttpHeaders();

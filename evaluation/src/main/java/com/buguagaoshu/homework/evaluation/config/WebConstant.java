@@ -16,4 +16,8 @@ public class WebConstant {
      * */
     public final static Long AEX_EXPIRES_TIME = 21600000L;
 
+
+
+    public final static String VERIFY_CODE_KEY = "verifyCodeKey";
+
 }

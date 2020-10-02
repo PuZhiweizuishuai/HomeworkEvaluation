@@ -16,6 +16,9 @@
         <result property="studentName" column="student_name"/>
         <result property="submitTime" column="submit_time"/>
     </resultMap>
+    <update id="addCount">
+        update submit_homework_status set ${col} = ${col} + #{count} where id = #{submitId}
+    </update>
 
 
 </mapper>

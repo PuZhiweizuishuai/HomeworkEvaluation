@@ -21,7 +21,7 @@
             教师
           </v-chip>
           <v-chip
-            v-if="comment.authorId == artice.authorId"
+            v-if="comment.authorId == artice.authorId || comment.authorId == homework.studentId"
             class="ma-2"
             color="green"
             small
@@ -30,7 +30,6 @@
             楼主
           </v-chip>
         </p>
-
       </v-col>
     </v-row>
     <v-row justify="end">
@@ -105,7 +104,7 @@
       max-width="1000"
     >
       <v-card>
-        <SecondComment :key="secondCommendKey" :father="comment" />
+        <SecondComment :key="secondCommendKey" :father="comment" :type="type" />
       </v-card>
     </v-dialog>
   </v-container>
@@ -129,11 +128,31 @@ export default {
     },
     artice: {
       type: Object,
-      default: null
+      default: () => {
+        return {
+          authorId: -1
+        }
+      }
     },
     showcomment: {
       type: Boolean,
       default: true
+    },
+    ratings: {
+      type: Boolean,
+      default: false
+    },
+    homework: {
+      type: Object,
+      default: () => {
+        return {
+          studentId: -1
+        }
+      }
+    },
+    type: {
+      type: Number,
+      default: 1
     }
   },
   data() {
@@ -142,6 +161,9 @@ export default {
       showSecond: false,
       secondCommendKey: 0
     }
+  },
+  created() {
+
   },
   methods: {
     openSecond() {

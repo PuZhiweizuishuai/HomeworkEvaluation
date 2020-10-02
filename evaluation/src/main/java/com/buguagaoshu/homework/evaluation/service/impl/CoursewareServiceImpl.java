@@ -2,10 +2,9 @@ package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
-import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
+import com.buguagaoshu.homework.evaluation.service.NotificationService;
 import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
-import com.buguagaoshu.homework.evaluation.utils.AesUtil;
 import com.buguagaoshu.homework.evaluation.utils.FileUtil;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -26,6 +25,7 @@ import com.buguagaoshu.homework.common.utils.Query;
 import com.buguagaoshu.homework.evaluation.dao.CoursewareDao;
 import com.buguagaoshu.homework.evaluation.entity.CoursewareEntity;
 import com.buguagaoshu.homework.evaluation.service.CoursewareService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,12 +38,15 @@ public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, Courseware
 
     private final StudentsCurriculumService studentsCurriculumService;
 
+    private final NotificationService notificationService;
+
 
     private final FileUtil fileUtil;
 
     @Autowired
-    public CoursewareServiceImpl(StudentsCurriculumService studentsCurriculumService, FileUtil fileUtil) {
+    public CoursewareServiceImpl(StudentsCurriculumService studentsCurriculumService, NotificationService notificationService, FileUtil fileUtil) {
         this.studentsCurriculumService = studentsCurriculumService;
+        this.notificationService = notificationService;
         this.fileUtil = fileUtil;
     }
 
@@ -87,6 +90,7 @@ public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, Courseware
     }
 
     @Override
+    @Transactional(rollbackFor = {})
     public boolean saveCourseware(CoursewareEntity coursewareEntity, HttpServletRequest request) {
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         StudentsCurriculumEntity student =
@@ -119,6 +123,8 @@ public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, Courseware
                 coursewareEntity.setFileType(fileUtil.fileTypeCode(coursewareEntity.getFileUrl()));
             }
             this.save(coursewareEntity);
+            List<StudentsCurriculumEntity> students = studentsCurriculumService.findUserListInCurriculum(coursewareEntity.getCourseId());
+            notificationService.sendNewCourseware(students, user, coursewareEntity);
             return true;
         }
         return false;

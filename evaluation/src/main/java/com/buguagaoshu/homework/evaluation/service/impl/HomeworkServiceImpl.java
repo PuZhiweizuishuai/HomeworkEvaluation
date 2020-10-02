@@ -611,7 +611,7 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
             notificationService.send(user.getId(),
                     user.getSubject(),
                     userSubmitHomework.getUserId(),
-                    NotificationTypeEnum.COURSE_KEEPER_ERROR,
+                    NotificationTypeEnum.COURSE_KEEPER,
                     "你在课程：" + curriculum.getCurriculumName() + " 的作业,老师以及批改完成。你现在可以查看你的成绩了！",
                     "/course/learn/" + curriculum.getId() + "/exam/homework/" + homework.getId(),
                     homework.getId());

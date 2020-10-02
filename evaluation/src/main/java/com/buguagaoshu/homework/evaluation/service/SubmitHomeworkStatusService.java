@@ -53,5 +53,11 @@ public interface SubmitHomeworkStatusService extends IService<SubmitHomeworkStat
      * @param homeworkId  作业ID
      */
     List<SubmitHomeworkStatusEntity> teacherNoCommentSubmit(long homeworkId);
+
+
+    /**
+     * 评论数或喜欢数增长控制
+     * */
+    void addCount(String col, Long submitId, int count);
 }
 

@@ -106,7 +106,27 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationDao, Notifi
     }
 
     @Override
-    public void sendBulletin(List<StudentsCurriculumEntity> userList,String notifier,  String notifierName, Long courseId) {
+    public void sendComment(String notifier, String notifierName,
+                            String receiver, SubmitHomeworkStatusEntity userSubmit,
+                            CommentEntity commentEntity, HomeworkEntity homeworkEntity) {
+        if (notifier.equals(receiver)) {
+            return;
+        }
+        long time = System.currentTimeMillis();
+        NotificationEntity notificationEntity = initNotificationEntity(notifier, notifierName, receiver, time, NotificationTypeEnum.HOMEWORK_HAVE_NEW_COMMENT, userSubmit.getId());
+        notificationEntity.setCommentId(commentEntity.getId());
+        if (commentEntity.getContent().length() > 50) {
+            notificationEntity.setCommentContent(commentEntity.getContent().substring(0, 50) + "......");
+        } else {
+            notificationEntity.setCommentContent(commentEntity.getContent());
+        }
+        notificationEntity.setText(homeworkEntity.getTitle());
+        notificationEntity.setUrl("/course/learn/" + homeworkEntity.getClassNumber() + "/evaluation/homework/" + homeworkEntity.getId() + "/comment/" + userSubmit.getId());
+        this.save(notificationEntity);
+    }
+
+    @Override
+    public void sendBulletin(List<StudentsCurriculumEntity> userList, String notifier, String notifierName, Long courseId) {
         if (userList.size() != 0) {
             CurriculumEntity curriculumEntity = curriculumService.getById(courseId);
             long time = System.currentTimeMillis();
@@ -126,7 +146,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationDao, Notifi
     }
 
     @Override
-    public void sendNewExam(List<StudentsCurriculumEntity> userListInCurriculum,String notifier, String notifierName, CurriculumEntity curriculumEntity, HomeworkEntity homeworkEntity) {
+    public void sendNewExam(List<StudentsCurriculumEntity> userListInCurriculum, String notifier, String notifierName, CurriculumEntity curriculumEntity, HomeworkEntity homeworkEntity) {
         if (userListInCurriculum.size() != 0) {
             long time = System.currentTimeMillis();
             List<NotificationEntity> notificationEntities = new LinkedList<>();
@@ -189,6 +209,23 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationDao, Notifi
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void sendNewCourseware(List<StudentsCurriculumEntity> students, Claims user, CoursewareEntity coursewareEntity) {
+        if (students.size() != 0) {
+            long time = System.currentTimeMillis();
+            List<NotificationEntity> notificationEntities = new LinkedList<>();
+            String text = "你学习的课程：发布了新的课件：" + coursewareEntity.getTitle() + "，请尽快查看！";
+            String url = "/course/learn/" + coursewareEntity.getCourseId() + "/courseware/" + coursewareEntity.getId();
+            students.forEach((u) -> {
+                NotificationEntity notificationEntity = initNotificationEntity(user.getId(), user.getSubject(), u.getStudentId(), time, NotificationTypeEnum.COURSE_COURSEWARE, coursewareEntity.getCourseId());
+                notificationEntity.setText(text);
+                notificationEntity.setUrl(url);
+                notificationEntities.add(notificationEntity);
+            });
+            this.saveBatch(notificationEntities);
+        }
     }
 
 

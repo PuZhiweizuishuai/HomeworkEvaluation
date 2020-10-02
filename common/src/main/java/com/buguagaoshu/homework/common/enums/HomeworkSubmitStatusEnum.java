@@ -24,6 +24,10 @@ public enum HomeworkSubmitStatusEnum {
         this.msg = msg;
     }
 
+    public static boolean chekEvaluationPower(Integer status) {
+        return status.equals(SUBMIT.code) || status.equals(COMPLETE.code);
+    }
+
     public int getCode() {
         return code;
     }

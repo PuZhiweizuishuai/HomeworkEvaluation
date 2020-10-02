@@ -411,8 +411,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     @Override
     public ReturnCodeEnum updatePassword(PasswordVo passwordVo, HttpServletRequest request, HttpServletResponse response) {
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
-        HttpSession session = request.getSession(false);
-        String verifyCodeKey = (String) session.getAttribute("verifyCodeKey");
+        HttpSession session = request.getSession();
+        String verifyCodeKey = (String) session.getAttribute(WebConstant.VERIFY_CODE_KEY);
         verifyCodeService.verify(verifyCodeKey, passwordVo.getVerifyCode());
         UserEntity userEntity = getById(user.getId());
         if (userEntity == null) {
@@ -456,7 +456,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             return null;
         }
         if (!StringUtils.isEmpty(userUpdateVo.getUserAvatarUrl())) {
-            entity.setTopImgUrl(userUpdateVo.getUserAvatarUrl());
+            entity.setUserAvatarUrl(userUpdateVo.getUserAvatarUrl());
             this.updateById(entity);
             return ReturnCodeEnum.SUCCESS;
         }
@@ -486,6 +486,19 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             entity.setUserQq(userUpdateVo.getUserQq());
         }
         this.updateById(entity);
+        return ReturnCodeEnum.SUCCESS;
+    }
+
+    @Override
+    public ReturnCodeEnum register(RegisterUserVo registerUserVo, HttpServletRequest request) {
+        // 验证验证码
+        verifyCodeService.verify(request.getSession().getId(), registerUserVo.getVerifyCode());
+        //
+        UserEntity userEntity = new UserEntity();
+        // 注册数据初始化
+        userEntity.initData();
+
+
         return ReturnCodeEnum.SUCCESS;
     }
 

@@ -1,6 +1,7 @@
 package com.buguagaoshu.homework.evaluation.controller;
 
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
+import com.buguagaoshu.homework.common.enums.CommentTypeEnum;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.model.CommentModel;
@@ -30,7 +31,7 @@ public class CommentController {
     @PostMapping("/comment/save")
     public ResponseDetails save(@Valid @RequestBody CommentVo commentVo,
                                 HttpServletRequest request) {
-        CommentModel commentModel = commentService.saveComment(commentVo, request);
+        CommentModel commentModel = commentService.saveArticleComment(commentVo, request);
         if (commentModel == null) {
             return ResponseDetails.ok(0, "所评论的帖子可能被删除被锁定或没有评论权限！");
         }
@@ -50,7 +51,7 @@ public class CommentController {
     public ResponseDetails list(@PathVariable("id") Long articleId,
                                 @RequestParam Map<String, Object> params,
                                 HttpServletRequest request) {
-        PageUtils page = commentService.commentList(articleId, params, request);
+        PageUtils page = commentService.articleCommentList(articleId, params, request, CommentTypeEnum.ORDINARY_ONE_LEVEL_COMMENT);
         if (page == null) {
             return ResponseDetails.ok(ReturnCodeEnum.NO_ROLE_OR_NO_FOUND);
         }

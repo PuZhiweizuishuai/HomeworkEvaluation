@@ -55,7 +55,7 @@ public class UserEntity {
 
     /**
      * 生日 yyyy-MM-dd
-     * */
+     */
     private String birthday;
     /**
      * 头像地址
@@ -64,7 +64,7 @@ public class UserEntity {
 
     /**
      * 个人主页顶部大图
-     * */
+     */
     private String topImgUrl;
 
     /**
@@ -147,17 +147,17 @@ public class UserEntity {
     /**
      * 账号状态
      * 【0 正常， 1 禁言, 2 锁定】
-     * */
+     */
     private Integer status;
 
     /**
      * 禁言或锁定开始时间
-     * */
+     */
     private Long startLockTime;
 
     /**
      * 禁言或锁定时间
-     * */
+     */
     private Long lockTime;
 
     /**
@@ -165,7 +165,7 @@ public class UserEntity {
      * 0 是
      * 1 不是
      * 首次登陆需要补全信息
-     * */
+     */
     private Integer firstLoginStatus;
 
 
@@ -174,13 +174,13 @@ public class UserEntity {
      * 0 不是
      * 1 是
      * 被重置密码后需要弹出修改密码窗口
-     * */
+     */
     private Integer resetPasswordStatus;
 
 
     /**
      * 教师职称
-     * */
+     */
     private String title;
 
     @TableField(exist = false)
@@ -188,5 +188,27 @@ public class UserEntity {
 
     @TableField(exist = false)
     private UserRoleEntity roleEntity;
+
+
+    public void initData() {
+        this.userAvatarUrl = "/images/head.png";
+        this.topImgUrl = "/images/top.png";
+        this.userQq = "";
+        this.userWechat = "";
+        this.userIntro = "";
+        this.createTime = System.currentTimeMillis();
+        this.latestLoginTime = this.createTime;
+        this.articleCount = 0L;
+        this.commentCount = 0L;
+        this.likeCount = 0L;
+        this.followerCount = 0L;
+        this.fansCount = 0L;
+        this.userQqStatus = 0;
+        this.userWechatStatus = 0;
+        this.userEmailStatus = 0;
+        this.userPhoneStatus = 0;
+        this.curriculumCount = 0;
+        this.status = 0;
+    }
 
 }

@@ -4,6 +4,7 @@ import com.buguagaoshu.homework.common.domain.CustomPage;
 import com.buguagaoshu.homework.common.enums.ArticleTypeEnum;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
+import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
@@ -74,8 +75,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
 
     @Override
     public ArticleEntity saveArticle(ArticleVo articleVo, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        String verifyCodeKey = (String) session.getAttribute("verifyCodeKey");
+        HttpSession session = request.getSession();
+        String verifyCodeKey = (String) session.getAttribute(WebConstant.VERIFY_CODE_KEY);
         verifyCodeService.verify(verifyCodeKey, articleVo.getVerifyCode());
         if (articleVo.getTag() != null && articleVo.getTag().size() > 6) {
             throw new UserDataFormatException("标签不能超过6个！");

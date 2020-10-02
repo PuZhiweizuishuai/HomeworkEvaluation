@@ -19,7 +19,6 @@ public enum NotificationTypeEnum {
 
     COURSE_SUBMIT_EXAM(3, "学生提交作业,提醒教师批改的通知！"),
 
-
     COURSE_KEEPER(4, "教师批改作业完成，提醒学生查看的通知!"),
 
     COURSE_KEEPER_ERROR(5, "作业被打回！"),
@@ -27,6 +26,8 @@ public enum NotificationTypeEnum {
     COURSE_JOIN(6, "加入课程的通知！"),
 
     COURSE_BBS_COMMENT(7, "课程讨论区收到新评论！"),
+
+    HOMEWORK_HAVE_NEW_COMMENT(8, "作业有了新的评价！"),
 
     /**
      * 留下数字空间，方便之后通知类型扩展

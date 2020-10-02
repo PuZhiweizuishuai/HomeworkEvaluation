@@ -17,11 +17,15 @@
     <v-row>
       <v-divider />
     </v-row>
-
+    <v-row v-for="item in commentsList" :key="item.id">
+      <v-col cols="12">
+        <Card :comment="item" :artice="artice" :homework="homework" :type="11" />
+      </v-col>
+    </v-row>
     <v-row v-if="total == 0" justify="center">
       <h3> 暂无评价 </h3>
     </v-row>
-    <!-- 目录 -->
+
     <v-row justify="center">
       <v-pagination
         v-if="total > size"
@@ -105,21 +109,29 @@
 </template>
 
 <script>
-
+import Card from '@/components/comment/card.vue'
 import Vditor from '@/components/vditor/vditor.vue'
 export default {
   components: {
-    Vditor
+    Vditor,
+    Card
   },
   props: {
+    homework: {
+      type: Object,
+      default: null
+    }
   },
   data() {
     return {
+      artice: {
+        authorId: -1
+      },
       commentsList: [],
       verifyImageUrl: this.SERVER_API_URL + '/verifyImage',
       uploadurl: this.SERVER_API_URL + '/upload/file',
       comment: {
-        articleId: 0,
+        submitId: 0,
         content: '',
         verifyCode: '',
         // 作业一级评论
@@ -135,8 +147,7 @@ export default {
     }
   },
   created() {
-
-    // this.getComment()
+    this.getComment()
   },
   methods: {
     getVerifyImage() {
@@ -166,6 +177,8 @@ export default {
       this.comment.content = value
     },
     submit() {
+      this.comment.submitId = this.$route.params.submitId
+      console.log(this.comment)
       if (!this.$store.state.userInfo) {
         this.message = '请先登录后再评论！'
         this.showMessage = true
@@ -181,7 +194,7 @@ export default {
         this.showMessage = true
         return
       }
-      this.httpPost('/comment/save', this.comment, (json) => {
+      this.httpPost('/evaluation/comment/submit', this.comment, (json) => {
         if (json.status === 200) {
           this.message = '评论成功！'
           this.showMessage = true

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.buguagaoshu.homework.common.enums.NotificationTypeEnum;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.*;
+import io.jsonwebtoken.Claims;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -54,11 +55,17 @@ public interface NotificationService extends IService<NotificationEntity> {
 
     /**
      * 发送新评论通知
-     *
+     * 帖子的新评论
      * @param notifier 消息发送者
      * @param receiver 消息接收者
      */
     void sendComment(String notifier, String notifierName, String receiver, ArticleEntity articleEntity, CommentEntity commentEntity, NotificationTypeEnum type);
+
+
+    /**
+     * 作业互评的新评论
+     */
+    void sendComment(String notifier, String notifierName, String receiver, SubmitHomeworkStatusEntity userSubmit, CommentEntity commentEntity, HomeworkEntity homeworkEntity);
 
 
     /**
@@ -107,5 +114,14 @@ public interface NotificationService extends IService<NotificationEntity> {
      * @return 结果
      */
     boolean readAll(HttpServletRequest request);
+
+
+    /**
+     * 向学生发布新课件通知
+     * @param  students 学生信息
+     * @param user 老师信息
+     * @param coursewareEntity 课件信息
+     * */
+    void sendNewCourseware(List<StudentsCurriculumEntity> students, Claims user, CoursewareEntity coursewareEntity);
 }
 

@@ -61,6 +61,11 @@
     </v-row>
     <v-row justify="center">
       <v-col cols="10">
+        <TimeForm :cols="12" :lable="`生日`" @time="getTime" />
+      </v-col>
+    </v-row>
+    <v-row justify="center">
+      <v-col cols="10">
         <v-text-field
           v-model="registerUser.password"
           placeholder="密码"
@@ -103,8 +108,12 @@
 </template>
 
 <script>
+import TimeForm from '@/components/form/time-no-hour.vue'
 export default {
   name: 'Register',
+  components: {
+    TimeForm
+  },
   data() {
     return {
       verifyImageUrl: this.SERVER_API_URL + '/verifyImage',
@@ -116,11 +125,15 @@ export default {
         verifyCode: '',
         username: '',
         userId: '',
-        sex: null
+        sex: null,
+        birthday: ''
       }
     }
   },
   methods: {
+    getTime(value) {
+      this.registerUser.birthday = value
+    },
     submitRegister() {
       var re = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/
       if (!re.test(this.registerUser.email)) {

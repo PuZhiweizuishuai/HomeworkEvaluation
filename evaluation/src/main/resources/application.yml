@@ -10,6 +10,8 @@ web:
     fileSuffix:
     # 服务器域名或网络IP
     website: http://127.0.0.1:8080/api
+    # 是否开启邀请码注册 0 关闭， 1 开启
+    registerInvitationCode: 1
 
 minio:
   server: http://192.168.43.128:9000
@@ -39,8 +41,8 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 100MB
-      max-request-size: 1024000MB
+      max-file-size: 2048MB
+      max-request-size: 102400000000MB
   jackson:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss

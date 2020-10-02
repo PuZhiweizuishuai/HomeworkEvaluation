@@ -48,6 +48,14 @@ const routes = [
         }
       },
       {
+        path: '/course/tag/:tagId',
+        component: () => import('@/views/home/tag-course.vue'),
+        name: 'Tag',
+        meta: {
+          title: '课程标签'
+        }
+      },
+      {
         path: '/notification',
         component: () => import('@/views/notification/index.vue'),
         name: 'Notification',
@@ -91,6 +99,14 @@ const routes = [
         component: () => import('@/views/about.vue'),
         meta: {
           title: '关于'
+        }
+      },
+      {
+        path: '/changelog',
+        name: 'ChangeLog',
+        component: () => import('@/views/changelog.vue'),
+        meta: {
+          title: '更新日志'
         }
       }
     ]
@@ -270,6 +286,15 @@ const routes = [
     meta: {
       title: store.state.webInfo.name + '- 登录'
     }
+  },
+  {
+    path: '*',
+    name: '404',
+
+    component: () => import('@/views/404.vue'),
+    meta: {
+      title: '404'
+    }
   }
 
 ]
@@ -285,7 +310,33 @@ router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     document.title = to.meta.title
   }
-  return next()
+  const date = new Date().getTime()
+  // 已经登录
+  if (store.state.userInfo != null) {
+    if (store.state.userInfo.expirationTime > date) {
+      if (to.path === '/login') {
+        return next({ path: '/' })
+      }
+      return next()
+    // 登录到期
+    } else {
+      store.commit('setUserInfo', null)
+      return next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+    }
+    // 未登录
+  } else {
+    if (to.meta.requireAuth) {
+      return next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      })
+    } else {
+      return next()
+    }
+  }
 })
 
 export default router

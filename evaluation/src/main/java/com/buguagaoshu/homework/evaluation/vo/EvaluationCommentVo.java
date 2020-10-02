@@ -46,4 +46,6 @@ public class EvaluationCommentVo {
 
 
     private String verifyCode;
+
+    private Double rating;
 }

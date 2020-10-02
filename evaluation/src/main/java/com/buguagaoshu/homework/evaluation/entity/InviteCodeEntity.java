@@ -6,7 +6,13 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import com.buguagaoshu.homework.common.enums.InviteCodeTypeEnum;
+import com.buguagaoshu.homework.common.valid.ListValue;
+import com.buguagaoshu.homework.evaluation.utils.InviteCodeUtil;
 import lombok.Data;
+
+import javax.validation.constraints.Min;
 
 /**
  * 邀请码
@@ -40,6 +46,7 @@ public class InviteCodeEntity {
     /**
      * 使用次数，即当前邀请码可使用次数，默认为 1
      */
+    @Min(value = 1, message = "使用次数最小为1")
     private Long useCount;
     /**
      * 生成的邀请链接
@@ -48,6 +55,7 @@ public class InviteCodeEntity {
     /**
      * 状态  0：可使用，1 停用
      */
+    @ListValue(value = {0, 1}, message = "邀请码状态设置错误！")
     private Integer status;
     /**
      * 描述
@@ -57,6 +65,7 @@ public class InviteCodeEntity {
     /**
      * 邀请码类型 【0 课程邀请码】【1 用户邀请码】
      * */
+    @ListValue(value = {0,1}, message = "邀请码类型设置错误！")
     private Integer type;
 
     /**
@@ -68,4 +77,12 @@ public class InviteCodeEntity {
      * 角色
      * */
     private String role;
+
+
+    public void initData(String userId) {
+        this.code = InviteCodeUtil.createInviteCode();
+        this.createTime = System.currentTimeMillis();
+        this.generatorId = userId;
+        this.status = InviteCodeTypeEnum.AVAILABLE.getCode();
+    }
 }

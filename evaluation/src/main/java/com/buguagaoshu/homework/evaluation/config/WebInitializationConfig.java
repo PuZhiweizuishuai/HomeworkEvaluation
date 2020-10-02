@@ -3,6 +3,7 @@ package com.buguagaoshu.homework.evaluation.config;
 import com.buguagaoshu.homework.evaluation.cache.ArticleTagCache;
 import com.buguagaoshu.homework.evaluation.cache.CourseTagCache;
 import com.buguagaoshu.homework.evaluation.cache.WebsiteIndexMessageCache;
+import com.buguagaoshu.homework.evaluation.entity.CourseTagEntity;
 import com.buguagaoshu.homework.evaluation.service.AdvertisementService;
 import com.buguagaoshu.homework.evaluation.service.ArticleService;
 import com.buguagaoshu.homework.evaluation.service.ArticleTagService;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
@@ -33,8 +36,10 @@ public class WebInitializationConfig {
             @Override
             public void run(String... args) throws Exception {
                 // 初始化课程分类树
-                courseTagCache.setCourseTagListTree(courseTagService.listWithTree());
+                List<CourseTagEntity> list = courseTagService.listWithTree();
+                courseTagCache.setCourseTagListTree(list);
                 courseTagCache.setCourseTagEntityMap(courseTagService.CourseTagMap());
+                courseTagCache.setCourseTagMapHaveChildren(list);
                 log.info("初始化课程分类树");
                 // 初始化帖子分类
                 articleTagCache.setArticleTagCaches(articleTagService.listTree());

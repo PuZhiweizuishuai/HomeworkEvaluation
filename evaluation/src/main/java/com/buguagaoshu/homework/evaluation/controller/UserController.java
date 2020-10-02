@@ -192,4 +192,10 @@ public class UserController {
         }
         return ResponseDetails.ok(ReturnCodeEnum.NOT_LOGGED_IN.getCode(), ReturnCodeEnum.NOT_LOGGED_IN.getMsg());
     }
+
+
+    @GetMapping("/user/register")
+    public ResponseDetails register(@Valid @RequestBody RegisterUserVo registerUserVo, HttpServletRequest request) {
+        return ResponseDetails.ok(userService.register(registerUserVo, request));
+    }
 }

@@ -16,7 +16,7 @@
     <v-row justify="center">
       <v-col cols="11">
         <v-row justify="end">
-          <v-btn>查看我的作业</v-btn>
+          <v-btn color="primary">查看我的作业</v-btn>
         </v-row>
       </v-col>
     </v-row>

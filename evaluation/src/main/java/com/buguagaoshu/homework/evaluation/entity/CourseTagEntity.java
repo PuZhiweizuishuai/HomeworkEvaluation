@@ -51,7 +51,7 @@ public class CourseTagEntity {
      */
     private Long catelogId;
 
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+
     @TableField(exist = false)
     private List<CourseTagEntity> children;
 }

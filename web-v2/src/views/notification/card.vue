@@ -9,6 +9,11 @@
         {{ notificatio.text }}
       </router-link>
     </v-card-text>
+    <v-card-text v-if="notificatio.type == 8">
+
+      你在 <router-link :to="notificatio.url">《 {{ notificatio.text }} 》</router-link>提交的答案，有了新的评价。 {{ notificatio.commentContent }}
+
+    </v-card-text>
     <!-- 评论通知 -->
     <v-card-text v-if="NotificatioUtil.isComment(notificatio)">
       <router-link :to="`/user/${notificatio.notifier}`">{{ notificatio.notifierName }} </router-link>

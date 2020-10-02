@@ -9,7 +9,11 @@ public enum InviteCodeTypeEnum {
      * 邀请码类型
      * */
     CURRICULUM(0, "课程邀请码"),
-    USER(1, "用户邀请码")
+    USER(1, "用户邀请码"),
+
+    AVAILABLE(0, "可用"),
+    DISABLED(1, "不可用")
+
     ;
     int code;
     String msg;

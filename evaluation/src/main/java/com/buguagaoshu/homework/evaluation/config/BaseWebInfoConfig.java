@@ -39,4 +39,6 @@ public class BaseWebInfoConfig {
     private String website = "http://127.0.0.1:8080";
 
     private String fileSuffix;
+
+    private Integer registerInvitationCode = 1;
 }

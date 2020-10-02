@@ -75,4 +75,9 @@ public class SubmitHomeworkStatusServiceImpl extends ServiceImpl<SubmitHomeworkS
         wrapper.orderByDesc("submit_time");
         return list(wrapper);
     }
+
+    @Override
+    public void addCount(String col, Long submitId, int count) {
+        this.baseMapper.addCount(col, submitId, count);
+    }
 }

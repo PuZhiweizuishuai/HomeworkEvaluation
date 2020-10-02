@@ -6,6 +6,7 @@ import com.buguagaoshu.homework.common.enums.CommentTypeEnum;
 import com.buguagaoshu.homework.common.enums.NotificationTypeEnum;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
+import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
 import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
@@ -78,9 +79,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
 
     @Override
     @Transactional(rollbackFor = {})
-    public CommentModel saveComment(CommentVo commentVo, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        String verifyCodeKey = (String) session.getAttribute("verifyCodeKey");
+    public CommentModel saveArticleComment(CommentVo commentVo, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String verifyCodeKey = (String) session.getAttribute(WebConstant.VERIFY_CODE_KEY);
         verifyCodeService.verify(verifyCodeKey, commentVo.getVerifyCode());
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         ArticleEntity article = articleService.getById(commentVo.getArticleId());
@@ -114,7 +115,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
                 }
                 // 判断父级ID
                 // 如果评论的对象父级ID是文章ID，那么新评论的父级ID就应该是评论的评论ID
-                if (father.getType() == 0) {
+                if (father.getType().equals(CommentTypeEnum.ORDINARY_ONE_LEVEL_COMMENT.getCode())) {
                     commentEntity.setFatherId(father.getId());
                 } else {
                     commentEntity.setFatherId(father.getFatherId());
@@ -125,7 +126,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
             } else {
                 BeanUtils.copyProperties(commentVo, commentEntity);
                 commentEntity.setFatherId(article.getId());
-                commentEntity.setType(0);
+                commentEntity.setType(CommentTypeEnum.ORDINARY_ONE_LEVEL_COMMENT.getCode());
                 commentEntity.setCommentId(null);
             }
             commentEntity.setAuthorId(user.getId());
@@ -144,7 +145,6 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
             article.setLatestCommentName(user.getId());
             articleService.updateById(article);
             // TODO 给关注帖子的人也发送通知
-            // TODO 有重复通知的bug
             notificationService.sendComment(user.getId(), user.getSubject(), article.getAuthorId(), article, commentEntity, type);
             if (father != null && !article.getAuthorId().equals(father.getAuthorId())) {
                 notificationService.sendComment(user.getId(), user.getSubject(), father.getAuthorId(), article, commentEntity, type);
@@ -156,8 +156,15 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
     }
 
     @Override
-    public PageUtils commentList(Long articleId, Map<String, Object> params, HttpServletRequest request) {
-        QueryWrapper<CommentEntity> wrapper = new QueryWrapper<>();
+    public CommentModel saveComment(CommentEntity commentEntity) {
+        CommentModel commentModel = new CommentModel();
+        return null;
+    }
+
+
+    @Override
+    public PageUtils articleCommentList(Long articleId, Map<String, Object> params,
+                                     HttpServletRequest request, CommentTypeEnum type) {
         ArticleEntity articleEntity = articleService.getById(articleId);
         Claims user = null;
         Map<String, StudentsCurriculumEntity> teacherMap = null;
@@ -179,9 +186,18 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
             }
             teacherMap = studentsCurriculumService.teacherList(articleEntity.getCourseId()).stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, t -> t));
         }
+        return commentList(articleId, params, request, type, teacherMap);
+    }
+
+
+    @Override
+    public PageUtils commentList(Long articleId, Map<String, Object> params,
+                                 HttpServletRequest request, CommentTypeEnum type,
+                                 Map<String, StudentsCurriculumEntity> teacherMap) {
+        QueryWrapper<CommentEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("article_id", articleId);
         wrapper.eq("status", 0);
-        wrapper.eq("type", CommentTypeEnum.ORDINARY_ONE_LEVEL_COMMENT.getCode());
+        wrapper.eq("type", type.getCode());
         String sort = (String) params.get("sort");
         if (!StringUtils.isEmpty(sort)) {
             if ("1".equals(sort)) {
@@ -199,8 +215,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
         }
         Set<String> userIds = page.getRecords().stream().map(CommentEntity::getAuthorId).collect(Collectors.toSet());
         Map<String, UserEntity> userEntityMap = userService.listByIds(userIds).stream().collect(Collectors.toMap(UserEntity::getUserId, u -> u));
-        Map<String, StudentsCurriculumEntity> finalTeacherMap = teacherMap;
-        return pageUtils(page, userEntityMap, finalTeacherMap, null);
+
+        return pageUtils(page, userEntityMap, teacherMap, null);
     }
 
     @Override
@@ -253,10 +269,16 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
                 return null;
             }
         }
+        return secondComment(id, CommentTypeEnum.ORDINARY_SECOND_COMMENT, params);
+    }
+
+
+    @Override
+    public PageUtils secondComment(Long commentId, CommentTypeEnum type, Map<String, Object> params) {
         QueryWrapper<CommentEntity> wrapper = new QueryWrapper<>();
-        wrapper.eq("father_id", id);
+        wrapper.eq("father_id", commentId);
         wrapper.eq("status", 0);
-        wrapper.eq("type", CommentTypeEnum.ORDINARY_SECOND_COMMENT.getCode());
+        wrapper.eq("type", type.getCode());
         IPage<CommentEntity> page = this.page(
                 new Query<CommentEntity>().getPage(params),
                 wrapper
@@ -298,6 +320,11 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
             }
         }
         return false;
+    }
+
+    @Override
+    public void countAdd(String col, Long id, Integer count) {
+        this.baseMapper.countAdd(col, id, count);
     }
 
 

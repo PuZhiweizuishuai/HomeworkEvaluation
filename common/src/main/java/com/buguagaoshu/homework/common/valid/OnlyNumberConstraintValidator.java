@@ -1,5 +1,7 @@
 package com.buguagaoshu.homework.common.valid;
 
+import org.springframework.util.StringUtils;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
@@ -19,6 +21,9 @@ public class OnlyNumberConstraintValidator implements ConstraintValidator<OnlyNu
 
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
+        if (StringUtils.isEmpty(s)) {
+            return false;
+        }
         int length = s.length();
         if (length > max) {
             return false;

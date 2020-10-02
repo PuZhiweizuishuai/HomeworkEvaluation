@@ -1,7 +1,9 @@
 package com.buguagaoshu.homework.evaluation.service;
 
 import com.buguagaoshu.homework.common.utils.PageUtils;
+import com.buguagaoshu.homework.evaluation.model.CommentModel;
 import com.buguagaoshu.homework.evaluation.model.HomeworkModel;
+import com.buguagaoshu.homework.evaluation.vo.EvaluationCommentVo;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -40,4 +42,17 @@ public interface EvaluationService {
      * @return 用户提交的作业内容
      */
     HomeworkModel userSubmitInfo(Long submitId, HttpServletRequest request);
+
+    /**
+     * 返回当前作业的评价信息
+     */
+    PageUtils commentPage(Long submitId, Map<String, Object> params, HttpServletRequest request);
+
+
+    PageUtils secondPage(Long commentId, Map<String, Object> params, HttpServletRequest request);
+
+    /**
+     * 提交当前作业的评价信息
+     */
+    CommentModel saveComment(EvaluationCommentVo evaluationCommentVo, HttpServletRequest request);
 }
