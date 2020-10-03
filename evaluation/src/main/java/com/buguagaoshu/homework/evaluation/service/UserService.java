@@ -97,6 +97,11 @@ public interface UserService extends IService<UserEntity> {
      */
     UserEntity findByEmail(String s);
 
+    /**
+     * 通过手机号查找用户
+     * */
+    UserEntity findByPhoneNumber(String s);
+
 
     /**
      * 通过用户 ID 获取用户信息

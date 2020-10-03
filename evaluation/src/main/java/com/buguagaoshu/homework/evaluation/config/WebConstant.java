@@ -14,7 +14,7 @@ public class WebConstant {
      * AES 加密时效
      * 默认 6 小时
      * */
-    public final static Long AEX_EXPIRES_TIME = 21600000L;
+    public final static Long AES_EXPIRES_TIME = 21600000L;
 
 
 

@@ -8,8 +8,10 @@ import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +22,7 @@ import java.util.Stack;
  * create          2020-09-19 19:48
  */
 @RestController
+@RequestMapping("/api")
 public class StudentWithCurriculumController {
     private final StudentsCurriculumService studentsCurriculumService;
 
@@ -28,6 +31,7 @@ public class StudentWithCurriculumController {
         this.studentsCurriculumService = studentsCurriculumService;
     }
 
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @GetMapping("/curriculum/role/{id}")
     public ResponseDetails userRoleInCourse(@PathVariable("id") Long courseId,
                                             HttpServletRequest request) {

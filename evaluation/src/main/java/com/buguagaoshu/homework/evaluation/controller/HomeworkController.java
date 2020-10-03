@@ -15,6 +15,7 @@ import com.buguagaoshu.homework.evaluation.vo.TeacherCommentHomeworkData;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ import java.util.Map;
  * create          2020-06-12 17:13
  */
 @RestController
+@RequestMapping("/api")
 public class HomeworkController {
     private final HomeworkService homeworkService;
 
@@ -42,6 +44,7 @@ public class HomeworkController {
     /**
      * 添加作业，教师和管理员可访问
      */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT')")
     @PostMapping("/homework/save")
     public ResponseDetails add(@Validated @RequestBody HomeworkModel homeworkModel,
                                HttpServletRequest request) {
@@ -57,6 +60,7 @@ public class HomeworkController {
     /**
      * 获取当前课程作业列表
      */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @GetMapping("/homework/list/{id}")
     public ResponseDetails list(@PathVariable("id") Long courseId,
                                 @RequestParam Map<String, Object> params,
@@ -72,6 +76,7 @@ public class HomeworkController {
     /**
      * 获取当前作业问题列表
      */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @GetMapping("/homework/info/{id}")
     public ResponseDetails homeworkQuestionList(@PathVariable("id") Long homeworkId,
                                                 HttpServletRequest request) throws JsonProcessingException {
@@ -87,6 +92,7 @@ public class HomeworkController {
     /**
      * 作业提交接口
      */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @PostMapping("/homework/submit")
     public ResponseDetails submitUserHomework(@Validated @RequestBody HomeworkAnswer homeworkAnswer,
                                               HttpServletRequest request) throws JsonProcessingException {
@@ -99,6 +105,7 @@ public class HomeworkController {
     /**
      * 获取有无批改作业的权限
      */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT')")
     @GetMapping("/homework/keeper/info/{id}")
     public ResponseDetails checkSettingPower(@PathVariable("id") Long homeworkId,
                                              HttpServletRequest request) {
@@ -111,6 +118,7 @@ public class HomeworkController {
     /**
      * 获取学生提交
      */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT')")
     @GetMapping("/homework/keeper/correct/{id}")
     public ResponseDetails teacherGetStudentSubmit(@PathVariable("id") Long homeworkId,
                                                    @RequestParam("studentId") String studentId,
@@ -127,6 +135,7 @@ public class HomeworkController {
     /**
      * 更新作业设置
      */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @PostMapping("/homework/setting/update")
     public ResponseDetails homeworkUpdate(@RequestBody HomeworkModel homeworkModel,
                                           HttpServletRequest request) {
@@ -138,6 +147,7 @@ public class HomeworkController {
     /**
      * 批改作业接口
      */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT')")
     @PostMapping("/homework/keeper/correct")
     public ResponseDetails correct(@Valid @RequestBody TeacherCommentHomeworkData teacherCommentHomeworkData,
                                    HttpServletRequest request) {

@@ -13,7 +13,8 @@ import java.util.*;
  */
 public class Test {
     public static void main(String[] args) throws ParseException {
-        System.out.println(TimeUtils.formatTime(1600185600000L));
+        int x = "/api/uploads/courseware/9/201741010102/2020-10-03/82f033c6abd04af38c65a8049b08850e.jpg".lastIndexOf("/");
+        System.out.println("/api/uploads/courseware/9/201741010102/2020-10-03/82f033c6abd04af38c65a8049b08850e.jpg".substring(x+1));
 
     }
 }

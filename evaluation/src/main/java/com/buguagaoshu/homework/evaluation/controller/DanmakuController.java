@@ -6,6 +6,7 @@ import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.evaluation.service.DanmakuService;
 import com.buguagaoshu.homework.evaluation.vo.DanmakuVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
  * TODO 使用消息队列，拆分弹幕服务，达到读写分离
  */
 @RestController
+@RequestMapping("/api")
 public class DanmakuController {
 
     private final DanmakuService danmakuService;
@@ -31,6 +33,7 @@ public class DanmakuController {
     /**
      * TODO 加入缓存
      * */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @GetMapping("/danmaku/v3")
     public ResponseDetails get(@RequestParam("id") Long id,
                                @RequestParam("max") Integer max) {
@@ -39,6 +42,7 @@ public class DanmakuController {
     }
 
 
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @PostMapping("/danmaku/v3")
     public ResponseDetails post(@RequestBody DanmakuVo danmakuVo,
                                 HttpServletRequest request) {

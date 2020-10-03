@@ -3,7 +3,7 @@
 
     <file-pond
       ref="pond"
-      name="file[]"
+      name="file"
       label-idle="选择文件或者拖动文件到此处"
       label-file-processing="文件正在上传，请稍后"
       label-file-processing-aborted="文件上传被取消"
@@ -54,7 +54,7 @@ export default {
       videMessage: {},
       myFiles: [],
       server: {
-        url: this.SERVER_API_URL + '/upload/file',
+        url: this.SERVER_API_URL + '/upload/courseware?course=' + this.$route.params.id,
         process: {
           headers: {
             'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')

@@ -8,6 +8,7 @@ import com.buguagaoshu.homework.evaluation.model.HomeworkModel;
 import com.buguagaoshu.homework.evaluation.service.EvaluationService;
 import com.buguagaoshu.homework.evaluation.vo.EvaluationCommentVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,8 @@ import java.util.Map;
  * 作业互评接口
  */
 @RestController
+@RequestMapping("/api")
+@PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
 public class EvaluationController {
     private final EvaluationService evaluationService;
 
@@ -43,6 +46,7 @@ public class EvaluationController {
     }
 
 
+
     @GetMapping("/evaluation/list/{id}")
     public ResponseDetails submitList(@PathVariable("id") Long homeworkId,
                                       Map<String, Object> params,
@@ -55,6 +59,7 @@ public class EvaluationController {
     }
 
 
+
     @GetMapping("/evaluation/submit/{id}")
     public ResponseDetails userSubmitHomework(@PathVariable("id") Long submitId,
                                               HttpServletRequest request) {
@@ -64,6 +69,7 @@ public class EvaluationController {
         }
         return ResponseDetails.ok().put("data", homeworkModel);
     }
+
 
     @PostMapping("/evaluation/comment/submit")
     public ResponseDetails submitComment(@RequestBody EvaluationCommentVo evaluationCommentVo,
@@ -76,6 +82,7 @@ public class EvaluationController {
     }
 
 
+
     @GetMapping("/evaluation/comment/list/{submitId}")
     public ResponseDetails commentList(@PathVariable("submitId") Long submitId,
                                        Map<String, Object> params,
@@ -86,6 +93,7 @@ public class EvaluationController {
         }
         return ResponseDetails.ok().put("data", pageUtils);
     }
+
 
 
     @GetMapping("/evaluation/comment/second/{commentId}")

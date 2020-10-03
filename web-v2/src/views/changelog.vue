@@ -17,6 +17,7 @@
         <li>完善的数据分析系统。</li>
         <li>用户主页完善。</li>
         <li>课程评分功能。</li>
+        <li>点赞收藏功能。</li>
       </v-col>
     </v-row>
   </v-container>

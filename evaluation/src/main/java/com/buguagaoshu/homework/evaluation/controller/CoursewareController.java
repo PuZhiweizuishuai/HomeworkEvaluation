@@ -5,6 +5,7 @@ import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.evaluation.entity.CoursewareEntity;
 import com.buguagaoshu.homework.evaluation.service.CoursewareService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import java.util.List;
  * 课件
  */
 @RestController
+@RequestMapping("/api")
 public class CoursewareController {
     private final CoursewareService coursewareService;
 
@@ -26,6 +28,7 @@ public class CoursewareController {
     }
 
 
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @GetMapping("/course/courseware/{id}")
     public ResponseDetails coursewareTree(@PathVariable("id") Long courseId,
                                           HttpServletRequest request) {
@@ -40,6 +43,7 @@ public class CoursewareController {
         return ResponseDetails.ok().put("data", tree);
     }
 
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT')")
     @PostMapping("/course/courseware/save")
     public ResponseDetails save(@Valid @RequestBody CoursewareEntity coursewareEntity,
                                 HttpServletRequest request) {

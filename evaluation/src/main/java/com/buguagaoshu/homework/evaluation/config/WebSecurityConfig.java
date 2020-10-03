@@ -1,6 +1,5 @@
 package com.buguagaoshu.homework.evaluation.config;
 
-import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.filter.JwtAuthenticationFilter;
 import com.buguagaoshu.homework.evaluation.filter.JwtLoginFilter;
 import com.buguagaoshu.homework.evaluation.service.UserLoginLogService;
@@ -12,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -32,6 +33,7 @@ import java.util.List;
  */
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserService userService;
 
@@ -84,7 +86,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * Access-Token
      * http://127.0.0.1:8000/list/user-list
      */
-    @Bean
+    //@Bean
     public CorsConfigurationSource corsConfigurationSource() {
         // 允许跨域访问的 URL
         List<String> allowedOriginsUrl = new ArrayList<>();
@@ -112,7 +114,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 添加过滤器链,前一个参数过滤器， 后一个参数过滤器添加的地方
                 // 登陆过滤器
                 .addFilterBefore(
-                        new JwtLoginFilter("/login",
+                        new JwtLoginFilter("/api/login",
                                 authenticationManager(),
                                 userLoginLogService,
                                 verifyCodeService
@@ -126,8 +128,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 // 开启 csrf 验证
                 .csrf()
-                // 关闭csrf
-                .disable()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

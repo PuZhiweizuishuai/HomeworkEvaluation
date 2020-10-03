@@ -44,7 +44,7 @@ export default {
     },
     uploadsize: {
       type: Number,
-      default: 10 * 1024 * 1024
+      default: 20 * 1024 * 1024
     }
   },
   data() {

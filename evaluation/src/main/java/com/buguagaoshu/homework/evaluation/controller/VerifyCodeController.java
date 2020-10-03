@@ -6,6 +6,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.imageio.ImageIO;
@@ -21,6 +22,7 @@ import java.io.IOException;
  * create          2019-11-27 19:57
  */
 @RestController
+@RequestMapping("/api")
 public class VerifyCodeController {
     private final VerifyCodeService verifyCodeService;
 

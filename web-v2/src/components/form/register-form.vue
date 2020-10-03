@@ -83,7 +83,6 @@
           placeholder="邀请码"
           label="邀请码"
           clearable
-          :rules="[() => registerUser.invitationCode != null || '邀请码不能为空']"
         />
       </v-col>
     </v-row>
@@ -104,6 +103,24 @@
     <v-row justify="center">
       <v-btn color="primary" @click="submitRegister">注册</v-btn>
     </v-row>
+    <v-snackbar
+      v-model="showMessage"
+      :top="true"
+      :timeout="3000"
+    >
+      {{ message }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="showMessage = false"
+        >
+          关闭
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -127,7 +144,9 @@ export default {
         userId: '',
         sex: null,
         birthday: ''
-      }
+      },
+      showMessage: false,
+      message: ''
     }
   },
   methods: {
@@ -137,22 +156,31 @@ export default {
     submitRegister() {
       var re = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/
       if (!re.test(this.registerUser.email)) {
-        console.log('邮箱格式错误')
+        this.message = '邮箱格式错误'
+        this.showMessage = true
         return
       }
-      if (this.registerUser.password === '' || this.registerUser.password.length < 6 || this.registerUser.verifyCode === '' || this.registerUser.username === '') {
-        console.log('密码过短')
+      if (this.registerUser.password === '' || this.registerUser.password.length < 6 || this.registerUser.password == null) {
+        this.message = '密码为空或密码过短，'
+        this.showMessage = true
         return
       }
-      if (this.$store.state.webInfo.openInvitationRegister === 1 && this.registerUser.invitationCode === '') {
-        console.log('缺少邀请码')
+      if (this.registerUser.verifyCode === '' || this.registerUser.verifyCode == null) {
+        this.message = '验证码不能为空'
+        this.showMessage = true
+        return
+      }
+      if (this.registerUser.username === '' || this.registerUser.username == null) {
+        this.message = '用户名不能为空'
+        this.showMessage = true
         return
       }
 
       if (this.registerUser.phoneNumber !== '') {
         var myreg = /^[1][3,4,5,7,8][0-9]{9}$/
         if (!myreg.test((this.registerUser.phoneNumber))) {
-          console.log('手机格式错误')
+          this.message = '手机号格式错误'
+          this.showMessage = true
           return
         }
       }

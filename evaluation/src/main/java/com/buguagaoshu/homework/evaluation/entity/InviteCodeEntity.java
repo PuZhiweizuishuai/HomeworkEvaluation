@@ -13,6 +13,7 @@ import com.buguagaoshu.homework.evaluation.utils.InviteCodeUtil;
 import lombok.Data;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  * 邀请码
@@ -65,6 +66,7 @@ public class InviteCodeEntity {
     /**
      * 邀请码类型 【0 课程邀请码】【1 用户邀请码】
      * */
+    @NotNull(message = "类型设置不能为空")
     @ListValue(value = {0,1}, message = "邀请码类型设置错误！")
     private Integer type;
 

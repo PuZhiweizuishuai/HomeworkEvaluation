@@ -61,4 +61,10 @@ public interface FileStorageRepository {
      * @return 资源路径
      * */
     Path load(String path,String filename) throws FileNotFoundException;
+
+
+    /**
+     * 课件上传专属接口
+     * */
+    Map<String, String> save(MultipartFile file, String course, HttpServletRequest request);
 }

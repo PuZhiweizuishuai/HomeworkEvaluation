@@ -4,6 +4,7 @@ package com.buguagaoshu.homework.evaluation.dao;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.buguagaoshu.homework.evaluation.entity.InviteCodeEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 邀请码
@@ -14,5 +15,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface InviteCodeDao extends BaseMapper<InviteCodeEntity> {
-	
+	void addCount(@Param("col") String col, @Param("id") Long id, @Param("count") Integer count);
 }

@@ -9,6 +9,7 @@ import com.buguagaoshu.homework.evaluation.service.ArticleService;
 import com.buguagaoshu.homework.evaluation.vo.ArticleVo;
 import com.buguagaoshu.homework.evaluation.vo.DeleteVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,7 @@ import java.util.Map;
  * 发帖控制
  */
 @RestController
+@RequestMapping("/api")
 public class ArticleController {
     private final ArticleService articleService;
 
@@ -29,6 +31,7 @@ public class ArticleController {
         this.articleService = articleService;
     }
 
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @PostMapping("/article/save")
     public ResponseDetails save(@Valid @RequestBody ArticleVo articleVo,
                                 HttpServletRequest request) {
@@ -41,6 +44,7 @@ public class ArticleController {
     }
 
 
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @PostMapping("/article/delete")
     public ResponseDetails delete(@RequestBody DeleteVo deleteVo,
                                   HttpServletRequest request) {
@@ -51,6 +55,7 @@ public class ArticleController {
     }
 
 
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @PostMapping("/article/perfect")
     public ResponseDetails perfect(@RequestBody DeleteVo deleteVo,
                                    HttpServletRequest request) {
@@ -60,6 +65,7 @@ public class ArticleController {
         return ResponseDetails.ok(ReturnCodeEnum.NO_ROLE_OR_NO_FOUND);
     }
 
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @GetMapping("/article/list/course/{courseId}")
     public ResponseDetails courseList(@PathVariable("courseId") Long courseId,
                                 @RequestParam Map<String, Object> params,
@@ -75,6 +81,7 @@ public class ArticleController {
     /**
      * 获取课程内帖子的详细内容
      * */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @GetMapping("/article/info/course/{id}")
     public ResponseDetails info(@PathVariable("id") Long id,
                                 HttpServletRequest request) {

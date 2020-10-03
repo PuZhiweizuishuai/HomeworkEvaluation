@@ -2,9 +2,11 @@ package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
+import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
 import com.buguagaoshu.homework.evaluation.service.NotificationService;
 import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
+import com.buguagaoshu.homework.evaluation.utils.AesUtil;
 import com.buguagaoshu.homework.evaluation.utils.FileUtil;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -32,7 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Pu Zhiwei
- * */
+ */
 @Service("coursewareService")
 public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, CoursewareEntity> implements CoursewareService {
 
@@ -72,13 +74,14 @@ public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, Courseware
         QueryWrapper<CoursewareEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("course_id", courseId);
         List<CoursewareEntity> list = this.list(wrapper);
-//        list.forEach(e -> {
-//            if (!StringUtils.isEmpty(e.getFileUrl())) {
-//                String strToEncrypt = user.getId() + "#" + e.getFileUrl() + "#" + System.currentTimeMillis() + WebConstant.AEX_EXPIRES_TIME;
-//                String key = AesUtil.encrypt(strToEncrypt, WebConstant.AES_KEY);
-//                e.setKey(key);
-//            }
-//        });
+        list.forEach(e -> {
+            if (!StringUtils.isEmpty(e.getFileUrl())) {
+                String name = e.getFileUrl().substring(e.getFileUrl().lastIndexOf("/") + 1);
+                String strToEncrypt = user.getId() + "#" + name + "#" + (System.currentTimeMillis() + WebConstant.AES_EXPIRES_TIME);
+                String key = AesUtil.encrypt(strToEncrypt, WebConstant.AES_KEY);
+                e.setKey(key);
+            }
+        });
 
         // TODO 观看历史记录
         List<CoursewareEntity> levelTree =
@@ -132,7 +135,7 @@ public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, Courseware
 
 
     private List<CoursewareEntity> getChildren(CoursewareEntity root,
-                                              List<CoursewareEntity> all) {
+                                               List<CoursewareEntity> all) {
         List<CoursewareEntity> children = all.stream().filter((categoryEntity) -> categoryEntity.getFatherId().equals(root.getId()))
                 .peek((courseTagEntity) -> {
                     // 查找子分类

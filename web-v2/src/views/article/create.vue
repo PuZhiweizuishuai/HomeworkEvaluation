@@ -97,7 +97,7 @@
         </v-row>
         <v-row>
           <v-col>
-            为保证你每个问题都能得到有效的解答：推荐阅读<a href=" https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/master/README-zh_CN.md" target="_blank">提问的智慧</a>
+            为保证你每个问题都能得到有效的解答：推荐阅读<a href="https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/master/README-zh_CN.md" target="_blank">提问的智慧</a>
           </v-col>
         </v-row>
         <v-row>
@@ -117,7 +117,7 @@
         <v-row>
           <v-col>
             •<span class="article-role-title">文件上传指南：</span>
-            点击编辑器菜单栏上的上传图标即可选择上传文件或图片，最大支持10MB的文件或图片上传。
+            点击编辑器菜单栏上的上传图标即可选择上传文件或图片，最大支持20MB的文件或图片上传。
             支持 JPG, JPEG, PNG, GIF, ZIP, DOC, DOCX, PDF, RAR, 7z,PPT, PPTX, XLS, XLSX, APK, mp4, mp3, wav
           </v-col>
         </v-row>

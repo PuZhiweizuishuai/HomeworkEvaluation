@@ -327,27 +327,32 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
         student.setCurriculumId(entity.getId());
         student.setCreateTime(System.currentTimeMillis());
         // TODO 邀请码加入
-        // 向老师发送通知
-        notificationService.send(user.getId(),
-                user.getSubject(),
-                entity.getCreateTeacher(),
-                NotificationTypeEnum.COURSE_JOIN,
-                "学生: " + user.getId() + " " + user.getSubject() + "进入了课程！",
-                "/user/" + user.getId(),
-                entity.getId());
         if (entity.getAccessMethod().equals(CurriculumAccessTypeEnum.USE_PASSWORD.getCode())) {
             if (encoder.matches(code.getCode(), entity.getPassword())) {
-                // TODO 优化加 1 方式
-                entity.setStudentNumber(entity.getStudentNumber() + 1);
-                this.updateById(entity);
+
+                this.baseMapper.addCount("student_number", entity.getId(), 1);
                 studentsCurriculumService.save(student);
+                // 向老师发送通知
+                notificationService.send(user.getId(),
+                        user.getSubject(),
+                        entity.getCreateTeacher(),
+                        NotificationTypeEnum.COURSE_JOIN,
+                        "学生: " + user.getId() + " " + user.getSubject() + "进入了课程！",
+                        "/user/" + user.getId(),
+                        entity.getId());
                 return ReturnCodeEnum.SUCCESS;
             }
         } else if (entity.getAccessMethod().equals(CurriculumAccessTypeEnum.PUBLIC_CURRICULUM.getCode())) {
             studentsCurriculumService.save(student);
-            // TODO 优化加 1 方式
-            entity.setStudentNumber(entity.getStudentNumber() + 1);
-            this.updateById(entity);
+            this.baseMapper.addCount("student_number", entity.getId(), 1);
+            // 向老师发送通知
+            notificationService.send(user.getId(),
+                    user.getSubject(),
+                    entity.getCreateTeacher(),
+                    NotificationTypeEnum.COURSE_JOIN,
+                    "学生: " + user.getId() + " " + user.getSubject() + "进入了课程！",
+                    "/user/" + user.getId(),
+                    entity.getId());
             return ReturnCodeEnum.SUCCESS;
         }
         return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
@@ -365,6 +370,11 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
         map.put("course", curriculumEntity);
         map.put("user", student);
         return map;
+    }
+
+    @Override
+    public void addCount(String col, Long id, Integer count) {
+        this.baseMapper.addCount(col, id, count);
     }
 
 

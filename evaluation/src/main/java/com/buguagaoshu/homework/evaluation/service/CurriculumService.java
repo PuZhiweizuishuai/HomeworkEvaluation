@@ -96,5 +96,9 @@ public interface CurriculumService extends IService<CurriculumEntity> {
      * }
      * */
     Map<String, Object> learn(Long id, HttpServletRequest request);
+
+
+
+    void addCount(String col, Long id, Integer count);
 }
 

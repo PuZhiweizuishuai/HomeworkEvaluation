@@ -68,6 +68,11 @@ public class MinIOStorageRepositoryImpl implements FileStorageRepository {
     }
 
     @Override
+    public Map<String, String> save(MultipartFile file, String course, HttpServletRequest request) {
+        return null;
+    }
+
+    @Override
     public Path load(String path, String filename) throws FileNotFoundException {
         return null;
     }

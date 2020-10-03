@@ -16,7 +16,9 @@ import com.buguagaoshu.homework.evaluation.dao.SubmitHomeworkStatusDao;
 import com.buguagaoshu.homework.evaluation.entity.SubmitHomeworkStatusEntity;
 import com.buguagaoshu.homework.evaluation.service.SubmitHomeworkStatusService;
 
-
+/**
+ * @author Pu Zhiwei
+ * */
 @Service("submitHomeworkStatusService")
 public class SubmitHomeworkStatusServiceImpl extends ServiceImpl<SubmitHomeworkStatusDao, SubmitHomeworkStatusEntity> implements SubmitHomeworkStatusService {
 

@@ -93,7 +93,7 @@ public class CoursewareEntity {
     private String fileName;
 
 
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+
     @TableField(exist = false)
     private List<CoursewareEntity> children;
 

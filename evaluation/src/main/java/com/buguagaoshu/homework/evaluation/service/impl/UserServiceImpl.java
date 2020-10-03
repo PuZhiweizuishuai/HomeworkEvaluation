@@ -5,6 +5,7 @@ import com.buguagaoshu.homework.common.enums.PasswordStatusEnum;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.common.enums.UserStatusEnum;
+import com.buguagaoshu.homework.evaluation.config.BaseWebInfoConfig;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.dao.UserRoleDao;
@@ -67,6 +68,15 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     private final VerifyCodeService verifyCodeService;
 
+    private final BaseWebInfoConfig baseWebInfoConfig;
+
+    private  InviteCodeService inviteCodeService;
+
+    @Autowired
+    public void setInviteCodeService(InviteCodeService inviteCodeService) {
+        this.inviteCodeService = inviteCodeService;
+    }
+
     @Autowired
     public void setNotificationService(NotificationService notificationService) {
         this.notificationService = notificationService;
@@ -83,11 +93,12 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Autowired
-    public UserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, UserRoleDao userRoleDao, StudentsCurriculumService studentsCurriculumService, VerifyCodeService verifyCodeService) {
+    public UserServiceImpl(BCryptPasswordEncoder bCryptPasswordEncoder, UserRoleDao userRoleDao, StudentsCurriculumService studentsCurriculumService, VerifyCodeService verifyCodeService, BaseWebInfoConfig baseWebInfoConfig) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userRoleDao = userRoleDao;
         this.studentsCurriculumService = studentsCurriculumService;
         this.verifyCodeService = verifyCodeService;
+        this.baseWebInfoConfig = baseWebInfoConfig;
     }
 
     @Override
@@ -336,6 +347,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             if (courseNumber == null) {
                 return null;
             }
+            // 记录学生人数
+            AtomicInteger count = new AtomicInteger(0);
             // 判断当前用户是否有权限进行此操作
             if (checkRole(curriculumEntity, teacher)) {
                 // 获取上传学生信息
@@ -351,8 +364,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
                 Map<String, StudentsCurriculumEntity> stringStudentsCurriculumEntityMap
                         = studentsCurriculumEntities.stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, u -> u));
                 List<StudentsCurriculumEntity> students = new ArrayList<>();
-                // 记录学生人数
-                AtomicInteger count = new AtomicInteger(0);
+
                 // 构造要导入学生列表
                 classImportUser(userList, map, stringStudentsCurriculumEntityMap, userEntityMap, students, count, courseNumber);
                 // 保存学生列表
@@ -366,11 +378,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             } else {
                 return null;
             }
-            CurriculumEntity entity = new CurriculumEntity();
-            entity.setId(curriculumEntity.getId());
-            entity.setStudentNumber(curriculumEntity.getStudentNumber());
-            // TODO 更新课程人数增加方法
-            curriculumService.updateById(entity);
+            curriculumService.addCount("student_number", curriculumEntity.getId(), count.get());
             return map;
         }
         return null;
@@ -379,6 +387,11 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     @Override
     public UserEntity findByEmail(String s) {
         return getOne(new QueryWrapper<UserEntity>().eq("email", s));
+    }
+
+    @Override
+    public UserEntity findByPhoneNumber(String s) {
+        return getOne(new QueryWrapper<UserEntity>().eq("phone_number", s));
     }
 
     @Override
@@ -490,15 +503,39 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Override
+    @Transactional(rollbackFor = {})
     public ReturnCodeEnum register(RegisterUserVo registerUserVo, HttpServletRequest request) {
         // 验证验证码
         verifyCodeService.verify(request.getSession().getId(), registerUserVo.getVerifyCode());
         //
+        UserEntity sysUser = getById(registerUserVo.getUserId());
+        if (sysUser != null) {
+            throw new UserDataFormatException("你已经注册过了，请直接登录！如果忘记密码，请点击忘记密码！");
+        }
+        UserEntity byEmail = findByEmail(registerUserVo.getEmail());
+        if (byEmail != null) {
+            throw new UserDataFormatException("该邮箱已被绑定，请更换邮箱或直接登录！");
+        }
+        UserEntity byPhoneNumber = findByPhoneNumber(registerUserVo.getPhoneNumber());
+        if (byPhoneNumber != null) {
+            throw new UserDataFormatException("该手机号已被绑定，请更换手机号或直接登录！");
+        }
         UserEntity userEntity = new UserEntity();
         // 注册数据初始化
         userEntity.initData();
-
-
+        // 如果开启了邀请码验证
+        if (baseWebInfoConfig.getRegisterInvitationCode() == 1) {
+            inviteCodeService.checkCode(registerUserVo);
+        }
+        BeanUtils.copyProperties(registerUserVo, userEntity);
+        userEntity.setPassword(bCryptPasswordEncoder.encode(registerUserVo.getPassword()));
+        this.save(userEntity);
+        UserRoleEntity userRoleEntity = new UserRoleEntity();
+        userRoleEntity.setRole(RoleTypeEnum.STUDENT.getRole());
+        userRoleEntity.setCreateTime(System.currentTimeMillis());
+        userRoleEntity.setUserId(userEntity.getUserId());
+        userRoleEntity.setOperator("system_create");
+        userRoleService.save(userRoleEntity);
         return ReturnCodeEnum.SUCCESS;
     }
 

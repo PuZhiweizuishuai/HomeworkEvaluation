@@ -43,7 +43,7 @@
     <!-- PDF 预览 -->
     <v-row v-if="courseware.fileType == 2" justify="center">
       <v-col cols="11">
-        <embed :src="courseware.fileUrl" type="application/pdf" style="width: 100%; height: 600px">
+        <embed :src="courseware.fileUrl +'?key=' + encodeURIComponent(courseware.key)" type="application/pdf" style="width: 100%; height: 600px">
       </v-col>
     </v-row>
     <v-row>
@@ -55,7 +55,7 @@
     <v-row v-if="courseware.fileType == 2 || courseware.fileType == 1" justify="center">
       <v-col cols="11">
         如你的浏览器不支持，那么请下载查看：
-        <router-link :to="courseware.fileUrl" target="_blank">
+        <router-link :to="courseware.fileUrl+'?key=' + encodeURIComponent(courseware.key)" target="_blank">
           <v-btn depressed color="primary">下载文件</v-btn>
         </router-link>
       </v-col>
@@ -63,7 +63,7 @@
     <v-row v-if="courseware.fileType == 3 || courseware.fileType == 0" justify="center">
       <v-col cols="11">
         非常抱歉，当前暂不支持这类文件的在线预览，请下载后查看：
-        <router-link :to="courseware.fileUrl" target="_blank">
+        <router-link :to="courseware.fileUrl +'?key=' + encodeURIComponent(courseware.key)" target="_blank">
           <v-btn depressed color="primary">下载文件</v-btn>
         </router-link>
       </v-col>
@@ -188,12 +188,13 @@ export default {
     },
     selectChildrenChange() {
       if (this.children == null) {
+        this.videoKey++
+        this.textKey++
         this.courseware = this.father
         return
       }
       for (let i = 0; i < this.father.children.length; i++) {
         if (this.father.children[i].id === this.children) {
-          console.log('this.courseware = this.father.children[i]', this.father.children[i])
           this.courseware = this.father.children[i]
           if (this.courseware.fileType === 1) {
             this.videoKey++

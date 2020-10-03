@@ -7,6 +7,7 @@
     </v-row>
     <v-row>
       <v-col>
+
         <v-btn class="mx-2" dark color="indigo" @click="post">
           <v-icon dark>mdi-plus</v-icon>
           发布新的公告
@@ -173,6 +174,7 @@ export default {
     this.getBulletinList()
   },
   methods: {
+
     getStatus(status) {
       if (status === 0) {
         return '正常'

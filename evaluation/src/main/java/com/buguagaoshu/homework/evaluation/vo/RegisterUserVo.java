@@ -18,8 +18,9 @@ public class RegisterUserVo {
     @Email(message = "邮件格式错误")
     private String email;
 
-    @OnlyNumber(max = 11, message = "手机号格式错误")
+    //@OnlyNumber(max = 11, message = "手机号格式错误")
     private String phoneNumber;
+
 
     @Length(min = 6, message = "密码必须在6位以上")
     private String password;

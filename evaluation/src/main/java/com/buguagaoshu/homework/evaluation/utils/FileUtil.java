@@ -23,6 +23,8 @@ public class FileUtil {
      */
     public final static int ONCE_UPLOAD_FILE_NUMBER = 9;
 
+    public final static Long MAX_FILE_SIZE = 20971520L;
+
     private String website = "";
 
     public FileUtil(BaseWebInfoConfig baseWebInfoConfig) {
@@ -34,6 +36,10 @@ public class FileUtil {
 
     public static final String[] VIDEO_TYPE = {
             ".mp4", ".mkv", ".webm", ".mov", ".mpeg", ".m4v", ".avi", ".flv"
+    };
+
+    public static final String[] PHOTO_TYPE = {
+            ".jpg", ".jpeg", ".png", ".gif", ".ico"
     };
 
     /**
@@ -71,6 +77,14 @@ public class FileUtil {
         }
     }
 
+    public FileModel coursewareFilePath(String filename, String course, String userId) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        FileModel fileModel = new FileModel();
+        fileModel.setFilename(InviteCodeUtil.createInviteCode() + getFileSuffix(filename));
+        fileModel.setPath("uploads/courseware/" + course + "/"  + userId + "/" + simpleDateFormat.format(new Date()));
+        return fileModel;
+    }
+
     public String getFileSuffix(String filename) {
         int number = filename.lastIndexOf(".");
         if (number <= 0) {
@@ -98,7 +112,6 @@ public class FileUtil {
                 return 3;
             }
         }
-
 
         // 不支持预览，需要下载的文件格式
         return 0;

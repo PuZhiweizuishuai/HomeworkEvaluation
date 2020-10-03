@@ -13,6 +13,7 @@ import com.buguagaoshu.homework.evaluation.entity.UserRoleEntity;
 import com.buguagaoshu.homework.evaluation.service.UserRoleService;
 import com.buguagaoshu.homework.evaluation.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
@@ -28,6 +29,7 @@ import java.util.Map;
  * create          2020-06-03 23:46
  */
 @RestController
+@RequestMapping("/api")
 public class UserController {
     private final UserService userService;
 
@@ -57,6 +59,7 @@ public class UserController {
      * 仅限管理员和老师获取用户列表，向课程导入学生
      * 但不能修改，老师可以课程列表里添加助教
      * */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @GetMapping("/user/list")
     public ResponseDetails list(@RequestParam Map<String, Object> params) {
         return ResponseDetails.ok().put("data", userService.selectUserAndRoleList(params));
@@ -66,6 +69,7 @@ public class UserController {
      * 教师获取当前课程的学生列表
      * 只能获取自己班的
      * */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @GetMapping("/teacher/user/classList")
     public ResponseDetails classList(@RequestParam Map<String, Object> params,
                                HttpServletRequest request) {
@@ -80,6 +84,7 @@ public class UserController {
     /**
      * 教师将学生导入课程
      * */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @PostMapping("/teacher/user/join")
     public ResponseDetails studentJoinClass(@RequestBody List<AdminAddUser> userList,
                                             HttpServletRequest request) {
@@ -95,6 +100,7 @@ public class UserController {
     /**
      * 添加用户
      * */
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/admin/user/add")
     public ResponseDetails addOneUser(@Valid @RequestBody List<UserEntity> UserEntityList,
                                       HttpServletRequest request) {
@@ -106,6 +112,7 @@ public class UserController {
     /**
      * 管理员重置密码
      * */
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/admin/user/update/password")
     public ResponseDetails restPassword(@RequestBody AdminAddUser adminAddUser) {
 
@@ -117,6 +124,7 @@ public class UserController {
     /**
      * 角色修改
      * */
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/admin/user/update/role")
     public ResponseDetails alterUserRole(@RequestBody UserRoleEntity userRoleEntity,
                                          HttpServletRequest request) {
@@ -128,6 +136,7 @@ public class UserController {
     /**
      * 教师修改课程内的角色
      * */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @PostMapping("/teacher/user/update/role")
     public ResponseDetails teacherAlterCourseRole(@RequestBody UserRoleInClassVo userRoleInClassVo,
                                                   HttpServletRequest request) {
@@ -139,6 +148,7 @@ public class UserController {
     /**
      * 管理员更新角色状态
      * */
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping("/admin/user/update/status")
     public ResponseDetails alterUserStatus(@RequestBody AlterUserStatus alterUserStatus) {
         ReturnCodeEnum returnCodeEnum = userService.alterUserStatus(alterUserStatus);
@@ -146,6 +156,7 @@ public class UserController {
     }
 
 
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @PostMapping("/user/update/password")
     public ResponseDetails updatePassword(@RequestBody PasswordVo passwordVo,
                                              HttpServletRequest request,
@@ -158,19 +169,21 @@ public class UserController {
      *
      * 更新首页大图
      * */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @PostMapping("/user/update/top")
     public ResponseDetails updateTop(@RequestBody UserUpdateVo userUpdateVo,
                                      HttpServletRequest request) {
         return ResponseDetails.ok(userService.updateTopImg(userUpdateVo, request));
     }
 
-
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @PostMapping("/user/update/avatar")
     public ResponseDetails updateAvatar(@RequestBody UserUpdateVo userUpdateVo,
                                         HttpServletRequest request) {
         return ResponseDetails.ok(userService.updateAvatar(userUpdateVo, request));
     }
 
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @PostMapping("/user/update/info")
     public ResponseDetails updateInfo(@RequestBody UserUpdateVo userUpdateVo,
                                       HttpServletRequest request) {
@@ -194,7 +207,7 @@ public class UserController {
     }
 
 
-    @GetMapping("/user/register")
+    @PostMapping("/user/register")
     public ResponseDetails register(@Valid @RequestBody RegisterUserVo registerUserVo, HttpServletRequest request) {
         return ResponseDetails.ok(userService.register(registerUserVo, request));
     }

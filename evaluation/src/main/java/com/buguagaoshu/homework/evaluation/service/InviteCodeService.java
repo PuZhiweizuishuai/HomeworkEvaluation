@@ -3,6 +3,7 @@ package com.buguagaoshu.homework.evaluation.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.InviteCodeEntity;
+import com.buguagaoshu.homework.evaluation.vo.RegisterUserVo;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -39,5 +40,24 @@ public interface InviteCodeService extends IService<InviteCodeEntity> {
      * @return 分页后数据
      */
     PageUtils pageList(Map<String, Object> params, HttpServletRequest request);
+
+    /**
+     * 获取邀请码使用日志
+     *
+     * @param params  查询参数
+     *                page: 页码
+     *                limit： 每页显示数量
+     *                code:  邀请码 id
+     * @param request 获取当前用户
+     * @return 分页数据
+     */
+    PageUtils useLog(Map<String, Object> params, HttpServletRequest request);
+
+
+    /**
+     * 检查用户提交的邀请码
+     * @param registerUserVo 用户信息
+     * */
+    void checkCode(RegisterUserVo registerUserVo);
 }
 

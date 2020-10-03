@@ -2,10 +2,8 @@ package com.buguagaoshu.homework.evaluation.controller;
 
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.evaluation.service.UserLoginLogService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -16,6 +14,7 @@ import java.util.Map;
  * 获取登录历史
  */
 @RestController
+@RequestMapping("/api")
 public class UserLoginLogController {
     private final UserLoginLogService loginLogService;
 
@@ -24,6 +23,7 @@ public class UserLoginLogController {
     }
 
 
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @GetMapping("/login/log/list")
     public ResponseDetails list(@RequestParam Map<String, Object> params,
                                 HttpServletRequest request) {

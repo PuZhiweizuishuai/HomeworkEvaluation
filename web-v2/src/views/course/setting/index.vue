@@ -22,6 +22,7 @@
         <UserTable v-if="type == 2" />
         <HomeworkTable v-if="type == 3" />
         <Courseware v-if="type == 4" />
+        <InviteCode v-if="type == 6" />
       </v-col>
     </v-row>
   </v-container>
@@ -34,6 +35,8 @@ import UserTable from '@/views/course/setting/user-table.vue'
 import HomeworkTable from '@/views/course/setting/homework-table.vue'
 import Courseware from '@/views/course/setting/courseware.vue'
 
+import InviteCode from '@/views/course/setting/invite-code.vue'
+
 export default {
   name: 'Setting',
   components: {
@@ -41,7 +44,8 @@ export default {
     BulletinTable,
     UserTable,
     HomeworkTable,
-    Courseware
+    Courseware,
+    InviteCode
   },
   props: {
     course: {

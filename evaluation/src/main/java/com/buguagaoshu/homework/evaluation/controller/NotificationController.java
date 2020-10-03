@@ -4,10 +4,8 @@ import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.evaluation.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -18,6 +16,8 @@ import java.util.Map;
  * 消息通知
  */
 @RestController
+@RequestMapping("/api")
+@PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
 public class NotificationController {
     private final NotificationService notificationService;
 
@@ -34,6 +34,7 @@ public class NotificationController {
                                         HttpServletRequest request) {
         return ResponseDetails.ok().put("data", notificationService.queryPage(params, request));
     }
+
 
     @GetMapping("/notification/read")
     public ResponseDetails read(@RequestParam("id") Long id,

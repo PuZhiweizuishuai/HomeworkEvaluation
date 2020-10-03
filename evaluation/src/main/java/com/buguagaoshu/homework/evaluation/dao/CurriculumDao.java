@@ -13,5 +13,5 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface CurriculumDao extends BaseMapper<CurriculumEntity> {
-	
+	void addCount(String col, Long id, Integer count);
 }

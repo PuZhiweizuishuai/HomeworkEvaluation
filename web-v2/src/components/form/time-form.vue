@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <!-- 年月日 -->
-    <v-col cols="5">
+    <v-col :cols="cols">
       <v-menu
         ref="datePickerTime"
         v-model="datePickerTime"
@@ -29,7 +29,7 @@
       </v-menu>
     </v-col>
     <!-- 具体时间 -->
-    <v-col cols="5">
+    <v-col :cols="cols">
       <v-menu
         ref="dateTime"
         v-model="dateTime"
@@ -65,6 +65,12 @@
 
 <script>
 export default {
+  props: {
+    cols: {
+      type: Number,
+      default: 5
+    }
+  },
   data() {
     return {
       datePickerTime: false,

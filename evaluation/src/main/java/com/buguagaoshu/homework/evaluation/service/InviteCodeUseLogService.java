@@ -15,6 +15,6 @@ import java.util.Map;
  */
 public interface InviteCodeUseLogService extends IService<InviteCodeUseLogEntity> {
 
-    PageUtils queryPage(Map<String, Object> params);
+    PageUtils queryPage(Map<String, Object> params, String codeId);
 }
 

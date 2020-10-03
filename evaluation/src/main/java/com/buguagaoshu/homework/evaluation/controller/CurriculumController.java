@@ -12,6 +12,7 @@ import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import com.buguagaoshu.homework.evaluation.utils.TimeUtils;
 import com.buguagaoshu.homework.evaluation.vo.CurriculumInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ import java.util.Map;
  * 课程接口
  */
 @RestController
+@RequestMapping("/api")
 public class CurriculumController {
 
     private final CurriculumService curriculumService;
@@ -37,6 +39,7 @@ public class CurriculumController {
     /**
      * 教师创建新的课程
      * */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @PostMapping("/teacher/curriculum/create")
     public ResponseDetails createCurriculum(@Valid @RequestBody CurriculumModel curriculumModel,
                                             HttpServletRequest request) {
@@ -48,6 +51,7 @@ public class CurriculumController {
     /**
      * 更新课程信息
      * */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @PostMapping("/teacher/curriculum/update")
     public ResponseDetails update(@Valid @RequestBody CurriculumModel curriculumModel,
                                   HttpServletRequest request) {
@@ -87,6 +91,7 @@ public class CurriculumController {
     /**
      * 加入课程
      * */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @PostMapping("/curriculum/join/{id}")
     public ResponseDetails join(@PathVariable("id") Long id,
                                 @RequestBody JoinCourseCode code,
@@ -99,6 +104,7 @@ public class CurriculumController {
     /**
      * 返回课程学习页需要的信息
      * */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @GetMapping("/curriculum/learn/{id}")
     public ResponseDetails learn(@PathVariable("id") Long id,
                                      HttpServletRequest request) {

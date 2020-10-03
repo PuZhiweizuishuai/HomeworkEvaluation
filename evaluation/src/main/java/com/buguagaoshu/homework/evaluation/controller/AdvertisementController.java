@@ -8,6 +8,7 @@ import com.buguagaoshu.homework.evaluation.model.AdvertisementModel;
 import com.buguagaoshu.homework.evaluation.service.AdvertisementService;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import java.util.Map;
  * create          2020-06-10 16:44
  */
 @RestController
+@RequestMapping("/api")
 public class AdvertisementController {
     private final AdvertisementService advertisementService;
 
@@ -26,11 +28,13 @@ public class AdvertisementController {
         this.advertisementService = advertisementService;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/ad/list")
     public ResponseDetails list(@RequestParam Map<String, Object> params) {
         return ResponseDetails.ok().put("page", advertisementService.queryPage(params));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin/ad/add")
     public ResponseDetails add(@RequestBody AdvertisementModel advertisementModel,
                                HttpServletRequest request) {
@@ -39,6 +43,7 @@ public class AdvertisementController {
         return ResponseDetails.ok().put("data", advertisementEntity);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin/ad/update")
     public ResponseDetails update(@RequestBody AdvertisementModel advertisementModel,
                                HttpServletRequest request) {
@@ -51,6 +56,7 @@ public class AdvertisementController {
     }
 
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin/ad/stop")
     public ResponseDetails stop(@RequestBody Long id) {
 

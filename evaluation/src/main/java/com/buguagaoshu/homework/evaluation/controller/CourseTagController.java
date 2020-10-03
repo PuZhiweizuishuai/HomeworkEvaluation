@@ -7,6 +7,7 @@ import com.buguagaoshu.homework.evaluation.entity.CourseTagEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 加载课程二级分类信息
  */
 @RestController
+@RequestMapping("/api")
 public class CourseTagController {
 
     private final CourseTagCache courseTagCache;

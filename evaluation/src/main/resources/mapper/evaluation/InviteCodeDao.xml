@@ -18,6 +18,9 @@
         <result property="type" column="type"/>
         <result property="role" column="role"/>
     </resultMap>
+    <update id="addCount">
+        update invite_code set ${col} = ${col} + #{count} where id = #{id}
+    </update>
 
 
 </mapper>

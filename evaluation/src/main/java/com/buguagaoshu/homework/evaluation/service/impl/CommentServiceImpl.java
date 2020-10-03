@@ -10,6 +10,7 @@ import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
 import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
+import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
 import com.buguagaoshu.homework.evaluation.model.CommentModel;
 import com.buguagaoshu.homework.evaluation.model.ReplyComment;
 import com.buguagaoshu.homework.evaluation.service.*;
@@ -82,6 +83,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
     public CommentModel saveArticleComment(CommentVo commentVo, HttpServletRequest request) {
         HttpSession session = request.getSession();
         String verifyCodeKey = (String) session.getAttribute(WebConstant.VERIFY_CODE_KEY);
+        if (StringUtils.isEmpty(verifyCodeKey)) {
+            throw new UserDataFormatException("验证码错误，刷新验证码后重试！");
+        }
         verifyCodeService.verify(verifyCodeKey, commentVo.getVerifyCode());
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         ArticleEntity article = articleService.getById(commentVo.getArticleId());
@@ -139,11 +143,15 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
             commentModel.setAuthorId(userEntity.getUserId());
             commentModel.setUsername(userEntity.getUsername());
             commentModel.setAvatarUrl(userEntity.getUserAvatarUrl());
+
+            // 更新上一个评论时间
+            ArticleEntity articleEntity = new ArticleEntity();
+            articleEntity.setId(article.getId());
+            articleEntity.setLatestCommentName(user.getId());
+            articleEntity.setLatestCommentTime(System.currentTimeMillis());
+            articleService.updateById(articleEntity);
             // TODO 将这里加1改到缓存中
             articleService.countNumberCount("comment_count", commentEntity.getArticleId(), 1);
-            article.setLatestCommentTime(System.currentTimeMillis());
-            article.setLatestCommentName(user.getId());
-            articleService.updateById(article);
             // TODO 给关注帖子的人也发送通知
             notificationService.sendComment(user.getId(), user.getSubject(), article.getAuthorId(), article, commentEntity, type);
             if (father != null && !article.getAuthorId().equals(father.getAuthorId())) {

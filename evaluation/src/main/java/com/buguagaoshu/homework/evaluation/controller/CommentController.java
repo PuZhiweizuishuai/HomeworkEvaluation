@@ -9,6 +9,7 @@ import com.buguagaoshu.homework.evaluation.model.ReplyComment;
 import com.buguagaoshu.homework.evaluation.service.CommentService;
 import com.buguagaoshu.homework.evaluation.vo.CommentVo;
 import com.buguagaoshu.homework.evaluation.vo.DeleteVo;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import java.util.Map;
  * create          2020-09-29 21:12
  */
 @RestController
+@RequestMapping("/api")
 public class CommentController {
     private final CommentService commentService;
 
@@ -27,7 +29,7 @@ public class CommentController {
         this.commentService = commentService;
     }
 
-
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @PostMapping("/comment/save")
     public ResponseDetails save(@Valid @RequestBody CommentVo commentVo,
                                 HttpServletRequest request) {
@@ -38,6 +40,7 @@ public class CommentController {
         return ResponseDetails.ok().put("data", commentModel);
     }
 
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @PostMapping("/comment/delete")
     public ResponseDetails delete(@RequestBody DeleteVo deleteVo,
                                   HttpServletRequest request) {
@@ -47,6 +50,7 @@ public class CommentController {
         return ResponseDetails.ok(ReturnCodeEnum.NO_ROLE_OR_NO_FOUND);
     }
 
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @GetMapping("/comment/list/{id}")
     public ResponseDetails list(@PathVariable("id") Long articleId,
                                 @RequestParam Map<String, Object> params,
@@ -61,6 +65,7 @@ public class CommentController {
     /**
      * 返回单个评论信息
      * */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @GetMapping("/comment/reply/{commentId}")
     public ResponseDetails replyComment(@PathVariable("commentId") Long commentId,
                                        HttpServletRequest request) {
@@ -74,6 +79,7 @@ public class CommentController {
     /**
      * 返回二级评论列表
      * */
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @GetMapping("/comment/second/list/{id}")
     public ResponseDetails secondCommentList(@PathVariable("id") Long id,
                                              @RequestParam Map<String, Object> params,

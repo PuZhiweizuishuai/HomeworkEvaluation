@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <div id="commentTop" />
+    <div id="commentTop" ref="commentTop" />
     <v-row justify="center">
       <v-col cols="11">
         <v-textarea
@@ -126,7 +126,9 @@ export default {
   },
   methods: {
     getComment(value) {
-      document.querySelector('#commentTop').scrollIntoView()
+      console.log('123456')
+
+      this.$refs.commentTop.scrollIntoView()
       this.commentPlaceholder = '回复 @' + value.username + ': ' + value.content
       this.comment.commentId = value.id
       this.comment.fatherId = value.fatherId

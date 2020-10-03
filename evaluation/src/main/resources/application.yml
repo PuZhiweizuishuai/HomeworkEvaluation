@@ -27,8 +27,7 @@ server:
   port: 8080
   http2:
     enabled: true
-  servlet:
-    context-path: /api
+
 
 spring:
   messages:
