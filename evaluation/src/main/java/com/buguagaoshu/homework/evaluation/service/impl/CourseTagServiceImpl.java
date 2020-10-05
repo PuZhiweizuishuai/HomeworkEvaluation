@@ -1,11 +1,12 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
+import com.buguagaoshu.homework.evaluation.cache.CourseTagCache;
+import com.buguagaoshu.homework.evaluation.config.WebConstant;
+import com.buguagaoshu.homework.evaluation.service.VerifyCodeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -17,6 +18,10 @@ import com.buguagaoshu.homework.common.utils.Query;
 import com.buguagaoshu.homework.evaluation.dao.CourseTagDao;
 import com.buguagaoshu.homework.evaluation.entity.CourseTagEntity;
 import com.buguagaoshu.homework.evaluation.service.CourseTagService;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 
 /**
@@ -24,6 +29,16 @@ import com.buguagaoshu.homework.evaluation.service.CourseTagService;
  */
 @Service("courseTagService")
 public class CourseTagServiceImpl extends ServiceImpl<CourseTagDao, CourseTagEntity> implements CourseTagService {
+
+    private final CourseTagCache courseTagCache;
+
+    private final VerifyCodeService verifyCodeService;
+
+    @Autowired
+    public CourseTagServiceImpl(CourseTagCache courseTagCache, VerifyCodeService verifyCodeService) {
+        this.courseTagCache = courseTagCache;
+        this.verifyCodeService = verifyCodeService;
+    }
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -57,6 +72,67 @@ public class CourseTagServiceImpl extends ServiceImpl<CourseTagDao, CourseTagEnt
             map.put(c.getId(), c);
         });
         return map;
+    }
+
+    @Override
+    public boolean updateTag(CourseTagEntity courseTagEntity, HttpServletRequest request) {
+        CourseTagEntity id = getById(courseTagEntity.getId());
+        if (id == null) {
+            return false;
+        }
+        if (id.getCatelogId() != 0) {
+            CourseTagEntity father = getById(courseTagEntity.getId());
+            if (father == null) {
+                return false;
+            }
+        }
+        this.updateById(courseTagEntity);
+        updateCache();
+        // 更新缓存
+        return true;
+    }
+
+    public void updateCache() {
+        List<CourseTagEntity> list = listWithTree();
+        courseTagCache.setCourseTagListTree(list);
+        courseTagCache.setCourseTagEntityMap(CourseTagMap());
+        courseTagCache.setCourseTagMapHaveChildren(list);
+    }
+
+    @Override
+    public boolean saveTag(CourseTagEntity courseTagEntity) {
+        if (courseTagEntity.getCatelogId() == null) {
+            courseTagEntity.setCatelogId(0L);
+        }
+        if (courseTagEntity.getCatelogId() != 0) {
+            CourseTagEntity tagEntity = getById(courseTagEntity.getCatelogId());
+            if (tagEntity == null) {
+                return false;
+            }
+        }
+        this.save(courseTagEntity);
+        updateCache();
+        return true;
+    }
+
+    @Override
+    @Transactional(rollbackFor = {})
+    public boolean deleteTag(Long tagId, String verifyCode, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        String key = (String) session.getAttribute(WebConstant.VERIFY_CODE_KEY);
+        verifyCodeService.verify(key, verifyCode);
+        CourseTagEntity id = getById(tagId);
+        if (id == null) {
+            return false;
+        }
+        if (id.getCatelogId() == 0) {
+            List<CourseTagEntity> list = list(new QueryWrapper<CourseTagEntity>().eq("catelog_id", id.getId()));
+            Set<Long> ids = list.stream().map(CourseTagEntity::getId).collect(Collectors.toSet());
+            this.baseMapper.deleteBatchIds(ids);
+        }
+        this.baseMapper.deleteById(id.getId());
+        updateCache();
+        return true;
     }
 
     /**

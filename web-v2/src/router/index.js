@@ -276,6 +276,82 @@ const routes = [
       }
     ]
   },
+
+  // 管理页
+  {
+    path: '/admin',
+    component: () => import('@/layout/admin/index.vue'),
+    meta: {
+      title: store.state.webInfo.name + ' - 管理系统',
+      requireAuth: true,
+      admin: true
+    },
+    children: [
+      {
+        path: '/admin',
+        name: 'Admin',
+        component: () => import('@/views/admin/index.vue'),
+        meta: {
+          admin: true,
+          requireAuth: true
+        }
+      },
+      {
+        path: '/admin/user',
+        name: 'AdminUserList',
+        component: () => import('@/views/admin/user-list.vue'),
+        meta: {
+          admin: true,
+          requireAuth: true
+        }
+      },
+      {
+        path: '/admin/user/import',
+        name: 'AdminImportUserList',
+        component: () => import('@/views/admin/import-user.vue'),
+        meta: {
+          admin: true,
+          requireAuth: true
+        }
+      },
+      {
+        path: '/admin/course',
+        name: 'AdminCourse',
+        component: () => import('@/views/admin/course.vue'),
+        meta: {
+          admin: true,
+          requireAuth: true
+        }
+      },
+      {
+        path: '/admin/coursetag',
+        name: 'AdminCourseTag',
+        component: () => import('@/views/admin/course-tag.vue'),
+        meta: {
+          admin: true,
+          requireAuth: true
+        }
+      },
+      {
+        path: '/admin/bbs',
+        name: 'AdminBBS',
+        component: () => import('@/views/admin/bbs.vue'),
+        meta: {
+          admin: true,
+          requireAuth: true
+        }
+      },
+      {
+        path: '/admin/topimg',
+        name: 'AdminTopImg',
+        component: () => import('@/views/admin/top-img.vue'),
+        meta: {
+          admin: true,
+          requireAuth: true
+        }
+      }
+    ]
+  },
   {
     path: '/login',
     name: 'Login',
@@ -317,8 +393,17 @@ router.beforeEach((to, from, next) => {
       if (to.path === '/login') {
         return next({ path: '/' })
       }
-      return next()
-    // 登录到期
+      if (to.meta.admin) {
+        if (store.state.userInfo.role.role === 'ROLE_ADMIN') {
+          return next()
+        } else {
+          //
+          return next({ path: '/404' })
+        }
+      } else {
+        return next()
+      }
+      // 登录到期
     } else {
       store.commit('setUserInfo', null)
       return next({

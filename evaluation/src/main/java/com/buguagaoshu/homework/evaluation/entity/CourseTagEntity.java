@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 /**
@@ -29,6 +30,7 @@ public class CourseTagEntity {
     /**
      * 课程专业
      */
+    @NotBlank(message = "分类名不能为空！")
     private String courseMajor;
 
     /**

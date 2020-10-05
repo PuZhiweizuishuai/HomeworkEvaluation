@@ -38,10 +38,21 @@
         </v-btn>
       </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="type == 0">
       <v-col>
         <v-btn depressed color="success" @click="importStudent">
           导入已选择学生
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row v-if="type == 1">
+      <v-col>
+        <v-btn depressed color="success" @click="createNewUser">
+          创建新用户
+        </v-btn>
+        <span v-html="`&nbsp;&nbsp;&nbsp;&nbsp;`" />
+        <v-btn depressed color="primary" @click="importNewUser">
+          导入新用户
         </v-btn>
       </v-col>
     </v-row>
@@ -90,6 +101,23 @@
               {{ Role.getStatus(item.status) }}
             </v-chip>
           </template>
+          <template v-if="type == 1" v-slot:item.actions="{ item }">
+            <v-tooltip left>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  icon
+                  class="mr-2"
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="edit(item)"
+                >
+                  <v-icon>mdi-cog</v-icon>
+                </v-btn>
+
+              </template>
+              <span>编辑</span>
+            </v-tooltip>
+          </template>
           <template v-slot:no-data>
             <v-btn color="primary" @click="getUserList">重新加载</v-btn>
           </template>
@@ -111,6 +139,14 @@
 import Role from '@/utils/auth.vue'
 export default {
   name: 'UserList',
+  props: {
+    // 表格类型
+    // 0 教师导入学生表， 1 管理页用户查看表
+    type: {
+      type: Number,
+      default: 0
+    }
+  },
   data() {
     return {
       id: 0,
@@ -142,7 +178,8 @@ export default {
         { text: '年级', sortable: false, value: 'grade' },
         { text: '专业', sortable: false, value: 'major' },
         { text: '角色', sortable: false, value: 'role.role' },
-        { text: '状态', sortable: false, value: 'status' }
+        { text: '状态', sortable: false, value: 'status' },
+        { text: '操作', sortable: false, value: 'actions' }
       ],
       message: ''
     }
@@ -200,6 +237,16 @@ export default {
       } else {
         return '女'
       }
+    },
+    edit(item) {
+      this.$emit('edit', item)
+    },
+    createNewUser() {
+      this.$emit('create', '创建新用户')
+    },
+    importNewUser() {
+      console.log('importNewUser')
+      this.$emit('import', '导入新用户')
     }
   }
 }

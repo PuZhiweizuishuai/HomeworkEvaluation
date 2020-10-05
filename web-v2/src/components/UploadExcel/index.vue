@@ -1,13 +1,14 @@
 <template>
-  <div>
+  <v-row>
     <input ref="excel-upload-input" class="excel-upload-input" type="file" accept=".xlsx, .xls" @change="handleClick">
     <div class="drop" @drop="handleDrop" @dragover="handleDragover" @dragenter="handleDragover">
-      Drop excel file here or
-      <el-button :loading="loading" style="margin-left:16px;" size="mini" type="primary" @click="handleUpload">
-        Browse
-      </el-button>
+      选择要导入的Excel文件
+
+      <v-btn depressed :loading="loading" color="primary" @click="handleUpload">
+        选择
+      </v-btn>
     </div>
-  </div>
+  </v-row>
 </template>
 
 <script>

@@ -34,6 +34,14 @@
               学生
             </v-chip>
           </h2>
+          <span v-if="userInfo.status == 1 || userInfo.status == 2" style="color: red;">
+            <span v-if="(userInfo.startLockTime + userInfo.lockTime) > new Date().getTime()">
+              该账号因为违反网站规定，已被管理页
+              <span v-if="userInfo.status == 2" v-text="`锁定`" />
+              <span v-if="userInfo.status == 1" v-text="`禁言`" />
+              结束时间为：<span v-text="TimeUtil.renderTime(userInfo.startLockTime + userInfo.lockTime)" />
+            </span>
+          </span>
         </v-col>
         <v-col
           v-if="this.$store.state.userInfo && this.$store.state.userInfo.userId == id"

@@ -22,6 +22,7 @@
     <v-list>
       <v-list-item
         v-for="(item, index) in headItem"
+        v-show="item.show"
         :key="index"
         link
         @click="headClick(item.id)"
@@ -46,14 +47,24 @@ export default {
     return {
       userInfo: {},
       headItem: [
-        { icon: 'mdi-account', text: '个人主页', link: `/user/`, id: 0 },
-        { icon: 'mdi-wrench', text: '个人设置', link: '/user/setting', id: 1 },
-        { icon: 'mdi-logout', text: '退出', link: '/logout', id: 2 }
+        { icon: 'mdi-account', text: '个人主页', link: `/user/`, id: 0, show: true, admin: false },
+        { icon: 'mdi-wrench', text: '个人设置', link: '/user/setting', id: 1, show: true, admin: false },
+        { icon: 'mdi-application-settings', text: '系统管理', link: '/admin', id: 4, show: false, admin: true },
+        { icon: 'mdi-logout', text: '退出', link: '/logout', id: 2, show: true, admin: false }
       ]
     }
   },
   created() {
     this.userInfo = this.$store.state.userInfo
+    for (let i = 0; i < this.headItem.length; i++) {
+      if (this.headItem[i].admin) {
+        if (this.userInfo.role.role === 'ROLE_ADMIN') {
+          this.headItem[i].show = true
+        } else {
+          this.headItem[i].show = false
+        }
+      }
+    }
   },
   methods: {
     headClick(value) {
@@ -65,6 +76,11 @@ export default {
           return
         }
         this.$router.push('/user/setting')
+      } else if (value === 4) {
+        if (this.$route.path === '/admin') {
+          return
+        }
+        this.$router.push('/admin')
       } else {
         this.logout()
       }
