@@ -128,6 +128,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 // 开启 csrf 验证
                 .csrf()
+                .ignoringAntMatchers(
+                        "/api/index/**",
+                        "/api/verifyImage",
+                        "/api/register",
+                        "/api/course/tag/list",
+                        "/api/curriculum/list",
+                        "/api/curriculum/info/**",
+                        "/api/upload/file",
+                        "/api/upload/courseware"
+                )
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .and()
                 .sessionManagement()

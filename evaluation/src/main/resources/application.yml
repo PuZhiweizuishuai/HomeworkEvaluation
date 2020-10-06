@@ -34,7 +34,8 @@ spring:
     basename: message/SpringSecurityMessage
   datasource:
     driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.43.128:3306/homework_evaluation?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    # 192.168.43.128
+    url: jdbc:mysql://192.168.43.130:3306/homework_evaluation?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
   servlet:
@@ -46,7 +47,7 @@ spring:
     time-zone: GMT+8
     date-format: yyyy-MM-dd HH:mm:ss
   redis:
-    host: 192.168.43.128
+    host: 192.168.43.130
     port: 6379
     timeout: 1000ms
     jedis:
@@ -59,7 +60,7 @@ spring:
         max-wait: -1
         # 最大活跃连接数，负数为不限制
         max-active: -1
-    # password: 123456
+    password: pzw123456
   cache:
     redis:
       time-to-live: 2h

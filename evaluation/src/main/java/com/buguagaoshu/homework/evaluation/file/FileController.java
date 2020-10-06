@@ -145,7 +145,7 @@ public class FileController {
         return ResponseEntity.status(HttpStatus.OK).body("key error!!!");
     }
 
-    @GetMapping("/uploads/file/{userId}/{date}/{filename:.+}")
+    //@GetMapping("/uploads/file/{userId}/{date}/{filename:.+}")
     public HttpEntity<?> getFile(@PathVariable("userId") String userId,
                                  @PathVariable("date") String date,
                                  @PathVariable("filename") String filename,
@@ -156,7 +156,7 @@ public class FileController {
             Resource resource =resourceLoader.getResource("file:" + Paths.get(path, filename));
             contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
             HttpHeaders headers = new HttpHeaders();
-            // TODO AES key 验证
+
             if (FileUtil.PDF.equals(fileUtil.getFileSuffix(filename))) {
                 headers.add("X-Frame-Options", "SAMEORIGIN");
             }
@@ -169,7 +169,5 @@ public class FileController {
         } catch (Exception ignored) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-
-
     }
 }

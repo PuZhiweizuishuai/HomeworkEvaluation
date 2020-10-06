@@ -1,6 +1,9 @@
 package com.buguagaoshu.homework.evaluation.model;
 
+import com.buguagaoshu.homework.common.valid.ListValue;
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
@@ -12,37 +15,43 @@ public class AdvertisementModel {
     /**
      * 广告标题
      */
+    @NotBlank(message = "标题不能为空！")
     private String title;
 
     /**
      * 点击后要链接到的地址
      */
+    @NotBlank(message = "链接不能为空")
     private String url;
 
     /**
      * 显示的图片地址
      */
+    @NotBlank(message = "图片地址不能为空！")
     private String image;
 
     /**
      * 开始投放时间
      */
+
     private String startTime;
 
     /**
-     * 结束投放时间
+     * 结束时间
      */
-    private Integer endTime;
+
+    private String endTime;
 
 
     /**
      * 类型，显示位置【
-     0 首页顶部大图，
-     1 课程页顶部大图
-     2 首页广告
-     3 课程页广告
-     】
+     * 0 首页顶部大图，
+     * 1 课程页顶部大图
+     * 2 首页广告
+     * 3 课程页广告
+     * 】
      */
+    @ListValue(value = {0, 1, 2, 3}, message = "类型取值非法！")
     private Integer type;
 
     /**

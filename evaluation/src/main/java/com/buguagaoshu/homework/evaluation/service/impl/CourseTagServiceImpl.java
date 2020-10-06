@@ -127,8 +127,10 @@ public class CourseTagServiceImpl extends ServiceImpl<CourseTagDao, CourseTagEnt
         }
         if (id.getCatelogId() == 0) {
             List<CourseTagEntity> list = list(new QueryWrapper<CourseTagEntity>().eq("catelog_id", id.getId()));
-            Set<Long> ids = list.stream().map(CourseTagEntity::getId).collect(Collectors.toSet());
-            this.baseMapper.deleteBatchIds(ids);
+            if (list != null && list.size() != 0) {
+                Set<Long> ids = list.stream().map(CourseTagEntity::getId).collect(Collectors.toSet());
+                this.baseMapper.deleteBatchIds(ids);
+            }
         }
         this.baseMapper.deleteById(id.getId());
         updateCache();

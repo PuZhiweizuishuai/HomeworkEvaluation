@@ -77,16 +77,9 @@ public class AdvertisementServiceImpl extends ServiceImpl<AdvertisementDao, Adve
         ad.setCreateUser(nowLoginUser);
         BeanUtils.copyProperties(advertisementModel, ad);
         ad.setId(null);
-        long startTime = TimeUtils.parseTimeZone(advertisementModel.getStartTime());
-        ad.setStartTime(startTime);
-        /**
-         * 注意，前端上传的结束时间字段时持续天数
-         * 而不是真正的结束时间
-         * */
-        ad.setEndTime(startTime + advertisementModel.getEndTime() * DAY);
-
+        ad.setStartTime(TimeUtils.parseTime(advertisementModel.getStartTime()));
+        ad.setEndTime(TimeUtils.parseTime(advertisementModel.getEndTime()));
         this.save(ad);
-
         // 加入缓存
         websiteIndexMessageCache.addCache(ad);
         return ad;
@@ -103,17 +96,18 @@ public class AdvertisementServiceImpl extends ServiceImpl<AdvertisementDao, Adve
         Long endTime = advertisementEntity.getEndTime();
         // 开始时间特殊处理
         try {
-            startTime = Long.parseLong(model.getStartTime());
-        } catch (NumberFormatException e) {
-            try {
-                startTime = TimeUtils.parseTimeZone(model.getStartTime());
-            } catch (RuntimeException ignored) {
-            }
+            startTime = TimeUtils.parseTime(model.getStartTime());
+        } catch (RuntimeException ignored) {
         }
+
         //
         advertisementEntity.setStartTime(startTime);
         if (model.getEndTime() != null) {
-            advertisementEntity.setEndTime(startTime + DAY * model.getEndTime());
+            try {
+                endTime = TimeUtils.parseTime(model.getEndTime());
+                advertisementEntity.setEndTime(endTime);
+            } catch (Exception ignored) {
+            }
         } else {
             advertisementEntity.setEndTime(endTime);
         }

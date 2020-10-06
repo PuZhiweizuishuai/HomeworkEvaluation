@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Map;
 
 /**
@@ -29,14 +30,14 @@ public class AdvertisementController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/admin/ad/list")
+    @GetMapping("/admin/topImg/list")
     public ResponseDetails list(@RequestParam Map<String, Object> params) {
-        return ResponseDetails.ok().put("page", advertisementService.queryPage(params));
+        return ResponseDetails.ok().put("data", advertisementService.queryPage(params));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/admin/ad/add")
-    public ResponseDetails add(@RequestBody AdvertisementModel advertisementModel,
+    @PostMapping("/admin/topImg/add")
+    public ResponseDetails add(@Valid @RequestBody AdvertisementModel advertisementModel,
                                HttpServletRequest request) {
         AdvertisementEntity advertisementEntity = advertisementService.add(advertisementModel,
                 JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY).getId());
@@ -44,7 +45,7 @@ public class AdvertisementController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/admin/ad/update")
+    @PostMapping("/admin/topImg/update")
     public ResponseDetails update(@RequestBody AdvertisementModel advertisementModel,
                                HttpServletRequest request) {
         AdvertisementEntity advertisementEntity = advertisementService.updateAd(advertisementModel,
@@ -57,7 +58,7 @@ public class AdvertisementController {
 
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/admin/ad/stop")
+    @PostMapping("/admin/topImg/stop")
     public ResponseDetails stop(@RequestBody Long id) {
 
         return ResponseDetails.ok(advertisementService.stop(id));
