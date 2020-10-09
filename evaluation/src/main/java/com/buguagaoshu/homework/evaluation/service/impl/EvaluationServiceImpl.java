@@ -272,7 +272,7 @@ public class EvaluationServiceImpl implements EvaluationService {
         }
         commentEntity.setAuthorId(user.getId());
         commentEntity.setIp(IpUtil.getIpAddr(request));
-        commentEntity.setUa(request.getHeader("user-agent"));
+        commentEntity.setUa(IpUtil.getUa(request));
         commentService.save(commentEntity);
         BeanUtils.copyProperties(commentEntity, commentModel);
         UserEntity userEntity = userService.getById(user.getId());

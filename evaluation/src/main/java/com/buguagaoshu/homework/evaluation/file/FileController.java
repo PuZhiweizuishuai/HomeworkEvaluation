@@ -116,10 +116,8 @@ public class FileController {
         }
         try {
             String decrypt = AesUtil.decrypt(key, WebConstant.AES_KEY);
-            System.out.println(decrypt);
             String[] str = decrypt.split("#");
             // 第一个是用户ID，第二个是文件名，第三个是过期时间
-            System.out.println("filename:" + filename);
             if (str[1].equals(filename) && Long.parseLong(str[2]) > System.currentTimeMillis() && str[0].equals(user.getId())) {
                 lock = true;
             }
@@ -145,7 +143,7 @@ public class FileController {
         return ResponseEntity.status(HttpStatus.OK).body("key error!!!");
     }
 
-    //@GetMapping("/uploads/file/{userId}/{date}/{filename:.+}")
+    @GetMapping("/uploads/file/{userId}/{date}/{filename:.+}")
     public HttpEntity<?> getFile(@PathVariable("userId") String userId,
                                  @PathVariable("date") String date,
                                  @PathVariable("filename") String filename,

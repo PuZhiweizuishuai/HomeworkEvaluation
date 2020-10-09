@@ -76,7 +76,7 @@ public class BulletinServiceImpl extends ServiceImpl<BulletinDao, BulletinEntity
             for (StudentsCurriculumEntity teacher : teacherList) {
                 // 如果是这门课的老师
                 if (user.getId().equals(teacher.getStudentId())) {
-                    save(bulletinEntity, user, IpUtil.getIpAddr(request), request.getHeader("user-agent"));
+                    save(bulletinEntity, user, IpUtil.getIpAddr(request), IpUtil.getUa(request));
                     // 向学生发布消息通知
                     List<StudentsCurriculumEntity> list = studentsCurriculumService.findUserListInCurriculum(bulletinEntity.getCurriculumId());
                     notificationService.sendBulletin(list, bulletinEntity.getUserId(),user.getSubject(), bulletinEntity.getCurriculumId());
@@ -103,7 +103,7 @@ public class BulletinServiceImpl extends ServiceImpl<BulletinDao, BulletinEntity
             sys.setText(bulletinEntity.getText());
             sys.setTitle(bulletinEntity.getTitle());
             sys.setIp(IpUtil.getIpAddr(request));
-            sys.setUa(request.getHeader("user-agent"));
+            sys.setUa(IpUtil.getUa(request));
             this.updateById(sys);
             return ReturnCodeEnum.SUCCESS;
         } else {

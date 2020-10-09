@@ -40,6 +40,7 @@ import com.buguagaoshu.homework.evaluation.dao.ArticleDao;
 import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
 import com.buguagaoshu.homework.evaluation.service.ArticleService;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -103,8 +104,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         articleEntity.setAuthorId(user.getId());
         articleEntity.setAuthorName(user.getSubject());
         articleEntity.setIp(IpUtil.getIpAddr(request));
-        articleEntity.setUa(request.getHeader("user-agent"));
+        articleEntity.setUa(IpUtil.getUa(request));
         BeanUtils.copyProperties(articleVo, articleEntity);
+
+        //articleEntity.setTitle(HtmlUtils.htmlEscape(articleEntity.getTitle()));
+        //articleEntity.setContent(HtmlUtils.htmlEscape(articleEntity.getContent()));
+
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             articleEntity.setTag(objectMapper.writeValueAsString(articleVo.getTag()));

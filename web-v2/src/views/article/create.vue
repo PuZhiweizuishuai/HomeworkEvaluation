@@ -228,7 +228,7 @@ export default {
         this.showMessage = true
         return
       }
-      console.log(this.article)
+
       this.httpPost('/article/save', this.article, (json) => {
         if (json.status === 200) {
           this.message = '发布成功！'

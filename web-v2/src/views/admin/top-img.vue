@@ -110,6 +110,9 @@
 <script>
 import TimeUtil from '@/utils/time-util.vue'
 import TopImgForm from '@/components/form/top-img-form.vue'
+/**
+  2020/10/06 计划，测试xss，使用xss后，会不会对页面产生影响
+ */
 export default {
   components: {
     TopImgForm

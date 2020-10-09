@@ -135,7 +135,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
             }
             commentEntity.setAuthorId(user.getId());
             commentEntity.setIp(IpUtil.getIpAddr(request));
-            commentEntity.setUa(request.getHeader("user-agent"));
+            commentEntity.setUa(IpUtil.getUa(request));
             this.save(commentEntity);
 
             BeanUtils.copyProperties(commentEntity, commentModel);

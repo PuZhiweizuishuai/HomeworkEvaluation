@@ -1,5 +1,7 @@
 package com.buguagaoshu.homework.evaluation.utils;
 
+import org.springframework.util.StringUtils;
+
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -42,9 +44,17 @@ public class IpUtil {
                 }
             }
         } catch (Exception e) {
-            ipAddress="";
+            ipAddress="未知IP";
         }
         // ipAddress = this.getRequest().getRemoteAddr();
         return ipAddress;
+    }
+
+    public static String getUa(HttpServletRequest request) {
+        String ua = request.getHeader("user-agent");
+        if (StringUtils.isEmpty(ua)) {
+            return "未知设备";
+        }
+        return ua;
     }
 }

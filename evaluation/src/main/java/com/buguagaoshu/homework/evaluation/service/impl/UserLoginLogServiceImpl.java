@@ -53,7 +53,7 @@ public class UserLoginLogServiceImpl extends ServiceImpl<UserLoginLogDao, UserLo
         // TODO IPv6 支持
         String ip = IpUtil.getIpAddr(request);
         long time = System.currentTimeMillis();
-        String ua = request.getHeader("user-agent");
+        String ua = IpUtil.getUa(request);
         userLoginLogEntity.setLoginIp(ip);
         userLoginLogEntity.setLoginTime(time);
         userLoginLogEntity.setLoginUa(ua);
