@@ -13,7 +13,7 @@ import java.net.UnknownHostException;
 public class IpUtil {
     /**
      * 获取用户登陆IP
-     * */
+     */
     public static String getIpAddr(HttpServletRequest request) {
         String ipAddress = null;
         try {
@@ -44,7 +44,7 @@ public class IpUtil {
                 }
             }
         } catch (Exception e) {
-            ipAddress="未知IP";
+            ipAddress = "未知IP";
         }
         // ipAddress = this.getRequest().getRemoteAddr();
         return ipAddress;
