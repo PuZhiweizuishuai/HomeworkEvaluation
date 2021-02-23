@@ -38,6 +38,10 @@ public class FileUtil {
             ".mp4", ".mkv", ".webm", ".mov", ".mpeg", ".m4v", ".avi", ".flv"
     };
 
+    public static final String[] VOICE_TYPE = {
+            ".mp3", ".wav", ".flac", ".ape", ".aac"
+    };
+
     public static final String[] PHOTO_TYPE = {
             ".jpg", ".jpeg", ".png", ".gif", ".ico"
     };
@@ -104,6 +108,12 @@ public class FileUtil {
 
         if (PDF.equals(suffix)) {
             return 2;
+        }
+
+        for (String s : VOICE_TYPE) {
+            if (s.equals(suffix)) {
+                return 4;
+            }
         }
 
         // 有待支持的文件预览格式

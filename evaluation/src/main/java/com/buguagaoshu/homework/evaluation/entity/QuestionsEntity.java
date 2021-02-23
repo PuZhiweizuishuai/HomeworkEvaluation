@@ -83,7 +83,7 @@ public class QuestionsEntity {
     /**
      * 标签
      * */
-    private String tag;
+    private Long tag;
 
 
 

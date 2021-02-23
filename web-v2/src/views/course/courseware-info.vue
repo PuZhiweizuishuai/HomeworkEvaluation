@@ -40,6 +40,13 @@
       </v-col>
     </v-row>
 
+    <!-- 音乐播放 -->
+    <v-row v-if="courseware.fileType == 4" :key="voiceKey" justify="center">
+      <v-col cols="10">
+        <Voice ref="voicePlayer" :voice="courseware" />
+      </v-col>
+    </v-row>
+
     <!-- PDF 预览 -->
     <v-row v-if="courseware.fileType == 2" justify="center">
       <v-col cols="11">
@@ -52,7 +59,7 @@
       </v-col>
     </v-row>
     <!-- 下载框 -->
-    <v-row v-if="courseware.fileType == 2 || courseware.fileType == 1" justify="center">
+    <v-row v-if="courseware.fileType == 2 || courseware.fileType == 1 || courseware.fileType == 4" justify="center">
       <v-col cols="11">
         如你的浏览器不支持，那么请下载查看：
         <router-link :to="courseware.fileUrl+'?key=' + encodeURIComponent(courseware.key)" target="_blank">
@@ -80,6 +87,7 @@
         <ShowMarkdown :markdown="courseware.text" />
       </v-col>
     </v-row>
+
     <v-row>
       <v-col cols="12">
         <v-divider />
@@ -99,11 +107,14 @@
 <script>
 import ShowMarkdown from '@/components/vditor/show-markdown.vue'
 import DPlayer from '@/components/player/player.vue'
+import Voice from '@/components/player/voice.vue'
+
 export default {
   name: 'CoursewareInfo',
   components: {
     ShowMarkdown,
-    DPlayer
+    DPlayer,
+    Voice
   },
   props: {
     course: {
@@ -132,8 +143,9 @@ export default {
       childrenList: [],
       children: 0,
       // 对视频与文件描述组件进行重新加载
-      videoKey: 0,
-      textKey: 0,
+      videoKey: Math.random(),
+      textKey: Math.random(),
+      voiceKey: Math.random(),
       next: {},
       last: {}
     }
@@ -176,20 +188,28 @@ export default {
       }
     },
     selectFatcherChange() {
+      if (this.$refs.voicePlayer != null) {
+        this.$refs.voicePlayer.destroy()
+      }
       this.courseware = this.coursewareMap.Get(this.selectFather)
       this.father = this.courseware
       this.childrenList = this.courseware.children
       this.children = 0
       if (this.courseware.fileType === 1) {
         this.videoKey++
+      } else if (this.courseware.fileType === 4) {
+        this.voiceKey++
       }
       this.textKey++
-      // console.log(this.courseware)
     },
     selectChildrenChange() {
+      if (this.$refs.voicePlayer != null) {
+        this.$refs.voicePlayer.destroy()
+      }
       if (this.children == null) {
         this.videoKey++
         this.textKey++
+        this.voiceKey++
         this.courseware = this.father
         return
       }
@@ -198,6 +218,8 @@ export default {
           this.courseware = this.father.children[i]
           if (this.courseware.fileType === 1) {
             this.videoKey++
+          } else if (this.courseware.fileType === 4) {
+            this.voiceKey++
           }
           this.textKey++
           return

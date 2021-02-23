@@ -1,9 +1,9 @@
 <template>
   <v-main>
     <v-container fill-height>
-      <video id="v1" autoplay loop muted>
+      <!-- <video id="v1" autoplay loop muted>
         <source id="videoSource" src="/video/bg.mp4" type="video/mp4">
-      </video>
+      </video> -->
       <v-row justify="center" align="center">
         <v-col cols="12">
           <v-card

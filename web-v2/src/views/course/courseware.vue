@@ -30,6 +30,9 @@
               <v-icon v-if="item.fileType == 3">
                 mdi-file-powerpoint
               </v-icon>
+              <v-icon v-if="item.fileType == 4">
+                mdi-music
+              </v-icon>
               <v-icon v-if="item.fileType == 0 || item.fileType == null">
                 mdi-file
               </v-icon>

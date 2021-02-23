@@ -406,10 +406,13 @@ router.beforeEach((to, from, next) => {
       // 登录到期
     } else {
       store.commit('setUserInfo', null)
-      return next({
-        path: '/login',
-        query: { redirect: to.fullPath }
-      })
+      if (to.meta.requireAuth) {
+        return next({
+          path: '/login',
+          query: { redirect: to.fullPath }
+        })
+      }
+      return next()
     }
     // 未登录
   } else {
