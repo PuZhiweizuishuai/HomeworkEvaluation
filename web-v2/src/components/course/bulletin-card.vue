@@ -3,11 +3,13 @@
     <a :name="bulletin.title" />
     <v-card-title>{{ bulletin.title }}</v-card-title>
     <v-card-subtitle>发布时间：{{ TimeUtil.renderTime(bulletin.createTime) }} </v-card-subtitle>
-    <v-row justify="center">
-      <v-col cols="11">
-        <ShowMarkdown :markdown="bulletin.text" :anchor="0" />
-      </v-col>
-    </v-row>
+    <v-col>
+      <v-row justify="center">
+        <v-col cols="11">
+          <ShowMarkdown :markdown="bulletin.text" :anchor="0" />
+        </v-col>
+      </v-row>
+    </v-col>
   </v-card>
 </template>
 

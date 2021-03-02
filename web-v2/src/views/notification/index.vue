@@ -10,9 +10,11 @@
         </v-tabs>
       </v-col>
     </v-row>
-    <v-row>
-      <v-divider />
-    </v-row>
+    <v-col>
+      <v-row>
+        <v-divider />
+      </v-row>
+    </v-col>
     <v-row>
       <v-col>
         <v-btn color="primary" depressed @click="readAll">

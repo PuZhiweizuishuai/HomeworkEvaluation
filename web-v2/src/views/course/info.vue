@@ -302,6 +302,7 @@ function initOutline() {
     }
   })
 }
+
 /**
  * 课程详细介绍页面
  */

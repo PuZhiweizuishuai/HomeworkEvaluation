@@ -3,11 +3,22 @@
     <div id="commentTop" ref="commentTop" />
     <v-row justify="center">
       <v-col cols="11">
-        <v-textarea
+        <h3>评论</h3>
+      </v-col>
+    </v-row>
+    <v-row justify="center">
+      <v-col cols="11">
+        <!-- <v-textarea
           v-model="comment.content"
           :placeholder="commentPlaceholder"
           label="评论"
           auto-grow
+        /> -->
+        <SecondCommentVditor
+          :key="secondCommentKey"
+          ref="secondCommentView"
+          :placeholder="commentPlaceholder"
+          @vditor-input="getSecondCommentText"
         />
       </v-col>
     </v-row>
@@ -41,7 +52,7 @@
       <v-divider />
     </v-row>
     <v-row v-for="item in secondList" :key="item.id" justify="center">
-      <v-col cols="11" style="padding-top: 0px;padding-bottom: 0px;">
+      <v-col cols="11">
         <Card :comment="item" :type="type" @comment="getComment" />
       </v-col>
     </v-row>
@@ -80,11 +91,13 @@
 
 <script>
 import Card from '@/components/comment/second-card.vue'
+import SecondCommentVditor from '@/components/vditor/comment.vue'
 
 export default {
   name: 'SecondComment',
   components: {
-    Card
+    Card,
+    SecondCommentVditor
   },
   props: {
     father: {
@@ -114,7 +127,8 @@ export default {
       },
       commentPlaceholder: '',
       message: '',
-      showMessage: false
+      showMessage: false,
+      secondCommentKey: 0
     }
   },
   created() {
@@ -126,10 +140,9 @@ export default {
   },
   methods: {
     getComment(value) {
-      console.log('123456')
-
       this.$refs.commentTop.scrollIntoView()
       this.commentPlaceholder = '回复 @' + value.username + ': ' + value.content
+      this.secondCommentKey++
       this.comment.commentId = value.id
       this.comment.fatherId = value.fatherId
     },
@@ -185,6 +198,7 @@ export default {
             this.showMessage = true
             this.comment.verifyCode = ''
             this.comment.content = ''
+            this.$refs.secondCommentView.setTextValue('')
             this.getSecondList()
           } else {
           //
@@ -205,9 +219,11 @@ export default {
         this.httpPost(`/evaluation/comment/submit`, data, (json) => {
           if (json.status === 200) {
             this.message = '评论成功！'
+            this.$refs.secondCommentView.setTextValue('')
             this.showMessage = true
             this.comment.verifyCode = ''
             this.comment.content = ''
+
             this.getSecondList()
           } else {
           //
@@ -220,6 +236,9 @@ export default {
     pageChange(value) {
       this.page = value
       this.getSecondList()
+    },
+    getSecondCommentText(value) {
+      this.comment.content = value
     }
   }
 }

@@ -21,90 +21,109 @@
     </template>
     <v-card :heigh="500" :max-heigh="600" :max-width="400">
       <!-- 头 -->
-      <v-row>
-        <v-col>
-          <v-tabs>
-            <v-tab @click="setType(0)">
-              <v-badge
-                v-if="total != 0"
-                color="green"
-                :content="total"
-              >
-                课程通知
-              </v-badge>
-              <span v-if="total == 0">课程通知</span>
-            </v-tab>
-            <v-tab @click="setType(1)">
-              <v-badge
-                v-if="total2 != 0"
-                color="green"
-                :content="total2"
-              >
-                论坛通知
-              </v-badge>
-              <span v-if="total2 == 0">论坛通知</span>
-            </v-tab>
-            <v-tab @click="setType(2)">
-              <v-badge
-                v-if="total3 != 0"
-                color="green"
-                :content="total3"
-              >
-                私信
-              </v-badge>
-              <span v-if="total3 == 0">私信</span>
-            </v-tab>
-            <v-tab @click="setType(3)">
-              <v-badge
-                v-if="total4 != 0"
-                color="green"
-                :content="total4"
-              >
-                系统通知
-              </v-badge>
-              <span v-if="total4 == 0">系统通知</span>
-            </v-tab>
-          </v-tabs>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-divider />
-      </v-row>
-      <v-row justify="center">
-        <v-col cols="11">
-          <v-row justify="end">
-            <v-btn text color="primary" @click="readAll">
-              <v-icon>mdi-notification-clear-all</v-icon>
-              一键已读
-            </v-btn>
-          </v-row>
-        </v-col>
-      </v-row>
-      <v-card outlined height="500">
-        <v-row v-for="item in notification" :key="item.id" justify="center">
-          <v-col style="padding-top: 0px;padding-bottom: 0px;">
-            <NotificationCard :notificatio="item" @read="readMessage" />
+      <v-col>
+        <v-row>
+          <v-col>
+            <v-tabs>
+              <v-tab @click="setType(0)">
+                <v-badge
+                  v-if="total != 0"
+                  color="green"
+                  :content="total"
+                >
+                  课程通知
+                </v-badge>
+                <span v-if="total == 0">课程通知</span>
+              </v-tab>
+              <v-tab @click="setType(1)">
+                <v-badge
+                  v-if="total2 != 0"
+                  color="green"
+                  :content="total2"
+                >
+                  论坛通知
+                </v-badge>
+                <span v-if="total2 == 0">论坛通知</span>
+              </v-tab>
+              <v-tab @click="setType(2)">
+                <v-badge
+                  v-if="total3 != 0"
+                  color="green"
+                  :content="total3"
+                >
+                  私信
+                </v-badge>
+                <span v-if="total3 == 0">私信</span>
+              </v-tab>
+              <v-tab @click="setType(3)">
+                <v-badge
+                  v-if="total4 != 0"
+                  color="green"
+                  :content="total4"
+                >
+                  系统通知
+                </v-badge>
+                <span v-if="total4 == 0">系统通知</span>
+              </v-tab>
+            </v-tabs>
           </v-col>
         </v-row>
+      </v-col>
 
-        <v-row v-if="notification.length === 0">
-          <v-col cols="11">
-            <v-row justify="center">
-              暂时没有新通知
-            </v-row>
-          </v-col>
+      <!-- 上下分割线 -->
+      <v-col>
+        <v-row>
+          <v-divider />
         </v-row>
-        <!-- 底部按钮 -->
+      </v-col>
 
+      <!-- 一件已读 -->
+      <v-col>
         <v-row justify="center">
           <v-col cols="11">
             <v-row justify="end">
-              <v-btn text color="success" @click="goTotNotification">
-                更多通知
+              <v-btn text color="primary" @click="readAll">
+                <v-icon>mdi-notification-clear-all</v-icon>
+                一键已读
               </v-btn>
             </v-row>
           </v-col>
         </v-row>
+      </v-col>
+
+      <!-- 显示通知 -->
+
+      <v-card outlined height="500">
+        <v-col>
+          <v-row v-for="item in notification" :key="item.id" justify="center">
+            <v-col style="padding-top: 0px;padding-bottom: 0px;">
+              <NotificationCard :notificatio="item" @read="readMessage" />
+            </v-col>
+          </v-row>
+        </v-col>
+        <!--  -->
+        <v-col>
+          <v-row v-if="notification.length === 0">
+            <v-col cols="11">
+              <v-row justify="center">
+                暂时没有新通知
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-col>
+        <!-- 底部按钮 -->
+
+        <v-col>
+          <v-row justify="center">
+            <v-col cols="11">
+              <v-row justify="end">
+                <v-btn text color="success" @click="goTotNotification">
+                  更多通知
+                </v-btn>
+              </v-row>
+            </v-col>
+          </v-row>
+        </v-col>
       </v-card>
     </v-card>
   </v-menu>

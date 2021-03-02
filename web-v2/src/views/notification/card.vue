@@ -23,21 +23,23 @@
       {{ notificatio.commentContent }}
 
     </v-card-text>
-    <v-row justify="end">
-      <v-card-actions>
-        <v-btn v-if="NotificatioUtil.isComment(notificatio)" depressed small color="primary" @click="getComment">
-          查看
-        </v-btn>
-        <v-btn
-          v-if="notificatio.status == 0"
-          color="primary"
-          text
-          @click="readMessage"
-        >
-          标为已读
-        </v-btn>
-      </v-card-actions>
-    </v-row>
+    <v-col>
+      <v-row justify="end">
+        <v-card-actions>
+          <v-btn v-if="NotificatioUtil.isComment(notificatio)" depressed small color="primary" @click="getComment">
+            查看
+          </v-btn>
+          <v-btn
+            v-if="notificatio.status == 0"
+            color="primary"
+            text
+            @click="readMessage"
+          >
+            标为已读
+          </v-btn>
+        </v-card-actions>
+      </v-row>
+    </v-col>
     <v-dialog
       v-model="dialog"
       max-width="1000"

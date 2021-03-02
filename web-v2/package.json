@@ -19,7 +19,7 @@
     "less": "^3.13.1",
     "less-loader": "^7.3.0",
     "v-charts": "^1.19.0",
-    "vditor": "^3.8.1",
+    "vditor": "^3.5.4",
     "vue": "^2.6.11",
     "vue-cookies": "^1.7.4",
     "vue-cropper": "^0.5.6",

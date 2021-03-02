@@ -6,13 +6,15 @@
       app
     >
       <router-link :to="`/course/learn/${id}`">
-        <v-row justify="center" align="center">
-          <v-col cols="11" style="text-align: center">
+        <v-col>
+          <v-row justify="center" align="center">
+            <v-col cols="11" style="text-align: center">
 
-            <v-img :aspect-ratio="16/9" :src="courseInfo.curriculumImageUrl" />
+              <v-img :aspect-ratio="16/9" :src="courseInfo.curriculumImageUrl" />
 
-          </v-col>
-        </v-row>
+            </v-col>
+          </v-row>
+        </v-col>
       </router-link>
       <v-list>
         <router-link v-for="item in items" :key="item.text" :to="item.link">
