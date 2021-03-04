@@ -2,6 +2,7 @@ package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.buguagaoshu.homework.common.domain.CustomPage;
 import com.buguagaoshu.homework.common.enums.ArticleTypeEnum;
+import com.buguagaoshu.homework.common.enums.AtUserTypeEnum;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.config.WebConstant;
@@ -9,9 +10,7 @@ import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
 import com.buguagaoshu.homework.evaluation.model.ArticleModel;
-import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
-import com.buguagaoshu.homework.evaluation.service.UserService;
-import com.buguagaoshu.homework.evaluation.service.VerifyCodeService;
+import com.buguagaoshu.homework.evaluation.service.*;
 import com.buguagaoshu.homework.evaluation.utils.IpUtil;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import com.buguagaoshu.homework.evaluation.vo.ArticleVo;
@@ -38,9 +37,8 @@ import com.buguagaoshu.homework.common.utils.Query;
 
 import com.buguagaoshu.homework.evaluation.dao.ArticleDao;
 import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
-import com.buguagaoshu.homework.evaluation.service.ArticleService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -57,11 +55,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
 
     private final VerifyCodeService verifyCodeService;
 
+    private final AtUserService atUserService;
+
     @Autowired
-    public ArticleServiceImpl(StudentsCurriculumService studentsCurriculumService, UserService userService, VerifyCodeService verifyCodeService) {
+    public ArticleServiceImpl(StudentsCurriculumService studentsCurriculumService, UserService userService, VerifyCodeService verifyCodeService, AtUserService atUserService) {
         this.studentsCurriculumService = studentsCurriculumService;
         this.userService = userService;
         this.verifyCodeService = verifyCodeService;
+        this.atUserService = atUserService;
     }
 
     @Override
@@ -75,6 +76,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     }
 
     @Override
+    @Transactional(rollbackFor = {})
     public ArticleEntity saveArticle(ArticleVo articleVo, HttpServletRequest request) {
         HttpSession session = request.getSession();
         String verifyCodeKey = (String) session.getAttribute(WebConstant.VERIFY_CODE_KEY);
@@ -110,6 +112,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         //articleEntity.setTitle(HtmlUtils.htmlEscape(articleEntity.getTitle()));
         //articleEntity.setContent(HtmlUtils.htmlEscape(articleEntity.getContent()));
 
+
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             articleEntity.setTag(objectMapper.writeValueAsString(articleVo.getTag()));
@@ -117,6 +120,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             log.error("用户 {} 发帖， 标签出现序列化异常！{}", user.getId(), e.getMessage());
         }
         this.save(articleEntity);
+
+        String atUser = atUserService.atUser(articleVo.getAtUsers(), AtUserTypeEnum.ARTICLE_AT, articleEntity, null, user.getId(), user.getSubject());
+        if (!"".equals(atUser)) {
+            articleEntity.setAtUser(atUser);
+            this.updateById(articleEntity);
+        }
         return articleEntity;
     }
 

@@ -12,6 +12,8 @@ target/
 
 /uploads/*
 /temp_code/*
+/web-v2/public/vditor
+
 ### IntelliJ IDEA ###
 .idea
 *.iws

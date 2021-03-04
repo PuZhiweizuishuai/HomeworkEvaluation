@@ -43,6 +43,10 @@ export default {
           speech: {
             enable: this.speech
           },
+          cdn: '/vditor',
+          theme: {
+            path: '/vditor/dist/css/content-theme'
+          },
           emojiPath: '/emoji',
           anchor: this.anchorNum
         })

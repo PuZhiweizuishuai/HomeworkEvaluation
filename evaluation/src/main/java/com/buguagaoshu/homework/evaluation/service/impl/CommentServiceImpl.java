@@ -1,10 +1,7 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.buguagaoshu.homework.common.domain.CustomPage;
-import com.buguagaoshu.homework.common.enums.ArticleTypeEnum;
-import com.buguagaoshu.homework.common.enums.CommentTypeEnum;
-import com.buguagaoshu.homework.common.enums.NotificationTypeEnum;
-import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
+import com.buguagaoshu.homework.common.enums.*;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
@@ -59,13 +56,16 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
 
     private final NotificationService notificationService;
 
+    private final AtUserService atUserService;
+
     @Autowired
-    public CommentServiceImpl(ArticleService articleService, StudentsCurriculumService studentsCurriculumService, UserService userService, VerifyCodeService verifyCodeService, NotificationService notificationService) {
+    public CommentServiceImpl(ArticleService articleService, StudentsCurriculumService studentsCurriculumService, UserService userService, VerifyCodeService verifyCodeService, NotificationService notificationService, AtUserService atUserService) {
         this.articleService = articleService;
         this.studentsCurriculumService = studentsCurriculumService;
         this.userService = userService;
         this.verifyCodeService = verifyCodeService;
         this.notificationService = notificationService;
+        this.atUserService = atUserService;
     }
 
     @Override
@@ -133,10 +133,20 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
                 commentEntity.setType(CommentTypeEnum.ORDINARY_ONE_LEVEL_COMMENT.getCode());
                 commentEntity.setCommentId(null);
             }
+
+
+
             commentEntity.setAuthorId(user.getId());
             commentEntity.setIp(IpUtil.getIpAddr(request));
             commentEntity.setUa(IpUtil.getUa(request));
             this.save(commentEntity);
+
+            // @用户处理
+            String atStr = atUserService.atUser(commentVo.getAtUsers(), AtUserTypeEnum.COMMENT_AT, article, commentEntity, user.getId(), user.getSubject());
+            if (!"".equals(atStr)) {
+                commentEntity.setAtUser(atStr);
+                this.updateById(commentEntity);
+            }
 
             BeanUtils.copyProperties(commentEntity, commentModel);
             UserEntity userEntity = userService.getById(user.getId());

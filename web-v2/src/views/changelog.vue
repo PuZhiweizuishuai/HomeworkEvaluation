@@ -39,6 +39,10 @@ export default {
           speech: {
             enable: false
           },
+          cdn: '/vditor',
+          theme: {
+            path: '/vditor/dist/css/content-theme'
+          },
           emojiPath: '/emoji',
           anchor: true
         })

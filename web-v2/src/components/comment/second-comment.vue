@@ -18,6 +18,7 @@
           :key="secondCommentKey"
           ref="secondCommentView"
           :placeholder="commentPlaceholder"
+          :uploadurl="uploadurl"
           @vditor-input="getSecondCommentText"
         />
       </v-col>
@@ -128,7 +129,8 @@ export default {
       commentPlaceholder: '',
       message: '',
       showMessage: false,
-      secondCommentKey: 0
+      secondCommentKey: 0,
+      uploadurl: this.SERVER_API_URL + '/upload/file'
     }
   },
   created() {

@@ -21,6 +21,7 @@
         <span v-if="comment.fatherId != comment.commentId">
           回复<router-link :to="`/user/${comment.replyUserId}`" target="_blank">@ {{ comment.replyUserName }} :</router-link>
         </span>
+        <!-- <span :id="'secondCommentView' + comment.id" /> -->
         {{ comment.content }}
       </v-col>
     </v-row>
@@ -70,7 +71,8 @@
 
 <script>
 import TimeUtil from '@/utils/time-util.vue'
-
+import Vditor from 'vditor'
+import 'vditor/src/assets/scss/index.scss'
 export default {
   props: {
     comment: {
@@ -80,15 +82,32 @@ export default {
   },
   data() {
     return {
-      TimeUtil
+      TimeUtil,
+      content: ''
     }
   },
   created() {
+    // Vditor.md2html(this.comment.content).then((data) => {
+    //   this.content = data
+    //   this.showComment()
+    // })
+  },
+  mounted() {
 
   },
   methods: {
     setComment() {
       this.$emit('comment', this.comment)
+    },
+    showComment() {
+      const previewElement = document.querySelector('#secondCommentView' + this.comment.id)
+
+      previewElement.innerHTML = this.content
+      previewElement.addEventListener('click', (event) => {
+        if (event.target.tagName === 'IMG') {
+          Vditor.previewImage(event.target)
+        }
+      })
     }
   }
 }

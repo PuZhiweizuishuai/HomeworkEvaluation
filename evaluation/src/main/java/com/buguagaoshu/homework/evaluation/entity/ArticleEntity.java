@@ -72,6 +72,11 @@ public class ArticleEntity {
     private String content;
 
     /**
+     * '@' 用户
+     * */
+    private String atUser;
+
+    /**
      * 帖子访问路径
      */
     private String permaLink;

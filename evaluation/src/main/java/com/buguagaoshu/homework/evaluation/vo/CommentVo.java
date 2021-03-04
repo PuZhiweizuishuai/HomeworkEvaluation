@@ -1,10 +1,12 @@
 package com.buguagaoshu.homework.evaluation.vo;
 
+import com.buguagaoshu.homework.common.domain.AtUser;
 import com.buguagaoshu.homework.common.valid.ListValue;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
@@ -42,6 +44,11 @@ public class CommentVo {
      * 回复的帖子ID
      */
     private Long commentId;
+
+    /**
+     * 用户 @对象
+     * */
+    private List<AtUser> atUsers;
 
     private String verifyCode;
 }

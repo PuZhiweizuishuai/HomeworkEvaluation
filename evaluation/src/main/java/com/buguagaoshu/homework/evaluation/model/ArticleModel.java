@@ -131,6 +131,8 @@ public class ArticleModel {
      */
     private Long articlestick;
 
+    private String atUser;
+
     /**
      * 0：公开，1：匿名
      */

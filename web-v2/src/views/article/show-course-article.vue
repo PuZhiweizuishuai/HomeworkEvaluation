@@ -33,7 +33,7 @@
       <v-col cols="2">
         <v-btn v-if="this.$store.state.userInfo.userId == article.authorId || role.role === 'ROLE_TEACHER'" outlined small color="error" @click="deleteDialog = true">删除</v-btn>
         <span v-html="`&nbsp;&nbsp;`" />
-        <v-btn v-if="role.role === 'ROLE_TEACHER'" outlined small @click="perfect">加精</v-btn>
+        <v-btn v-if="role.role === 'ROLE_TEACHER'" outlined small @click="perfect">{{ addPerfect }}</v-btn>
         <span v-html="`&nbsp;&nbsp;`" />
         <v-btn outlined small>举报</v-btn>
       </v-col>
@@ -279,7 +279,8 @@ export default {
       },
       message: '',
       showMessage: false,
-      deleteDialog: false
+      deleteDialog: false,
+      addPerfect: '加精'
     }
   },
   created() {
@@ -290,6 +291,11 @@ export default {
       this.httpGet(`/article/info/course/${this.$route.params.articleId}`, (json) => {
         if (json.status === 200) {
           this.article = json.data
+          if (this.article.perfect === 1) {
+            this.addPerfect = '取消加精'
+          } else {
+            this.addPerfect = '加精'
+          }
           this.initRender()
         } else {
           this.$router.push(`/course/learn/${this.$route.params.id}/bbs`)
@@ -306,6 +312,10 @@ export default {
         this.article.content, {
           speech: {
             enable: false
+          },
+          cdn: '/vditor',
+          theme: {
+            path: '/vditor/dist/css/content-theme'
           },
           emojiPath: '/emoji',
           anchor: 1,
@@ -339,9 +349,11 @@ export default {
         if (json.status === 200) {
           if (this.article.perfect === 1) {
             this.message = '取消加精成功！'
+            this.addPerfect = '加精'
             this.article.perfect = 0
           } else {
             this.message = '已经成功设置为精品贴'
+            this.addPerfect = '取消加精'
             this.article.perfect = 1
           }
           this.showMessage = true

@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.evaluation.vo;
 
+import com.buguagaoshu.homework.common.domain.AtUser;
 import com.buguagaoshu.homework.common.valid.ListValue;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -38,6 +39,9 @@ public class ArticleVo {
 
     @NotNull(message = "验证码不能为空!")
     private String verifyCode;
+
+
+    private List<AtUser> atUsers;
 
     /**
      * 课程评分

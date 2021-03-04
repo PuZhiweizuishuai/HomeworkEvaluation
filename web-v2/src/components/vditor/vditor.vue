@@ -124,6 +124,10 @@ export default {
   },
   mounted() {
     this.contentEditor = new Vditor(this.idName, {
+      cdn: '/vditor',
+      theme: {
+        path: '/vditor/dist/css/content-theme'
+      },
       toolbarConfig: {
         pin: false,
         hide: this.hideBar

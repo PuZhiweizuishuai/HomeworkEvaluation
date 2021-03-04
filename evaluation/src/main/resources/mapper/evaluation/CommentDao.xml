@@ -11,6 +11,7 @@
         <result property="authorId" column="author_id"/>
         <result property="type" column="type"/>
         <result property="commentId" column="comment_id"/>
+        <result property="atUser" column="at_user" />
         <result property="status" column="status"/>
         <result property="ip" column="ip"/>
         <result property="ua" column="ua"/>

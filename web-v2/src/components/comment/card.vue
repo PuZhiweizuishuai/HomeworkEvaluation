@@ -57,7 +57,7 @@
         </template>
         <span>评论</span>
       </v-tooltip>
-      {{ comment.commentCount }}
+      <span v-if="showcomment">{{ comment.commentCount }} </span>
 
       <span v-html="`&nbsp;&nbsp;`" />
       <span v-html="`&nbsp;&nbsp;`" />

@@ -43,7 +43,7 @@ export default {
         danmaku: {
           id: this.videoData.id,
           api: '/api/danmaku/',
-          token: 'mjmnb',
+          token: 'token',
           maximum: 1000,
           user: () => {
             if (this.$store.state.userInfo.id == null) {

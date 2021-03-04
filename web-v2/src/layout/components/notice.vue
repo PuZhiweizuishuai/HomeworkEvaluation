@@ -1,5 +1,5 @@
 <template>
-  <v-menu top offset-y :close-on-content-click="false">
+  <v-menu top offset-y :close-on-content-click="false" :max-height="600" style="background-color: white">
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         dark
@@ -19,7 +19,7 @@
         <v-icon v-else>mdi-bell</v-icon>
       </v-btn>
     </template>
-    <v-card :heigh="500" :max-heigh="600" :max-width="400">
+    <v-card :max-width="400">
       <!-- 头 -->
       <v-col>
         <v-row>
@@ -91,40 +91,49 @@
         </v-row>
       </v-col>
 
+      <!-- 上下分割线 -->
+      <v-col>
+        <v-row>
+          <v-divider />
+        </v-row>
+      </v-col>
+
       <!-- 显示通知 -->
 
-      <v-card outlined height="500">
-        <v-col>
-          <v-row v-for="item in notification" :key="item.id" justify="center">
-            <v-col style="padding-top: 0px;padding-bottom: 0px;">
-              <NotificationCard :notificatio="item" @read="readMessage" />
-            </v-col>
-          </v-row>
-        </v-col>
-        <!--  -->
-        <v-col>
-          <v-row v-if="notification.length === 0">
-            <v-col cols="11">
-              <v-row justify="center">
-                暂时没有新通知
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-col>
-        <!-- 底部按钮 -->
+      <!-- <v-card height="500" outlined> -->
 
-        <v-col>
-          <v-row justify="center">
-            <v-col cols="11">
-              <v-row justify="end">
-                <v-btn text color="success" @click="goTotNotification">
-                  更多通知
-                </v-btn>
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-card>
+      <v-col>
+        <v-row v-for="item in notification" :key="item.id" justify="center">
+          <v-col style="padding-top: 0px;padding-bottom: 0px;">
+            <NotificationCard :notificatio="item" @read="readMessage" />
+          </v-col>
+        </v-row>
+      </v-col>
+      <!--  -->
+      <v-col>
+        <v-row v-if="notification.length === 0">
+          <v-col cols="11">
+            <v-row justify="center">
+              暂时没有新通知
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-col>
+      <!-- 底部按钮 -->
+
+      <v-col>
+        <v-row justify="center">
+          <v-col cols="11">
+            <v-row justify="end">
+              <v-btn text color="success" @click="goTotNotification">
+                更多通知
+              </v-btn>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-col>
+      <!-- </v-card> -->
+
     </v-card>
   </v-menu>
 </template>

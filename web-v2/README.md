@@ -37,6 +37,34 @@ npm install
 npm run serve
 ```
 
+## 构建前必读
+
+因为本项目需要在局域网环境下进行访问，所以对于前端Markdown编辑器Vditor的CDN配置进行了修改，将其默认的CND地址更改为了本地地址。如果你没有局域网访问需求，可以将CDN配置删除，采用Vditor的默认CDN jsdelivr
+
+修改以下文件目录，将其中的
+
+```js
+          cdn: '/vditor',
+          theme: {
+            path: '/vditor/dist/css/content-theme'
+          },
+```
+
+删除即可。
+
+
+- src\components\vditor\comment.vue
+
+- src\components\vditor\show-markdown.vue
+
+- src\components\vditor\vditor.vue
+
+- src\views\course\info.vue
+
+- src\views\changelog.vue
+
+- src\views\article\show-course-article.vue
+
 
 
 ### Customize configuration

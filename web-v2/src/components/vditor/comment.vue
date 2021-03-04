@@ -100,7 +100,7 @@ export default {
         },
         toolbar: [
           'emoji',
-          'link',
+          'upload',
           'edit-mode'
         // {
         //   hotkey: '⇧⌘S',
@@ -114,8 +114,29 @@ export default {
         ],
         height: 200,
         hint: {
+          delay: 1000,
           emojiPath: '/emoji',
-          emoji: this.emojis
+          emoji: this.emojis,
+          extend: [
+            {
+              key: '@',
+              hint: (key) => {
+                console.log(key)
+                if ('vanessa'.indexOf(key.toLocaleLowerCase()) > -1) {
+                  return [
+                    {
+                      value: '@Vanessa',
+                      html: '<img src="https://avatars0.githubusercontent.com/u/970828?s=60&v=4"/> Vanessa'
+                    }]
+                }
+                return []
+              }
+            }
+          ]
+        },
+        cdn: '/vditor',
+        theme: {
+          path: '/vditor/dist/css/content-theme'
         },
         cache: {
           enable: false
@@ -123,14 +144,14 @@ export default {
         // minHeight: this.minHeight,
         placeholder: this.placeholder,
         upload: {
-          max: 0,
+          max: 20 * 1024 * 1024,
           withCredentials: true,
           headers: {
             'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')
           },
-          accept: 'image/*, .wav, .mp4, .zip, .rar, .7z, .docx, .dox, .ppt, .pptx, .xls, .xlsx, .pdf, .apk, .mp3, .txt',
+          accept: 'image/*',
           url: this.uploadurl,
-
+          multiple: false,
           filename(name) {
             return name.replace(/[^(a-zA-Z0-9\u4e00-\u9fa5\.)]/g, '')
               .replace(/[\?\\/:|<>\*\[\]\(\)\$%\{\}@~]/g, '')

@@ -29,6 +29,8 @@ public enum NotificationTypeEnum {
 
     HOMEWORK_HAVE_NEW_COMMENT(8, "作业有了新的评价！"),
 
+
+
     /**
      * 留下数字空间，方便之后通知类型扩展
      * */
@@ -39,6 +41,9 @@ public enum NotificationTypeEnum {
 
 
     BBS_NEW_FANS(102, "论坛收到新粉丝"),
+
+
+    AT_USER(103, "提到了你！"),
 
     /**
      * 收到其它人的私信消息

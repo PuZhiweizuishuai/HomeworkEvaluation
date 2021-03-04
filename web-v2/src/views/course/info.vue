@@ -431,6 +431,10 @@ export default {
           },
           emojiPath: '/emoji',
           anchor: 1,
+          cdn: '/vditor',
+          theme: {
+            path: '/vditor/dist/css/content-theme'
+          },
           after() {
             if (window.innerWidth <= 768) {
               return

@@ -93,7 +93,6 @@ export default {
   },
   methods: {
     getNotification() {
-      console.log('getNotification()')
       this.httpGet(`/notification/list?page=${this.page}&limit=${this.size}&type=${this.type}`, (json) => {
         if (json.status === 200) {
           this.notification = json.data.list

@@ -9,51 +9,61 @@
         {{ comment.articleEntity.title }}
       </router-link>
     </v-card-title>
-    <v-row justify="center">
-      <v-col cols="11">
-        <CommentCard
-          :comment="comment.commentModel"
-          :artice="comment.articleEntity"
-          :showcomment="false"
-        />
-      </v-col>
-    </v-row>
-    <v-row justify="center">
-      <v-col cols="11">
-        <h3> 回复评论: </h3>
-      </v-col>
-    </v-row>
-    <v-row justify="center">
-      <v-col cols="11">
-        <v-textarea
+    <v-card-text>
+      <v-row justify="center">
+        <v-col cols="11">
+          <CommentCard
+            :comment="comment.commentModel"
+            :artice="comment.articleEntity"
+            :showcomment="false"
+          />
+        </v-col>
+      </v-row>
+      <v-row justify="center">
+        <v-col cols="11">
+          <h3> 回复评论: </h3>
+        </v-col>
+      </v-row>
+
+      <v-row justify="center">
+        <v-col cols="11">
+          <!-- <v-textarea
           v-model="commentData.content"
           label="评论"
           placeholder="友善评论"
           solo
-        />
-      </v-col>
-    </v-row>
-    <v-row justify="center">
-      <v-col cols="3">
-        <img :src="verifyImageUrl" alt="验证码" title="点击刷新" style="cursor:pointer;" @click="getVerifyImage">
-      </v-col>
-      <v-col cols="3">
-        <v-text-field
-          v-model="commentData.verifyCode"
-          placeholder="验证码"
-          label="验证码"
-          :rules="[() => commentData.verifyCode != null || '验证码不能为空']"
-          clearable
-        />
-      </v-col>
-      <v-col cols="4">
-        <v-row justify="center">
-          <v-btn depressed color="success" @click="submit">
-            评论
-          </v-btn>
-        </v-row>
-      </v-col>
-    </v-row>
+        /> -->
+          <SecondCommentVditor
+            ref="secondCommentView"
+            :placeholder="commentPlaceholder"
+            :uploadurl="uploadurl"
+            @vditor-input="getSecondCommentText"
+          />
+        </v-col>
+      </v-row>
+
+      <v-row justify="center">
+        <v-col cols="3">
+          <img :src="verifyImageUrl" alt="验证码" title="点击刷新" style="cursor:pointer;" @click="getVerifyImage">
+        </v-col>
+        <v-col cols="3">
+          <v-text-field
+            v-model="commentData.verifyCode"
+            placeholder="验证码"
+            label="验证码"
+            :rules="[() => commentData.verifyCode != null || '验证码不能为空']"
+            clearable
+          />
+        </v-col>
+        <v-col cols="4">
+          <v-row justify="center">
+            <v-btn depressed color="success" @click="submit">
+              评论
+            </v-btn>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-card-text>
     <v-snackbar
       v-model="showMessage"
       :top="true"
@@ -77,10 +87,13 @@
 
 <script>
 import CommentCard from '@/components/comment/card.vue'
+import SecondCommentVditor from '@/components/vditor/comment.vue'
+
 export default {
   name: 'NotificationCommentCard',
   components: {
-    CommentCard
+    CommentCard,
+    SecondCommentVditor
   },
   props: {
     comment: {
@@ -90,6 +103,8 @@ export default {
   },
   data() {
     return {
+      commentPlaceholder: '',
+      uploadurl: this.SERVER_API_URL + '/upload/file',
       commentData: {
         articleId: this.comment.articleEntity.id,
         content: '',
@@ -105,6 +120,9 @@ export default {
   methods: {
     getVerifyImage() {
       this.verifyImageUrl = this.SERVER_API_URL + '/verifyImage?t=' + new Date().getTime()
+    },
+    getSecondCommentText(data) {
+      this.commentData.content = data
     },
     submit() {
       console.log(this.commentData)

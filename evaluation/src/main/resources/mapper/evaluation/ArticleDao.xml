@@ -34,6 +34,7 @@
         <result property="topImgUrl" column="top_img_url"/>
         <result property="authorName" column="author_name"/>
         <result property="courseRating" column="course_rating" />
+        <result property="atUser" column="at_user" />
     </resultMap>
 
     <update id="countAdd">

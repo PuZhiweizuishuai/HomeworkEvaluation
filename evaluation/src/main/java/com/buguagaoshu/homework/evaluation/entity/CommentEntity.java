@@ -39,6 +39,13 @@ public class CommentEntity {
 	private String authorId;
 
 	/**
+	 * '@'用户列表
+	 * 写入数据库为JSON
+	 * 接收 List<AtUser> 数据类型
+	 * */
+	private String atUser;
+
+	/**
 	 * 0 一级回复， 1 回复评论
 	 */
 	private Integer type;
