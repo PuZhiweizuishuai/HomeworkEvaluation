@@ -111,6 +111,7 @@ export default {
       { icon: 'mdi-file-document-edit', text: '测验与作业', link: `/course/learn/`, type: '/exam', teacher: false, show: true },
       { icon: 'mdi-comment', text: '作业互评', link: `/course/learn/`, type: '/evaluation', teacher: false, show: true },
       { icon: 'mdi-facebook-messenger', text: '讨论区', link: `/course/learn/`, type: '/bbs', teacher: false, show: true },
+      { icon: 'mdi-comment-question', text: '课程评价', link: `/course/learn/`, type: '/rating', teacher: false, show: true },
       { icon: 'mdi-cog', text: '课程管理', link: `/course/learn/`, type: '/setting', teacher: true, show: false }
     ],
     courseInfo: {},

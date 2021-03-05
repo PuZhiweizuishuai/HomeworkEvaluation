@@ -110,4 +110,7 @@ public class CurriculumEntity {
      * 初始为0分，不显示，显示咱没有人评分
      * */
     private Double score;
+
+
+    private Integer ratingUserNumber;
 }

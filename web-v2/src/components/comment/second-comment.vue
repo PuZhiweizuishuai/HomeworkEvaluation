@@ -52,6 +52,19 @@
     <v-row>
       <v-divider />
     </v-row>
+    <v-row>
+      <v-col cols="10" style="padding-bottom: 0px;">
+        <v-tabs>
+          <v-tab @click="setSort(0)">评论时间</v-tab>
+          <v-tab @click="setSort(1)">时间倒序</v-tab>
+          <v-tab>最多点赞</v-tab>
+          <v-tab @click="setSort(3)">最多评论</v-tab>
+        </v-tabs>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-divider />
+    </v-row>
     <v-row v-for="item in secondList" :key="item.id" justify="center">
       <v-col cols="11">
         <Card :comment="item" :type="type" @comment="getComment" />
@@ -117,6 +130,7 @@ export default {
       page: 1,
       size: 10,
       length: 1,
+      sort: 0,
       total: 0,
       comment: {
         content: '',
@@ -153,7 +167,7 @@ export default {
     },
     getSecondList() {
       if (this.type === 1) {
-        this.httpGet(`/comment/second/list/${this.father.id}?page=${this.page}&limit=${this.size}`, (json) => {
+        this.httpGet(`/comment/second/list/${this.father.id}?page=${this.page}&limit=${this.size}&sort=${this.sort}`, (json) => {
           if (json.status === 200) {
           //
             this.secondList = json.data.list
@@ -164,7 +178,7 @@ export default {
           }
         })
       } else if (this.type === 11) {
-        this.httpGet(`/evaluation/comment/second/${this.father.id}?page=${this.page}&limit=${this.size}`, (json) => {
+        this.httpGet(`/evaluation/comment/second/${this.father.id}?page=${this.page}&limit=${this.size}&sort=${this.sort}`, (json) => {
           if (json.status === 200) {
           //
             this.secondList = json.data.list
@@ -241,11 +255,15 @@ export default {
     },
     getSecondCommentText(value) {
       this.comment.content = value
+    },
+    setSort(sort) {
+      this.sort = sort
+      this.getSecondList()
     }
   }
 }
 </script>
 
-<style>
+<style >
 
 </style>

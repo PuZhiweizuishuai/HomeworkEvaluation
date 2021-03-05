@@ -6,6 +6,7 @@ import com.buguagaoshu.homework.common.enums.AtUserTypeEnum;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.config.WebConstant;
+import com.buguagaoshu.homework.evaluation.entity.CurriculumEntity;
 import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
@@ -57,12 +58,15 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
 
     private final AtUserService atUserService;
 
+    private final CurriculumService curriculumService;
+
     @Autowired
-    public ArticleServiceImpl(StudentsCurriculumService studentsCurriculumService, UserService userService, VerifyCodeService verifyCodeService, AtUserService atUserService) {
+    public ArticleServiceImpl(StudentsCurriculumService studentsCurriculumService, UserService userService, VerifyCodeService verifyCodeService, AtUserService atUserService, CurriculumService curriculumService) {
         this.studentsCurriculumService = studentsCurriculumService;
         this.userService = userService;
         this.verifyCodeService = verifyCodeService;
         this.atUserService = atUserService;
+        this.curriculumService = curriculumService;
     }
 
     @Override
@@ -94,12 +98,26 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             }
             // 检查评分
             if (articleVo.getType() == ArticleTypeEnum.COURSE_RATING.getCode()) {
+                QueryWrapper<ArticleEntity> wrapper = new QueryWrapper<>();
+                wrapper.eq("course_id", articleVo.getCourseId());
+                wrapper.eq("type", ArticleTypeEnum.COURSE_RATING.getCode());
+                wrapper.eq("author_id", user.getId());
+                wrapper.ne("status", ArticleTypeEnum.DELETE.getCode());
+                ArticleEntity courseRating = this.getOne(wrapper);
+                if (courseRating != null) {
+                    throw new UserDataFormatException("你已经评价过这门课程了！");
+                }
                 if (articleVo.getCourseRating() == null) {
                     throw new UserDataFormatException("评分有误！");
                 }
-                if (articleVo.getCourseRating() > 10.0) {
+                if (articleVo.getCourseRating() > 5.0  || articleVo.getCourseRating() < 0.0) {
                     throw new UserDataFormatException("评分有误！");
                 }
+                // 放缓存
+                CurriculumEntity curriculum = curriculumService.getById(articleVo.getCourseId());
+                curriculum.setScore(articleVo.getCourseRating() + curriculum.getScore());
+                curriculum.setRatingUserNumber(curriculum.getRatingUserNumber() + 1);
+                curriculumService.updateById(curriculum);
             }
         }
 
@@ -115,7 +133,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            articleEntity.setTag(objectMapper.writeValueAsString(articleVo.getTag()));
+            if (articleVo.getTag() != null && articleEntity.getTag().length() != 0) {
+                articleEntity.setTag(objectMapper.writeValueAsString(articleVo.getTag()));
+            } else {
+                articleEntity.setTag("[]");
+            }
         } catch (JsonProcessingException e) {
             log.error("用户 {} 发帖， 标签出现序列化异常！{}", user.getId(), e.getMessage());
         }
@@ -217,6 +239,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                     } catch (Exception ignored) {
                     }
                     articleEntity.setViewCount(articleEntity.getViewCount()+1);
+                    // TODO Redis 缓存
                     this.baseMapper.countAdd("view_count", articleEntity.getId(), 1);
                     return articleModel;
                 }
@@ -286,5 +309,32 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             }
         }
         return false;
+    }
+
+    @Override
+    public PageUtils courseRating(Long courseId, Map<String, Object> params) {
+        QueryWrapper<ArticleEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("course_id", courseId);
+        wrapper.ne("status", ArticleTypeEnum.DELETE.getCode());
+        wrapper.eq("type", ArticleTypeEnum.COURSE_RATING.getCode());
+        String sort = (String) params.get("sort");
+        if (!StringUtils.isEmpty(sort)) {
+            // TODO 细节优化
+            switch (sort) {
+                case "0":
+                    wrapper.orderByDesc("like_count");
+                    break;
+                case "1":
+                    wrapper.orderByDesc("update_time");
+                    break;
+                default:
+                    wrapper.orderByDesc("create_time");
+            }
+        }
+        IPage<ArticleEntity> page = this.page(
+                new Query<ArticleEntity>().getPage(params),
+                wrapper
+        );
+        return new PageUtils(page);
     }
 }

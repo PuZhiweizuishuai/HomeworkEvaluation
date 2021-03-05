@@ -119,4 +119,6 @@ public class CurriculumInfo {
      * 本课程的其他老师
      * */
     private List<SimpleTeacherInfo> otherTeacher;
+
+    private Integer ratingUserNumber;
 }

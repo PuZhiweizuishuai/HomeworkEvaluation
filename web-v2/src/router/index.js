@@ -209,6 +209,15 @@ const routes = [
           requireAuth: true
         }
       },
+      // 学生评价区
+      {
+        path: '/course/learn/:id/rating',
+        name: 'Rating',
+        component: () => import('@/views/course/course-comment.vue'),
+        meta: {
+          requireAuth: true
+        }
+      },
       // 新建主题帖
       {
         path: '/course/learn/:id/bbs/article',

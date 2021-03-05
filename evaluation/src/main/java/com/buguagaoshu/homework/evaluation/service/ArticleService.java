@@ -70,5 +70,12 @@ public interface ArticleService extends IService<ArticleEntity> {
      * 如果不是，那么会变成加精贴
      * */
     boolean perfect(DeleteVo deleteVo, HttpServletRequest request);
+
+
+    /**
+     * 返回课程评价
+     *
+     * */
+    PageUtils courseRating(Long courseId, Map<String, Object> params);
 }
 

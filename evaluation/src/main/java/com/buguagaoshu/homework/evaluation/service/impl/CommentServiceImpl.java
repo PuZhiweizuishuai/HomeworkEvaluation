@@ -297,6 +297,14 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
         wrapper.eq("father_id", commentId);
         wrapper.eq("status", 0);
         wrapper.eq("type", type.getCode());
+        String sort = (String) params.get("sort");
+        if (!StringUtils.isEmpty(sort)) {
+            if ("1".equals(sort)) {
+                wrapper.orderByDesc("create_time");
+            } else if ("3".equals(sort)) {
+                wrapper.orderByDesc("comment_count");
+            }
+        }
         IPage<CommentEntity> page = this.page(
                 new Query<CommentEntity>().getPage(params),
                 wrapper

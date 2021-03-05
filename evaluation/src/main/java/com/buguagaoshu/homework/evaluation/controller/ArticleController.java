@@ -91,4 +91,14 @@ public class ArticleController {
         }
         return ResponseDetails.ok(ReturnCodeEnum.NO_ROLE_OR_NO_FOUND);
     }
+
+
+    /**
+     * 获取课程评价
+     * */
+    @GetMapping("/article/course/rating/{courseId}")
+    public ResponseDetails courseRating(@PathVariable("courseId") Long courseId,
+                                        @RequestParam Map<String, Object> params) {
+        return ResponseDetails.ok().put("data", articleService.courseRating(courseId, params));
+    }
 }

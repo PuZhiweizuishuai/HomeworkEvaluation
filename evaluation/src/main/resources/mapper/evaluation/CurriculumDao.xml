@@ -25,6 +25,7 @@
         <result property="courseTag" column="course_tag" />
         <result property="score" column="score"/>
         <result property="fatherCourseTag" column="father_course_tag"/>
+        <result property="ratingUserNumber" column="rating_user_number"/>
     </resultMap>
     <update id="addCount">
         update curriculum set ${col} = ${col} + #{count} where id = #{id}

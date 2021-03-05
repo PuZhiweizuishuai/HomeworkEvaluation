@@ -53,13 +53,14 @@
             评分：
 
             <v-rating
-              v-model="courseInfo.score"
+              v-model="courseScore"
               color="orange"
               half-increments
 
               :readonly="true"
             />
             <span v-if="courseInfo.score == 0">暂无评分</span>
+            <span v-else>共 {{ courseInfo.ratingUserNumber }} 人评价</span>
           </v-col>
         </v-row>
         <v-row>
@@ -334,7 +335,8 @@ export default {
       showMessage: false,
       verifyImageUrl: this.SERVER_API_URL + '/verifyImage',
       closInfoLeft: 9,
-      colsInfoRight: 3
+      colsInfoRight: 3,
+      courseScore: 0
     }
   },
   created() {
@@ -352,6 +354,7 @@ export default {
         if (json.status === 200) {
           this.courseInfo = json.data
           document.title = json.data.curriculumName
+          this.courseScore = json.data.score / json.data.ratingUserNumber
           this.initRender()
         } else {
           this.$router.push('/')

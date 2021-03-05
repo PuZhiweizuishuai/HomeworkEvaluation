@@ -18,11 +18,12 @@
     </v-row>
     <v-row justify="center">
       <v-col cols="12">
-        <span v-if="comment.fatherId != comment.commentId">
+        <span v-if="comment.fatherId != comment.commentId" style="float: left">
           回复<router-link :to="`/user/${comment.replyUserId}`" target="_blank">@ {{ comment.replyUserName }} :</router-link>
         </span>
         <!-- <span :id="'secondCommentView' + comment.id" /> -->
-        {{ comment.content }}
+        <!-- {{ comment.content }} -->
+        <ShowMarkdown :markdown="comment.content" :anchor="0" />
       </v-col>
     </v-row>
     <v-row justify="end">
@@ -71,9 +72,11 @@
 
 <script>
 import TimeUtil from '@/utils/time-util.vue'
-import Vditor from 'vditor'
-import 'vditor/src/assets/scss/index.scss'
+import ShowMarkdown from '@/components/vditor/show-markdown.vue'
 export default {
+  components: {
+    ShowMarkdown
+  },
   props: {
     comment: {
       type: Object,
@@ -98,21 +101,11 @@ export default {
   methods: {
     setComment() {
       this.$emit('comment', this.comment)
-    },
-    showComment() {
-      const previewElement = document.querySelector('#secondCommentView' + this.comment.id)
-
-      previewElement.innerHTML = this.content
-      previewElement.addEventListener('click', (event) => {
-        if (event.target.tagName === 'IMG') {
-          Vditor.previewImage(event.target)
-        }
-      })
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>

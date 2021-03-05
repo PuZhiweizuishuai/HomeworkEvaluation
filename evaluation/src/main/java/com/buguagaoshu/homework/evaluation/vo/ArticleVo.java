@@ -29,7 +29,7 @@ public class ArticleVo {
     private String content;
 
 
-    @ListValue(value = {0, 1, 2, 3}, message = "帖子类型取值不对！")
+    @ListValue(value = {0, 1, 2, 3, 4}, message = "帖子类型取值不对！")
     private Integer type;
 
 
