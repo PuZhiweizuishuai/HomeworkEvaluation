@@ -39,8 +39,10 @@
     <v-row justify="center">
       <v-col cols="10">
         <Vditor
+          v-if="showEditVditor"
           :placeholder="'写下你对本课程理性的评价，帮助老师更好的改进课程，让其它学生更了解这么课程'"
           :uploadurl="uploadurl"
+          :markdown="comment.content"
           :height="400"
           @vditor-input="setVditorInput"
         />
@@ -68,9 +70,11 @@
         color="primary"
         @click="submit"
       >
-        提交
+        {{ submitName }}
       </v-btn>
     </v-row>
+
+    <v-col />
     <v-snackbar
       v-model="showMessage"
       :top="true"
@@ -111,17 +115,42 @@ export default {
         verifyCode: ''
       },
       showMessage: false,
-      message: ''
+      message: '',
+      submitName: '提交',
+      submitType: 0,
+      showEditVditor: false
     }
   },
+  created() {
+    this.getComment()
+  },
   methods: {
+    getComment() {
+      this.httpGet(`/article/course/comment/${this.comment.courseId}`, (json) => {
+        if (json.status === 200 && json.data !== null) {
+          //
+          // this.comment = json.data
+          this.comment.content = json.data.content
+          this.comment.title = json.data.title
+          this.comment.courseRating = json.data.courseRating
+          this.type = 4
+          this.comment.verifyCode = ''
+          this.submitName = '修改'
+          this.submitType = 1
+        } else {
+          this.submitName = '提交'
+          this.submitType = 0
+        }
+        this.showEditVditor = true
+      })
+    },
     getVerifyImage() {
       this.verifyImageUrl = this.SERVER_API_URL + '/verifyImage?t=' + new Date().getTime()
     },
     setVditorInput(value) {
       this.comment.content = value
     },
-    submit() {
+    checkData() {
       if (this.comment.title === '' || this.comment.title === null) {
         this.message = '标题不能为空！'
         this.showMessage = true
@@ -143,11 +172,19 @@ export default {
         this.showMessage = true
         return
       }
-      this.httpPost('/article/save', this.comment, (json) => {
+    },
+    submit() {
+      this.checkData()
+      let url = '/article/save'
+      if (this.submitType === 0) {
+        url = '/article/save'
+      } else {
+        url = '/article/course/comment/update'
+      }
+      this.httpPost(url, this.comment, (json) => {
         if (json.status === 200) {
           this.message = '评价成功!'
           this.showMessage = true
-          console.log(json)
         } else {
           this.message = json.message
           this.showMessage = true

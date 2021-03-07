@@ -100,5 +100,8 @@ public interface CurriculumService extends IService<CurriculumEntity> {
 
 
     void addCount(String col, Long id, Integer count);
+
+
+    void addCount(String col, Long id, Double count);
 }
 

@@ -6,6 +6,7 @@ import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
 import com.buguagaoshu.homework.evaluation.model.ArticleModel;
 import com.buguagaoshu.homework.evaluation.vo.ArticleVo;
 import com.buguagaoshu.homework.evaluation.vo.DeleteVo;
+import io.jsonwebtoken.Claims;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -28,6 +29,15 @@ public interface ArticleService extends IService<ArticleEntity> {
      * @return 保存结果
      * */
     ArticleEntity saveArticle(ArticleVo articleVo, HttpServletRequest request);
+
+
+    /**
+     * 获取当前用户对本课程评价
+     * */
+    ArticleEntity getCourseRating(Long courseId, HttpServletRequest request);
+
+
+    ArticleEntity getCourseRating(Long courseId, Claims user);
 
 
     /**
@@ -77,5 +87,10 @@ public interface ArticleService extends IService<ArticleEntity> {
      *
      * */
     PageUtils courseRating(Long courseId, Map<String, Object> params);
+
+    /**
+     * 更新课程评价
+     * */
+    ArticleEntity updateUserCourseRating(ArticleVo articleVo, HttpServletRequest request);
 }
 

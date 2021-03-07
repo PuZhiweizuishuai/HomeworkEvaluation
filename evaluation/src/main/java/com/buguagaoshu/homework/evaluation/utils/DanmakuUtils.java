@@ -20,6 +20,9 @@ public class DanmakuUtils {
         list.add(colorNumber);
         list.add(colorHex);
         list.add(text);
+        list.add("201741010102");
+        list.add("蒲致威");
+        list.add(System.currentTimeMillis());
         return list;
     }
 }

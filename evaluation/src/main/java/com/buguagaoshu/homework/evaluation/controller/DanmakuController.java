@@ -8,6 +8,7 @@ import com.buguagaoshu.homework.evaluation.vo.DanmakuVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +47,7 @@ public class DanmakuController {
     @PostMapping("/danmaku/v3")
     public ResponseDetails post(@RequestBody DanmakuVo danmakuVo,
                                 HttpServletRequest request) {
+        danmakuVo.setText(HtmlUtils.htmlEscape(danmakuVo.getText()));
         ReturnCodeEnum codeEnum = danmakuService.saveDanmaku(danmakuVo, request);
         if (codeEnum.equals(ReturnCodeEnum.NO_ROLE_OR_NO_FOUND)) {
             return ResponseDetails.ok(codeEnum).put("code", 1);

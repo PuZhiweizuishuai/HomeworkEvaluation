@@ -1,0 +1,8 @@
+
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://homework:123456@192.168.43.131:27017/homework
+server:
+  port: 8081

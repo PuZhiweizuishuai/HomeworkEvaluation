@@ -22,6 +22,9 @@ import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.SpringSecurityCoreVersion;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -98,12 +101,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             }
             // 检查评分
             if (articleVo.getType() == ArticleTypeEnum.COURSE_RATING.getCode()) {
-                QueryWrapper<ArticleEntity> wrapper = new QueryWrapper<>();
-                wrapper.eq("course_id", articleVo.getCourseId());
-                wrapper.eq("type", ArticleTypeEnum.COURSE_RATING.getCode());
-                wrapper.eq("author_id", user.getId());
-                wrapper.ne("status", ArticleTypeEnum.DELETE.getCode());
-                ArticleEntity courseRating = this.getOne(wrapper);
+
+                ArticleEntity courseRating = getCourseRating(articleVo.getCourseId(), user);
                 if (courseRating != null) {
                     throw new UserDataFormatException("你已经评价过这门课程了！");
                 }
@@ -113,7 +112,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 if (articleVo.getCourseRating() > 5.0  || articleVo.getCourseRating() < 0.0) {
                     throw new UserDataFormatException("评分有误！");
                 }
-                // 放缓存
+                // TODO 放缓存
                 CurriculumEntity curriculum = curriculumService.getById(articleVo.getCourseId());
                 curriculum.setScore(articleVo.getCourseRating() + curriculum.getScore());
                 curriculum.setRatingUserNumber(curriculum.getRatingUserNumber() + 1);
@@ -149,6 +148,22 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             this.updateById(articleEntity);
         }
         return articleEntity;
+    }
+
+    @Override
+    public ArticleEntity getCourseRating(Long courseId, HttpServletRequest request) {
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        return getCourseRating(courseId, user);
+    }
+
+    @Override
+    public ArticleEntity getCourseRating(Long courseId, Claims user) {
+        QueryWrapper<ArticleEntity> wrapper = new QueryWrapper<>();
+        wrapper.eq("course_id", courseId);
+        wrapper.eq("type", ArticleTypeEnum.COURSE_RATING.getCode());
+        wrapper.eq("author_id", user.getId());
+        wrapper.ne("status", ArticleTypeEnum.DELETE.getCode());
+        return this.getOne(wrapper);
     }
 
     @Override
@@ -327,8 +342,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 case "1":
                     wrapper.orderByDesc("update_time");
                     break;
+                case "2":
+                    break;
                 default:
-                    wrapper.orderByDesc("create_time");
+                    wrapper.orderByDesc("update_time");
             }
         }
         IPage<ArticleEntity> page = this.page(
@@ -336,5 +353,38 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 wrapper
         );
         return new PageUtils(page);
+    }
+
+    @Override
+    public ArticleEntity updateUserCourseRating(ArticleVo articleVo, HttpServletRequest request) {
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        verifyCodeService.verify((String) request.getSession().getAttribute(WebConstant.VERIFY_CODE_KEY), articleVo.getVerifyCode());
+        StudentsCurriculumEntity studentsCurriculumEntity = studentsCurriculumService.selectStudentByCurriculumId(user.getId(), articleVo.getCourseId());
+        if (studentsCurriculumEntity == null) {
+            return null;
+        }
+        if (articleVo.getCourseRating() == null) {
+            throw new UserDataFormatException("评分有误！");
+        }
+        if (articleVo.getCourseRating() > 5.0  || articleVo.getCourseRating() < 0.0) {
+            throw new UserDataFormatException("评分有误！");
+        }
+        ArticleEntity courseRating = getCourseRating(articleVo.getCourseId(), user);
+        if (courseRating == null) {
+            return null;
+        }
+        // 计算分数
+        if (!courseRating.getCourseRating().equals(articleVo.getCourseRating())) {
+            curriculumService.addCount("score", courseRating.getCourseId(), articleVo.getCourseRating() - courseRating.getCourseRating());
+        }
+        courseRating.setTitle(articleVo.getTitle());
+        courseRating.setContent(articleVo.getContent());
+        courseRating.setCourseRating(articleVo.getCourseRating());
+        courseRating.setUpdateTime(System.currentTimeMillis());
+        courseRating.setIp(IpUtil.getIpAddr(request));
+        courseRating.setUa(IpUtil.getUa(request));
+
+        this.updateById(courseRating);
+        return courseRating;
     }
 }

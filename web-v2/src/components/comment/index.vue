@@ -27,7 +27,7 @@
     <v-row v-if="total == 0" justify="center">
       <h3> 暂无评论 </h3>
     </v-row>
-    <!-- 目录 -->
+    <!-- 页码 -->
     <v-row justify="center">
       <v-pagination
         v-if="length != 1"

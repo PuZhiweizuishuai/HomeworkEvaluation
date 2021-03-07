@@ -101,4 +101,24 @@ public class ArticleController {
                                         @RequestParam Map<String, Object> params) {
         return ResponseDetails.ok().put("data", articleService.courseRating(courseId, params));
     }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
+    @GetMapping("/article/course/comment/{courseId}")
+    public ResponseDetails getUserCourseComment(@PathVariable("courseId") Long courseId,
+                                                HttpServletRequest request) {
+        return ResponseDetails.ok().put("data", articleService.getCourseRating(courseId, request));
+    }
+
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
+    @PostMapping("/article/course/comment/update")
+    public ResponseDetails updateCourseRating(@Valid @RequestBody ArticleVo articleVo,
+                                              HttpServletRequest request) {
+        ArticleEntity entity = articleService.updateUserCourseRating(articleVo, request);
+        if (entity == null) {
+            return ResponseDetails.ok(ReturnCodeEnum.NO_POWER);
+        }
+        return ResponseDetails.ok().put("data", entity);
+
+    }
 }

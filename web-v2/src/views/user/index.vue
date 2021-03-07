@@ -9,57 +9,58 @@
 
     </v-container>
     <v-container fill-height>
-      <v-row align="center">
-        <v-col
-          cols="12"
-          md="8"
-        >
-          <v-avatar size="80" style="float: left;">
-            <v-img :src="userInfo.userAvatarUrl" />
-          </v-avatar>
-          <h2 style="margin-top: 20px;margin-left: 100px;">
-            {{ userInfo.username }}
+      <v-col>
+        <v-row align="center">
+          <v-col
+            cols="12"
+            md="8"
+          >
+            <v-avatar size="80" style="float: left;">
+              <v-img :src="userInfo.userAvatarUrl" />
+            </v-avatar>
+            <h2 style="margin-top: 20px;margin-left: 100px;">
+              {{ userInfo.username }}
 
-            <v-chip v-if="userInfo.role.role == 'ROLE_TEACHER'" small color="orange">
-              教师
-              <v-icon right>mdi-star</v-icon>
-            </v-chip>
-            <v-chip v-if="userInfo.role.role == 'ROLE_ADMIN'" small color="primary">
-              管理员
-            </v-chip>
-            <v-chip v-if="userInfo.role.role == 'ROLE_STUDENT'" small color="green">
-              <v-avatar left>
-                <v-icon>mdi-account-circle</v-icon>
-              </v-avatar>
-              学生
-            </v-chip>
-          </h2>
-          <span v-if="userInfo.status == 1 || userInfo.status == 2" style="color: red;">
-            <span v-if="(userInfo.startLockTime + userInfo.lockTime) > new Date().getTime()">
-              该账号因为违反网站规定，已被管理页
-              <span v-if="userInfo.status == 2" v-text="`锁定`" />
-              <span v-if="userInfo.status == 1" v-text="`禁言`" />
-              结束时间为：<span v-text="TimeUtil.renderTime(userInfo.startLockTime + userInfo.lockTime)" />
+              <v-chip v-if="userInfo.role.role == 'ROLE_TEACHER'" small color="orange">
+                教师
+                <v-icon right>mdi-star</v-icon>
+              </v-chip>
+              <v-chip v-if="userInfo.role.role == 'ROLE_ADMIN'" small color="primary">
+                管理员
+              </v-chip>
+              <v-chip v-if="userInfo.role.role == 'ROLE_STUDENT'" small color="green">
+                <v-avatar left>
+                  <v-icon>mdi-account-circle</v-icon>
+                </v-avatar>
+                学生
+              </v-chip>
+            </h2>
+            <span v-if="userInfo.status == 1 || userInfo.status == 2" style="color: red;">
+              <span v-if="(userInfo.startLockTime + userInfo.lockTime) > new Date().getTime()">
+                该账号因为违反网站规定，已被管理页
+                <span v-if="userInfo.status == 2" v-text="`锁定`" />
+                <span v-if="userInfo.status == 1" v-text="`禁言`" />
+                结束时间为：<span v-text="TimeUtil.renderTime(userInfo.startLockTime + userInfo.lockTime)" />
+              </span>
             </span>
-          </span>
-        </v-col>
-        <v-col
-          v-if="this.$store.state.userInfo && this.$store.state.userInfo.userId == id"
-          cols="6"
-          md="4"
-          class="hidden-sm-and-down ml-0 pl-4"
-        >
-          <v-btn color="primary" @click="goToSetting">个人设置</v-btn>
-        </v-col>
-        <v-col
-          v-if="this.$store.state.userInfo == null || this.$store.state.userInfo.userId != id"
-          cols="6"
-          md="4"
-        >
-          粉丝数：  {{ userInfo.fansCount }} <v-btn color="primary">关注他</v-btn>
-        </v-col>
-      </v-row>
-
+          </v-col>
+          <v-col
+            v-if="this.$store.state.userInfo && this.$store.state.userInfo.userId == id"
+            cols="6"
+            md="4"
+            class="hidden-sm-and-down ml-0 pl-4"
+          >
+            <v-btn color="primary" @click="goToSetting">个人设置</v-btn>
+          </v-col>
+          <v-col
+            v-if="this.$store.state.userInfo == null || this.$store.state.userInfo.userId != id"
+            cols="6"
+            md="4"
+          >
+            粉丝数：  {{ userInfo.fansCount }} <v-btn color="primary">关注他</v-btn>
+          </v-col>
+        </v-row>
+      </v-col>
       <v-tabs>
         <v-tab v-if="this.$store.state.userInfo == null || this.$store.state.userInfo.userId != id" @click="setType(0)">首页</v-tab>
         <v-tab v-else @click="setType(0)">我的课程</v-tab>

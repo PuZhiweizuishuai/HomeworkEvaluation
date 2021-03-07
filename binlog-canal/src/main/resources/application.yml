@@ -1,7 +1,7 @@
 alibaba:
   canal:
     host:
-      - 192.168.43.130:11111
+      - 192.168.43.131:11111
     destination: example
     database: homework_evaluation
     username: root

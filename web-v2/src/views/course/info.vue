@@ -1,75 +1,77 @@
 <template>
   <v-container v-resize="onResize" fill-height>
-    <!-- 顶部 -->
-    <v-row>
-      <!-- 左边 -->
-      <v-col :cols="topLeft">
-        <v-img :src="courseInfo.curriculumImageUrl" :aspect-ratio="16/9" />
-      </v-col>
+    <v-col>
+      <!-- 顶部 -->
+      <v-row>
+        <!-- 左边 -->
+        <v-col :cols="topLeft">
+          <v-img :src="courseInfo.curriculumImageUrl" :aspect-ratio="16/9" />
+        </v-col>
 
-      <!-- 中间 -->
-      <v-col :cols="topCenter">
-        <v-row>
+        <!-- 中间 -->
+        <v-col :cols="topCenter">
+          <v-row>
 
-          <h1> {{ courseInfo.curriculumName }} </h1>
+            <h1> {{ courseInfo.curriculumName }} </h1>
 
-        </v-row>
-        <v-row>
-          <v-col>
-            {{ courseInfo.classNumber }} 班
-            <v-divider />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            开课时间：{{ TimeUtil.formateNoHoursTime(courseInfo.openingTime, courseInfo.closeTime) }}
-            <v-divider />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            简介：{{ courseInfo.simpleInfo }}
-            <v-divider />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <v-icon>mdi-account-outline</v-icon>已有 {{ courseInfo.studentNumber }} 人参加
-            <v-divider />
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            <div class="my-2">
-              <v-btn depressed block color="primary" @click="intoCourse">{{ clickMessage }}</v-btn>
-            </div>
-          </v-col>
-        </v-row>
-      </v-col>
-      <!-- 右边 -->
-      <v-col :cols="topRight">
-        <v-row>
-          <v-col>
-            评分：
+          </v-row>
+          <v-row>
+            <v-col>
+              {{ courseInfo.classNumber }} 班
+              <v-divider />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              开课时间：{{ TimeUtil.formateNoHoursTime(courseInfo.openingTime, courseInfo.closeTime) }}
+              <v-divider />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              简介：{{ courseInfo.simpleInfo }}
+              <v-divider />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-icon>mdi-account-outline</v-icon>已有 {{ courseInfo.studentNumber }} 人参加
+              <v-divider />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <div class="my-2">
+                <v-btn depressed block color="primary" @click="intoCourse">{{ clickMessage }}</v-btn>
+              </div>
+            </v-col>
+          </v-row>
+        </v-col>
+        <!-- 右边 -->
+        <v-col :cols="topRight">
+          <v-row>
+            <v-col>
+              评分：
 
-            <v-rating
-              v-model="courseScore"
-              color="orange"
-              half-increments
-
-              :readonly="true"
-            />
-            <span v-if="courseInfo.score == 0">暂无评分</span>
-            <span v-else>共 {{ courseInfo.ratingUserNumber }} 人评价</span>
-          </v-col>
-        </v-row>
-        <v-row>
-          <v-col>
-            分享：
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
+              <v-rating
+                v-model="courseScore"
+                color="orange"
+                half-increments
+                background-color="orange lighten-3"
+                :readonly="true"
+              />
+              <span v-if="courseInfo.score == 0">暂无评分</span>
+              <span v-else>共 {{ courseInfo.ratingUserNumber }} 人评价</span>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              分享：
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-col>
 
     <!-- 详细介绍 -->
     <v-row>
@@ -88,6 +90,12 @@
         <v-row v-show="showId == 0">
           <v-col>
             <div id="class-markdown-view" ref="curriculumInfo" />
+          </v-col>
+        </v-row>
+        <!-- 课程评价 -->
+        <v-row v-show="showId == 1">
+          <v-col>
+            <CommentList :score="courseScore" />
           </v-col>
         </v-row>
       </v-col>
@@ -270,6 +278,7 @@
 import TimeUtil from '@/utils/time-util.vue'
 import Vditor from 'vditor'
 import 'vditor/src/assets/scss/index.scss'
+import CommentList from '@/components/comment/course/list.vue'
 
 function initOutline() {
   const headingElements = []
@@ -309,6 +318,9 @@ function initOutline() {
  */
 export default {
   name: 'CourseInfo',
+  components: {
+    CommentList
+  },
   data() {
     return {
       TimeUtil,

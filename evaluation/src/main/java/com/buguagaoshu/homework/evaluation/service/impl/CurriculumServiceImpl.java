@@ -377,6 +377,11 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
         this.baseMapper.addCount(col, id, count);
     }
 
+    @Override
+    public void addCount(String col, Long id, Double count) {
+        this.baseMapper.addCount(col, id, count);
+    }
+
 
     /**
      * 更新时间时对时间的特殊处理
