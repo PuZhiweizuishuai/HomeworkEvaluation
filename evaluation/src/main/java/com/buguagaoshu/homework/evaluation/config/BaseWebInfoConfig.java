@@ -2,6 +2,7 @@ package com.buguagaoshu.homework.evaluation.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "web.base-info")
 @Data
+@RefreshScope
 public class BaseWebInfoConfig {
     /**
      * 网站名

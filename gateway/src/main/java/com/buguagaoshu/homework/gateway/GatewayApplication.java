@@ -1,4 +1,4 @@
-package com.buguagaoshu.homework.danmaku;
+package com.buguagaoshu.homework.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,10 +7,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
 @EnableDiscoveryClient
-public class DanmakuApplication {
+public class GatewayApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(DanmakuApplication.class, args);
+        SpringApplication.run(GatewayApplication.class, args);
     }
 
 }

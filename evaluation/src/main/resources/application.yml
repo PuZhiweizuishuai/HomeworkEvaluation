@@ -32,6 +32,8 @@ server:
 spring:
   cloud:
     nacos:
+#      discovery:
+#        namespace: 7fff554b-80f9-4c2a-b748-ac00e50a3544
       server-addr: 192.168.43.131:8848
   application:
     name: Evaluation
@@ -55,7 +57,7 @@ spring:
     host: 192.168.43.131
     port: 6379
     timeout: 1000ms
-    password: 123456
+    # password: 123456
     client-type: lettuce
   cache:
     redis:
