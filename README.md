@@ -32,6 +32,58 @@
 <img src="http://p.ananas.chaoxing.com/star3/origin/3e8e6a7f51809653641cd858d1279eca.png" alt="课程页" title="课程页" >
 
 
+
+
+
+## 运行环境
+
+|           组件           |                        技术                        |
+| :-------------------------: | :--------------------------------------------------: |
+|           前端           |                       vue.js 2                       |
+|           后端           |                     Spring Boot                     |
+|     前端构建环境     | Node.js 14, Npm 6.14,[vue-cli3](https://cli.vuejs.org/) |
+|     后端运行环境     |                        Java11                        |
+|        后端构建        |                      Maven 3.6                      |
+|       数据库版本       |         MySQL 8.0，Redis 6.0，MongoDB 4.4         |
+| 服务发现于配置中心 |                     Nacos 1.4.1                     |
+|           搜索           |                 Elasticsearch 7.10.1                 |
+|        消息队列        |                     Kafka 2.7.0                     |
+|      数据同步canal      |                 Alibaba Canal 1.1.5                 |
+
+
+## 快速运行
+
+修改配置文件，设置好各个中间件地址
+
+### 方法一
+
+首先进入 common 中执行
+
+```bash
+mvn clean install
+```
+
+之后以此编译打包其它组件运行
+
+
+### 方法二
+
+直接导入 IDEA 运行
+
+
+### 构建前端
+
+
+之后进入
+
+
+```bash
+127.0.0.1:8000
+```
+
+查看运行结果
+
+
 ## 简介 describe
 
 即将开发完成，基本功能如下
