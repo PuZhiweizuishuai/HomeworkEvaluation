@@ -45,7 +45,7 @@
 |     后端运行环境     |                        Java11                        |
 |        后端构建        |                      Maven 3.6                      |
 |       数据库版本       |         MySQL 8.0，Redis 6.0，MongoDB 4.4         |
-| 服务发现于配置中心 |                     Nacos 1.4.1                     |
+| 服务发现与配置中心 |                     Nacos 1.4.1                     |
 |           搜索           |                 Elasticsearch 7.10.1                 |
 |        消息队列        |                     Kafka 2.7.0                     |
 |      数据同步canal      |                 Alibaba Canal 1.1.5                 |
@@ -63,7 +63,7 @@
 mvn clean install
 ```
 
-之后以此编译打包其它组件运行
+之后依次编译打包其它组件运行
 
 
 ### 方法二
@@ -73,9 +73,9 @@ mvn clean install
 
 ### 构建前端
 
+具体细节请查看前端web-v2文件下 README
 
-之后进入
-
+构建完成后进入
 
 ```bash
 127.0.0.1:8000
