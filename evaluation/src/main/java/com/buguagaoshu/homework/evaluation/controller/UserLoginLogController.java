@@ -14,7 +14,6 @@ import java.util.Map;
  * 获取登录历史
  */
 @RestController
-@RequestMapping("/api")
 public class UserLoginLogController {
     private final UserLoginLogService loginLogService;
 

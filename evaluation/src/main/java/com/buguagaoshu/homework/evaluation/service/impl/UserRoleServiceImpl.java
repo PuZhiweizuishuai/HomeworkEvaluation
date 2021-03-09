@@ -5,8 +5,6 @@ import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.CurriculumEntity;
 import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
-import com.buguagaoshu.homework.evaluation.entity.UserEntity;
-import com.buguagaoshu.homework.evaluation.model.User;
 import com.buguagaoshu.homework.evaluation.service.CurriculumService;
 import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
@@ -18,7 +16,6 @@ import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.common.utils.Query;
 
 import com.buguagaoshu.homework.evaluation.dao.UserRoleDao;

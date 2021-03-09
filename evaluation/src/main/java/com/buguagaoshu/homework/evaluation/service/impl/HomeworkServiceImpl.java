@@ -2,7 +2,6 @@ package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.buguagaoshu.homework.common.domain.MultipleReturnValues;
 import com.buguagaoshu.homework.common.enums.*;
-import com.buguagaoshu.homework.common.valid.OnlyNumber;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.*;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
@@ -16,12 +15,10 @@ import com.buguagaoshu.homework.evaluation.vo.KeeperDashboardViewVo;
 import com.buguagaoshu.homework.evaluation.vo.QuestionComment;
 import com.buguagaoshu.homework.evaluation.vo.TeacherCommentHomeworkData;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,7 +37,6 @@ import com.buguagaoshu.homework.evaluation.dao.HomeworkDao;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 
 /**

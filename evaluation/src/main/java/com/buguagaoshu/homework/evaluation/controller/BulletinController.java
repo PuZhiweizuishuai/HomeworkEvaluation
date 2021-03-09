@@ -17,7 +17,6 @@ import java.util.Map;
  * 发送课程公告
  */
 @RestController
-@RequestMapping("/api")
 public class BulletinController {
 
     private final BulletinService bulletinService;

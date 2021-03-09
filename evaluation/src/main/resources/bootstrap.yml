@@ -8,3 +8,6 @@ spring:
         file-extension: yml
         # 测试环境配置
         namespace: 7fff554b-80f9-4c2a-b748-ac00e50a3544
+        extension-configs:
+          - dataId: JWT.yml
+            group: DEFAULT_GROUP

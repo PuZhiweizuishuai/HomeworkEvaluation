@@ -1,12 +1,9 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.buguagaoshu.homework.common.domain.CustomPage;
 import com.buguagaoshu.homework.common.enums.QuestionTypeEnum;
-import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.HomeworkWithQuestionsEntity;
-import com.buguagaoshu.homework.evaluation.entity.SubmitHomeworkStatusEntity;
 import com.buguagaoshu.homework.evaluation.entity.SubmitQuestionsEntity;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
 import com.buguagaoshu.homework.evaluation.model.QuestionsModel;
@@ -23,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;

@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : ubuntu
+ Source Server         : homework
  Source Server Type    : MySQL
- Source Server Version : 80021
- Source Host           : 192.168.43.128:3306
+ Source Server Version : 80023
+ Source Host           : 192.168.43.131:3306
  Source Schema         : homework_evaluation
 
  Target Server Type    : MySQL
- Target Server Version : 80021
+ Target Server Version : 80023
  File Encoding         : 65001
 
- Date: 03/10/2020 17:52:42
+ Date: 09/03/2021 22:16:46
 */
 
 SET NAMES utf8mb4;
@@ -34,7 +34,7 @@ CREATE TABLE `advertisement`  (
   `type` int NOT NULL COMMENT '类型，显示位置【\r\n0 首页顶部大图，\r\n1 课程页顶部大图\r\n2 首页广告\r\n3 课程页广告\r\n】',
   `view_count` bigint NOT NULL DEFAULT 0 COMMENT '点击次数',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for article
@@ -62,7 +62,7 @@ CREATE TABLE `article`  (
   `bad_count` bigint NOT NULL DEFAULT 0 COMMENT '帖子点踩计数',
   `collect_count` bigint NOT NULL DEFAULT 0 COMMENT '帖子收藏计数',
   `ip` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '发帖 IP',
-  `ua` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'User-Agent',
+  `ua` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'User-Agent',
   `articleStick` bigint NOT NULL COMMENT '帖子置顶时间',
   `anonymous` int NOT NULL DEFAULT 0 COMMENT '0：公开，1：匿名',
   `perfect` int NOT NULL DEFAULT 0 COMMENT '0：非精品，1：精品',
@@ -70,12 +70,13 @@ CREATE TABLE `article`  (
   `top_img_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '帖子首图地址',
   `author_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '作者名',
   `course_rating` double NULL DEFAULT NULL COMMENT '课程评分',
+  `at_user` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_article_by_user_id`(`author_id`) USING BTREE,
   INDEX `find_article_by_course_id`(`course_id`) USING BTREE,
   INDEX `find_article_by_type`(`type`) USING BTREE,
   INDEX `find_article_by_status`(`status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '帖子表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '帖子表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for article_tag
@@ -90,7 +91,7 @@ CREATE TABLE `article_tag`  (
   `catelog_id` int NOT NULL COMMENT '0 父分类， 其它数字为该数字下的子 子分类',
   `type` int NOT NULL DEFAULT 0 COMMENT '0 话题， 1 分类',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for bulletin
@@ -105,12 +106,12 @@ CREATE TABLE `bulletin`  (
   `create_time` bigint NOT NULL COMMENT '发布时间',
   `update_time` bigint NOT NULL COMMENT '更新时间',
   `status` int NOT NULL DEFAULT 0 COMMENT '更新状态[0 正常， 1 删除]',
-  `ua` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '发布设备',
+  `ua` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '发布设备',
   `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '发布IP',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_bulletin_by_user_id`(`user_id`) USING BTREE,
   INDEX `find_bulletin_by_class_Id`(`curriculum_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '课程公告表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '课程公告表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for comment
@@ -125,7 +126,7 @@ CREATE TABLE `comment`  (
   `comment_id` bigint NULL DEFAULT NULL COMMENT '回复的帖子ID',
   `status` int NOT NULL DEFAULT 0 COMMENT '状态 0 正常， 1 删除',
   `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'IP地址',
-  `ua` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '回复设备UA',
+  `ua` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '回复设备UA',
   `like_count` bigint NOT NULL DEFAULT 0 COMMENT '喜欢数',
   `bad_count` bigint NOT NULL DEFAULT 0 COMMENT '不喜欢数',
   `q_a_offered` int NULL DEFAULT 0 COMMENT '回复是否被采纳，用于问答贴，0 未采纳， 1被采纳',
@@ -134,11 +135,12 @@ CREATE TABLE `comment`  (
   `comment_count` bigint NOT NULL DEFAULT 0 COMMENT '评论数',
   `father_id` bigint NOT NULL COMMENT '父级评论ID，如果没有父级评论，默认为帖子ID',
   `rating` double NULL DEFAULT NULL COMMENT '作业打分或者课程评价',
+  `at_user` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL COMMENT '@用户',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_comment_by_article_id`(`article_id`) USING BTREE,
   INDEX `find_comment_by_user_id`(`author_id`) USING BTREE,
   INDEX `find_comment_by_comment_id`(`comment_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 54 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for course_tag
@@ -153,7 +155,7 @@ CREATE TABLE `course_tag`  (
   `catelog_id` bigint NOT NULL DEFAULT 0 COMMENT '所属分类层级 【0 父分类， 其它数字为该数字下的子 子分类】',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_course_major_index`(`course_major`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '课程分类' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '课程分类' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for courseware
@@ -175,7 +177,7 @@ CREATE TABLE `courseware`  (
   `file_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '原文件名',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_courseware_by_course_id`(`course_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for curriculum
@@ -202,11 +204,12 @@ CREATE TABLE `curriculum`  (
   `course_tag` bigint NULL DEFAULT NULL COMMENT '课程分类',
   `score` double NOT NULL DEFAULT 0 COMMENT '初始0分，不显示',
   `father_course_tag` bigint NULL DEFAULT NULL COMMENT '父级分类',
+  `rating_user_number` int NOT NULL DEFAULT 0 COMMENT '评价人数',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_teacher_create_class_index`(`create_teacher`) USING BTREE COMMENT '查找该老师创建的课程',
   INDEX `find_curriculum_name_index`(`curriculum_name`) USING BTREE COMMENT '通过课程名查找课程',
   INDEX `find_teacher_by_name_index`(`teacher_name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '课程表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '课程表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for danmaku
@@ -224,7 +227,7 @@ CREATE TABLE `danmaku`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_danmaku_by_courseware_id`(`courseware_id`) USING BTREE,
   INDEX `find_danmaku_by_userID`(`courseware_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '弹幕表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 26 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '弹幕表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for history
@@ -238,7 +241,7 @@ CREATE TABLE `history`  (
   `update_time` bigint NOT NULL COMMENT '更新时间',
   `progress_bar` double NULL DEFAULT NULL COMMENT '如果是视频的话，视频进度',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for homework
@@ -265,7 +268,7 @@ CREATE TABLE `homework`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_homework_by_class_index`(`class_number`) USING BTREE,
   INDEX `find_homeword_teacher_index`(`create_teacher`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '作业表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '作业表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for homework_with_questions
@@ -281,7 +284,7 @@ CREATE TABLE `homework_with_questions`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_homework_question_index`(`homework_id`) USING BTREE,
   INDEX `find_question_use_homework_index`(`question_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '问题-作业关联表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '问题-作业关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for invite_code
@@ -303,7 +306,7 @@ CREATE TABLE `invite_code`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_invitecode_index`(`code`) USING BTREE COMMENT '查找邀请码',
   INDEX `find_invitecode_teacher_index`(`generator_id`) USING BTREE COMMENT '查找当前教师生成的邀请码'
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '邀请码' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '邀请码' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for invite_code_use_log
@@ -316,7 +319,7 @@ CREATE TABLE `invite_code_use_log`  (
   `use_time` bigint NOT NULL COMMENT '使用时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_use_invitecode_use_index`(`invitecode_id`) USING BTREE COMMENT '邀请码使用列表'
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '邀请码使用列表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '邀请码使用列表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for notification
@@ -339,7 +342,7 @@ CREATE TABLE `notification`  (
   INDEX `find_notification_by_notifier`(`notifier`) USING BTREE,
   INDEX `find_notification_by_receiver`(`receiver`) USING BTREE,
   INDEX `find_notification_by_outer_id`(`outer_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 46 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通知表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 118 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通知表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for questions
@@ -359,12 +362,12 @@ CREATE TABLE `questions`  (
   `submit_count` bigint NOT NULL DEFAULT 0 COMMENT '提交次数',
   `right_count` bigint NOT NULL DEFAULT 0 COMMENT '正确次数',
   `difficulty` int NULL DEFAULT NULL COMMENT '难度',
-  `tag` bigint CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标签',
+  `tag` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '标签',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_question_type_index`(`type`) USING BTREE,
   INDEX `find_question_teacher_index`(`create_teacher`) USING BTREE,
   INDEX `find_question_share_index`(`share_status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '问题表，需要与作业表关联' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '问题表，需要与作业表关联' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for students_curriculum
@@ -381,7 +384,7 @@ CREATE TABLE `students_curriculum`  (
   INDEX `find_student_curriculum_index`(`student_id`) USING BTREE COMMENT '查找学生选择的课程',
   INDEX `find_curriculum_student_index`(`curriculum_id`) USING BTREE COMMENT '查找选择该课程的学生列表',
   INDEX `find_curriculum_user_role_index`(`role`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '学生-课程关系列表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 24 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '学生-课程关系列表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for submit_homework_status
@@ -404,7 +407,7 @@ CREATE TABLE `submit_homework_status`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_user_homework_by_user_id`(`user_id`) USING BTREE,
   INDEX `find_user_homework_by_homework_id`(`homework_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户作业提交状态' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 43 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户作业提交状态' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for submit_questions
@@ -427,7 +430,7 @@ CREATE TABLE `submit_questions`  (
   INDEX `find_question_by_user_id`(`user_id`) USING BTREE,
   INDEX `find_question_by_question_id`(`question_id`) USING BTREE,
   INDEX `find_question_by_homework_id`(`homework_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 153 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户提交的答案保存' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 154 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户提交的答案保存' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user
@@ -472,7 +475,7 @@ CREATE TABLE `user`  (
   INDEX `find_by_email_index`(`email`) USING BTREE COMMENT '使用邮件登陆查找用户',
   INDEX `find_by_phone_number_index`(`phone_number`) USING BTREE COMMENT '使用手机号查找登陆用户',
   INDEX `find_by_username_index`(`username`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user_login_log
@@ -483,11 +486,11 @@ CREATE TABLE `user_login_log`  (
   `user_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户ID',
   `login_time` bigint NOT NULL COMMENT '登陆时间',
   `login_ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '登陆IP',
-  `login_UA` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'User-Agent 浏览器信息',
+  `login_UA` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'User-Agent 浏览器信息',
   `login_city` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '登陆城市',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_login_user_by_id_index`(`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 41 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户登陆记录' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 50 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户登陆记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user_role
@@ -503,6 +506,40 @@ CREATE TABLE `user_role`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_role_by_userID_index`(`user_id`) USING BTREE COMMENT '查找当前用户拥有的权限列表',
   INDEX `find_role_operator_index`(`operator`) USING BTREE COMMENT '查找用户创建的权限'
-) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 30 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色表' ROW_FORMAT = DYNAMIC;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+INSERT INTO `article_tag` VALUES (1, '开发语言', NULL, NULL, 0, 0, 0);
+INSERT INTO `article_tag` VALUES (2, '平台框架', NULL, NULL, 0, 0, 0);
+INSERT INTO `article_tag` VALUES (3, '服务器', NULL, NULL, 0, 0, 0);
+INSERT INTO `article_tag` VALUES (4, '数据库缓存', NULL, NULL, 0, 0, 0);
+INSERT INTO `article_tag` VALUES (5, '开发工具', NULL, NULL, 0, 0, 0);
+INSERT INTO `article_tag` VALUES (6, '系统设备', NULL, NULL, 0, 0, 0);
+INSERT INTO `article_tag` VALUES (7, '休闲灌水', NULL, NULL, 0, 0, 0);
+INSERT INTO `article_tag` VALUES (8, 'Java', NULL, NULL, 0, 1, 0);
+INSERT INTO `article_tag` VALUES (9, 'Python', NULL, NULL, 0, 1, 0);
+INSERT INTO `article_tag` VALUES (10, 'HTML', NULL, NULL, 0, 1, 0);
+INSERT INTO `article_tag` VALUES (11, 'CSS', NULL, NULL, 0, 1, 0);
+INSERT INTO `article_tag` VALUES (12, 'JavaScript', NULL, NULL, 0, 1, 0);
+INSERT INTO `article_tag` VALUES (13, 'C/C++', NULL, NULL, 0, 1, 0);
+INSERT INTO `article_tag` VALUES (14, 'C#', NULL, NULL, 0, 1, 0);
+INSERT INTO `article_tag` VALUES (15, 'Spring', NULL, NULL, 0, 2, 0);
+INSERT INTO `article_tag` VALUES (16, 'Linux', NULL, NULL, 0, 3, 0);
+INSERT INTO `article_tag` VALUES (17, 'Nginx', NULL, NULL, 0, 3, 0);
+INSERT INTO `article_tag` VALUES (18, 'Docker', NULL, NULL, 0, 3, 0);
+INSERT INTO `article_tag` VALUES (19, '\r\nDjango', NULL, NULL, 0, 2, 0);
+INSERT INTO `article_tag` VALUES (20, 'Mysql', NULL, NULL, 0, 4, 0);
+INSERT INTO `article_tag` VALUES (21, 'Redis', NULL, NULL, 0, 4, 0);
+INSERT INTO `article_tag` VALUES (22, 'Windows', NULL, NULL, 0, 6, 0);
+INSERT INTO `article_tag` VALUES (23, 'Android', NULL, NULL, 0, 6, 0);
+INSERT INTO `article_tag` VALUES (24, 'iOS', NULL, NULL, 0, 6, 0);
+INSERT INTO `article_tag` VALUES (25, 'Linux', NULL, NULL, 0, 6, 0);
+INSERT INTO `article_tag` VALUES (26, '\r\nGit', NULL, NULL, 0, 5, 0);
+INSERT INTO `article_tag` VALUES (27, 'VS Code', NULL, NULL, 0, 5, 0);
+INSERT INTO `article_tag` VALUES (28, '\r\nVisual Studio', NULL, NULL, 0, 5, 0);
+INSERT INTO `article_tag` VALUES (29, '\r\nVim', NULL, NULL, 0, 5, 0);
+INSERT INTO `article_tag` VALUES (30, '\r\nIntelliJ IDEA', NULL, NULL, 0, 5, 0);
+INSERT INTO `article_tag` VALUES (31, '\r\nEclipse', NULL, NULL, 0, 5, 0);
+INSERT INTO `article_tag` VALUES (32, '娱乐八卦', NULL, NULL, 0, 7, 0);
+INSERT INTO `article_tag` VALUES (33, '闲聊', NULL, NULL, 0, 7, 0);

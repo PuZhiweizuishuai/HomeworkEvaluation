@@ -2,10 +2,10 @@ package com.buguagaoshu.homework.evaluation.config;
 
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.evaluation.model.User;
-import com.buguagaoshu.homework.evaluation.service.UserLoginLogService;
 import com.buguagaoshu.homework.evaluation.vo.LoginDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
  * JWT 令牌认证工具
  * 用来处理认证过程中的验证和请求
  */
+@RefreshScope
 public class TokenAuthenticationHelper {
     /**
      * 未设置记住我时 token 过期时间
@@ -47,8 +48,12 @@ public class TokenAuthenticationHelper {
      * TODO 改成随机生成的 InviteCodeUtil.createInviteCode();
      * TODO 为每个用户单独生成 KEY，退出或其它操作直接让 KEY 失效
      * */
-    public static final String SECRET_KEY = "TEST_KEY";
-    public static final String COOKIE_TOKEN = "COOKIE-TOKEN";
+    @Value("${JWT.SecretKey}")
+    public static String SECRET_KEY = "TEST_KEY";
+
+    @Value("${JWT.CookieToken}")
+    public static String COOKIE_TOKEN = "COOKIE-TOKEN";
+
     public static final String XSRF = "XSRF-TOKEN";
 
 

@@ -16,7 +16,6 @@ import java.util.Map;
  * 消息通知
  */
 @RestController
-@RequestMapping("/api")
 @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
 public class NotificationController {
     private final NotificationService notificationService;

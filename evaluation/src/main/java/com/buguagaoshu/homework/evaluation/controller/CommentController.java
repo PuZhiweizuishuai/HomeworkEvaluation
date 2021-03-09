@@ -21,7 +21,6 @@ import java.util.Map;
  * create          2020-09-29 21:12
  */
 @RestController
-@RequestMapping("/api")
 public class CommentController {
     private final CommentService commentService;
 

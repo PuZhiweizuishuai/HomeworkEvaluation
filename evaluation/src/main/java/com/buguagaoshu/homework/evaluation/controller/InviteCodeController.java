@@ -16,7 +16,6 @@ import java.util.Map;
  * create          2020-10-02 22:38
  */
 @RestController
-@RequestMapping("/api")
 public class InviteCodeController {
     private final InviteCodeService inviteCodeService;
 

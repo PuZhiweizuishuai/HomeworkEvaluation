@@ -22,9 +22,6 @@ import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.SpringSecurityCoreVersion;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

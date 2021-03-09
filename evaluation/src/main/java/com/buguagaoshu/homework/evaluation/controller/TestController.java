@@ -1,6 +1,8 @@
 package com.buguagaoshu.homework.evaluation.controller;
 
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,7 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
  * create          2020-10-03 22:17
  */
 @RestController
+@RefreshScope
 public class TestController {
+
+    @Value("${JWT.SecretKey}")
+    private String key;
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/test/admin")
@@ -42,7 +48,7 @@ public class TestController {
     @GetMapping("/test/all")
     @PreAuthorize("permitAll()")
     public ResponseDetails all() {
-        return ResponseDetails.ok().put("data", "所有人！");
+        return ResponseDetails.ok().put("data", "所有人！" + key);
     }
 
     @PreAuthorize("permitAll()")

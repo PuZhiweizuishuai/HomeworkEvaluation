@@ -22,7 +22,6 @@ import java.io.IOException;
  * create          2019-11-27 19:57
  */
 @RestController
-@RequestMapping("/api")
 public class VerifyCodeController {
     private final VerifyCodeService verifyCodeService;
 

@@ -9,7 +9,6 @@ import com.buguagaoshu.homework.evaluation.repository.FileStorageRepository;
 import com.buguagaoshu.homework.evaluation.utils.AesUtil;
 import com.buguagaoshu.homework.evaluation.utils.FileUtil;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
-import com.sun.net.httpserver.HttpsServer;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -33,7 +32,6 @@ import java.util.Map;
  * TODO 文件格式验证,此加载器有BUG，先单独搞出来
  */
 @RestController
-@RequestMapping("/api")
 public class FileController {
     private final FileStorageRepository repository;
 

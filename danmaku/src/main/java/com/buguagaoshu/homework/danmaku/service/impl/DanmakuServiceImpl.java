@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +50,7 @@ public class DanmakuServiceImpl implements DanmakuService {
         Optional<DanmakuList> danmakuList = danmakuListRepository.findById(danmaku.getCoursewareId());
         if (danmakuList.isPresent()) {
             // 追加保存弹幕数据
+            // TODO 限制保存数量
             Query query = new Query(Criteria.where("id").is(danmaku.getCoursewareId()));
             Update update = new Update().push("data", buildBackInfo.createDanmaku(danmaku));
             mongoTemplate.upsert(query, update, DanmakuList.class);
@@ -84,6 +86,6 @@ public class DanmakuServiceImpl implements DanmakuService {
     @Override
     public List<List<Object>> danmakuList(Long coursewareId) {
         Optional<DanmakuList> list = danmakuListRepository.findById(coursewareId);
-        return list.get().getData();
+        return list.map(DanmakuList::getData).orElse(new ArrayList<>());
     }
 }

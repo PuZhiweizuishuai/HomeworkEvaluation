@@ -20,7 +20,6 @@ import java.util.Map;
  * create          2020-06-10 16:44
  */
 @RestController
-@RequestMapping("/api")
 public class AdvertisementController {
     private final AdvertisementService advertisementService;
 

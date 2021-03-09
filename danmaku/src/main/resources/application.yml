@@ -2,5 +2,19 @@ spring:
   data:
     mongodb:
       uri: mongodb://homework:123456@192.168.43.131:27017/homework
+  kafka:
+    bootstrap-servers:
+      - 192.168.43.131:9092
+    consumer:
+      group-id: danmaku
+    listener:
+      missing-topics-fatal: false
 server:
   port: 8081
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 60000
+        readTimeout: 60000

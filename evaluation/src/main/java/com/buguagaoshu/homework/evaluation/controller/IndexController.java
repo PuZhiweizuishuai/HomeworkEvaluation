@@ -15,8 +15,7 @@ import java.util.Arrays;
  * 加载主页，课程页等需要的各种信息
  */
 @RestController
-
-@RequestMapping("/api/index")
+@RequestMapping("/index")
 public class IndexController {
     private final WebsiteIndexMessageCache indexMessageCache;
 

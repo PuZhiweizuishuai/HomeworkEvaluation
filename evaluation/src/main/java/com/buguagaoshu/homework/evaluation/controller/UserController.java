@@ -29,7 +29,6 @@ import java.util.Map;
  * create          2020-06-03 23:46
  */
 @RestController
-@RequestMapping("/api")
 public class UserController {
     private final UserService userService;
 

@@ -1,24 +1,19 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.buguagaoshu.homework.common.domain.DanmakuDetails;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
-import com.buguagaoshu.homework.common.utils.PageUtils;
-import com.buguagaoshu.homework.common.utils.Query;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
-import com.buguagaoshu.homework.evaluation.dao.DanmakuDao;
 import com.buguagaoshu.homework.evaluation.entity.CoursewareEntity;
-import com.buguagaoshu.homework.evaluation.entity.DanmakuEntity;
 import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
 import com.buguagaoshu.homework.evaluation.service.CoursewareService;
 import com.buguagaoshu.homework.evaluation.service.DanmakuService;
 import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
-import com.buguagaoshu.homework.evaluation.utils.DanmakuUtils;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
-import com.buguagaoshu.homework.evaluation.vo.DanmakuVo;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -31,55 +26,36 @@ import javax.servlet.http.HttpServletRequest;
  * @author Pu Zhiwei
  * */
 @Service("danmakuService")
-public class DanmakuServiceImpl extends ServiceImpl<DanmakuDao, DanmakuEntity> implements DanmakuService {
+@Slf4j
+public class DanmakuServiceImpl implements DanmakuService {
 
     private final CoursewareService coursewareService;
 
     private final StudentsCurriculumService studentsCurriculumService;
 
-    public DanmakuServiceImpl(CoursewareService coursewareService, StudentsCurriculumService studentsCurriculumService) {
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    private final ObjectMapper objectMapper;
+
+    public DanmakuServiceImpl(CoursewareService coursewareService, StudentsCurriculumService studentsCurriculumService, KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
         this.coursewareService = coursewareService;
         this.studentsCurriculumService = studentsCurriculumService;
+        this.kafkaTemplate = kafkaTemplate;
+        this.objectMapper = objectMapper;
     }
 
 
-    @Override
-    public PageUtils queryPage(Map<String, Object> params) {
-        IPage<DanmakuEntity> page = this.page(
-                new Query<DanmakuEntity>().getPage(params),
-                new QueryWrapper<DanmakuEntity>()
-        );
 
-        return new PageUtils(page);
-    }
 
     @Override
     public List<Object> danmakuList(Long id, Integer max) {
-        Map<String, Object> params = new HashMap<>(2);
-        params.put("limit", max);
-        IPage<DanmakuEntity> page = this.page(
-                new Query<DanmakuEntity>().getPage(params),
-                new QueryWrapper<DanmakuEntity>().eq("courseware_id", id)
-        );
-        List<DanmakuEntity> danmakuEntities = page.getRecords();
-
-       List<Object> danmakuDtos = new LinkedList<>();
-       danmakuEntities.forEach(d->{
-           danmakuDtos.add(DanmakuUtils.createDanmaku(
-                   d.getTime(),
-                   d.getType(),
-                   d.getColorDec(),
-                   d.getColor(),
-                   d.getText()
-           ));
-
-       });
-       return danmakuDtos;
+        return null;
     }
 
     @Override
-    public ReturnCodeEnum saveDanmaku(DanmakuVo danmakuVo, HttpServletRequest request) {
-        Claims claims = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+    public ReturnCodeEnum saveDanmaku(DanmakuDetails danmakuVo, HttpServletRequest request) {
+        // System.out.println(danmakuVo.getToken());
+        Claims claims = JwtUtil.parseJWT(TokenAuthenticationHelper.SECRET_KEY, danmakuVo.getToken());
         if (claims == null) {
             return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
         }
@@ -92,18 +68,14 @@ public class DanmakuServiceImpl extends ServiceImpl<DanmakuDao, DanmakuEntity> i
         if (studentsCurriculumEntity == null) {
             return ReturnCodeEnum.NO_ROLE_OR_NO_FOUND;
         }
-        DanmakuEntity danmakuEntity = new DanmakuEntity();
-        danmakuEntity.setAuthor(claims.getId());
-
-        danmakuEntity.setColorDec(danmakuVo.getColor());
-        danmakuEntity.setCoursewareId(danmakuVo.getId());
-        danmakuEntity.setText(danmakuVo.getText());
-        danmakuEntity.setColor(Long.toHexString(danmakuVo.getColor()));
-        danmakuEntity.setTime(danmakuVo.getTime());
-        danmakuEntity.setType(danmakuVo.getType());
-        this.save(danmakuEntity);
-        // TODO 加入缓存，提升效率
-        return ReturnCodeEnum.SUCCESS;
+        danmakuVo.setAuthor(claims.getId());
+        try {
+            kafkaTemplate.send("danmaku", objectMapper.writeValueAsString(danmakuVo));
+            return ReturnCodeEnum.SUCCESS;
+        } catch (Exception e) {
+            log.error("弹幕数据序列化失败：{}", e.getMessage());
+            return ReturnCodeEnum.SYSTEM_ERROR;
+        }
     }
 
 }

@@ -114,7 +114,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 添加过滤器链,前一个参数过滤器， 后一个参数过滤器添加的地方
                 // 登陆过滤器
                 .addFilterBefore(
-                        new JwtLoginFilter("/api/login",
+                        new JwtLoginFilter("/login",
                                 authenticationManager(),
                                 userLoginLogService,
                                 verifyCodeService
@@ -129,14 +129,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 开启 csrf 验证
                 .csrf()
                 .ignoringAntMatchers(
-                        "/api/index/**",
-                        "/api/verifyImage",
-                        "/api/register",
-                        "/api/course/tag/list",
-                        "/api/curriculum/list",
-                        "/api/curriculum/info/**",
-                        "/api/upload/file",
-                        "/api/upload/courseware"
+                        "/index/**",
+                        "/verifyImage",
+                        "/register",
+                        "/course/tag/list",
+                        "/curriculum/list",
+                        "/curriculum/info/**",
+                        "/upload/file",
+                        "/upload/courseware",
+                        "/service/danmakus/check"
                 )
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .and()

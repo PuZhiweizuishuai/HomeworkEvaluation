@@ -7,7 +7,6 @@ import com.buguagaoshu.homework.evaluation.utils.IpUtil;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.net.IPv6Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Map;

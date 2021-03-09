@@ -1,1 +1,18 @@
-
+spring:
+  cloud:
+    gateway:
+      routes:
+        # 弹幕服务
+        - id: danmaku_route
+          uri: lb://Danmaku
+          predicates:
+            - Path=/api/danmaku/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*), /$\{segment}
+        # 核心服务
+        - id: Evaluation_route
+          uri: lb://Evaluation
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*), /$\{segment}

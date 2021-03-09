@@ -20,7 +20,6 @@ import java.util.Map;
  * 作业互评接口
  */
 @RestController
-@RequestMapping("/api")
 @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
 public class EvaluationController {
     private final EvaluationService evaluationService;

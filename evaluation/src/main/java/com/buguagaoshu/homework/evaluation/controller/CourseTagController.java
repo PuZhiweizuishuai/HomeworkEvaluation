@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
  * 加载课程二级分类信息
  */
 @RestController
-@RequestMapping("/api")
 public class CourseTagController {
 
     private final CourseTagCache courseTagCache;

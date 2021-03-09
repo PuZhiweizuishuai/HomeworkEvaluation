@@ -18,7 +18,6 @@ import java.util.Map;
  * create          2020-06-17 20:14
  */
 @RestController
-@RequestMapping("/api")
 @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
 public class QuestionsController {
     private final QuestionsService questionsService;

@@ -9,7 +9,6 @@ import com.buguagaoshu.homework.evaluation.model.CurriculumModel;
 import com.buguagaoshu.homework.evaluation.model.JoinCourseCode;
 import com.buguagaoshu.homework.evaluation.service.CurriculumService;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
-import com.buguagaoshu.homework.evaluation.utils.TimeUtils;
 import com.buguagaoshu.homework.evaluation.vo.CurriculumInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,7 +24,6 @@ import java.util.Map;
  * 课程接口
  */
 @RestController
-@RequestMapping("/api")
 public class CurriculumController {
 
     private final CurriculumService curriculumService;

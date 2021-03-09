@@ -4,7 +4,6 @@ import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
-import com.buguagaoshu.homework.evaluation.entity.HomeworkEntity;
 import com.buguagaoshu.homework.evaluation.entity.SubmitHomeworkStatusEntity;
 import com.buguagaoshu.homework.evaluation.model.HomeworkAnswer;
 import com.buguagaoshu.homework.evaluation.model.HomeworkModel;
@@ -29,7 +28,6 @@ import java.util.Map;
  * create          2020-06-12 17:13
  */
 @RestController
-@RequestMapping("/api")
 public class HomeworkController {
     private final HomeworkService homeworkService;
 

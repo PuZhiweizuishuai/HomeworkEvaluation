@@ -18,7 +18,6 @@ import java.util.List;
  * 课件
  */
 @RestController
-@RequestMapping("/api")
 public class CoursewareController {
     private final CoursewareService coursewareService;
 

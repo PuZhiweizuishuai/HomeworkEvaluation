@@ -1,6 +1,7 @@
 package com.buguagaoshu.homework.evaluation;
 
 import com.buguagaoshu.homework.evaluation.utils.InviteCodeUtil;
+import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import com.buguagaoshu.homework.evaluation.utils.TimeUtils;
 
 import java.text.DateFormat;
@@ -13,8 +14,9 @@ import java.util.*;
  */
 public class Test {
     public static void main(String[] args) throws ParseException {
-        int x = "/api/uploads/courseware/9/201741010102/2020-10-03/82f033c6abd04af38c65a8049b08850e.jpg".lastIndexOf("/");
-        System.out.println("/api/uploads/courseware/9/201741010102/2020-10-03/82f033c6abd04af38c65a8049b08850e.jpg".substring(x+1));
+        String s = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiLokrLoh7TlqIEiLCJqdGkiOiIyMDE3NDEwMTAxMDIiLCJhdXRob3JpdGllcyI6IlJPTEVfQURNSU4sIiwiZXhwIjoxNjE1OTgzMzg2fQ.Oy7kX6ccrnWi5MrMYl9hmv5EIZEEdMZydK2u_1xz12TgGnGqX8L7m9GA2gYmZ0nRyl_NIlA0TpPHpqcH8js0ww";
 
+        String st = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiLokrLoh7TlqIEiLCJqdGkiOiIyMDE3NDEwMTAxMDIiLCJhdXRob3JpdGllcyI6IlJPTEVfQURNSU4sIiwiZXhwIjoxNjE1OTgzMzg2fQ.Oy7kX6ccrnWi5MrMYl9hmv5EIZEEdMZydK2u_1xz12TgGnGqX8L7m9GA2gYmZ0nRyl_NIlA0TpPHpqcH8js0ww";
+        System.out.println(JwtUtil.parseJWT(st, "TEST_KEY"));
     }
 }

@@ -7,6 +7,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
  * create          2020-10-03 22:46
@@ -19,5 +22,11 @@ public class TestRoleControllrt {
     public ResponseDetails role() {
 
         return ResponseDetails.ok().put("data", SecurityContextHolder.getContext().getAuthentication());
+    }
+
+
+    @GetMapping("/test/buguagaoshu")
+    public void tiaoZhuan(HttpServletResponse response) throws IOException {
+        response.sendRedirect("https://www.buguagaoshu.com/");
     }
 }

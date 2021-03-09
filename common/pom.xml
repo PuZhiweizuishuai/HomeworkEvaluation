@@ -17,6 +17,7 @@
     <properties>
         <java.version>11</java.version>
         <mybatis-plus.version>3.4.2</mybatis-plus.version>
+        <jjwt.version>0.9.1</jjwt.version>
         <spring-cloud.alibaba>2.2.5.RELEASE</spring-cloud.alibaba>
         <!--        <jakarta.version>2.0.2</jakarta.version>-->
     </properties>
@@ -26,6 +27,11 @@
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jjwt.version}</version>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>

@@ -22,7 +22,6 @@ import java.util.Map;
  * 发帖控制
  */
 @RestController
-@RequestMapping("/api")
 public class ArticleController {
     private final ArticleService articleService;
 
