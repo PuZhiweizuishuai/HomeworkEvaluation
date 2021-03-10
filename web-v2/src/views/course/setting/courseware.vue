@@ -2,7 +2,7 @@
   <v-container>
     <v-row justify="center">
       <v-col cols="12">
-        <v-btn depressed color="success" @click="dialog = true">
+        <v-btn depressed color="success" @click="createCourseware">
           上传课件
         </v-btn>
       </v-col>
@@ -15,7 +15,6 @@
     <v-row>
       <v-col cols="12">
         <v-treeview
-          selectable
           hoverable
           activatable
           :items="coursewareList"
@@ -24,6 +23,24 @@
             <router-link :to="`/course/learn/${item.courseId}/courseware/${item.id}`">
               {{ item.title }}
             </router-link>
+            <v-chip
+              v-if="item.status == 1"
+              class="ma-2"
+            >
+              转码中
+            </v-chip>
+            <v-chip
+              v-if="item.status == 2"
+              class="ma-2"
+              color="red"
+              text-color="white"
+            >
+              转码失败，此课件将无法正常预览，需要下载查看
+            </v-chip>
+            <span v-html="`&nbsp;&nbsp;&nbsp;&nbsp;`" />
+            <v-btn small text color="primary" @click="edit(item)">编辑</v-btn>
+            <span v-html="`&nbsp;&nbsp;&nbsp;&nbsp;`" />
+            <v-btn small text color="error" @click="deleteItem(item)">删除</v-btn>
           </template>
         </v-treeview>
       </v-col>
@@ -37,7 +54,7 @@
           上传课件
         </v-card-title>
 
-        <CoursewareForm @courseware="getCourseware" />
+        <CoursewareForm :key="coursewareKey" :isedit="isEdit" :info="nowItem" @courseware="saveCourseware" />
 
       </v-card>
     </v-dialog>
@@ -75,16 +92,23 @@ export default {
       dialog: false,
       courseware: {},
       showMessage: false,
-      message: ''
+      message: '',
+      isEdit: false,
+      nowItem: null,
+      coursewareKey: 0
     }
   },
   created() {
     this.getCoursewareList()
   },
   methods: {
-    getCourseware(value) {
+    saveCourseware(value, isEdit) {
+      let url = '/course/courseware/save'
+      if (this.isEdit) {
+        url = '/course/courseware/update'
+      }
       this.courseware = value
-      this.httpPost('/course/courseware/save', this.courseware, (json) => {
+      this.httpPost(url, this.courseware, (json) => {
         if (json.status === 200) {
           this.message = '创建成功'
           this.showMessage = true
@@ -105,6 +129,31 @@ export default {
           //
         }
       })
+    },
+    edit(item) {
+      //
+      this.isEdit = true
+      this.nowItem = item
+      this.coursewareKey++
+      this.dialog = true
+    },
+    createCourseware() {
+      this.nowItem = {
+        sort: 1,
+        courseId: this.$route.params.id,
+        title: '',
+        text: '',
+        level: 0,
+        fileUrl: '',
+        fileName: '',
+        fatherId: 0
+      }
+      this.isEdit = false
+      this.coursewareKey++
+      this.dialog = true
+    },
+    deleteItem(item) {
+      //
     }
   }
 }

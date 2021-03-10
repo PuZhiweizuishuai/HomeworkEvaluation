@@ -1,4 +1,10 @@
-
+minio:
+  server: http://192.168.43.131:9000
+  accessKey: admin
+  secretKey: pzw123456
+  bucketName: homework
+  # 300 秒
+  expiry: 300
 spring:
   cloud:
     nacos:

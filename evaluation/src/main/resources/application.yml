@@ -49,6 +49,10 @@ spring:
   kafka:
     bootstrap-servers:
       - 192.168.43.131:9092
+    consumer:
+      group-id: Evaluation
+    listener:
+      missing-topics-fatal: false
   servlet:
     multipart:
       enabled: true

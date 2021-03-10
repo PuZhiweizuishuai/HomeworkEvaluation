@@ -119,9 +119,10 @@ public interface NotificationService extends IService<NotificationEntity> {
     /**
      * 向学生发布新课件通知
      * @param  students 学生信息
-     * @param user 老师信息
+     * @param userId 老师信息
+     * @param username 老师名
      * @param coursewareEntity 课件信息
      * */
-    void sendNewCourseware(List<StudentsCurriculumEntity> students, Claims user, CoursewareEntity coursewareEntity);
+    void sendNewCourseware(List<StudentsCurriculumEntity> students, String userId, String username, CoursewareEntity coursewareEntity);
 }
 

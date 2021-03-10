@@ -33,6 +33,18 @@
         <v-divider />
       </v-col>
     </v-row>
+    <v-row justify="center">
+      <v-col cols="11">
+        <h2>
+          {{ courseware.title }}
+        </h2>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-divider />
+      </v-col>
+    </v-row>
     <!-- 视频播放 -->
     <v-row v-if="courseware.fileType == 1" :key="videoKey">
       <v-col cols="12">
@@ -58,23 +70,24 @@
         <v-divider />
       </v-col>
     </v-row>
+
+    <!-- OFFICE 文档预览 -->
+    <v-row v-if="courseware.fileType == 3" justify="center">
+      <v-col v-if="courseware.status == 0" cols="11">
+        <embed :src="courseware.fileUrl +'.pdf?key=' + encodeURIComponent(courseware.key)" type="application/pdf" style="width: 100%; height: 600px">
+      </v-col>
+    </v-row>
+
     <!-- 下载框 -->
-    <v-row v-if="courseware.fileType == 2 || courseware.fileType == 1 || courseware.fileType == 4" justify="center">
+    <v-row v-if="courseware.fileType != null" justify="center">
       <v-col cols="11">
-        如你的浏览器不支持，那么请下载查看：
+        此文件如果不支持预览，那么请下载查看：
         <router-link :to="courseware.fileUrl+'?key=' + encodeURIComponent(courseware.key)" target="_blank">
           <v-btn depressed color="primary">下载文件</v-btn>
         </router-link>
       </v-col>
     </v-row>
-    <v-row v-if="courseware.fileType == 3 || courseware.fileType == 0" justify="center">
-      <v-col cols="11">
-        非常抱歉，当前暂不支持这类文件的在线预览，请下载后查看：
-        <router-link :to="courseware.fileUrl +'?key=' + encodeURIComponent(courseware.key)" target="_blank">
-          <v-btn depressed color="primary">下载文件</v-btn>
-        </router-link>
-      </v-col>
-    </v-row>
+
     <!-- 分割线 -->
     <v-row>
       <v-col cols="12">

@@ -18,6 +18,7 @@
         <result property="fatherId" column="father_id"/>
         <result property="sort" column="sort" />
         <result property="fileName" column="file_name" />
+        <result property="status" column="status" />
     </resultMap>
 
 

@@ -12,3 +12,8 @@ spring:
   cloud:
     nacos:
       server-addr: 192.168.43.131:8848
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 204800MB
+      max-request-size: 102400000000MB

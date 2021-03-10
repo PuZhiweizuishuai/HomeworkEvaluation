@@ -97,4 +97,6 @@ public class CoursewareEntity {
 
     @TableField(exist = false)
     private String key;
+
+    private Integer status;
 }

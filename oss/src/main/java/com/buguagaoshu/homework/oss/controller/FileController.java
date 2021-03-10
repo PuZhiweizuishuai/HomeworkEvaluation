@@ -37,6 +37,7 @@ public class FileController {
         this.repository = fileStorageRepository;
     }
 
+
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @PostMapping("/uploads/file")
     public VditorFiles upload(@RequestParam(value = "file[]", required = false) MultipartFile[] files,
@@ -52,7 +53,7 @@ public class FileController {
     }
 
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
-    @PostMapping("/upload/courseware")
+    @PostMapping("/uploads/courseware")
     public ResponseDetails upload(@RequestParam(value = "file", required = false) MultipartFile file,
                                   @RequestParam(value = "course") String course,
                                   HttpServletRequest request) {
@@ -65,6 +66,7 @@ public class FileController {
         }
         return ResponseDetails.ok().put("data", save);
     }
+
 
     @GetMapping("/uploads/file/{userId}/{date}/{filename:.+}")
     public void getFile(@PathVariable("userId") String userId,
@@ -94,14 +96,13 @@ public class FileController {
             String decrypt = AesUtil.decrypt(key, AES_KEY);
             String[] str = decrypt.split("#");
             // 第一个是用户ID，第二个是文件名，第三个是过期时间
-            if (str[1].equals(filename) && Long.parseLong(str[2]) > System.currentTimeMillis() && str[0].equals(user.getId())) {
+            if ((str[1].equals(filename) || (str[1]+".pdf").equals(filename)) && Long.parseLong(str[2]) > System.currentTimeMillis() && str[0].equals(user.getId())) {
                 lock = true;
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.OK).body("key error!!!");
         }
         if (lock) {
-            String contentType = "application/octet-stream";
             try {
                 return ResponseEntity.status(HttpStatus.FOUND).header("location", repository.getFileUrl(path)).body(null);
             } catch (Exception e) {

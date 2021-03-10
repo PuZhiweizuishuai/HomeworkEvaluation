@@ -32,11 +32,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 开启跨域
                 .cors()
                 .and()
-                // 开启 csrf 验证
+                // 关闭 csrf 验证
                 .csrf()
-                .ignoringAntMatchers()
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .and()
+                .disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()

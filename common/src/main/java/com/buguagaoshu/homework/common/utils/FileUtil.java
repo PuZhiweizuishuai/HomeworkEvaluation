@@ -41,12 +41,12 @@ public class FileUtil {
             ".jpg", ".jpeg", ".png", ".gif", ".ico"
     };
 
-    /**
-     * TODO 有待支持的在线预览文件格式
-     */
+
     public static final String[] DOC_FILE = {
             ".doc", ".xls", ".ppt", ".docx", ".xlsx", ".pptx"
     };
+
+    public final static int OFFICE_CODE = 3;
 
     /**
      * 文件存储路径
@@ -111,7 +111,6 @@ public class FileUtil {
             }
         }
 
-        // 有待支持的文件预览格式
         for (String s : DOC_FILE) {
             if (s.equals(suffix)) {
                 return 3;
@@ -134,6 +133,15 @@ public class FileUtil {
 //            }
 //        }
 //        return false;
+    }
+
+    public String getNewFileName(String url) {
+        return url.substring(url.lastIndexOf("/") + 1);
+    }
+
+
+    public String removeApiWithName(String url) {
+        return url.substring(4, url.lastIndexOf("/"));
     }
 
     public String getWebsite() {

@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
+import com.buguagaoshu.homework.common.domain.ConvertOfficeInfo;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.config.WebConstant;
@@ -9,8 +10,10 @@ import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
 import com.buguagaoshu.homework.common.utils.AesUtil;
 import com.buguagaoshu.homework.common.utils.FileUtil;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -42,13 +45,19 @@ public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, Courseware
 
     private final NotificationService notificationService;
 
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    private final ObjectMapper objectMapper;
+
     private final WebConstant webConstant;
     private final FileUtil fileUtil;
 
     @Autowired
-    public CoursewareServiceImpl(StudentsCurriculumService studentsCurriculumService, NotificationService notificationService, WebConstant webConstant, FileUtil fileUtil) {
+    public CoursewareServiceImpl(StudentsCurriculumService studentsCurriculumService, NotificationService notificationService, KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper, WebConstant webConstant, FileUtil fileUtil) {
         this.studentsCurriculumService = studentsCurriculumService;
         this.notificationService = notificationService;
+        this.kafkaTemplate = kafkaTemplate;
+        this.objectMapper = objectMapper;
         this.webConstant = webConstant;
         this.fileUtil = fileUtil;
     }
@@ -114,7 +123,6 @@ public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, Courseware
                 }
             }
 
-
             coursewareEntity.setCreateTeacher(user.getId());
             coursewareEntity.setCaretTime(time);
             coursewareEntity.setUpdateTime(time);
@@ -125,10 +133,34 @@ public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, Courseware
             // 设置文件格式
             if (!StringUtils.isEmpty(coursewareEntity.getFileUrl())) {
                 coursewareEntity.setFileType(fileUtil.fileTypeCode(coursewareEntity.getFileUrl()));
+                if (coursewareEntity.getFileType() == FileUtil.OFFICE_CODE) {
+                    // 转码中
+                    coursewareEntity.setStatus(1);
+                } else {
+                    coursewareEntity.setStatus(0);
+                }
+            } else {
+                coursewareEntity.setStatus(0);
             }
+
             this.save(coursewareEntity);
-            List<StudentsCurriculumEntity> students = studentsCurriculumService.findUserListInCurriculum(coursewareEntity.getCourseId());
-            notificationService.sendNewCourseware(students, user, coursewareEntity);
+            // 发送转码消息
+            if (coursewareEntity.getFileType() != null && coursewareEntity.getFileType() == FileUtil.OFFICE_CODE) {
+                ConvertOfficeInfo convertOfficeInfo = new ConvertOfficeInfo();
+                convertOfficeInfo.setFilename(fileUtil.getNewFileName(coursewareEntity.getFileUrl()));
+                convertOfficeInfo.setFilePath(fileUtil.removeApiWithName(coursewareEntity.getFileUrl()));
+                convertOfficeInfo.setTargetFilePath("");
+                convertOfficeInfo.setUsername(user.getSubject());
+                convertOfficeInfo.setUserID(user.getId());
+                convertOfficeInfo.setCoursewareId(coursewareEntity.getId());
+                try {
+                    kafkaTemplate.send("ConvertOffice", objectMapper.writeValueAsString(convertOfficeInfo));
+                } catch (Exception ignored) {}
+            } else {
+                // 发送通知
+                List<StudentsCurriculumEntity> students = studentsCurriculumService.findUserListInCurriculum(coursewareEntity.getCourseId());
+                notificationService.sendNewCourseware(students, user.getId(), user.getSubject(), coursewareEntity);
+            }
             return true;
         }
         return false;

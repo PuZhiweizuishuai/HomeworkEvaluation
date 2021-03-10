@@ -10,9 +10,10 @@ import java.text.ParseException;
  */
 public class Test {
     public static void main(String[] args) throws ParseException {
-        String s = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiLokrLoh7TlqIEiLCJqdGkiOiIyMDE3NDEwMTAxMDIiLCJhdXRob3JpdGllcyI6IlJPTEVfQURNSU4sIiwiZXhwIjoxNjE1OTgzMzg2fQ.Oy7kX6ccrnWi5MrMYl9hmv5EIZEEdMZydK2u_1xz12TgGnGqX8L7m9GA2gYmZ0nRyl_NIlA0TpPHpqcH8js0ww";
+        String url = "/api/uploads/courseware/9/201741010102/2021-03-03/a9754b8016fc4130975315be0bd3fe5f.mp4";
+        int n = url.lastIndexOf("/");
+        System.out.println(url.substring(n+1));
 
-        String st = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiLokrLoh7TlqIEiLCJqdGkiOiIyMDE3NDEwMTAxMDIiLCJhdXRob3JpdGllcyI6IlJPTEVfQURNSU4sIiwiZXhwIjoxNjE1OTgzMzg2fQ.Oy7kX6ccrnWi5MrMYl9hmv5EIZEEdMZydK2u_1xz12TgGnGqX8L7m9GA2gYmZ0nRyl_NIlA0TpPHpqcH8js0ww";
-        System.out.println(JwtUtil.parseJWT(st, "TEST_KEY"));
+        System.out.println(url.substring(5, url.lastIndexOf("/")));
     }
 }

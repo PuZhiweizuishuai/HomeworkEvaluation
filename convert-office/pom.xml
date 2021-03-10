@@ -17,12 +17,22 @@
         <java.version>11</java.version>
         <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
         <jodconverter.version>4.4.2</jodconverter.version>
+        <io.minio.version>3.0.10</io.minio.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>com.buguagaoshu.homework</groupId>
             <artifactId>common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>${io.minio.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jodconverter</groupId>

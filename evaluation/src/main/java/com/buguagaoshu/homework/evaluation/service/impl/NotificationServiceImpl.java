@@ -212,14 +212,14 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationDao, Notifi
     }
 
     @Override
-    public void sendNewCourseware(List<StudentsCurriculumEntity> students, Claims user, CoursewareEntity coursewareEntity) {
+    public void sendNewCourseware(List<StudentsCurriculumEntity> students, String userId, String username, CoursewareEntity coursewareEntity) {
         if (students.size() != 0) {
             long time = System.currentTimeMillis();
             List<NotificationEntity> notificationEntities = new LinkedList<>();
             String text = "你学习的课程：发布了新的课件：" + coursewareEntity.getTitle() + "，请尽快查看！";
             String url = "/course/learn/" + coursewareEntity.getCourseId() + "/courseware/" + coursewareEntity.getId();
             students.forEach((u) -> {
-                NotificationEntity notificationEntity = initNotificationEntity(user.getId(), user.getSubject(), u.getStudentId(), time, NotificationTypeEnum.COURSE_COURSEWARE, coursewareEntity.getCourseId());
+                NotificationEntity notificationEntity = initNotificationEntity(userId, username, u.getStudentId(), time, NotificationTypeEnum.COURSE_COURSEWARE, coursewareEntity.getCourseId());
                 notificationEntity.setText(text);
                 notificationEntity.setUrl(url);
                 notificationEntities.add(notificationEntity);

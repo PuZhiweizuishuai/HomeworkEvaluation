@@ -17,10 +17,11 @@
         <v-treeview
           hoverable
           activatable
+
           :items="coursewareList"
         >
           <template v-slot:prepend="{ item }">
-            <router-link :to="`/course/learn/${item.courseId}/courseware/${item.id}`">
+            <router-link v-if="item.status == 0" :to="`/course/learn/${item.courseId}/courseware/${item.id}`">
               <v-icon v-if="item.fileType == 2">
                 mdi-file-pdf
               </v-icon>
@@ -28,7 +29,7 @@
                 mdi-video
               </v-icon>
               <v-icon v-if="item.fileType == 3">
-                mdi-file-powerpoint
+                mdi-file-document
               </v-icon>
               <v-icon v-if="item.fileType == 4">
                 mdi-music
