@@ -171,7 +171,7 @@ export default {
         courseId: this.$route.params.id,
         verifyCode: ''
       },
-      uploadurl: this.SERVER_API_URL + '/upload/file',
+      uploadurl: this.SERVER_API_URL + '/uploads/file',
       colsRight: 3,
       colsLeft: 8,
       showCenterDriver: true,

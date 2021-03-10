@@ -98,7 +98,7 @@ export default {
   },
   data() {
     return {
-      uploadurl: this.SERVER_API_URL + '/upload/file',
+      uploadurl: this.SERVER_API_URL + '/uploads/file',
       courseware: {
         sort: 1,
         courseId: this.$route.params.id,

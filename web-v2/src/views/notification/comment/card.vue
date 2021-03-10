@@ -104,7 +104,7 @@ export default {
   data() {
     return {
       commentPlaceholder: '',
-      uploadurl: this.SERVER_API_URL + '/upload/file',
+      uploadurl: this.SERVER_API_URL + '/uploads/file',
       commentData: {
         articleId: this.comment.articleEntity.id,
         content: '',

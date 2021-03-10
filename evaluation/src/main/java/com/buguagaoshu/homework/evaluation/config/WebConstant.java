@@ -1,14 +1,23 @@
 package com.buguagaoshu.homework.evaluation.config;
 
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
+
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
  * create          2020-09-27 19:13
  */
+@RefreshScope
+@Data
 public class WebConstant {
     /**
      * AES 加密 KEY
      * */
-    public final static String AES_KEY = "sfsadfk23#$#%^454153@#$@!$%#$^$%7456";
+    @Value("${Aes.key}")
+    private String aesKey;
+
 
     /**
      * AES 加密时效

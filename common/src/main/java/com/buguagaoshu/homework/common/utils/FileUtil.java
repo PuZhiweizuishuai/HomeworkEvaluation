@@ -1,14 +1,12 @@
-package com.buguagaoshu.homework.evaluation.utils;
+package com.buguagaoshu.homework.common.utils;
 
-import com.buguagaoshu.homework.evaluation.config.BaseWebInfoConfig;
-import com.buguagaoshu.homework.evaluation.exception.FilePathException;
-import com.buguagaoshu.homework.evaluation.model.FileModel;
+
+import com.buguagaoshu.homework.common.domain.FileModel;
+import com.buguagaoshu.homework.common.exception.FilePathException;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
@@ -16,7 +14,6 @@ import java.util.Map;
  */
 @Component
 public class FileUtil {
-    private final BaseWebInfoConfig baseWebInfoConfig;
 
     /**
      * 一次最多上传的文件数量
@@ -27,9 +24,7 @@ public class FileUtil {
 
     private String website = "";
 
-    public FileUtil(BaseWebInfoConfig baseWebInfoConfig) {
-        this.baseWebInfoConfig = baseWebInfoConfig;
-        this.website = baseWebInfoConfig.getWebsite();
+    public FileUtil() {
     }
 
     public static final String PDF = ".pdf";
@@ -128,16 +123,17 @@ public class FileUtil {
     }
 
     public boolean checkSuffix(String filename) {
-        if (baseWebInfoConfig.getFileSuffix() == null || "".equals(baseWebInfoConfig.getFileSuffix())) {
-            return true;
-        }
-        String[] suf = baseWebInfoConfig.getFileSuffix().split(",");
-        for (String s : suf) {
-            if (s.equals(getFileSuffix(filename))) {
-                return true;
-            }
-        }
-        return false;
+        return true;
+//        if (baseWebInfoConfig.getFileSuffix() == null || "".equals(baseWebInfoConfig.getFileSuffix())) {
+//            return true;
+//        }
+//        String[] suf = baseWebInfoConfig.getFileSuffix().split(",");
+//        for (String s : suf) {
+//            if (s.equals(getFileSuffix(filename))) {
+//                return true;
+//            }
+//        }
+//        return false;
     }
 
     public String getWebsite() {

@@ -1,9 +1,8 @@
-package com.buguagaoshu.homework.evaluation.utils;
+package com.buguagaoshu.homework.common.utils;
 
 
 
 
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -19,7 +18,7 @@ import javax.crypto.spec.SecretKeySpec;
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
  * create          2020-09-11 16:34
  */
-@Slf4j
+
 public class AesUtil {
 
     private static SecretKeySpec secretKey;
@@ -52,7 +51,6 @@ public class AesUtil {
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
-            log.error("加密时出错 " + e.toString());
             return null;
         }
     }
@@ -70,7 +68,6 @@ public class AesUtil {
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
             return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
         } catch (Exception e) {
-            log.error("解密时出错：" + e.toString());
             return null;
         }
 

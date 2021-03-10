@@ -1,0 +1,14 @@
+minio:
+  server: http://192.168.43.131:9000
+  accessKey: admin
+  secretKey: pzw123456
+  bucketName: homework
+  # 300 秒
+  expiry: 300
+server:
+  port: 8095
+
+spring:
+  cloud:
+    nacos:
+      server-addr: 192.168.43.131:8848

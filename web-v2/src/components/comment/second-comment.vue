@@ -144,7 +144,7 @@ export default {
       message: '',
       showMessage: false,
       secondCommentKey: 0,
-      uploadurl: this.SERVER_API_URL + '/upload/file'
+      uploadurl: this.SERVER_API_URL + '/uploads/file'
     }
   },
   created() {

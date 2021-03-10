@@ -103,7 +103,7 @@ export default {
   data() {
     return {
       homeworkData: {},
-      uploadurl: this.SERVER_API_URL + `/upload/file?type=homework&homework=${this.$route.params.homeworkId}`,
+      uploadurl: this.SERVER_API_URL + `/uploads/file?type=homework&homework=${this.$route.params.homeworkId}`,
       commentMap: {
 
       },

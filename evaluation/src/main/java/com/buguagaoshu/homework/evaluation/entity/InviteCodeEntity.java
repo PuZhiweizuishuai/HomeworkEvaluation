@@ -4,12 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import com.buguagaoshu.homework.common.enums.InviteCodeTypeEnum;
 import com.buguagaoshu.homework.common.valid.ListValue;
-import com.buguagaoshu.homework.evaluation.utils.InviteCodeUtil;
+import com.buguagaoshu.homework.common.utils.InviteCodeUtil;
 import lombok.Data;
 
 import javax.validation.constraints.Min;

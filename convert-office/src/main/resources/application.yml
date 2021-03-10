@@ -1,0 +1,30 @@
+
+spring:
+  cloud:
+    nacos:
+      server-addr: 192.168.43.131:8848
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    # 192.168.43.128 192.168.43.130
+    url: jdbc:mysql://192.168.43.131:3306/homework_evaluation?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+  kafka:
+    bootstrap-servers:
+      - 192.168.43.131:9092
+    consumer:
+      group-id: ConvertOffice
+    listener:
+      missing-topics-fatal: false
+server:
+  port: 8089
+
+libreoffice:
+  home: E:/Spring/Homework/LiberOffice
+  # 开启多个LibreOffice进程，每个端口对应一个进程
+  # port:2002,2003
+  ports: 2002
+  # 任务执行超时为5分钟
+  taskExecutionTimeoutMinutes: 5
+  # 任务队列超时为1小时
+  taskQueueTimeoutHours: 1

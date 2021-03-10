@@ -64,7 +64,7 @@ export default {
       ],
       showMessage: false,
       message: '',
-      uploadurl: this.SERVER_API_URL + '/upload/file'
+      uploadurl: this.SERVER_API_URL + '/uploads/file'
     }
   },
   created() {

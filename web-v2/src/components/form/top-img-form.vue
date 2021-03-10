@@ -134,7 +134,7 @@ export default {
         { text: '社区页', value: 0 },
         { text: '首页', value: 1 }
       ],
-      uploadurl: this.SERVER_API_URL + '/upload/file',
+      uploadurl: this.SERVER_API_URL + '/uploads/file',
       showMessage: false,
       message: true
     }

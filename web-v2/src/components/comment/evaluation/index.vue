@@ -129,7 +129,7 @@ export default {
       },
       commentsList: [],
       verifyImageUrl: this.SERVER_API_URL + '/verifyImage',
-      uploadurl: this.SERVER_API_URL + '/upload/file',
+      uploadurl: this.SERVER_API_URL + '/uploads/file',
       comment: {
         submitId: 0,
         content: '',

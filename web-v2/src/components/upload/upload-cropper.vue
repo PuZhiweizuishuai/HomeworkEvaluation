@@ -60,7 +60,7 @@ export default {
   props: {
     uploadurl: {
       type: String,
-      default: '/api/upload/file'
+      default: '/api/uploads/file'
     },
     fixednumber: {
       type: Array,
@@ -142,7 +142,7 @@ export default {
     },
     // 获取文件上传的url
     retrieveNewURL(file, cb) {
-      fetch(this.SERVER_API_URL + `/upload/file/url?filename=${this.fileName}`, {
+      fetch(this.SERVER_API_URL + `/uploads/file/url?filename=${this.fileName}`, {
         method: 'GET', // or 'PUT'
         credentials: 'include'
       }).then(res => res.json())

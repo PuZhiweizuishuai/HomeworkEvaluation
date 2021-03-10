@@ -63,7 +63,7 @@ export default {
       ],
       showMessage: false,
       message: '',
-      uploadurl: this.SERVER_API_URL + '/upload/file' // ?type=avatars'
+      uploadurl: this.SERVER_API_URL + '/uploads/file' // ?type=avatars'
     }
   },
   created() {

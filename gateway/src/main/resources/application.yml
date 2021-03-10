@@ -9,6 +9,13 @@ spring:
             - Path=/api/danmaku/**
           filters:
             - RewritePath=/api/(?<segment>/?.*), /$\{segment}
+        # 对象存储
+        - id: OSS_route
+          uri: lb://OSS
+          predicates:
+            - Path=/api/uploads/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*), /$\{segment}
         # 核心服务
         - id: Evaluation_route
           uri: lb://Evaluation

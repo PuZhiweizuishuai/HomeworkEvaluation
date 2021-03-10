@@ -49,6 +49,8 @@
 |           搜索           |                 Elasticsearch 7.10.1                 |
 |        消息队列        |                     Kafka 2.7.0                     |
 |      数据同步canal      |                 Alibaba Canal 1.1.5                 |
+|      对象存储      |                 MinIO                 |
+|      文档转换      |                 Libre Office 6.4                 |
 
 
 ## 快速运行

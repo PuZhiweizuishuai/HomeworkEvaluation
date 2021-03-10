@@ -1,4 +1,4 @@
-package com.buguagaoshu.homework.evaluation.exception;
+package com.buguagaoshu.homework.common.exception;
 
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}

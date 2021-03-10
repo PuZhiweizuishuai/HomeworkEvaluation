@@ -1,4 +1,4 @@
-package com.buguagaoshu.homework.evaluation.utils;
+package com.buguagaoshu.homework.common.utils;
 
 import java.util.UUID;
 

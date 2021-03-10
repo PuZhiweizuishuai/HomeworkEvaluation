@@ -241,7 +241,7 @@ export default {
       },
       choiceAnswer: '',
       multipleChoice: [],
-      uploadurl: this.SERVER_API_URL + '/upload/file',
+      uploadurl: this.SERVER_API_URL + '/uploads/file',
       questionTypeItem: [
         { text: '单选', value: 0 },
         { text: '多选', value: 1 },

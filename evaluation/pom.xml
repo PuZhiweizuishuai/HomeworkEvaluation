@@ -67,12 +67,7 @@
             <artifactId>spring-kafka</artifactId>
         </dependency>
 
-        <!-- Java11 下 jjwt 版本依赖 , Java8 可以忽略 -->
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.0</version>
-        </dependency>
+
         <dependency>
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>

@@ -1,11 +1,11 @@
 package com.buguagaoshu.homework.evaluation.repository.impl;
 
 import com.buguagaoshu.homework.evaluation.config.MinIOConfigProperties;
-import com.buguagaoshu.homework.evaluation.exception.FilePathException;
-import com.buguagaoshu.homework.evaluation.model.FileModel;
-import com.buguagaoshu.homework.evaluation.model.VditorFiles;
+import com.buguagaoshu.homework.common.exception.FilePathException;
+import com.buguagaoshu.homework.common.domain.FileModel;
+import com.buguagaoshu.homework.common.domain.VditorFiles;
 import com.buguagaoshu.homework.evaluation.repository.FileStorageRepository;
-import com.buguagaoshu.homework.evaluation.utils.FileUtil;
+import com.buguagaoshu.homework.common.utils.FileUtil;
 import io.minio.MinioClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.buguagaoshu.homework.evaluation.repository;
 
-import com.buguagaoshu.homework.evaluation.model.VditorFiles;
+import com.buguagaoshu.homework.common.domain.VditorFiles;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;

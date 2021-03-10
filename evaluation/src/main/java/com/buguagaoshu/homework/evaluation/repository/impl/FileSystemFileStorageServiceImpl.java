@@ -1,10 +1,10 @@
 package com.buguagaoshu.homework.evaluation.repository.impl;
 
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
-import com.buguagaoshu.homework.evaluation.model.FileModel;
-import com.buguagaoshu.homework.evaluation.model.VditorFiles;
+import com.buguagaoshu.homework.common.domain.FileModel;
+import com.buguagaoshu.homework.common.domain.VditorFiles;
 import com.buguagaoshu.homework.evaluation.repository.FileStorageRepository;
-import com.buguagaoshu.homework.evaluation.utils.FileUtil;
+import com.buguagaoshu.homework.common.utils.FileUtil;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;

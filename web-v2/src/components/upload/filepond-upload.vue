@@ -54,7 +54,7 @@ export default {
       videMessage: {},
       myFiles: [],
       server: {
-        url: this.SERVER_API_URL + '/upload/courseware?course=' + this.$route.params.id,
+        url: this.SERVER_API_URL + '/uploads/courseware?course=' + this.$route.params.id,
         process: {
           headers: {
             'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')

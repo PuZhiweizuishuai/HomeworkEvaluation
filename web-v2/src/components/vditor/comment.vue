@@ -13,7 +13,7 @@ export default {
     },
     uploadurl: {
       type: String,
-      default: 'http://127.0.0.1:8080/upload/file'
+      default: 'http://127.0.0.1:8080/uploads/file'
     }
   },
   data() {

@@ -162,7 +162,7 @@ export default {
         limitTime: 0,
         time: 0
       },
-      uploadurl: this.SERVER_API_URL + '/upload/file',
+      uploadurl: this.SERVER_API_URL + '/uploads/file',
       message: '',
       showMessage: false
     }

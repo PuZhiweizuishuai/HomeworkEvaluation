@@ -128,7 +128,7 @@ export default {
     return {
       commentsList: [],
       verifyImageUrl: this.SERVER_API_URL + '/verifyImage',
-      uploadurl: this.SERVER_API_URL + '/upload/file',
+      uploadurl: this.SERVER_API_URL + '/uploads/file',
       comment: {
         articleId: this.artice.id,
         content: '',

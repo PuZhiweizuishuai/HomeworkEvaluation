@@ -363,6 +363,7 @@ export default {
       TimeUtil,
       id: 0,
       course: {
+        id: 0,
         curriculumName: '',
         classNumber: 0,
         openingTime: '',
@@ -382,7 +383,7 @@ export default {
       date: new Date().toISOString().substr(0, 10),
       startTime: false,
       closeTime: false,
-      uploadurl: this.SERVER_API_URL + '/upload/file',
+      uploadurl: this.SERVER_API_URL + '/uploads/file',
       // 保存限制进入的日期，年月日
       datePickerTime: false,
       // 保存限制进入课程的具体时分秒
@@ -406,9 +407,21 @@ export default {
     getInfo() {
       this.httpGet(`/curriculum/info/${this.id}`, (json) => {
         if (json.status === 200) {
-          this.course = json.data
-          this.course.closeTime = TimeUtil.formateNoHours(this.course.closeTime)
-          this.course.openingTime = TimeUtil.formateNoHours(this.course.openingTime)
+          // this.course = json.data
+          this.course.closeTime = TimeUtil.formateNoHours(json.data.closeTime)
+          this.course.openingTime = TimeUtil.formateNoHours(json.data.openingTime)
+          this.course.id = json.data.id
+          this.course.curriculumName = json.data.curriculumName
+          this.course.classNumber = json.data.classNumber
+          this.course.courseTag = json.data.courseTag
+          this.course.fatherCourseTag = json.data.fatherCourseTag
+          this.course.simpleInfo = json.data.simpleInfo
+          this.course.curriculumInfo = json.data.curriculumInfo
+          this.course.accessMethod = json.data.accessMethod
+          this.course.joinTimeLimit = json.data.joinTimeLimit
+          this.course.joinTime = json.data.joinTime
+          this.course.curriculumImageUrl = json.data.curriculumImageUrl
+          this.course.password = json.data.password
           if (this.course.joinTimeLimit === 1) {
             this.course.joinTime = TimeUtil.formateHours(this.course.joinTime)
           }

@@ -69,7 +69,7 @@ export default {
   data() {
     return {
       Constant,
-      uploadurl: this.SERVER_API_URL + `/upload/file?type=homework&homework=${this.$route.params.id}`
+      uploadurl: this.SERVER_API_URL + `/uploads/file?type=homework&homework=${this.$route.params.id}`
     }
   },
   methods: {

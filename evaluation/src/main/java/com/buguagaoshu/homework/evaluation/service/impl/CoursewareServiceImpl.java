@@ -6,8 +6,8 @@ import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
 import com.buguagaoshu.homework.evaluation.service.NotificationService;
 import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
-import com.buguagaoshu.homework.evaluation.utils.AesUtil;
-import com.buguagaoshu.homework.evaluation.utils.FileUtil;
+import com.buguagaoshu.homework.common.utils.AesUtil;
+import com.buguagaoshu.homework.common.utils.FileUtil;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,13 +42,14 @@ public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, Courseware
 
     private final NotificationService notificationService;
 
-
+    private final WebConstant webConstant;
     private final FileUtil fileUtil;
 
     @Autowired
-    public CoursewareServiceImpl(StudentsCurriculumService studentsCurriculumService, NotificationService notificationService, FileUtil fileUtil) {
+    public CoursewareServiceImpl(StudentsCurriculumService studentsCurriculumService, NotificationService notificationService, WebConstant webConstant, FileUtil fileUtil) {
         this.studentsCurriculumService = studentsCurriculumService;
         this.notificationService = notificationService;
+        this.webConstant = webConstant;
         this.fileUtil = fileUtil;
     }
 
@@ -78,7 +79,7 @@ public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, Courseware
             if (!StringUtils.isEmpty(e.getFileUrl())) {
                 String name = e.getFileUrl().substring(e.getFileUrl().lastIndexOf("/") + 1);
                 String strToEncrypt = user.getId() + "#" + name + "#" + (System.currentTimeMillis() + WebConstant.AES_EXPIRES_TIME);
-                String key = AesUtil.encrypt(strToEncrypt, WebConstant.AES_KEY);
+                String key = AesUtil.encrypt(strToEncrypt, webConstant.getAesKey());
                 e.setKey(key);
             }
         });

@@ -104,7 +104,7 @@ export default {
   },
   data() {
     return {
-      uploadurl: this.SERVER_API_URL + '/upload/file',
+      uploadurl: this.SERVER_API_URL + '/uploads/file',
       verifyImageUrl: this.SERVER_API_URL + '/verifyImage',
       comment: {
         content: '',

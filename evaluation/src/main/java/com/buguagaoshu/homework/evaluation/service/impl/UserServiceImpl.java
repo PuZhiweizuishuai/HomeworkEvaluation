@@ -15,7 +15,7 @@ import com.buguagaoshu.homework.evaluation.model.User;
 import com.buguagaoshu.homework.evaluation.service.*;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import com.buguagaoshu.homework.evaluation.vo.*;
-import com.buguagaoshu.homework.evaluation.utils.InviteCodeUtil;
+import com.buguagaoshu.homework.common.utils.InviteCodeUtil;
 import com.buguagaoshu.homework.evaluation.utils.IpUtil;
 import com.buguagaoshu.homework.evaluation.utils.TimeUtils;
 import io.jsonwebtoken.Claims;

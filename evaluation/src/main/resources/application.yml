@@ -21,7 +21,8 @@ minio:
   # 300 秒
   expiry: 300
 
-
+Aes:
+  key: sfsadfk23#$#%^454153@#$@!$%#$^$%7456
 
 server:
   port: 8080

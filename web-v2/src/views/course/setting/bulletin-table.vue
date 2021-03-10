@@ -156,7 +156,7 @@ export default {
       length: 1,
       id: 0,
       dialog: false,
-      uploadurl: this.SERVER_API_URL + '/upload/file',
+      uploadurl: this.SERVER_API_URL + '/uploads/file',
       bulletinData: {
         title: '',
         text: '',
