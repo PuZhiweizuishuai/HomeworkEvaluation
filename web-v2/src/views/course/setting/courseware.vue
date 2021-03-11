@@ -58,6 +58,41 @@
 
       </v-card>
     </v-dialog>
+    <!-- 删除文件确定框 -->
+    <v-dialog
+      v-model="deleteDialog"
+      max-width="500"
+    >
+      <v-card>
+        <v-card-title class="headline">
+          敏感操作，请输入密码后继续
+        </v-card-title>
+        <v-card-text>注意：删除后将无法恢复，请谨慎操作！！！删除父级目录将连同删除子目录。
+
+          <br>
+          你确定要删除：{{ nowItem.title }}
+        </v-card-text>
+        <v-card-subtitle>
+          <v-text-field v-model="password" label="密码" placeholder="请输入密码" type="password" />
+        </v-card-subtitle>
+        <v-card-actions>
+          <v-btn
+            color="green darken-1"
+            text
+            @click="deleteDialog = false"
+          >
+            取消
+          </v-btn>
+          <v-btn
+            color="error darken-1"
+            text
+            @click="sendDelete"
+          >
+            确定
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-snackbar
       v-model="showMessage"
       :top="true"
@@ -94,8 +129,12 @@ export default {
       showMessage: false,
       message: '',
       isEdit: false,
-      nowItem: null,
-      coursewareKey: 0
+      nowItem: {
+        title: ''
+      },
+      coursewareKey: 0,
+      deleteDialog: false,
+      password: ''
     }
   },
   created() {
@@ -154,6 +193,24 @@ export default {
     },
     deleteItem(item) {
       //
+
+      this.nowItem = item
+      this.deleteDialog = true
+    },
+    sendDelete() {
+      this.nowItem.password = this.password
+      this.httpPost('/course/courseware/delete', this.nowItem, (json) => {
+        if (json.status === 200) {
+          this.message = '删除成功'
+          this.showMessage = true
+          this.deleteDialog = false
+          this.password = ''
+          this.getCoursewareList()
+        } else {
+          this.message = json.message
+          this.showMessage = true
+        }
+      })
     }
   }
 }

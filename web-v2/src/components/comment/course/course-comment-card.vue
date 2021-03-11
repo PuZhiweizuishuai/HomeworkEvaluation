@@ -1,17 +1,27 @@
 <template>
   <v-card outlined>
     <v-card-title>
-      <router-link :to="`/user/${comment.authorId}`" target="_blank">
-        {{ comment.authorName }}
-      </router-link>
-      <v-rating
-        v-model="comment.courseRating"
-        size="16"
-        color="orange"
-        half-increments
-        background-color="orange lighten-3"
-        :readonly="true"
-      />
+      <v-row>
+        <v-col cols="10">
+          <router-link :to="`/user/${comment.authorId}`" target="_blank">
+            {{ comment.authorName }}
+          </router-link>
+          <v-rating
+            v-model="comment.courseRating"
+            size="16"
+            color="orange"
+            half-increments
+            background-color="orange lighten-3"
+            :readonly="true"
+          />
+        </v-col>
+        <v-col v-if="deletebtn" cols="2">
+          <v-btn color="error" text>
+            <v-icon>mdi-delete</v-icon>
+            删除
+          </v-btn>
+        </v-col>
+      </v-row>
     </v-card-title>
     <v-card-text>
       <v-row>
@@ -74,6 +84,10 @@ export default {
     comment: {
       type: Object,
       default: null
+    },
+    deletebtn: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

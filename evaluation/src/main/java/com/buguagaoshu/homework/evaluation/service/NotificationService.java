@@ -123,6 +123,6 @@ public interface NotificationService extends IService<NotificationEntity> {
      * @param username 老师名
      * @param coursewareEntity 课件信息
      * */
-    void sendNewCourseware(List<StudentsCurriculumEntity> students, String userId, String username, CoursewareEntity coursewareEntity);
+    void sendNewCourseware(List<StudentsCurriculumEntity> students, String userId, String username, CoursewareEntity coursewareEntity, String typeMessage);
 }
 

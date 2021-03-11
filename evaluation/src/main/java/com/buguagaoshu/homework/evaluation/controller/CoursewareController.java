@@ -52,4 +52,27 @@ public class CoursewareController {
         }
         return ResponseDetails.ok(ReturnCodeEnum.NO_POWER);
     }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT')")
+    @PostMapping("/course/courseware/delete")
+    public ResponseDetails delete(@Valid @RequestBody CoursewareEntity coursewareEntity,
+                                  HttpServletRequest request) {
+        boolean result = coursewareService.delete(coursewareEntity, request);
+        if (result) {
+            return ResponseDetails.ok();
+        }
+        return ResponseDetails.ok(ReturnCodeEnum.NO_POWER);
+    }
+
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT')")
+    @PostMapping("/course/courseware/update")
+    public ResponseDetails update(@Valid @RequestBody CoursewareEntity coursewareEntity,
+                                  HttpServletRequest request) {
+        boolean result = coursewareService.updateCourseware(coursewareEntity, request);
+        if (result) {
+            return ResponseDetails.ok();
+        }
+        return ResponseDetails.ok(ReturnCodeEnum.NO_POWER);
+    }
 }

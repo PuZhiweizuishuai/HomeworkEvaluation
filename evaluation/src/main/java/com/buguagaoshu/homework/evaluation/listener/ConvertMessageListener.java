@@ -42,14 +42,11 @@ public class ConvertMessageListener {
             String[] str = message.split("#");
             // 转码成功
             CoursewareEntity coursewareEntity = coursewareService.getById(Long.parseLong(str[0]));
-            System.out.println();
-            System.out.println(message);
-            System.out.println();
             if (str[1].equals("T")) {
                 // 发送成功消息
                 List<StudentsCurriculumEntity> students = studentsCurriculumService.findUserListInCurriculum(coursewareEntity.getCourseId());
                 // 2 是ID， 3 是名称
-                notificationService.sendNewCourseware(students, str[2], str[3], coursewareEntity);
+                notificationService.sendNewCourseware(students, str[2], str[3], coursewareEntity, str[4]);
                 coursewareEntity.setStatus(0);
             } else {
                 // 保存失败消息

@@ -35,5 +35,11 @@ public interface CoursewareService extends IService<CoursewareEntity> {
      * @return 结果
      * */
     boolean saveCourseware(CoursewareEntity coursewareEntity, HttpServletRequest request);
+
+
+    boolean updateCourseware(CoursewareEntity coursewareEntity, HttpServletRequest request);
+
+
+    boolean delete(CoursewareEntity coursewareEntity, HttpServletRequest request);
 }
 

@@ -27,4 +27,7 @@ public interface FileStorageRepository {
 
 
     String getFileUrl(String path);
+
+
+    Boolean delete(String path);
 }

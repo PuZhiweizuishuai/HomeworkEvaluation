@@ -157,16 +157,6 @@ export default {
       if (url.status === 200) {
         this.courseware.fileName = url.data.filename // Object.keys(url.data.succMap)[0]
         this.courseware.fileUrl = url.data.path // Object.values(url.data.succMap)[0]
-        this.courseware = {
-          sort: 1,
-          courseId: this.$route.params.id,
-          title: '',
-          text: '',
-          level: 0,
-          fileUrl: '',
-          fileName: '',
-          fatherId: 0
-        }
         this.message = '上传成功！'
         this.showMessage = true
       } else {

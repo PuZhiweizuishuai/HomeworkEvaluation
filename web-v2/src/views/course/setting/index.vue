@@ -23,6 +23,7 @@
         <HomeworkTable v-if="type == 3" />
         <Courseware v-if="type == 4" />
         <InviteCode v-if="type == 6" />
+        <StudenComment v-if="type == 7" />
       </v-col>
     </v-row>
   </v-container>
@@ -34,7 +35,7 @@ import BulletinTable from '@/views/course/setting/bulletin-table.vue'
 import UserTable from '@/views/course/setting/user-table.vue'
 import HomeworkTable from '@/views/course/setting/homework-table.vue'
 import Courseware from '@/views/course/setting/courseware.vue'
-
+import StudenComment from '@/views/course/setting/student-comment.vue'
 import InviteCode from '@/views/course/setting/invite-code.vue'
 
 export default {
@@ -45,7 +46,8 @@ export default {
     UserTable,
     HomeworkTable,
     Courseware,
-    InviteCode
+    InviteCode,
+    StudenComment
   },
   props: {
     course: {

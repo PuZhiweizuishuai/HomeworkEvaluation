@@ -16,7 +16,7 @@
     </v-row>
     <v-row v-for="item in items" :key="item.id">
       <v-col>
-        <Card :comment="item" />
+        <Card :comment="item" :deletebtn="deletebtn" />
       </v-col>
     </v-row>
     <v-row justify="center">
@@ -41,6 +41,10 @@ export default {
     score: {
       type: Number,
       default: 0
+    },
+    deletebtn: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

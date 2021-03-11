@@ -12,6 +12,7 @@ import io.minio.MinioClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -142,6 +143,16 @@ public class MinIoRepository implements FileStorageRepository {
         } catch (Exception e) {
             // 返回 404
             return "";
+        }
+    }
+
+    @Override
+    public Boolean delete(String path) {
+        try {
+            minioClient.removeObject(minIOConfigProperties.getBucketName(), path);
+            return true;
+        } catch (Exception e) {
+            return false;
         }
     }
 }

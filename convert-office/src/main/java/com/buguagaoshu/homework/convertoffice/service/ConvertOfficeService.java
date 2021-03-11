@@ -56,7 +56,7 @@ public class ConvertOfficeService {
                 if (d1 && d2) {
                     kafkaTemplate.send(
                             "ConvertMessage",
-                            convertOfficeInfo.getCoursewareId() + "#T#" + convertOfficeInfo.getUserID() + "#" + convertOfficeInfo.getUsername());
+                            convertOfficeInfo.getCoursewareId() + "#T#" + convertOfficeInfo.getUserID() + "#" + convertOfficeInfo.getUsername() + "#" + convertOfficeInfo.getTypeMsg());
                     return;
                 }
             }

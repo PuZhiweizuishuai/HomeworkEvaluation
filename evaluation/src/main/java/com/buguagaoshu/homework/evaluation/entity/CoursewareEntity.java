@@ -101,6 +101,23 @@ public class CoursewareEntity {
     @TableField(exist = false)
     private String key;
 
+    @TableField(exist = false)
+    private String password;
+
 
     private Integer status;
+
+
+    public void update(CoursewareEntity entity) {
+        this.updateTime = System.currentTimeMillis();
+        this.title = entity.getTitle();
+        this.text = entity.getText();
+        this.fileUrl = entity.getFileUrl();
+        this.fileType = entity.getFileType();
+        this.level = entity.getLevel();
+        this.fatherId = entity.getFatherId();
+        this.sort = entity.getSort();
+        this.fileName = entity.getFileName();
+        this.status = entity.getStatus();
+    }
 }

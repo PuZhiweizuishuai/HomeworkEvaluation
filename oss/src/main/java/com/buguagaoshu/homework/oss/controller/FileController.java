@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.oss.controller;
 
+import com.buguagaoshu.homework.common.domain.FileModel;
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.common.domain.VditorFiles;
 import com.buguagaoshu.homework.common.utils.AesUtil;
@@ -7,6 +8,7 @@ import com.buguagaoshu.homework.oss.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.oss.repository.FileStorageRepository;
 import com.buguagaoshu.homework.oss.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.*;
@@ -27,6 +29,7 @@ import java.util.Map;
  */
 @RestController
 @RefreshScope
+@Slf4j
 public class FileController {
     private final FileStorageRepository repository;
 
@@ -68,14 +71,37 @@ public class FileController {
     }
 
 
+
+    @PostMapping("/uploads/delete")
+    public ResponseDetails deleteFile(@RequestBody FileModel fileModel) {
+        if (StringUtils.isEmpty(fileModel.getToken())) {
+            return ResponseDetails.ok().put("data", false);
+        }
+        try {
+            Claims claims = JwtUtil.parseJWT(TokenAuthenticationHelper.SECRET_KEY, fileModel.getToken());
+            if (fileModel.getPath().contains(claims.getId())) {
+                log.info("用户 {} 操作删除文件： {}", claims.getId(), fileModel.getPath());
+                return ResponseDetails.ok().put("data", repository.delete(fileModel.getPath()));
+            } else {
+                return ResponseDetails.ok().put("data", false);
+            }
+        } catch (Exception e) {
+            return ResponseDetails.ok().put("data", false);
+        }
+    }
+
+
     @GetMapping("/uploads/file/{userId}/{date}/{filename:.+}")
-    public void getFile(@PathVariable("userId") String userId,
-                        @PathVariable("date") String date,
-                        @PathVariable("filename") String filename,
-                        HttpServletRequest request,
-                        HttpServletResponse response) throws IOException {
+    public HttpEntity getFile(@PathVariable("userId") String userId,
+                                      @PathVariable("date") String date,
+                                      @PathVariable("filename") String filename,
+                                      HttpServletRequest request) {
         String path = "uploads/file/" + userId + "/" + date + "/" + filename;
-        response.sendRedirect(repository.getFileUrl(path));
+        String url = repository.getFileUrl(path);
+        if (url.equals("")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("404 Not Found!");
+        }
+        return ResponseEntity.status(HttpStatus.FOUND).header("location", url).body(null);
     }
 
 

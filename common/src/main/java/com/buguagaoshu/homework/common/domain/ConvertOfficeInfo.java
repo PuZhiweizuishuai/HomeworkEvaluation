@@ -32,6 +32,16 @@ public class ConvertOfficeInfo {
 
     private String username;
 
+    private String typeMsg;
+
+    public String getTypeMsg() {
+        return typeMsg;
+    }
+
+    public void setTypeMsg(String typeMsg) {
+        this.typeMsg = typeMsg;
+    }
+
     public String getUserID() {
         return userID;
     }

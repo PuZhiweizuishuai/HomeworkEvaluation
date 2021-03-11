@@ -16,6 +16,14 @@ import javax.servlet.http.HttpServletRequest;
  * 用来获取当前登陆用户
  */
 public class JwtUtil {
+    public static String getToken(HttpServletRequest request) {
+        Cookie cookie = WebUtils.getCookie(request, TokenAuthenticationHelper.COOKIE_TOKEN);
+        if (cookie != null) {
+            return cookie.getValue();
+        }
+        return "";
+    }
+
     public static Claims getNowLoginUser(HttpServletRequest request, String key) {
         Cookie cookie = WebUtils.getCookie(request, TokenAuthenticationHelper.COOKIE_TOKEN);
         if (cookie != null) {

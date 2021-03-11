@@ -212,7 +212,7 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationDao, Notifi
     }
 
     @Override
-    public void sendNewCourseware(List<StudentsCurriculumEntity> students, String userId, String username, CoursewareEntity coursewareEntity) {
+    public void sendNewCourseware(List<StudentsCurriculumEntity> students, String userId, String username, CoursewareEntity coursewareEntity, String typeMessage) {
         if (students.size() != 0) {
             long time = System.currentTimeMillis();
             List<NotificationEntity> notificationEntities = new LinkedList<>();

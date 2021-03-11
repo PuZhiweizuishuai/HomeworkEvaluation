@@ -70,6 +70,12 @@ spring:
   cache:
     redis:
       time-to-live: 2h
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 60000
+        readTimeout: 60000
 
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
