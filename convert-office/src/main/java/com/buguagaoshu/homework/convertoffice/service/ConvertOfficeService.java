@@ -30,6 +30,7 @@ public class ConvertOfficeService {
     }
 
     public void ConvertOfficeToPDF(ConvertOfficeInfo convertOfficeInfo) {
+        log.info("课件 {} 文档转码流程开始！", convertOfficeInfo.getCoursewareId());
         File tempDir = new File(FileConstant.TEMP);
         if (!tempDir.exists() && !tempDir.mkdirs()) {
             log.error("请检查要写入文件目录的权限！！！");
@@ -37,6 +38,7 @@ public class ConvertOfficeService {
         }
         boolean success = false;
         // 下载文件
+        log.info("开始下载需要转换的文档： {}", convertOfficeInfo.getFilePath() + "/" +convertOfficeInfo.getFilename());
         if (repository.downloadFileToTemp(
                 convertOfficeInfo.getFilePath() + "/" +convertOfficeInfo.getFilename(),
                 convertOfficeInfo.getFilename())) {
@@ -44,9 +46,11 @@ public class ConvertOfficeService {
             File source = new File(FileConstant.TEMP + convertOfficeInfo.getFilename());
             File out = new File(FileConstant.TEMP + convertOfficeInfo.getFilename() + ".pdf");
             success = LibreOfficeUtil.convertOffice2PDFSyncIsSuccess(source, out);
+            log.info("转换完成,输出目录为：{}", out.getPath());
         }
         if (success) {
             // 上传转换完成的文件
+            log.info("上传转码后的文件：{}", convertOfficeInfo.getFilePath() + "/" +  convertOfficeInfo.getFilename() + ".pdf");
             if (repository.uploadFile(
                     FileConstant.TEMP + convertOfficeInfo.getFilename() + ".pdf",
                     convertOfficeInfo.getFilePath() + "/" +  convertOfficeInfo.getFilename() + ".pdf")) {
@@ -57,6 +61,7 @@ public class ConvertOfficeService {
                     kafkaTemplate.send(
                             "ConvertMessage",
                             convertOfficeInfo.getCoursewareId() + "#T#" + convertOfficeInfo.getUserID() + "#" + convertOfficeInfo.getUsername() + "#" + convertOfficeInfo.getTypeMsg());
+                    log.info("课件 {} 文档转码流程完成！", convertOfficeInfo.getCoursewareId());
                     return;
                 }
             }

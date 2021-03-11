@@ -43,7 +43,8 @@ public class FileUtil {
 
 
     public static final String[] DOC_FILE = {
-            ".doc", ".xls", ".ppt", ".docx", ".xlsx", ".pptx"
+            ".doc", ".xls", ".ppt", ".docx", ".xlsx", ".pptx", ".odg", ".otg", ".fodg", ".odp", ".otp",
+            ".pps", ".ods", ".xlsm", ".odt", ".ott", ".dot", ".dotx", ".docm"
     };
 
     public final static int OFFICE_CODE = 3;
