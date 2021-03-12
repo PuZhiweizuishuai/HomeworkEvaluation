@@ -35,6 +35,7 @@
         <result property="authorName" column="author_name"/>
         <result property="courseRating" column="course_rating" />
         <result property="atUser" column="at_user" />
+        <result property="simpleContent" column="simple_content"/>
     </resultMap>
 
     <update id="countAdd">

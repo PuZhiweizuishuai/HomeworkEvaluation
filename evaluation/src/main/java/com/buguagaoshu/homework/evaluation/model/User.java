@@ -15,6 +15,7 @@ import java.util.List;
  */
 @Data
 public class User implements UserDetails {
+
     /**
      * 主键ID，学号
      */

@@ -189,6 +189,24 @@ public class UserEntity {
     @TableField(exist = false)
     private UserRoleEntity roleEntity;
 
+    public void clean() {
+        this.password = null;
+        if (this.userQqStatus == 0) {
+            this.userQq = null;
+        }
+        if (this.userWechatStatus == 0) {
+            this.userWechat = null;
+        }
+        if (this.userEmailStatus == 0) {
+            this.email = null;
+        }
+        if (this.userPhoneStatus == 0) {
+            this.phoneNumber = null;
+        }
+        this.resetPasswordStatus = null;
+        this.latestLoginIp = null;
+    }
+
 
     public void initData() {
         this.userAvatarUrl = "/images/head.png";

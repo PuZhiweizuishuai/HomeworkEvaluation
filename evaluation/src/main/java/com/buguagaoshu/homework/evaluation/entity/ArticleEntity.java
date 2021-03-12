@@ -71,6 +71,9 @@ public class ArticleEntity {
     @NotBlank(message = "帖子正文不能为空！")
     private String content;
 
+
+    private String simpleContent;
+
     /**
      * '@' 用户
      * */

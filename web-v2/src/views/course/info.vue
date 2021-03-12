@@ -143,7 +143,8 @@
             <h2>大纲：</h2>
           </v-col>
         </v-row>
-        <v-row>
+        <div id="catalog-anchor" />
+        <v-row v-if="showCatalog" id="catalog-view" v-scroll="onScroll">
           <v-col>
             <div id="markdown-view-catalog" ref="catalogView" />
           </v-col>
@@ -348,7 +349,9 @@ export default {
       verifyImageUrl: this.SERVER_API_URL + '/verifyImage',
       closInfoLeft: 9,
       colsInfoRight: 3,
-      courseScore: 0
+      courseScore: 0,
+      anchorHeight: 0,
+      showCatalog: true
     }
   },
   created() {
@@ -356,6 +359,9 @@ export default {
     this.getCourseInfo()
     this.judge()
     this.onResize()
+  },
+  mounted() {
+    this.anchorHeight = document.querySelector('#catalog-anchor').offsetTop
   },
   updated() {
 
@@ -423,6 +429,9 @@ export default {
     onResize() {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight }
       if (this.windowSize.x < 900) {
+        const d = document.querySelector('#catalog-view')
+        d.style.position = 'static'
+        d.style.top = '150px'
         this.topLeft = 12
         this.topCenter = 12
         this.topRight = 12
@@ -464,6 +473,22 @@ export default {
     },
     getVerifyImage() {
       this.verifyImageUrl = this.SERVER_API_URL + '/verifyImage?t=' + new Date().getTime()
+    },
+    onScroll(e) {
+      if (typeof window === 'undefined') return
+      const top = window.pageYOffset || e.target.scrollTop || 0
+      // this.fab = top > 200
+      // style="position: fixed; top: 100px"
+      const d = document.querySelector('#catalog-view')
+      if (top > this.anchorHeight + 64 && this.windowSize.x > 900) {
+        // console.log(e.style)
+
+        d.style.position = 'fixed'
+        d.style.top = '150px'
+      } else {
+        d.style.position = 'static'
+        d.style.top = '150px'
+      }
     }
   }
 }

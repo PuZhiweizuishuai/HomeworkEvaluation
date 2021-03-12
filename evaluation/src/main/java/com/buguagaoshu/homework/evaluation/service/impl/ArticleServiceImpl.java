@@ -52,6 +52,8 @@ import javax.servlet.http.HttpSession;
 public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> implements ArticleService {
     private final StudentsCurriculumService studentsCurriculumService;
 
+    private final ObjectMapper objectMapper;
+
     private final UserService userService;
 
     private final VerifyCodeService verifyCodeService;
@@ -61,8 +63,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     private final CurriculumService curriculumService;
 
     @Autowired
-    public ArticleServiceImpl(StudentsCurriculumService studentsCurriculumService, UserService userService, VerifyCodeService verifyCodeService, AtUserService atUserService, CurriculumService curriculumService) {
+    public ArticleServiceImpl(StudentsCurriculumService studentsCurriculumService, ObjectMapper objectMapper, UserService userService, VerifyCodeService verifyCodeService, AtUserService atUserService, CurriculumService curriculumService) {
         this.studentsCurriculumService = studentsCurriculumService;
+        this.objectMapper = objectMapper;
+
         this.userService = userService;
         this.verifyCodeService = verifyCodeService;
         this.atUserService = atUserService;
@@ -96,6 +100,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             if (studentsCurriculumEntity == null) {
                 return null;
             }
+            articleVo.setType(ArticleTypeEnum.COURSE.getCode());
             // 检查评分
             if (articleVo.getType() == ArticleTypeEnum.COURSE_RATING.getCode()) {
 
@@ -109,6 +114,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 if (articleVo.getCourseRating() > 5.0  || articleVo.getCourseRating() < 0.0) {
                     throw new UserDataFormatException("评分有误！");
                 }
+
                 // TODO 放缓存
                 CurriculumEntity curriculum = curriculumService.getById(articleVo.getCourseId());
                 curriculum.setScore(articleVo.getCourseRating() + curriculum.getScore());
@@ -122,14 +128,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         articleEntity.setIp(IpUtil.getIpAddr(request));
         articleEntity.setUa(IpUtil.getUa(request));
         BeanUtils.copyProperties(articleVo, articleEntity);
+        // TODO 处理悬赏积分与投票
+        articleEntity.setQAOfferPoint(articleVo.getOfferPoint());
 
-        //articleEntity.setTitle(HtmlUtils.htmlEscape(articleEntity.getTitle()));
-        //articleEntity.setContent(HtmlUtils.htmlEscape(articleEntity.getContent()));
-
-
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            if (articleVo.getTag() != null && articleEntity.getTag().length() != 0) {
+            if (articleVo.getTag() != null && articleVo.getTag().size() != 0) {
                 articleEntity.setTag(objectMapper.writeValueAsString(articleVo.getTag()));
             } else {
                 articleEntity.setTag("[]");
@@ -137,8 +140,17 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         } catch (JsonProcessingException e) {
             log.error("用户 {} 发帖， 标签出现序列化异常！{}", user.getId(), e.getMessage());
         }
+        // 处理简介
+        if (articleVo.getSimpleContent() == null) {
+            if (articleEntity.getContent().length() > 50) {
+                articleEntity.setSimpleContent(articleEntity.getContent().substring(0, 50));
+            } else {
+                articleEntity.setSimpleContent(articleEntity.getContent());
+            }
+        }
         this.save(articleEntity);
 
+        // 处理@用户
         String atUser = atUserService.atUser(articleVo.getAtUsers(), AtUserTypeEnum.ARTICLE_AT, articleEntity, null, user.getId(), user.getSubject());
         if (!"".equals(atUser)) {
             articleEntity.setAtUser(atUser);
@@ -383,5 +395,35 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
 
         this.updateById(courseRating);
         return courseRating;
+    }
+
+    @Override
+    public PageUtils getArticleList(Map<String, Object> params, HttpServletRequest request) {
+        QueryWrapper<ArticleEntity> wrapper = new QueryWrapper<>();
+        wrapper.ne("status", ArticleTypeEnum.DELETE.getCode());
+        wrapper.ne("type", ArticleTypeEnum.COURSE.getCode());
+        wrapper.ne("type",ArticleTypeEnum.COURSE_RATING.getCode());
+        wrapper.orderByDesc("update_time");
+        IPage<ArticleEntity> page = this.page(
+                new Query<ArticleEntity>().getPage(params),
+                wrapper
+        );
+        if (page.getTotal() == 0) {
+            return new PageUtils(page);
+        }
+        Set<String> userId = page.getRecords().stream().map(ArticleEntity::getAuthorId).collect(Collectors.toSet());
+        Map<String, UserEntity> maps = userService.listByIds(userId).stream().collect(Collectors.toMap(UserEntity::getUserId, u -> u));
+        List<ArticleModel> articleModels = new ArrayList<>();
+        page.getRecords().forEach((a) -> {
+            ArticleModel articleModel = new ArticleModel();
+            BeanUtils.copyProperties(a, articleModel);
+            articleModel.setContent(null);
+            // 数据脱敏
+            UserEntity userEntity = maps.get(a.getAuthorId());
+            userEntity.clean();
+            articleModel.setUser(userEntity);
+            articleModels.add(articleModel);
+        });
+        return new PageUtils(new CustomPage<>(articleModels, page.getTotal(), page.getSize(), page.getCurrent(), page.orders()));
     }
 }

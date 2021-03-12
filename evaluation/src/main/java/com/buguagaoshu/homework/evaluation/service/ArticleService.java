@@ -92,5 +92,11 @@ public interface ArticleService extends IService<ArticleEntity> {
      * 更新课程评价
      * */
     ArticleEntity updateUserCourseRating(ArticleVo articleVo, HttpServletRequest request);
+
+
+    /**
+     * 返回当前帖子列表
+     * */
+    PageUtils getArticleList(Map<String, Object> params, HttpServletRequest request);
 }
 

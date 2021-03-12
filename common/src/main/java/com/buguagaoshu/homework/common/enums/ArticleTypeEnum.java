@@ -8,11 +8,13 @@ public enum ArticleTypeEnum {
     /**
      * 帖子类型
      * */
+    DRAFT(-1, "草稿"),
     ORDINARY(0, "普通贴"),
     COURSE(1, "课程内的讨论贴"),
     QA(2, "问答贴"),
     THINK(3, "想法"),
     COURSE_RATING(4, "课程评分"),
+    VOTE(5, "投票贴"),
 
     NORMAL(0, "帖子正常"),
     LOCK(1, "帖子已锁定"),

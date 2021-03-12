@@ -1,14 +1,9 @@
 package com.buguagaoshu.homework.evaluation.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.buguagaoshu.homework.common.valid.ListValue;
-import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
-import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotBlank;
+import com.buguagaoshu.homework.evaluation.entity.UserEntity;
+import lombok.Data;
+
 import java.util.List;
 
 /**
@@ -59,6 +54,9 @@ public class ArticleModel {
      * 帖子正文内容
      */
     private String content;
+
+
+    private String simpleContent;
 
     /**
      * 帖子访问路径
@@ -153,6 +151,7 @@ public class ArticleModel {
      */
     private String topImgUrl;
 
+    private UserEntity user;
 
     private String avatarUrl;
 

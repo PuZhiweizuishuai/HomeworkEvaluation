@@ -30,6 +30,15 @@ const routes = [
           title: '社区'
         }
       },
+      {
+        path: '/bbs/post',
+        name: 'PostAeticle',
+        component: () => import('@/views/bbs/components/create.vue'),
+        meta: {
+          title: '发帖',
+          requireAuth: true
+        }
+      },
       // 课程详情页
       {
         path: '/course/info/:id',

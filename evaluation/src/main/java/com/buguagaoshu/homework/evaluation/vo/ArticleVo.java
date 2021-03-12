@@ -5,6 +5,7 @@ import com.buguagaoshu.homework.common.valid.ListValue;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -33,8 +34,10 @@ public class ArticleVo {
     private Integer type;
 
 
-    @NotNull(message = "课程ID不能为空！")
     private Long courseId;
+
+    @Max(value = 50, message = "简介不能超过50个字！")
+    private String simpleContent;
 
 
     @NotNull(message = "验证码不能为空!")
@@ -42,6 +45,11 @@ public class ArticleVo {
 
 
     private List<AtUser> atUsers;
+
+    /**
+     * 问答悬赏积分（仅作用于问答帖）
+     */
+    private Integer offerPoint;
 
     /**
      * 课程评分

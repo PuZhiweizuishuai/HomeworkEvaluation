@@ -34,12 +34,18 @@ public class ArticleController {
     @PostMapping("/article/save")
     public ResponseDetails save(@Valid @RequestBody ArticleVo articleVo,
                                 HttpServletRequest request) {
-
         ArticleEntity entity = articleService.saveArticle(articleVo, request);
         if (entity == null) {
             return ResponseDetails.ok(ReturnCodeEnum.NO_POWER);
         }
         return ResponseDetails.ok().put("data", entity);
+    }
+
+
+    @GetMapping("/article/list")
+    public ResponseDetails getArticleList(@RequestParam Map<String, Object> params,
+                                          HttpServletRequest request) {
+        return ResponseDetails.ok().put("data", articleService.getArticleList(params, request));
     }
 
 
