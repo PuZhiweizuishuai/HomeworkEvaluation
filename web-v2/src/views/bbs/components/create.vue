@@ -84,7 +84,7 @@
           </v-col>
         </v-row>
         <!-- 邀请好友 -->
-        <v-row>
+        <!-- <v-row>
           <v-col>
             <v-autocomplete
               v-model="article.atUsers"
@@ -95,7 +95,8 @@
               multiple
             />
           </v-col>
-        </v-row>
+        </v-row> -->
+
         <!-- 选择类型 -->
         <v-row>
           <v-col>
@@ -111,7 +112,7 @@
         <!-- 投票模块 -->
         <v-row v-if="article.type == 5">
           <v-col>
-            <v-btn block color="success">
+            <v-btn block color="success" @click="voteDialog = true">
               新建投票
             </v-btn>
           </v-col>
@@ -143,8 +144,8 @@
           </v-col>
         </v-row>
         <v-row justify="space-around">
-          <v-btn depressed color="" large @click="submit">保存到草稿</v-btn>
-          <v-btn depressed color="primary" large @click="submit">提交</v-btn>
+          <!-- <v-btn depressed color="" large @click="submit(-1)">保存到草稿</v-btn> -->
+          <v-btn depressed color="primary" large @click="submit(0)">提交</v-btn>
         </v-row>
         <!-- 这个 col是上分界线的底部 -->
       </v-col>
@@ -253,15 +254,25 @@
         </v-btn>
       </template>
     </v-snackbar>
+
+    <!-- 投票卡片 -->
+    <v-dialog
+      v-model="voteDialog"
+      max-width="700"
+    >
+      <VoteCard @vote="getVote" />
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import Vditor from '@/components/vditor/vditor.vue'
+import VoteCard from '@/components/vote/create-vote.vue'
 
 export default {
   components: {
-    Vditor
+    Vditor,
+    VoteCard
   },
   data() {
     return {
@@ -275,7 +286,8 @@ export default {
         courseId: null,
         verifyCode: '',
         atUsers: [],
-        offerPoint: 0
+        offerPoint: 0,
+        vote: {}
       },
       fatherTags: [],
       childTags: [],
@@ -289,7 +301,8 @@ export default {
         { title: '讨论', id: 0 },
         { title: '问答', id: 2 },
         { title: '投票', id: 5 }
-      ]
+      ],
+      voteDialog: false
     }
   },
   created() {
@@ -310,7 +323,7 @@ export default {
       // 获取用户列表
     },
     getTags() {
-      this.httpGet('/article/tags', (json) => {
+      this.httpGet('/article/tags/tree', (json) => {
         this.fatherTags = json.data
       })
     },
@@ -330,7 +343,10 @@ export default {
     getVerifyImage() {
       this.verifyImageUrl = this.SERVER_API_URL + '/verifyImage?t=' + new Date().getTime()
     },
-    submit() {
+    submit(value) {
+      if (value === -1) {
+        this.article.type = -1
+      }
       if (this.article.title == null || this.article.title === '') {
         this.message = '标题不能为空！'
         this.showMessage = true
@@ -361,12 +377,21 @@ export default {
         if (json.status === 200) {
           this.message = '发布成功！'
           this.showMessage = true
-          this.$router.push(`/bbs`)
+          if (value === 0) {
+            this.$router.push(`/bbs/article/${json.data.id}`)
+          } else {
+            //
+          }
         } else {
           this.message = json.message
           this.showMessage = true
         }
       })
+    },
+    getVote(value) {
+      this.article.vote = value
+      console.log(this.article)
+      this.voteDialog = false
     }
   }
 }

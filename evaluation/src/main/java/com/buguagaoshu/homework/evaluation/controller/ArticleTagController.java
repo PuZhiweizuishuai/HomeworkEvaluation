@@ -19,8 +19,13 @@ public class ArticleTagController {
         this.articleTagCache = articleTagCache;
     }
 
-    @GetMapping("/article/tags")
-    public ResponseDetails list() {
+    @GetMapping("/article/tags/tree")
+    public ResponseDetails tree() {
         return ResponseDetails.ok().put("data", articleTagCache.getArticleTagCaches());
+    }
+
+    @GetMapping("/article/tags/list")
+    public ResponseDetails list() {
+        return ResponseDetails.ok().put("data", articleTagCache.getIntegerArticleTagEntityMap().values());
     }
 }

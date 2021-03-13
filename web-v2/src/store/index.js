@@ -18,7 +18,14 @@ export default new Vuex.Store({
       ? JSON.parse(localStorage.getItem('user')) : null,
 
     // 编辑课程时需要的分类信息
-    editCourseTag: []
+    editCourseTag: [],
+    tagMap: {
+      Set: function(key, value) { this[key] = value },
+      Get: function(key) { return this[key] },
+      Contains: function(key) { return this.Get(key) != null },
+      Remove: function(key) { delete this[key] }
+    },
+    tagsLength: 0
   },
   mutations: {
     setUserInfo(state, userInfo) {
@@ -29,6 +36,12 @@ export default new Vuex.Store({
     },
     setEditCourseInfoTag(state, tag) {
       state.editCourseTag = tag
+    },
+    setTagMap(state, tags) {
+      for (let i = 0; i < tags.length; i++) {
+        state.tagMap.Set(tags[i].id, tags[i])
+        state.tagsLength++
+      }
     }
   },
   actions: {

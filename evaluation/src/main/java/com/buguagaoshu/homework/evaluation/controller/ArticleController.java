@@ -70,6 +70,16 @@ public class ArticleController {
         return ResponseDetails.ok(ReturnCodeEnum.NO_ROLE_OR_NO_FOUND);
     }
 
+    @GetMapping("/article/info/{id}")
+    public ResponseDetails articleInfo(@PathVariable("id") Long id,
+                                       HttpServletRequest request) {
+        ArticleModel articleInfo = articleService.getArticleInfo(id, request);
+        if (articleInfo == null) {
+            return ResponseDetails.ok(ReturnCodeEnum.NOO_FOUND);
+        }
+        return ResponseDetails.ok().put("data", articleInfo);
+    }
+
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @GetMapping("/article/list/course/{courseId}")
     public ResponseDetails courseList(@PathVariable("courseId") Long courseId,

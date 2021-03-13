@@ -49,7 +49,7 @@ public class CommentController {
         return ResponseDetails.ok(ReturnCodeEnum.NO_ROLE_OR_NO_FOUND);
     }
 
-    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
+
     @GetMapping("/comment/list/{id}")
     public ResponseDetails list(@PathVariable("id") Long articleId,
                                 @RequestParam Map<String, Object> params,
@@ -64,7 +64,6 @@ public class CommentController {
     /**
      * 返回单个评论信息
      * */
-    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @GetMapping("/comment/reply/{commentId}")
     public ResponseDetails replyComment(@PathVariable("commentId") Long commentId,
                                        HttpServletRequest request) {
@@ -78,7 +77,6 @@ public class CommentController {
     /**
      * 返回二级评论列表
      * */
-    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
     @GetMapping("/comment/second/list/{id}")
     public ResponseDetails secondCommentList(@PathVariable("id") Long id,
                                              @RequestParam Map<String, Object> params,

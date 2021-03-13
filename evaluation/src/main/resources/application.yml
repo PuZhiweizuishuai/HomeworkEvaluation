@@ -46,6 +46,9 @@ spring:
     url: jdbc:mysql://192.168.43.131:3306/homework_evaluation?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
+  data:
+    mongodb:
+      uri: mongodb://homework:123456@192.168.43.131:27017/homework
   kafka:
     bootstrap-servers:
       - 192.168.43.131:9092

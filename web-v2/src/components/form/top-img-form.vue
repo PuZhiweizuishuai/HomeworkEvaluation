@@ -141,7 +141,17 @@ export default {
   },
   created() {
     if (this.type === 1) {
-      this.advertisementFrom = this.info
+      // this.info
+      // 2022-01-31 00:00:00
+      this.advertisementFrom = {
+        id: this.info.id,
+        title: this.info.title,
+        url: this.info.url,
+        image: this.info.image,
+        startTime: this.TimeUtil.renderTime(this.info.startTime),
+        endTime: this.TimeUtil.renderTime(this.info.endTime),
+        type: this.info.type
+      }
       this.btnName = '更新'
     }
   },

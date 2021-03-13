@@ -39,6 +39,38 @@ const routes = [
           requireAuth: true
         }
       },
+      {
+        path: '/bbs/tags',
+        name: 'Tags',
+        component: () => import('@/views/bbs/tag/index.vue'),
+        meta: {
+          title: '标签'
+        }
+      },
+      {
+        path: '/bbs/tags/:id',
+        name: 'TagsInfo',
+        component: () => import('@/views/bbs/tag/info.vue'),
+        meta: {
+          title: '标签'
+        }
+      },
+      {
+        path: '/bbs/article/:articleId',
+        name: 'ShowArticle',
+        component: () => import('@/views/article/show-article.vue'),
+        meta: {
+
+        }
+      },
+      {
+        path: '/bbs/draft/box',
+        name: 'Draft',
+        component: () => import('@/views/bbs/draft.vue'),
+        meta: {
+          title: '草稿箱'
+        }
+      },
       // 课程详情页
       {
         path: '/course/info/:id',

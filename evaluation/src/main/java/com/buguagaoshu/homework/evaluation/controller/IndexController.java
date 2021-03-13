@@ -35,4 +35,9 @@ public class IndexController {
     public ResponseDetails curriculumPageCarousel() {
         return ResponseDetails.ok().put("data", indexMessageCache.getCurriculumAdList().values());
     }
+
+    @GetMapping("/bbs/ad")
+    public ResponseDetails bbsPageCarousel() {
+        return ResponseDetails.ok().put("data", indexMessageCache.getIndexAdList().values());
+    }
 }

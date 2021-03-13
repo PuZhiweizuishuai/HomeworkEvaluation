@@ -98,5 +98,9 @@ public interface ArticleService extends IService<ArticleEntity> {
      * 返回当前帖子列表
      * */
     PageUtils getArticleList(Map<String, Object> params, HttpServletRequest request);
+
+
+
+    ArticleModel getArticleInfo(Long id, HttpServletRequest request);
 }
 

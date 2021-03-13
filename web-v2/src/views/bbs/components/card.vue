@@ -1,54 +1,108 @@
 <template>
-  <!-- 社区页帖子列表卡片  -->
+  <!-- 社区页帖子列表卡片 margin-left: 24px; -->
   <v-card outlined>
-    <v-col />
-    <router-link :to="`/bbs/${item.id}`">
-      <v-row justify="center">
+    <v-card-subtitle>
+      <v-row no-gutters>
+        <v-col
+          cols="12"
+          sm="8"
+          md="10"
+        >
+          <!-- 标题内容 -->
+          <router-link :to="`/bbs/article/${item.id}`">
+            <v-row>
+              <v-col cols="12">
 
-        <v-col cols="11">
-          <router-link :to="`/user/${item.authorId}`">
-            <v-avatar size="62" style="float: left;">
-              <v-img :src="item.user.userAvatarUrl" />
-            </v-avatar>
+                <h3 style="color:black">
+                  <v-icon v-if="item.type == 2">
+                    mdi-comment-question
+                  </v-icon>
+                  <v-icon v-if="item.type == 5">
+                    mdi-vote
+                  </v-icon>
+                  {{ item.title }}
+                  <v-chip
+                    v-if="item.perfect == 1"
+                    class="ma-2"
+                    color="orange"
+                    small
+                    text-color="white"
+                  >
+                    精品
+                  </v-chip>
+                </h3>
+
+              </v-col>
+            </v-row>
+            <!-- 简介 -->
+            <v-row>
+              <v-col cols="12" style="padding-top: 0px; color: black;">
+                {{ item.simpleContent }} ......
+              </v-col>
+            </v-row>
           </router-link>
           <v-row>
-            <v-col cols="12" style="padding-top: 0px;">
-              <h3 style="color:black">
-                {{ item.title }}
-                <v-chip
-                  v-if="item.perfect == 1"
-                  class="ma-2"
-                  color="orange"
-                  small
-                  text-color="white"
-                >
-                  精品
-                </v-chip>
-              </h3>
-            </v-col>
-          </v-row>
-          <v-row>
-            {{ item.simpleContent }} ......
-          </v-row>
-          <v-row>
             <v-col style="padding-top: 0px;">
-              <router-link :to="`/user/${item.authorId}`">{{ item.authorName }} </router-link>
-              <span style="color:black">发布于：{{ TimeUtil.renderTime(item.createTime) }}
+              <!-- <router-link :to="`/user/${item.authorId}`">{{ item.authorName }} </router-link> -->
+              <!-- 悬停显示个人信息卡片 -->
+              <v-menu
+                open-on-hover
+                top
+                offset-y
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    text
+                    color="primary"
+                    depressed
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    {{ item.authorName }}
+                  </v-btn>
+
+                </template>
+                <UserInfoCard :user="item.user" />
+              </v-menu>
+
+              <span style="color:black">更新于：{{ TimeUtil.renderTime(item.updateTime) }}
                 |
                 {{ item.viewCount }} 浏览， {{ item.commentCount }} 回复，  {{ item.likeCount }} 喜欢</span>
             </v-col>
           </v-row>
         </v-col>
+        <!-- 右边 -->
+        <v-col
+          cols="4"
+          md="2"
+        >
+          <!-- 类型，话题 -->
+          <v-row>
+            <v-col>
+              <v-btn
+                rounded
+                link
+                :to="`/bbs/tags/${this.$store.state.tagMap.Get(item.tagId).id}`"
+                depressed
+                x-small
+              >
+                {{ this.$store.state.tagMap.Get(item.tagId).title }}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-col>
       </v-row>
-    </router-link>
-    <v-col />
+    </v-card-subtitle>
   </v-card>
 </template>
 
 <script>
 import TimeUtil from '@/utils/time-util.vue'
-
+import UserInfoCard from '@/components/user/info-card.vue'
 export default {
+  components: {
+    UserInfoCard
+  },
   props: {
     article: {
       type: Object,
@@ -60,6 +114,11 @@ export default {
       TimeUtil,
       item: this.article
     }
+  },
+  created() {
+  },
+  methods: {
+
   }
 }
 </script>

@@ -43,6 +43,7 @@
 
             color="success"
             depressed
+            @click="thinkDialog = true"
           >
             <v-icon>
               mdi-message-text
@@ -61,12 +62,35 @@
         </v-btn>
 
       </v-row>
+      <v-row>
+
+        <v-btn block depressed @click="goToDraft">
+          我的收藏
+        </v-btn>
+
+      </v-row>
     </v-card-subtitle>
+    <v-dialog
+      v-model="thinkDialog"
+
+      max-width="500"
+    >
+      <ThinkCard />
+    </v-dialog>
   </v-card>
 </template>
 
 <script>
+import ThinkCard from '@/views/bbs/components/think.vue'
 export default {
+  components: {
+    ThinkCard
+  },
+  data() {
+    return {
+      thinkDialog: false
+    }
+  },
   methods: {
     goToDraft() {
       // <router-link to="/bbs/draft/box">

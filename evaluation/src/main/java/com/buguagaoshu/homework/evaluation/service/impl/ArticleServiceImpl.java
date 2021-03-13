@@ -256,6 +256,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                     BeanUtils.copyProperties(articleEntity, articleModel);
                     articleModel.setAuthorName(userEntity.getUsername());
                     articleModel.setAvatarUrl(userEntity.getUserAvatarUrl());
+                    userEntity.clean();
+                    articleModel.setUser(userEntity);
                     Map<String, StudentsCurriculumEntity> teacherMap = studentsCurriculumService.teacherList(articleEntity.getCourseId()).stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, t -> t));
                     articleModel.setIsTeacher(teacherMap.get(articleEntity.getAuthorId()) != null);
                     try {
@@ -401,8 +403,34 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     public PageUtils getArticleList(Map<String, Object> params, HttpServletRequest request) {
         QueryWrapper<ArticleEntity> wrapper = new QueryWrapper<>();
         wrapper.ne("status", ArticleTypeEnum.DELETE.getCode());
+        String type = (String) params.get("type");
+        String userId = (String) params.get("user");
         wrapper.ne("type", ArticleTypeEnum.COURSE.getCode());
         wrapper.ne("type",ArticleTypeEnum.COURSE_RATING.getCode());
+        boolean lock = true;
+        if (!StringUtils.isEmpty(type)) {
+            int typeNumber = 0;
+            try {
+                typeNumber = Integer.parseInt(type);
+                if (typeNumber == -1) {
+                    Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+                    wrapper.eq("author_id", user.getId());
+                    wrapper.eq("type", ArticleTypeEnum.DRAFT.getCode());
+                    lock = false;
+                } else if (typeNumber == 0) {
+                    //
+                } else {
+                    wrapper.eq("type", typeNumber);
+                }
+            } catch (Exception ignored) { }
+        }
+        if (!StringUtils.isEmpty(userId)) {
+            wrapper.eq("author_id", userId);
+        }
+        if (lock) {
+            wrapper.ne("type", ArticleTypeEnum.DRAFT.getCode());
+        }
+
         wrapper.orderByDesc("update_time");
         IPage<ArticleEntity> page = this.page(
                 new Query<ArticleEntity>().getPage(params),
@@ -411,8 +439,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         if (page.getTotal() == 0) {
             return new PageUtils(page);
         }
-        Set<String> userId = page.getRecords().stream().map(ArticleEntity::getAuthorId).collect(Collectors.toSet());
-        Map<String, UserEntity> maps = userService.listByIds(userId).stream().collect(Collectors.toMap(UserEntity::getUserId, u -> u));
+        Set<String> userIds = page.getRecords().stream().map(ArticleEntity::getAuthorId).collect(Collectors.toSet());
+        Map<String, UserEntity> maps = userService.listByIds(userIds).stream().collect(Collectors.toMap(UserEntity::getUserId, u -> u));
         List<ArticleModel> articleModels = new ArrayList<>();
         page.getRecords().forEach((a) -> {
             ArticleModel articleModel = new ArticleModel();
@@ -425,5 +453,38 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             articleModels.add(articleModel);
         });
         return new PageUtils(new CustomPage<>(articleModels, page.getTotal(), page.getSize(), page.getCurrent(), page.orders()));
+    }
+
+
+    @Override
+    public ArticleModel getArticleInfo(Long id, HttpServletRequest request) {
+        ArticleEntity articleEntity = this.getById(id);
+        if (articleEntity == null) {
+            return null;
+        }
+        if (articleEntity.getCourseId() != null && articleEntity.getStatus() != ArticleTypeEnum.NORMAL.getCode()) {
+            return null;
+        }
+        try {
+            if (articleEntity.getType() == ArticleTypeEnum.DRAFT.getCode()) {
+                Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+                if (!user.getId().equals(articleEntity.getAuthorId())) {
+                    return null;
+                }
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        UserEntity userEntity = userService.getById(articleEntity.getAuthorId());
+        userEntity.clean();
+        ArticleModel articleModel = new ArticleModel();
+        BeanUtils.copyProperties(articleEntity, articleModel);
+        articleModel.setUser(userEntity);
+        try {
+            articleModel.setTag((List<String>) objectMapper.readValue(articleEntity.getTag(), List.class));
+        } catch (Exception ignored) {
+        }
+        // TODO 阅读量加 1
+        return articleModel;
     }
 }

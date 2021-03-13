@@ -52,6 +52,8 @@ npm install
 
 - src\views\article\show-course-article.vue
 
+- src\views\article\show-article.vue
+
 
 将其中的
 

@@ -5,6 +5,13 @@
         <Card :article="item" />
       </v-col>
     </v-row>
+    <v-row justify="center">
+      <v-pagination
+        v-model="page"
+        :length="length"
+        @input="pageChange"
+      />
+    </v-row>
   </v-container>
 </template>
 
@@ -13,6 +20,12 @@ import Card from '@/views/bbs/components/card.vue'
 export default {
   components: {
     Card
+  },
+  props: {
+    type: {
+      type: Number,
+      default: 0
+    }
   },
   data() {
     return {
@@ -25,17 +38,30 @@ export default {
     }
   },
   created() {
+    if (this.$store.state.tagsLength === 0) {
+      this.getTagList()
+    }
     this.getList()
   },
   methods: {
     getList() {
-      this.httpGet(`/article/list?page=${this.page}&limit=${this.size}&tagId=${this.tagId}`, (json) => {
+      this.httpGet(`/article/list?page=${this.page}&limit=${this.size}&tagId=${this.tagId}&type=${this.type}`, (json) => {
         this.articleList = json.data.list
         this.totalCount = json.data.totalCount
         this.length = json.data.totalPage
         this.page = json.data.page
         this.$route.query.page = this.page
       })
+    },
+    getTagList() {
+      this.httpGet('/article/tags/list', (json) => {
+        //
+        this.$store.commit('setTagMap', json.data)
+      })
+    },
+    pageChange(value) {
+      this.page = value
+      this.getList()
     }
   }
 

@@ -38,6 +38,7 @@ public class AdvertisementController {
     @PostMapping("/admin/topImg/add")
     public ResponseDetails add(@Valid @RequestBody AdvertisementModel advertisementModel,
                                HttpServletRequest request) {
+        System.out.println(advertisementModel);
         AdvertisementEntity advertisementEntity = advertisementService.add(advertisementModel,
                 JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY).getId());
         return ResponseDetails.ok().put("data", advertisementEntity);
