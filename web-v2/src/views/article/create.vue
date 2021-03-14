@@ -167,7 +167,7 @@ export default {
         title: '',
         content: '',
         tag: [],
-        type: 1,
+        type: 0,
         courseId: this.$route.params.id,
         verifyCode: ''
       },

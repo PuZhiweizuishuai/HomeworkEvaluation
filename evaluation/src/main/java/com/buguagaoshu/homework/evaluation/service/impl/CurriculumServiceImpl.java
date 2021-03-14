@@ -174,6 +174,9 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
         // 课程进入方式
         if (CurriculumAccessTypeEnum.USE_PASSWORD.getCode() == curriculumEntity.getAccessMethod()) {
             // TODO 修改密码需要验证
+            if (StringUtils.isEmpty(curriculumModel.getPassword())) {
+                throw new UserDataFormatException("当前设置课程需要密码才能进入，但是却没有输入密码！");
+            }
             curriculumEntity.setPassword(encoder.encode(curriculumModel.getPassword()));
         }
         this.updateById(curriculumEntity);

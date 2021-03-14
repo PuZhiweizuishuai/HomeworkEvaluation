@@ -30,7 +30,7 @@ public class ArticleVo {
     private String content;
 
 
-    @ListValue(value = {-1, 0, 1, 2, 3, 4}, message = "帖子类型取值不对！")
+    @ListValue(value = {-1, 0, 1, 2, 10, 11, 12, 100, 200}, message = "帖子类型取值不对！")
     private Integer type;
 
 
@@ -55,4 +55,9 @@ public class ArticleVo {
      * 课程评分
      * */
     private Double courseRating;
+
+    /**
+     * 投票数据
+     * */
+    private List<VoteVo> votes;
 }

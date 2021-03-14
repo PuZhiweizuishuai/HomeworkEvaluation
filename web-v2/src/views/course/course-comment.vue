@@ -111,7 +111,7 @@ export default {
         title: '',
         courseRating: 0,
         courseId: this.$route.params.id,
-        type: 4,
+        type: 200,
         verifyCode: ''
       },
       showMessage: false,

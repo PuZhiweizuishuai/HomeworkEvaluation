@@ -110,15 +110,23 @@
           </v-col>
         </v-row>
         <!-- 投票模块 -->
-        <v-row v-if="article.type == 5">
+        <v-row v-if="article.type == 12">
           <v-col>
             <v-btn block color="success" @click="voteDialog = true">
               新建投票
             </v-btn>
           </v-col>
         </v-row>
+        <!-- 显示投票内容 -->
+        <div v-if="article.type == 12">
+          <v-row v-for="(item, i) in article.votes" :key="i">
+            <v-col>
+              <ShowVote :vote="item" @delete="deleteItem" />
+            </v-col>
+          </v-row>
+        </div>
         <!-- 问答模块 -->
-        <v-row v-if="article.type == 2">
+        <v-row v-if="article.type == 11">
           <v-col>
             <v-text-field
               v-model="article.title"
@@ -268,11 +276,13 @@
 <script>
 import Vditor from '@/components/vditor/vditor.vue'
 import VoteCard from '@/components/vote/create-vote.vue'
+import ShowVote from '@/components/vote/create-show.vue'
 
 export default {
   components: {
     Vditor,
-    VoteCard
+    VoteCard,
+    ShowVote
   },
   data() {
     return {
@@ -287,7 +297,7 @@ export default {
         verifyCode: '',
         atUsers: [],
         offerPoint: 0,
-        vote: {}
+        votes: []
       },
       fatherTags: [],
       childTags: [],
@@ -298,9 +308,9 @@ export default {
       dialog: false,
       userList: [],
       types: [
-        { title: '讨论', id: 0 },
-        { title: '问答', id: 2 },
-        { title: '投票', id: 5 }
+        { title: '讨论', id: 10 },
+        { title: '问答', id: 11 },
+        { title: '投票', id: 12 }
       ],
       voteDialog: false
     }
@@ -311,10 +321,10 @@ export default {
     const type = parseInt(this.$route.query.type)
     if (!isNaN(type)) {
       //
-      if (type === 0 || type === 2 || type === 5) {
+      if (type === 10 || type === 11 || type === 12) {
         this.article.type = type
       } else {
-        this.article.type = 0
+        this.article.type = 10
       }
     }
   },
@@ -389,9 +399,13 @@ export default {
       })
     },
     getVote(value) {
-      this.article.vote = value
+      this.article.votes.push(JSON.parse(JSON.stringify(value)))
       console.log(this.article)
       this.voteDialog = false
+    },
+    deleteItem(value) {
+      const index = this.article.votes.indexOf(value)
+      this.article.votes.splice(index, 1)
     }
   }
 }

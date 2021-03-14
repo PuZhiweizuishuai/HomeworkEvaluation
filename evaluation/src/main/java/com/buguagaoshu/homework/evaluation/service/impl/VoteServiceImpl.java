@@ -21,7 +21,9 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -44,7 +46,18 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public void save(VoteVo voteVo) {
+    public void save(List<VoteVo> voteVos, Long articleId) {
+        if (voteVos != null && voteVos.size() != 0) {
+            List<VoteEntity> voteEntities = new ArrayList<>();
+            for (VoteVo voteVo : voteVos) {
+                voteVo.setArticleId(articleId);
+                voteEntities.add(saveOneCheck(voteVo));
+            }
+            voteRepository.saveAll(voteEntities);
+        }
+    }
+
+    public VoteEntity saveOneCheck(VoteVo voteVo) {
         if (voteVo.getChoices().size() < 2) {
             throw new UserDataFormatException("至少需要两个选项！");
         }
@@ -62,48 +75,51 @@ public class VoteServiceImpl implements VoteService {
         });
         voteEntity.setEndTime(TimeUtils.parseTime(voteVo.getEndTime()));
         voteEntity.setChoices(map);
+        voteEntity.setVoteCount(0L);
         voteRepository.save(voteEntity);
+        return voteEntity;
     }
 
     @Override
     public ResponseDetails vote(VoteLogEntity voteLogEntity, HttpServletRequest request) {
         // Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
-        VoteEntity voteEntity = getVote(voteLogEntity.getVoteId());
-        if (voteEntity == null) {
-            return ResponseDetails.ok(ReturnCodeEnum.NOO_FOUND).put("data", "投票不存在！");
-        }
-        VoteLogEntity voteLog = voteLogRepository.findVoteLogEntityByVoteIdAndUserId(voteLogEntity.getVoteId(), "201741010102");
-        if (voteLog != null) {
-            throw new UserDataFormatException("你已经参与过此投票了！");
-        }
-        voteLogEntity.setUserId("201741010102");
-        voteLogEntity.setCreateTime(System.currentTimeMillis());
-
-
-        Query query = new Query(Criteria.where("id").is(voteLogEntity.getVoteId()));
-        Update update = new Update();
-        if (voteEntity.getType() == 1) {
-            if (voteLogEntity.getChoice().size() <= voteEntity.getMaxChoice()) {
-                for (String s : voteLogEntity.getChoice()) {
-                    update.inc("choices." + s, 1);
-
-
-                }
-            } else {
-                throw new UserDataFormatException("超过最大可选择选项！");
-            }
-        } else {
-            update.inc("choices." + voteLogEntity.getChoice().get(0), 1);
-        }
-
-        update.inc("voteCount", 1);
-        mongoTemplate.upsert(query, update, VoteEntity.class);
-        voteLogRepository.save(voteLogEntity);
-        return ResponseDetails.ok().put("data", voteEntity);
+//        VoteEntity voteEntity = getVote(voteLogEntity.getVoteId());
+//        if (voteEntity == null) {
+//            return ResponseDetails.ok(ReturnCodeEnum.NOO_FOUND).put("data", "投票不存在！");
+//        }
+//        VoteLogEntity voteLog = voteLogRepository.findVoteLogEntityByVoteIdAndUserId(voteLogEntity.getVoteId(), "201741010102");
+//        if (voteLog != null) {
+//            throw new UserDataFormatException("你已经参与过此投票了！");
+//        }
+//        voteLogEntity.setUserId("201741010102");
+//        voteLogEntity.setCreateTime(System.currentTimeMillis());
+//
+//
+//        Query query = new Query(Criteria.where("id").is(voteLogEntity.getVoteId()));
+//        Update update = new Update();
+//        if (voteEntity.getType() == 1) {
+//            if (voteLogEntity.getChoice().size() <= voteEntity.getMaxChoice()) {
+//                for (String s : voteLogEntity.getChoice()) {
+//                    update.inc("choices." + s, 1);
+//
+//
+//                }
+//            } else {
+//                throw new UserDataFormatException("超过最大可选择选项！");
+//            }
+//        } else {
+//            update.inc("choices." + voteLogEntity.getChoice().get(0), 1);
+//        }
+//
+//        update.inc("voteCount", 1);
+//        mongoTemplate.upsert(query, update, VoteEntity.class);
+//        voteLogRepository.save(voteLogEntity);
+//        return ResponseDetails.ok().put("data", voteEntity);
+        return null;
     }
 
     @Override
-    public VoteEntity getVote(Long voteId) {
-        return voteRepository.findById(voteId).orElse(null);
+    public List<VoteEntity> getVoteList(Long articleId) {
+        return voteRepository.findVoteEntityByArticleId(articleId);
     }
 }

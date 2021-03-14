@@ -2,6 +2,7 @@ package com.buguagaoshu.homework.evaluation.model;
 
 
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
+import com.buguagaoshu.homework.evaluation.entity.VoteEntity;
 import lombok.Data;
 
 import java.util.List;
@@ -162,4 +163,7 @@ public class ArticleModel {
      * 课程评分
      * */
     private Double courseRating;
+
+
+    private List<VoteEntity> votes;
 }

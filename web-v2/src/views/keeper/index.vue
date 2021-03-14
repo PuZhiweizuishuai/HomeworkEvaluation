@@ -91,10 +91,10 @@
               <!-- 基本数据 -->
               <v-row no-gutters>
                 <v-col cols="6">
-                  <ve-pie :data="submitWithNoSubmitChart" :settings="chartSettings" />
+                  <!-- <ve-pie :data="submitWithNoSubmitChart" :settings="chartSettings" /> -->
                 </v-col>
                 <v-col cols="6">
-                  <ve-pie :data="commentChart" :settings="chartSettings" />
+                  <!-- <ve-pie :data="commentChart" :settings="chartSettings" /> -->
                 </v-col>
               </v-row>
               <!-- 详细数据分析，统计信息 -->

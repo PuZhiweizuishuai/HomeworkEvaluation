@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Data
 public class VoteVo {
-    private Long id;
+    private Long articleId;
 
     @Max(value = 50, message = "标题过长，最大不超过50个字！")
     private String title;

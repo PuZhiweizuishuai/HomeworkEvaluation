@@ -90,6 +90,14 @@
         <v-row>
           <div id="class-article-content-view" ref="articleContent" />
         </v-row>
+        <!-- 显示投票 -->
+
+        <v-row>
+          <v-col>
+            <v-divider />
+          </v-col>
+        </v-row>
+        <VoteList v-if="article.type == 12" :votes="article.votes" />
         <!-- 分割线 -->
         <v-row>
           <v-col>
@@ -217,6 +225,7 @@ import TimeUtil from '@/utils/time-util.vue'
 import Vditor from 'vditor'
 import 'vditor/src/assets/scss/index.scss'
 import Comment from '@/components/comment/index.vue'
+import VoteList from '@/components/vote/vote-list.vue'
 
 function initOutline() {
   const headingElements = []
@@ -252,7 +261,8 @@ function initOutline() {
 }
 export default {
   components: {
-    Comment
+    Comment,
+    VoteList
   },
   props: {
     role: {

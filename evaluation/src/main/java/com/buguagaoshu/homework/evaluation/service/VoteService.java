@@ -6,6 +6,7 @@ import com.buguagaoshu.homework.evaluation.entity.VoteLogEntity;
 import com.buguagaoshu.homework.evaluation.vo.VoteVo;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
@@ -15,7 +16,7 @@ public interface VoteService {
     /**
      * 创建投票
      * */
-    void save(VoteVo voteVo);
+    void save(List<VoteVo> voteVos, Long articleId);
 
     /**
      * 更新投票数据
@@ -27,5 +28,5 @@ public interface VoteService {
     /**
      * @return 查找投票结果
      * */
-    VoteEntity getVote(Long voteId);
+    List<VoteEntity> getVoteList(Long articleId);
 }

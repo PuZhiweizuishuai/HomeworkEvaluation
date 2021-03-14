@@ -6,9 +6,7 @@ import com.buguagaoshu.homework.common.enums.AtUserTypeEnum;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.config.WebConstant;
-import com.buguagaoshu.homework.evaluation.entity.CurriculumEntity;
-import com.buguagaoshu.homework.evaluation.entity.StudentsCurriculumEntity;
-import com.buguagaoshu.homework.evaluation.entity.UserEntity;
+import com.buguagaoshu.homework.evaluation.entity.*;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
 import com.buguagaoshu.homework.evaluation.model.ArticleModel;
 import com.buguagaoshu.homework.evaluation.service.*;
@@ -37,7 +35,6 @@ import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.common.utils.Query;
 
 import com.buguagaoshu.homework.evaluation.dao.ArticleDao;
-import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
@@ -56,6 +53,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
 
     private final UserService userService;
 
+    private final VoteService voteService;
+
     private final VerifyCodeService verifyCodeService;
 
     private final AtUserService atUserService;
@@ -63,11 +62,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     private final CurriculumService curriculumService;
 
     @Autowired
-    public ArticleServiceImpl(StudentsCurriculumService studentsCurriculumService, ObjectMapper objectMapper, UserService userService, VerifyCodeService verifyCodeService, AtUserService atUserService, CurriculumService curriculumService) {
+    public ArticleServiceImpl(StudentsCurriculumService studentsCurriculumService, ObjectMapper objectMapper, UserService userService, VoteService voteService, VerifyCodeService verifyCodeService, AtUserService atUserService, CurriculumService curriculumService) {
         this.studentsCurriculumService = studentsCurriculumService;
         this.objectMapper = objectMapper;
 
         this.userService = userService;
+        this.voteService = voteService;
         this.verifyCodeService = verifyCodeService;
         this.atUserService = atUserService;
         this.curriculumService = curriculumService;
@@ -95,6 +95,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         ArticleEntity articleEntity = new ArticleEntity();
         articleEntity.initData();
+        // 处理课程内帖子
         if (articleVo.getCourseId() != null) {
             StudentsCurriculumEntity studentsCurriculumEntity = studentsCurriculumService.selectStudentByCurriculumId(user.getId(), articleVo.getCourseId());
             if (studentsCurriculumEntity == null) {
@@ -122,15 +123,16 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 curriculumService.updateById(curriculum);
             }
         }
-
+        // 补全数据
         articleEntity.setAuthorId(user.getId());
         articleEntity.setAuthorName(user.getSubject());
         articleEntity.setIp(IpUtil.getIpAddr(request));
         articleEntity.setUa(IpUtil.getUa(request));
         BeanUtils.copyProperties(articleVo, articleEntity);
-        // TODO 处理悬赏积分与投票
+        // TODO 处理悬赏积分
         articleEntity.setQAOfferPoint(articleVo.getOfferPoint());
 
+        // 序列化标签
         try {
             if (articleVo.getTag() != null && articleVo.getTag().size() != 0) {
                 articleEntity.setTag(objectMapper.writeValueAsString(articleVo.getTag()));
@@ -148,7 +150,13 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 articleEntity.setSimpleContent(articleEntity.getContent());
             }
         }
+        // 保存数据
         this.save(articleEntity);
+
+        // 检查投票
+        if (ArticleTypeEnum.isVote(articleVo.getType())) {
+            voteService.save(articleVo.getVotes(), articleEntity.getId());
+        }
 
         // 处理@用户
         String atUser = atUserService.atUser(articleVo.getAtUsers(), AtUserTypeEnum.ARTICLE_AT, articleEntity, null, user.getId(), user.getSubject());
@@ -185,7 +193,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         QueryWrapper<ArticleEntity> wrapper = new QueryWrapper<>();
         wrapper.eq("course_id", courseId);
         wrapper.ne("status", ArticleTypeEnum.DELETE.getCode());
-        wrapper.eq("type", ArticleTypeEnum.COURSE.getCode());
+        wrapper.ge("type", ArticleTypeEnum.COURSE.getCode());
+        wrapper.le("type", ArticleTypeEnum.COURSE_END.getCode());
         String key = (String) params.get("key");
         if (!StringUtils.isEmpty(key)) {
             wrapper.like("title", key);
@@ -245,7 +254,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         if (articleEntity == null) {
             return null;
         }
-        if (articleEntity.getType() == ArticleTypeEnum.COURSE.getCode()) {
+        // 如果是课程内的帖子
+        if (ArticleTypeEnum.checkCourseArticle(articleEntity.getType())) {
             try {
                 ObjectMapper objectMapper = new ObjectMapper();
                 Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
@@ -263,6 +273,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                     try {
                         articleModel.setTag((List<String>) objectMapper.readValue(articleEntity.getTag(), List.class));
                     } catch (Exception ignored) {
+                    }
+                    if (ArticleTypeEnum.isVote(articleEntity.getType())) {
+                        List<VoteEntity> voteList = voteService.getVoteList(articleEntity.getId());
+                        articleModel.setVotes(voteList);
                     }
                     articleEntity.setViewCount(articleEntity.getViewCount()+1);
                     // TODO Redis 缓存
@@ -324,7 +338,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 this.updateById(articleEntity);
                 return true;
             }
-            if (articleEntity.getType().equals(ArticleTypeEnum.COURSE.getCode())) {
+            // 课程内加精判断
+            if (ArticleTypeEnum.checkCourseArticle(articleEntity.getType())) {
                 List<StudentsCurriculumEntity> studentsCurriculumEntities = studentsCurriculumService.teacherList(articleEntity.getCourseId());
                 for (StudentsCurriculumEntity s : studentsCurriculumEntities) {
                     if (s.getStudentId().equals(user.getId())) {
@@ -403,32 +418,13 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     public PageUtils getArticleList(Map<String, Object> params, HttpServletRequest request) {
         QueryWrapper<ArticleEntity> wrapper = new QueryWrapper<>();
         wrapper.ne("status", ArticleTypeEnum.DELETE.getCode());
-        String type = (String) params.get("type");
+
         String userId = (String) params.get("user");
-        wrapper.ne("type", ArticleTypeEnum.COURSE.getCode());
-        wrapper.ne("type",ArticleTypeEnum.COURSE_RATING.getCode());
-        boolean lock = true;
-        if (!StringUtils.isEmpty(type)) {
-            int typeNumber = 0;
-            try {
-                typeNumber = Integer.parseInt(type);
-                if (typeNumber == -1) {
-                    Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
-                    wrapper.eq("author_id", user.getId());
-                    wrapper.eq("type", ArticleTypeEnum.DRAFT.getCode());
-                    lock = false;
-                } else if (typeNumber == 0) {
-                    //
-                } else {
-                    wrapper.eq("type", typeNumber);
-                }
-            } catch (Exception ignored) { }
-        }
+        wrapper.ge("type", ArticleTypeEnum.ORDINARY.getCode());
+        wrapper.le("type", ArticleTypeEnum.ORDINARY_END.getCode());
+
         if (!StringUtils.isEmpty(userId)) {
             wrapper.eq("author_id", userId);
-        }
-        if (lock) {
-            wrapper.ne("type", ArticleTypeEnum.DRAFT.getCode());
         }
 
         wrapper.orderByDesc("update_time");
@@ -462,7 +458,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         if (articleEntity == null) {
             return null;
         }
-        if (articleEntity.getCourseId() != null && articleEntity.getStatus() != ArticleTypeEnum.NORMAL.getCode()) {
+        if (ArticleTypeEnum.checkCourseArticle(articleEntity.getType())) {
             return null;
         }
         try {
@@ -480,6 +476,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         ArticleModel articleModel = new ArticleModel();
         BeanUtils.copyProperties(articleEntity, articleModel);
         articleModel.setUser(userEntity);
+        if (ArticleTypeEnum.isVote(articleEntity.getType())) {
+            List<VoteEntity> voteList = voteService.getVoteList(articleEntity.getId());
+            articleModel.setVotes(voteList);
+        }
         try {
             articleModel.setTag((List<String>) objectMapper.readValue(articleEntity.getTag(), List.class));
         } catch (Exception ignored) {

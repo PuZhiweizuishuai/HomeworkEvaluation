@@ -5,7 +5,7 @@
       <v-col />
       <v-row justify="space-around">
         <div>
-          <router-link to="/bbs/post?type=0">
+          <router-link to="/bbs/post?type=10">
             <v-btn
               class="mx-2"
               depressed
@@ -21,7 +21,7 @@
           </router-link>
         </div>
         <div>
-          <router-link to="/bbs/post?type=2">
+          <router-link to="/bbs/post?type=11">
             <v-btn
               class="mx-2"
               depressed

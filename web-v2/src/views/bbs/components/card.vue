@@ -14,10 +14,10 @@
               <v-col cols="12">
 
                 <h3 style="color:black">
-                  <v-icon v-if="item.type == 2">
+                  <v-icon v-if="item.type == 11">
                     mdi-comment-question
                   </v-icon>
-                  <v-icon v-if="item.type == 5">
+                  <v-icon v-if="item.type == 12">
                     mdi-vote
                   </v-icon>
                   {{ item.title }}

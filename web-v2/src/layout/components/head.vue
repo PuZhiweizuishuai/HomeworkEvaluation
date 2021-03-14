@@ -48,6 +48,7 @@ export default {
       userInfo: {},
       headItem: [
         { icon: 'mdi-account', text: '个人主页', link: `/user/`, id: 0, show: true, admin: false },
+        { icon: 'mdi-book-variant', text: '我的课程', link: `/myclass`, id: 5, show: true, admin: false },
         { icon: 'mdi-wrench', text: '个人设置', link: '/user/setting', id: 1, show: true, admin: false },
         { icon: 'mdi-application-settings', text: '系统管理', link: '/admin', id: 4, show: false, admin: true },
         { icon: 'mdi-logout', text: '退出', link: '/logout', id: 2, show: true, admin: false }
