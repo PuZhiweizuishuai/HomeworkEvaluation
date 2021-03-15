@@ -48,10 +48,10 @@ export default {
       userInfo: {},
       headItem: [
         { icon: 'mdi-account', text: '个人主页', link: `/user/`, id: 0, show: true, admin: false },
-        { icon: 'mdi-book-variant', text: '我的课程', link: `/myclass`, id: 5, show: true, admin: false },
-        { icon: 'mdi-wrench', text: '个人设置', link: '/user/setting', id: 1, show: true, admin: false },
-        { icon: 'mdi-application-settings', text: '系统管理', link: '/admin', id: 4, show: false, admin: true },
-        { icon: 'mdi-logout', text: '退出', link: '/logout', id: 2, show: true, admin: false }
+        { icon: 'mdi-book-variant', text: '我的课程', link: `/myclass`, id: 1, show: true, admin: false },
+        { icon: 'mdi-wrench', text: '个人设置', link: '/user/setting', id: 2, show: true, admin: false },
+        { icon: 'mdi-application-settings', text: '系统管理', link: '/admin', id: 3, show: false, admin: true },
+        { icon: 'mdi-logout', text: '退出', link: '/logout', id: 4, show: true, admin: false }
       ]
     }
   },
@@ -73,11 +73,16 @@ export default {
         // this.$router.push('/user/' + this.userInfo.id)
         location.replace('/user/' + this.userInfo.userId)
       } else if (value === 1) {
+        if (this.$route.path === '/myclass') {
+          return
+        }
+        this.$router.push('/myclass')
+      } else if (value === 2) {
         if (this.$route.path === '/user/setting') {
           return
         }
         this.$router.push('/user/setting')
-      } else if (value === 4) {
+      } else if (value === 3) {
         if (this.$route.path === '/admin') {
           return
         }
