@@ -5,6 +5,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -18,14 +19,16 @@ public class VoteLogEntity {
     private ObjectId id;
 
     /**
-     * 投票的目标ID
+     * 投票的目标帖子ID
      * */
-    private Long voteId;
+    @NotNull(message = "帖子ID不能为空！")
+    private Long articleId;
 
     /**
      * 选择的项目
      * */
-    private List<String> choice;
+    @NotNull(message = "选项不能为空！")
+    private List<UserVoteChoices> choices;
 
 
     private Long createTime;

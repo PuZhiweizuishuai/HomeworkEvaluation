@@ -3,6 +3,7 @@ package com.buguagaoshu.homework.evaluation.service;
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.evaluation.entity.VoteEntity;
 import com.buguagaoshu.homework.evaluation.entity.VoteLogEntity;
+import com.buguagaoshu.homework.evaluation.model.VoteMode;
 import com.buguagaoshu.homework.evaluation.vo.VoteVo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,4 +30,9 @@ public interface VoteService {
      * @return 查找投票结果
      * */
     List<VoteEntity> getVoteList(Long articleId);
+
+
+    List<VoteMode> getVoteModeList(Long articleId);
+
+    VoteLogEntity voteLogEntity(Long articleId, String userId);
 }

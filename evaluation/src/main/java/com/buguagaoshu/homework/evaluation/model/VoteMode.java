@@ -1,27 +1,18 @@
-package com.buguagaoshu.homework.evaluation.entity;
+package com.buguagaoshu.homework.evaluation.model;
 
 import com.buguagaoshu.homework.common.valid.ListValue;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.MongoId;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 import java.util.Map;
 
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
- * create          2021-03-13 22:40
- * 投票模块
+ * create          2021-03-15 18:59
  */
 @Data
-@Document("Votes")
-public class VoteEntity {
-    @MongoId
-    private ObjectId id;
+public class VoteMode {
+    private String id;
 
     private Long articleId;
 

@@ -13,6 +13,12 @@
             <v-row>
               <v-col cols="12" style="padding-top: 0px;">
                 <h3 style="color:black">
+                  <v-icon v-if="item.type == 1">
+                    mdi-comment-question
+                  </v-icon>
+                  <v-icon v-if="item.type == 2">
+                    mdi-vote
+                  </v-icon>
                   {{ item.title }}
                   <v-chip
                     v-if="item.isTeacher"

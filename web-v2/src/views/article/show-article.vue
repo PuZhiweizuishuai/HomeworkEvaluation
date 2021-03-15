@@ -97,7 +97,7 @@
             <v-divider />
           </v-col>
         </v-row>
-        <VoteList v-if="article.type == 12" :votes="article.votes" />
+        <VoteList v-if="article.type == 12" :votes="article.votes" :votelog="article.voteLog" @success="getArticle" />
         <!-- 分割线 -->
         <v-row>
           <v-col>
@@ -316,7 +316,7 @@ export default {
       this.httpGet(`/article/info/${this.$route.params.articleId}`, (json) => {
         if (json.status === 200) {
           this.article = json.data
-
+          document.title = json.data.title
           if (this.article.perfect === 1) {
             this.addPerfect = '取消加精'
           } else {
@@ -329,7 +329,7 @@ export default {
       })
     },
     back() {
-      this.$router.push(`/bbs?page=${this.page}`)
+      this.$router.push(`/bbs`)
     },
     initRender() {
       const output = this.$refs.articleContent

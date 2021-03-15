@@ -47,6 +47,7 @@ public enum ArticleTypeEnum {
         return msg;
     }
 
+
     /**
      * 判断是否是课程内帖子
      * */

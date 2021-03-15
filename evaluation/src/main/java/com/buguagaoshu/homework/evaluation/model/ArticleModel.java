@@ -3,6 +3,7 @@ package com.buguagaoshu.homework.evaluation.model;
 
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import com.buguagaoshu.homework.evaluation.entity.VoteEntity;
+import com.buguagaoshu.homework.evaluation.entity.VoteLogEntity;
 import lombok.Data;
 
 import java.util.List;
@@ -165,5 +166,8 @@ public class ArticleModel {
     private Double courseRating;
 
 
-    private List<VoteEntity> votes;
+    private List<VoteMode> votes;
+
+
+    private VoteLogEntity voteLog;
 }

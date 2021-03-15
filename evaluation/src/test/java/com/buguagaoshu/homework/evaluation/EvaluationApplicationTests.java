@@ -10,6 +10,7 @@ import com.buguagaoshu.homework.evaluation.service.VoteService;
 import com.buguagaoshu.homework.evaluation.vo.VoteVo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,15 +49,21 @@ class EvaluationApplicationTests {
 //        vote.setType(0);
 //        vote.setVoteCount(0L);
 //        voteService.save(vote);
-        VoteLogEntity voteLogEntity = new VoteLogEntity();
-        voteLogEntity.setVoteId(1L);
-        List<String> list = new ArrayList<>();
-        list.add("a");
-        voteLogEntity.setChoice(list);
-        voteService.vote(voteLogEntity, null);
+//        VoteLogEntity voteLogEntity = new VoteLogEntity();
+//        voteLogEntity.setVoteId(1L);
+//        List<String> list = new ArrayList<>();
+//        list.add("a");
+//        voteLogEntity.setChoice(list);
+//        voteService.vote(voteLogEntity, null);
 //        Query query = new Query(Criteria.where("id").is(1L));
 //        Update update = new Update().inc("choices.a", 1);
 //        mongoTemplate.upsert(query, update, VoteEntity.class);
+
+        Query query = new Query(Criteria.where("id").is(new ObjectId("604f37942642526c8efbf14f")));
+        Update update = new Update();
+        update.inc("choices." + "b", 1);
+        update.inc("voteCount", 1);
+        mongoTemplate.upsert(query, update, VoteEntity.class);
     }
 
 }

@@ -21,7 +21,7 @@
           </router-link>
         </div>
         <div>
-          <router-link to="/bbs/post?type=11">
+          <router-link to="/bbs/post?type=12">
             <v-btn
               class="mx-2"
               depressed
@@ -33,7 +33,7 @@
                 mdi-comment-question
               </v-icon>
             </v-btn>
-            <p class="btn-text-info">提问</p>
+            <p class="btn-text-info">投票</p>
           </router-link>
         </div>
         <div>

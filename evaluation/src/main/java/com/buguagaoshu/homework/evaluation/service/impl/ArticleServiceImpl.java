@@ -9,6 +9,7 @@ import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.entity.*;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
 import com.buguagaoshu.homework.evaluation.model.ArticleModel;
+import com.buguagaoshu.homework.evaluation.model.VoteMode;
 import com.buguagaoshu.homework.evaluation.service.*;
 import com.buguagaoshu.homework.evaluation.utils.IpUtil;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
@@ -101,7 +102,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             if (studentsCurriculumEntity == null) {
                 return null;
             }
-            articleVo.setType(ArticleTypeEnum.COURSE.getCode());
+            if (!ArticleTypeEnum.checkCourseArticle(articleVo.getType())) {
+                throw new UserDataFormatException("课程内帖子类型设置错误！");
+            }
+
             // 检查评分
             if (articleVo.getType() == ArticleTypeEnum.COURSE_RATING.getCode()) {
 
@@ -112,7 +116,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 if (articleVo.getCourseRating() == null) {
                     throw new UserDataFormatException("评分有误！");
                 }
-                if (articleVo.getCourseRating() > 5.0  || articleVo.getCourseRating() < 0.0) {
+                if (articleVo.getCourseRating() > 5.0 || articleVo.getCourseRating() < 0.0) {
                     throw new UserDataFormatException("评分有误！");
                 }
 
@@ -275,10 +279,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                     } catch (Exception ignored) {
                     }
                     if (ArticleTypeEnum.isVote(articleEntity.getType())) {
-                        List<VoteEntity> voteList = voteService.getVoteList(articleEntity.getId());
-                        articleModel.setVotes(voteList);
+                        articleModel.setVotes(voteService.getVoteModeList(articleEntity.getId()));
+                        articleModel.setVoteLog(voteService.voteLogEntity(articleEntity.getId(), user.getId()));
                     }
-                    articleEntity.setViewCount(articleEntity.getViewCount()+1);
+                    articleEntity.setViewCount(articleEntity.getViewCount() + 1);
                     // TODO Redis 缓存
                     this.baseMapper.countAdd("view_count", articleEntity.getId(), 1);
                     return articleModel;
@@ -392,7 +396,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         if (articleVo.getCourseRating() == null) {
             throw new UserDataFormatException("评分有误！");
         }
-        if (articleVo.getCourseRating() > 5.0  || articleVo.getCourseRating() < 0.0) {
+        if (articleVo.getCourseRating() > 5.0 || articleVo.getCourseRating() < 0.0) {
             throw new UserDataFormatException("评分有误！");
         }
         ArticleEntity courseRating = getCourseRating(articleVo.getCourseId(), user);
@@ -461,24 +465,33 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         if (ArticleTypeEnum.checkCourseArticle(articleEntity.getType())) {
             return null;
         }
+        Claims user = null;
         try {
-            if (articleEntity.getType() == ArticleTypeEnum.DRAFT.getCode()) {
-                Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+            user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        } catch (Exception ignored) { }
+
+        if (articleEntity.getType() == ArticleTypeEnum.DRAFT.getCode()) {
+            if (user != null) {
                 if (!user.getId().equals(articleEntity.getAuthorId())) {
                     return null;
                 }
             }
-        } catch (Exception e) {
-            return null;
         }
+
         UserEntity userEntity = userService.getById(articleEntity.getAuthorId());
         userEntity.clean();
         ArticleModel articleModel = new ArticleModel();
         BeanUtils.copyProperties(articleEntity, articleModel);
         articleModel.setUser(userEntity);
         if (ArticleTypeEnum.isVote(articleEntity.getType())) {
-            List<VoteEntity> voteList = voteService.getVoteList(articleEntity.getId());
+            List<VoteMode> voteList = voteService.getVoteModeList(articleEntity.getId());
             articleModel.setVotes(voteList);
+            // 检查当前投票状态
+            if (user != null) {
+                articleModel.setVoteLog(voteService.voteLogEntity(articleEntity.getId(), user.getId()));
+            } else {
+                articleModel.setVoteLog(null);
+            }
         }
         try {
             articleModel.setTag((List<String>) objectMapper.readValue(articleEntity.getTag(), List.class));
