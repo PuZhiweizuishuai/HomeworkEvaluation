@@ -18,6 +18,7 @@
     "filepond-plugin-image-preview": "^4.6.5",
     "less": "^3.13.1",
     "less-loader": "^7.3.0",
+    "v-viewer": "^1.5.1",
     "vditor": "^3.5.4",
     "vue": "^2.6.11",
     "vue-cookies": "^1.7.4",

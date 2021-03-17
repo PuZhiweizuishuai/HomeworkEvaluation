@@ -8,12 +8,14 @@ import com.buguagaoshu.homework.evaluation.model.ArticleModel;
 import com.buguagaoshu.homework.evaluation.service.ArticleService;
 import com.buguagaoshu.homework.evaluation.vo.ArticleVo;
 import com.buguagaoshu.homework.evaluation.vo.DeleteVo;
+import com.buguagaoshu.homework.evaluation.vo.ThinkVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,6 +41,24 @@ public class ArticleController {
             return ResponseDetails.ok(ReturnCodeEnum.NO_POWER);
         }
         return ResponseDetails.ok().put("data", entity);
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
+    @PostMapping("/article/thinks/save")
+    public ResponseDetails saveThink(@Valid @RequestBody ThinkVo thinkVo,
+                                HttpServletRequest request) {
+        ArticleEntity entity = articleService.saveThink(thinkVo, request);
+        if (entity == null) {
+            return ResponseDetails.ok(ReturnCodeEnum.NO_POWER);
+        }
+        return ResponseDetails.ok().put("data", entity);
+    }
+
+
+    @GetMapping("/article/thinks/list")
+    public ResponseDetails getThink(@RequestParam Map<String, Object> params,
+                                     HttpServletRequest request) {
+        return ResponseDetails.ok().put("data", articleService.getThinkList(params, request));
     }
 
 

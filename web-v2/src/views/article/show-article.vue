@@ -10,6 +10,7 @@
           >
             <v-icon>mdi-arrow-left-thick</v-icon>
           </v-btn>
+          <span v-if="article.type == 100">想法：</span>
           {{ article.title }}
           <v-chip
             v-if="article.perfect == 1"
@@ -97,6 +98,15 @@
             <v-divider />
           </v-col>
         </v-row>
+        <!-- 显示图片 -->
+        <v-row v-if="article.type == 100" justify="center">
+          <v-col cols="10">
+            <viewer :images="fileList">
+              <!-- <v-img height="200" width="200" :src="item" /> -->
+              <img v-for="(item, i) in fileList" :key="i" class="show-tink-img" height="100" width="auto" :src="item">
+            </viewer>
+          </v-col>
+        </v-row>
         <VoteList v-if="article.type == 12" :votes="article.votes" :votelog="article.voteLog" @success="getArticle" />
         <!-- 分割线 -->
         <v-row>
@@ -169,7 +179,7 @@
             <h3>目录：</h3>
           </v-col>
         </v-row>
-        <v-row id="catalog-view">
+        <v-row id="catalog-view" v-scroll="onScroll" style="height: 500px;overflow-y:scroll;">
           <v-col>
             <div id="markdown-view-catalog" ref="articleCatalogView" />
 
@@ -227,6 +237,8 @@ import 'vditor/src/assets/scss/index.scss'
 import Comment from '@/components/comment/index.vue'
 import VoteList from '@/components/vote/vote-list.vue'
 
+let anchorTop = 0
+
 function initOutline() {
   const headingElements = []
   Array.from(document.querySelector('#class-article-content-view').children).forEach((item) => {
@@ -258,7 +270,10 @@ function initOutline() {
       }
     }
   })
+  anchorTop = document.querySelector('#catalog-anchor').offsetTop
+  console.log(anchorTop)
 }
+
 export default {
   components: {
     Comment,
@@ -293,7 +308,8 @@ export default {
       showMessage: false,
       deleteDialog: false,
       addPerfect: '加精',
-      page: 1
+      page: 1,
+      fileList: null
     }
   },
   created() {
@@ -321,6 +337,9 @@ export default {
             this.addPerfect = '取消加精'
           } else {
             this.addPerfect = '加精'
+          }
+          if (this.article.type === 100 && this.article.files != null) {
+            this.fileList = JSON.parse(this.article.files)
           }
           this.initRender()
         } else {
@@ -403,6 +422,22 @@ export default {
           this.showMessage = true
         }
       })
+    },
+    onScroll(e) {
+      if (typeof window === 'undefined') return
+      const top = window.pageYOffset || e.target.scrollTop || 0
+      // this.fab = top > 200
+      // style="position: fixed; top: 100px"
+      const d = document.querySelector('#catalog-view')
+      if (top > anchorTop + 64 && this.windowSize.x > 900) {
+        // console.log(e.style)
+
+        d.style.position = 'fixed'
+        d.style.top = '150px'
+      } else {
+        d.style.position = 'static'
+        d.style.top = '150px'
+      }
     }
   }
 }
@@ -454,5 +489,9 @@ export default {
             color: #4285f4;
             background-color: #f6f8fa;
         }
+        .show-tink-img {
+  cursor: pointer;
+  margin: 10px;
+}
 
 </style>

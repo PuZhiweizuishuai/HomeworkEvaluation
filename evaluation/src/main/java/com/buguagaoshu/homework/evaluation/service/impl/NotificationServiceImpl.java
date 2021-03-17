@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
+import com.buguagaoshu.homework.common.enums.ArticleTypeEnum;
 import com.buguagaoshu.homework.common.enums.NotificationTypeEnum;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.entity.*;
@@ -99,6 +100,9 @@ public class NotificationServiceImpl extends ServiceImpl<NotificationDao, Notifi
             notificationEntity.setCommentContent(commentEntity.getContent().substring(0, 50) + "......");
         } else {
             notificationEntity.setCommentContent(commentEntity.getContent());
+        }
+        if (articleEntity.getType() == ArticleTypeEnum.THINK.getCode()) {
+            notificationEntity.setType(NotificationTypeEnum.THINK_COMMENT.getCode());
         }
         notificationEntity.setText(articleEntity.getTitle());
         notificationEntity.setUrl(null);

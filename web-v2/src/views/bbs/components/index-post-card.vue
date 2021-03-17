@@ -75,13 +75,13 @@
 
       max-width="500"
     >
-      <ThinkCard />
+      <ThinkCard @success="submitSucc" />
     </v-dialog>
   </v-card>
 </template>
 
 <script>
-import ThinkCard from '@/views/bbs/components/think.vue'
+import ThinkCard from '@/components/think/think.vue'
 export default {
   components: {
     ThinkCard
@@ -95,6 +95,10 @@ export default {
     goToDraft() {
       // <router-link to="/bbs/draft/box">
       this.$router.push('/bbs/draft/box')
+    },
+    submitSucc(value) {
+      this.thinkDialog = false
+      this.$emit('success', true)
     }
   }
 }

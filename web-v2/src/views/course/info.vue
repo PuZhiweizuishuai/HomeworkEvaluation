@@ -144,7 +144,7 @@
           </v-col>
         </v-row>
         <div id="catalog-anchor" />
-        <v-row v-if="showCatalog" id="catalog-view" v-scroll="onScroll">
+        <v-row v-if="showCatalog" id="catalog-view" v-scroll="onScroll" style="height: 500px;overflow-y:scroll;">
           <v-col>
             <div id="markdown-view-catalog" ref="catalogView" />
           </v-col>

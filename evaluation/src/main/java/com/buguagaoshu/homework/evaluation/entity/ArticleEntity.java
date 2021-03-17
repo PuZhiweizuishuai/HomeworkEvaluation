@@ -173,13 +173,20 @@ public class ArticleEntity {
     /**
      * 帖子首图地址
      */
-    private String topImgUrl;
+    private String files;
 
 
     /**
      * 课程评分
      * */
     private Double courseRating;
+
+    /**
+     * 转发
+     * */
+    private Long forward;
+
+    private Long forwardCount;
 
 
     public void initData() {
@@ -197,6 +204,8 @@ public class ArticleEntity {
         this.setArticlestick(0L);
         this.setAnonymous(0);
         this.setPerfect(0);
-        this.setQAOfferPoint(null);
+
+        this.forward = 0L;
+        this.forwardCount = 0L;
     }
 }

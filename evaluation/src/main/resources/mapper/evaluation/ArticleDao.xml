@@ -31,11 +31,13 @@
         <result property="anonymous" column="anonymous"/>
         <result property="perfect" column="perfect"/>
         <result property="qAOfferPoint" column="q_a_offer_point"/>
-        <result property="topImgUrl" column="top_img_url"/>
+        <result property="files" column="files"/>
         <result property="authorName" column="author_name"/>
         <result property="courseRating" column="course_rating" />
         <result property="atUser" column="at_user" />
         <result property="simpleContent" column="simple_content"/>
+        <result property="forward" column="forward" />
+        <result property="forwardCount" column="forward_count" />
     </resultMap>
 
     <update id="countAdd">

@@ -94,8 +94,8 @@ public class TokenAuthenticationHelper {
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         cookie.setMaxAge(cookExpirationTime);
+        // cookie.setSecure(true);
         response.addCookie(cookie);
-
 
         // 向前端写入数据
         ResponseDetails responseDetails = ResponseDetails.ok(HttpStatus.OK.value(), "登陆成功！");

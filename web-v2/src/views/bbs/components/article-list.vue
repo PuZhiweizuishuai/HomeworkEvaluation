@@ -7,7 +7,7 @@
     </v-row>
     <v-row justify="center">
       <v-pagination
-        v-model="page"
+        v-model="pageMode"
         :length="length"
         @input="pageChange"
       />
@@ -29,9 +29,11 @@ export default {
   },
   data() {
     return {
+      pageMode: 1,
       page: 1,
       size: 20,
       tagId: -1,
+      typeCode: this.type,
       totalCount: 0,
       length: 1,
       articleList: []
@@ -45,13 +47,18 @@ export default {
   },
   methods: {
     getList() {
-      this.httpGet(`/article/list?page=${this.page}&limit=${this.size}&tagId=${this.tagId}&type=${this.type}`, (json) => {
+      this.httpGet(`/article/list?page=${this.page}&limit=${this.size}&tagId=${this.tagId}&type=${this.typeCode}`, (json) => {
         this.articleList = json.data.list
         this.totalCount = json.data.totalCount
         this.length = json.data.totalPage
         this.page = json.data.page
         this.$route.query.page = this.page
       })
+    },
+    setType(type) {
+      this.typeCode = type
+      this.page = 1
+      this.getList()
     },
     getTagList() {
       this.httpGet('/article/tags/list', (json) => {
@@ -60,6 +67,7 @@ export default {
       })
     },
     pageChange(value) {
+      this.pageMode = value
       this.page = value
       this.getList()
     }

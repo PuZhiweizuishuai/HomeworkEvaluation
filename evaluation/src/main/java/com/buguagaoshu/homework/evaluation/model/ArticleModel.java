@@ -151,7 +151,7 @@ public class ArticleModel {
     /**
      * 帖子首图地址
      */
-    private String topImgUrl;
+    private String files;
 
     private UserEntity user;
 
@@ -170,4 +170,11 @@ public class ArticleModel {
 
 
     private VoteLogEntity voteLog;
+
+    /**
+     * 转发
+     * */
+    private Long forward;
+
+    private Long forwardCount;
 }

@@ -45,6 +45,8 @@ public enum NotificationTypeEnum {
 
     AT_USER(103, "提到了你！"),
 
+    THINK_COMMENT(104, "想法收到回复！"),
+
     /**
      * 收到其它人的私信消息
      */

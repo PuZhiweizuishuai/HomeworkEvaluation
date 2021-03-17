@@ -30,7 +30,7 @@ public class ArticleVo {
     private String content;
 
 
-    @ListValue(value = {-1, 0, 1, 2, 10, 11, 12, 100, 200}, message = "帖子类型取值不对！")
+    @ListValue(value = {-1, 0, 1, 2, 10, 11, 12, 200}, message = "帖子类型取值不对！")
     private Integer type;
 
 
@@ -46,6 +46,9 @@ public class ArticleVo {
 
     private List<AtUser> atUsers;
 
+
+    private List<String> files;
+
     /**
      * 问答悬赏积分（仅作用于问答帖）
      */
@@ -60,4 +63,11 @@ public class ArticleVo {
      * 投票数据
      * */
     private List<VoteVo> votes;
+
+    /**
+     * 转发
+     * */
+    private Long forward;
+
+    private Long forwardCount;
 }

@@ -15,6 +15,7 @@ import com.buguagaoshu.homework.evaluation.utils.IpUtil;
 import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import com.buguagaoshu.homework.evaluation.vo.ArticleVo;
 import com.buguagaoshu.homework.evaluation.vo.DeleteVo;
+import com.buguagaoshu.homework.evaluation.vo.ThinkVo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -93,6 +94,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         if (articleVo.getTag() != null && articleVo.getTag().size() > 6) {
             throw new UserDataFormatException("标签不能超过6个！");
         }
+        if (ArticleTypeEnum.THINK.getCode() == articleVo.getType()) {
+            throw new UserDataFormatException("类型错误！");
+        }
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         ArticleEntity articleEntity = new ArticleEntity();
         articleEntity.initData();
@@ -128,24 +132,15 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             }
         }
         // 补全数据
-        articleEntity.setAuthorId(user.getId());
-        articleEntity.setAuthorName(user.getSubject());
-        articleEntity.setIp(IpUtil.getIpAddr(request));
-        articleEntity.setUa(IpUtil.getUa(request));
+        completionArticleData(articleEntity, user, request);
+
         BeanUtils.copyProperties(articleVo, articleEntity);
         // TODO 处理悬赏积分
         articleEntity.setQAOfferPoint(articleVo.getOfferPoint());
 
         // 序列化标签
-        try {
-            if (articleVo.getTag() != null && articleVo.getTag().size() != 0) {
-                articleEntity.setTag(objectMapper.writeValueAsString(articleVo.getTag()));
-            } else {
-                articleEntity.setTag("[]");
-            }
-        } catch (JsonProcessingException e) {
-            log.error("用户 {} 发帖， 标签出现序列化异常！{}", user.getId(), e.getMessage());
-        }
+        articleEntity.setTag(objectToString(articleVo.getTag()));
+
         // 处理简介
         if (articleVo.getSimpleContent() == null) {
             if (articleEntity.getContent().length() > 50) {
@@ -261,7 +256,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         // 如果是课程内的帖子
         if (ArticleTypeEnum.checkCourseArticle(articleEntity.getType())) {
             try {
-                ObjectMapper objectMapper = new ObjectMapper();
                 Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
                 StudentsCurriculumEntity studentsCurriculumEntity = studentsCurriculumService.selectStudentByCurriculumId(user.getId(), articleEntity.getCourseId());
                 ArticleModel articleModel = new ArticleModel();
@@ -274,10 +268,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                     articleModel.setUser(userEntity);
                     Map<String, StudentsCurriculumEntity> teacherMap = studentsCurriculumService.teacherList(articleEntity.getCourseId()).stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, t -> t));
                     articleModel.setIsTeacher(teacherMap.get(articleEntity.getAuthorId()) != null);
-                    try {
-                        articleModel.setTag((List<String>) objectMapper.readValue(articleEntity.getTag(), List.class));
-                    } catch (Exception ignored) {
-                    }
+                    articleModel.setTag(stringToObj(articleEntity.getTag()));
+
                     if (ArticleTypeEnum.isVote(articleEntity.getType())) {
                         articleModel.setVotes(voteService.getVoteModeList(articleEntity.getId()));
                         articleModel.setVoteLog(voteService.voteLogEntity(articleEntity.getId(), user.getId()));
@@ -424,6 +416,13 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         wrapper.ne("status", ArticleTypeEnum.DELETE.getCode());
 
         String userId = (String) params.get("user");
+        String type = (String) params.get("type");
+
+        if (!StringUtils.isEmpty(type)) {
+            if (type.equals("10") || type.equals("11") || type.equals("12")) {
+                wrapper.eq("type", type);
+            }
+        }
         wrapper.ge("type", ArticleTypeEnum.ORDINARY.getCode());
         wrapper.le("type", ArticleTypeEnum.ORDINARY_END.getCode());
 
@@ -436,23 +435,41 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 new Query<ArticleEntity>().getPage(params),
                 wrapper
         );
+        return getArticleMode(page, 1);
+    }
+
+    public PageUtils getArticleMode(IPage<ArticleEntity> page, int type) {
         if (page.getTotal() == 0) {
             return new PageUtils(page);
         }
         Set<String> userIds = page.getRecords().stream().map(ArticleEntity::getAuthorId).collect(Collectors.toSet());
         Map<String, UserEntity> maps = userService.listByIds(userIds).stream().collect(Collectors.toMap(UserEntity::getUserId, u -> u));
         List<ArticleModel> articleModels = new ArrayList<>();
-        page.getRecords().forEach((a) -> {
-            ArticleModel articleModel = new ArticleModel();
-            BeanUtils.copyProperties(a, articleModel);
-            articleModel.setContent(null);
-            // 数据脱敏
-            UserEntity userEntity = maps.get(a.getAuthorId());
-            userEntity.clean();
-            articleModel.setUser(userEntity);
-            articleModels.add(articleModel);
-        });
+        if (type == 0) {
+            page.getRecords().forEach((a) -> {
+                ArticleModel articleModel = new ArticleModel();
+                BeanUtils.copyProperties(a, articleModel);
+                articleModel.setContent(null);
+                // 数据脱敏
+                UserEntity userEntity = maps.get(a.getAuthorId());
+                userEntity.clean();
+                articleModel.setUser(userEntity);
+                articleModels.add(articleModel);
+            });
+        } else {
+            page.getRecords().forEach((a) -> {
+                ArticleModel articleModel = new ArticleModel();
+                BeanUtils.copyProperties(a, articleModel);
+                // 数据脱敏
+                UserEntity userEntity = maps.get(a.getAuthorId());
+                userEntity.clean();
+                articleModel.setUser(userEntity);
+                articleModels.add(articleModel);
+            });
+        }
+
         return new PageUtils(new CustomPage<>(articleModels, page.getTotal(), page.getSize(), page.getCurrent(), page.orders()));
+
     }
 
 
@@ -493,11 +510,72 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 articleModel.setVoteLog(null);
             }
         }
-        try {
-            articleModel.setTag((List<String>) objectMapper.readValue(articleEntity.getTag(), List.class));
-        } catch (Exception ignored) {
-        }
+        articleModel.setTag(stringToObj(articleEntity.getTag()));
+
         // TODO 阅读量加 1
         return articleModel;
+    }
+
+    @Override
+    public ArticleEntity saveThink(ThinkVo thinkVo, HttpServletRequest request) {
+        Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        ArticleEntity articleEntity = new ArticleEntity();
+        articleEntity.initData();
+        articleEntity.setTag("[]");
+        articleEntity.setTagId(0);
+        completionArticleData(articleEntity, user, request);
+        BeanUtils.copyProperties(thinkVo, articleEntity);
+        if (thinkVo.getContent().length() > 50) {
+            articleEntity.setTitle(thinkVo.getContent().substring(0, 45) + "...");
+        } else {
+            articleEntity.setTitle(thinkVo.getContent());
+        }
+        articleEntity.setSimpleContent("");
+        if (thinkVo.getFiles() != null) {
+            articleEntity.setFiles(objectToString(thinkVo.getFiles()));
+        }
+        if (thinkVo.getForward() != null) {
+            // TODO 转发功能
+        }
+        this.save(articleEntity);
+        return articleEntity;
+    }
+
+    @Override
+    public PageUtils getThinkList(Map<String, Object> params, HttpServletRequest request) {
+        QueryWrapper<ArticleEntity> wrapper = new QueryWrapper<>();
+        wrapper.ne("status", ArticleTypeEnum.DELETE.getCode());
+        wrapper.eq("type", ArticleTypeEnum.THINK.getCode());
+        wrapper.orderByDesc("update_time");
+        IPage<ArticleEntity> page = this.page(
+                new Query<ArticleEntity>().getPage(params),
+                wrapper
+        );
+        return getArticleMode(page, 1);
+    }
+
+
+    public void completionArticleData(ArticleEntity articleEntity, Claims user, HttpServletRequest request) {
+        articleEntity.setAuthorId(user.getId());
+        articleEntity.setAuthorName(user.getSubject());
+        articleEntity.setIp(IpUtil.getIpAddr(request));
+        articleEntity.setUa(IpUtil.getUa(request));
+    }
+
+    public String objectToString(List<String> list) {
+        try {
+            return objectMapper.writeValueAsString(list);
+        } catch (Exception e) {
+            return "[]";
+        }
+    }
+
+
+    public List<String> stringToObj(String str) {
+        try {
+            return objectMapper.readValue(str, List.class);
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
     }
 }

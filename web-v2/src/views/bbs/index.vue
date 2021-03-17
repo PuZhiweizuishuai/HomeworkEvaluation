@@ -2,7 +2,7 @@
   <v-container v-resize="onResize" fluid>
     <v-row>
       <v-col>
-        <PostCard v-if="this.$store.state.userInfo && showPostCard == false" />
+        <PostCard v-if="this.$store.state.userInfo && showPostCard == false" @success="thinkSuc" />
       </v-col>
     </v-row>
     <v-row>
@@ -10,13 +10,24 @@
         <v-divider />
       </v-col>
     </v-row>
+    <!-- 导航 -->
+    <v-row>
+      <v-col>
+        <v-tabs v-model="checkTab">
+          <v-tab @click="getList(0)">推荐</v-tab>
+          <v-tab @click="getList(100)">想法</v-tab>
+          <v-tab @click="getList(12)">投票</v-tab>
+        </v-tabs>
+      </v-col>
+    </v-row>
     <v-col />
     <v-row>
       <v-col :cols="colsLift">
-        <List />
+        <List v-show="pageType == 10 || pageType == 12 || pageType == 0" ref="showArticleList" />
+        <ThinkList v-show="pageType == 100" ref="showThinkList" />
       </v-col>
       <v-col :cols="colsRight">
-        <PostCard v-if="this.$store.state.userInfo && showPostCard" />
+        <PostCard v-if="this.$store.state.userInfo && showPostCard" @success="thinkSuc" />
         <v-col />
         <!-- 广告 -->
         <v-card outlined>
@@ -54,13 +65,15 @@
 
 <script>
 import List from '@/views/bbs/components/article-list.vue'
+import ThinkList from '@/components/think/think-list.vue'
 import PostCard from '@/views/bbs/components/index-post-card.vue'
 
 export default {
   name: 'BBS',
   components: {
     List,
-    PostCard
+    PostCard,
+    ThinkList
   },
   data() {
     return {
@@ -72,17 +85,48 @@ export default {
         x: 0,
         y: 0
       },
-      showPostCard: true
+      showPostCard: true,
+      pageType: 10,
+      checkTab: 0
     }
   },
   created() {
+    const type = parseInt(this.$route.query.type)
+    if (!isNaN(type)) {
+      //
+      if (type === 100 || type === 10 || type === 11 || type === 12) {
+        this.pageType = type
+        if (type === 100) {
+          this.checkTab = 1
+        } else if (type === 12) {
+          this.checkTab = 2
+        }
+      } else {
+        this.pageType = 0
+        this.checkTab = 0
+      }
+    }
+    console.log(this.pageType)
     this.getAd()
   },
   methods: {
+    thinkSuc() {
+      this.$refs.showThinkList.getThinkList()
+    },
     getAd() {
       this.httpGet('/index/bbs/ad', (json) => {
         this.adList = json.data
       })
+    },
+    getList(value) {
+      console.log(this.pageType)
+      this.pageType = value
+      if (value === 10 || value === 12 || value === 0) {
+        this.$refs.showArticleList.setType(value)
+      } else if (value === 100) {
+        //
+        this.$refs.showThinkList.getThinkList()
+      }
     },
     onResize() {
       this.windowSize = { x: window.innerWidth, y: window.innerHeight }

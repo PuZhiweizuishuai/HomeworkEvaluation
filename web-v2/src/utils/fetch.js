@@ -33,5 +33,22 @@ exports.install = function(Vue, options) {
         return null
       })
   }
+
+  Vue.prototype.uploadFiles = function(url, form, cb) {
+    fetch(`${this.SERVER_API_URL}${url}`, {
+      headers: {
+        'X-XSRF-TOKEN': this.$cookies.get('XSRF-TOKEN')
+      },
+      method: 'POST',
+      credentials: 'include',
+      body: form
+    }).then(response => response.json())
+      .then(json => {
+        cb(json)
+      })
+      .catch(e => {
+        return null
+      })
+  }
 }
 

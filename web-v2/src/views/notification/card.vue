@@ -17,7 +17,8 @@
     <!-- 评论通知 -->
     <v-card-text v-if="NotificatioUtil.isComment(notificatio)">
       <router-link :to="`/user/${notificatio.notifier}`">{{ notificatio.notifierName }} </router-link>
-      在帖子
+      <span v-if="notificatio.type == 104">在想法</span>
+      <span v-else>在帖子</span>
       <span>《{{ notificatio.text }}》 </span>
       下回复了你:
       {{ notificatio.commentContent }}

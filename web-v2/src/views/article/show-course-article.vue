@@ -172,7 +172,7 @@
             <h3>目录：</h3>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row id="catalog-view" v-scroll="onScroll" style="height: 500px;overflow-y:scroll;">
           <v-col>
             <div id="markdown-view-catalog" ref="articleCatalogView" />
           </v-col>
@@ -184,6 +184,7 @@
           </v-col>
         </v-row>
       </v-col>
+      <div id="catalog-anchor" />
     </v-row>
     <v-dialog
       v-model="deleteDialog"
@@ -228,6 +229,8 @@ import 'vditor/src/assets/scss/index.scss'
 import Comment from '@/components/comment/index.vue'
 import VoteList from '@/components/vote/vote-list.vue'
 
+let anchorTop = 0
+
 function initOutline() {
   const headingElements = []
   Array.from(document.querySelector('#class-article-content-view').children).forEach((item) => {
@@ -259,6 +262,8 @@ function initOutline() {
       }
     }
   })
+  anchorTop = document.querySelector('#catalog-anchor').offsetTop
+  console.log(anchorTop)
 }
 export default {
   components: {
@@ -350,6 +355,22 @@ export default {
       } else {
         this.colsRight = 3
         this.colsLeft = 9
+      }
+    },
+    onScroll(e) {
+      if (typeof window === 'undefined') return
+      const top = window.pageYOffset || e.target.scrollTop || 0
+      // this.fab = top > 200
+      // style="position: fixed; top: 100px"
+      const d = document.querySelector('#catalog-view')
+      if (top > anchorTop + 64 && this.windowSize.x > 900) {
+        // console.log(e.style)
+
+        d.style.position = 'fixed'
+        d.style.top = '150px'
+      } else {
+        d.style.position = 'static'
+        d.style.top = '150px'
       }
     },
     perfect() {

@@ -6,9 +6,11 @@ import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
 import com.buguagaoshu.homework.evaluation.model.ArticleModel;
 import com.buguagaoshu.homework.evaluation.vo.ArticleVo;
 import com.buguagaoshu.homework.evaluation.vo.DeleteVo;
+import com.buguagaoshu.homework.evaluation.vo.ThinkVo;
 import io.jsonwebtoken.Claims;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -102,5 +104,16 @@ public interface ArticleService extends IService<ArticleEntity> {
 
 
     ArticleModel getArticleInfo(Long id, HttpServletRequest request);
+
+
+    /**
+     * 保存想法
+     * */
+    ArticleEntity saveThink(ThinkVo thinkVo, HttpServletRequest request);
+
+    /**
+     * 获取想法列表
+     * */
+    PageUtils getThinkList(Map<String, Object> params, HttpServletRequest request);
 }
 

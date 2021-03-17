@@ -141,10 +141,14 @@ export default {
       size: 20,
       length: 0,
       total: 0,
-      type: 0
+      type: 0,
+      articleId: this.$route.params.articleId
     }
   },
   created() {
+    if (this.articleId == null || this.articleId === undefined) {
+      this.articleId = this.artice.id
+    }
     this.getComment()
   },
   methods: {
@@ -152,7 +156,7 @@ export default {
       this.verifyImageUrl = this.SERVER_API_URL + '/verifyImage?t=' + new Date().getTime()
     },
     getComment() {
-      this.httpGet(`/comment/list/${this.$route.params.articleId}?page=${this.page}&limit=${this.size}&sort=${this.type}`, (json) => {
+      this.httpGet(`/comment/list/${this.articleId}?page=${this.page}&limit=${this.size}&sort=${this.type}`, (json) => {
         if (json.status === 200) {
           this.commentsList = json.data.list
           this.length = json.data.totalPage
