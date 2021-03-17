@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.buguagaoshu.homework.click.dao.FollowUserDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.buguagaoshu.homework.click.entity.FollowUserEntity" id="followUserMap">
+        <result property="id" column="id"/>
+        <result property="targetUserId" column="target_user_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="ip" column="ip"/>
+        <result property="ua" column="ua"/>
+        <result property="group" column="group"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+
+</mapper>

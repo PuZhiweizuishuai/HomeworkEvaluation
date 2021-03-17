@@ -1,0 +1,32 @@
+server:
+  port: 8091
+  http2:
+    enabled: true
+
+
+spring:
+  cloud:
+    nacos:
+      server-addr: 192.168.43.131:8848
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    # 192.168.43.128 192.168.43.130
+    url: jdbc:mysql://192.168.43.131:3306/homework_evaluation?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+  kafka:
+    bootstrap-servers:
+      - 192.168.43.131:9092
+    consumer:
+      group-id: Click
+    listener:
+      missing-topics-fatal: false
+  redis:
+    host: 192.168.43.131
+    port: 6379
+    timeout: 1000ms
+    # password: 123456
+    client-type: lettuce
+  cache:
+    redis:
+      time-to-live: 2h

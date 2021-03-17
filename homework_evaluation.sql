@@ -11,7 +11,7 @@
  Target Server Version : 80023
  File Encoding         : 65001
 
- Date: 10/03/2021 23:35:39
+ Date: 17/03/2021 23:30:26
 */
 
 SET NAMES utf8mb4;
@@ -34,7 +34,7 @@ CREATE TABLE `advertisement`  (
   `type` int NOT NULL COMMENT '类型，显示位置【\r\n0 首页顶部大图，\r\n1 课程页顶部大图\r\n2 首页广告\r\n3 课程页广告\r\n】',
   `view_count` bigint NOT NULL DEFAULT 0 COMMENT '点击次数',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for article
@@ -44,7 +44,7 @@ CREATE TABLE `article`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '帖子标题',
   `tag_id` int NOT NULL DEFAULT 0 COMMENT '分区ID',
-  `tag` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '帖子标签，英文状态逗号分隔',
+  `tag` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '帖子标签，英文状态逗号分隔',
   `author_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '帖子作者 id',
   `comment_count` bigint NOT NULL DEFAULT 0 COMMENT '帖子回帖计数',
   `view_count` bigint NOT NULL DEFAULT 0 COMMENT '帖子浏览计数',
@@ -56,7 +56,7 @@ CREATE TABLE `article`  (
   `latest_comment_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '帖子最新回帖者用户名',
   `commentable` int NOT NULL DEFAULT 1 COMMENT '帖子是否可回帖[0 不行， 1 可以]',
   `status` int NOT NULL COMMENT '0：正常，1：锁定，   2删除',
-  `type` int NOT NULL COMMENT '0：普通帖子，1：课程讨论贴，2，问答贴， 3，想法\r\n4 课程评分',
+  `type` int NOT NULL COMMENT '结果已优化，查看ArticleTypeEnum类',
   `course_id` bigint NULL DEFAULT NULL COMMENT '课程ID',
   `like_count` bigint NOT NULL DEFAULT 0 COMMENT '帖子点赞计数',
   `bad_count` bigint NOT NULL DEFAULT 0 COMMENT '帖子点踩计数',
@@ -67,16 +67,19 @@ CREATE TABLE `article`  (
   `anonymous` int NOT NULL DEFAULT 0 COMMENT '0：公开，1：匿名',
   `perfect` int NOT NULL DEFAULT 0 COMMENT '0：非精品，1：精品',
   `q_a_offer_point` int NULL DEFAULT NULL COMMENT '问答悬赏积分（仅作用于问答帖）',
-  `top_img_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '帖子首图地址',
+  `files` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL COMMENT '文件或图片列表\r\n文件或图片列表',
   `author_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '作者名',
   `course_rating` double NULL DEFAULT NULL COMMENT '课程评分',
   `at_user` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL,
+  `simple_content` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '简介',
+  `forward` bigint NULL DEFAULT NULL COMMENT '转发',
+  `forward_count` bigint NULL DEFAULT NULL COMMENT '转发量',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_article_by_user_id`(`author_id`) USING BTREE,
   INDEX `find_article_by_course_id`(`course_id`) USING BTREE,
   INDEX `find_article_by_type`(`type`) USING BTREE,
   INDEX `find_article_by_status`(`status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '帖子表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 40 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '帖子表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for article_tag
@@ -114,6 +117,24 @@ CREATE TABLE `bulletin`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '课程公告表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Table structure for collects
+-- ----------------------------
+DROP TABLE IF EXISTS `collects`;
+CREATE TABLE `collects`  (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `article_id` bigint NOT NULL COMMENT '收藏的帖子',
+  `user_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户ID',
+  `create_time` bigint NOT NULL COMMENT '收藏时间',
+  `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `ua` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `text` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '收藏的细节，原帖标题或者内容',
+  `type` int NOT NULL COMMENT '类型课程内帖子，论坛帖子，想法收藏',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `find_collect_by_aeticle_id`(`article_id`) USING BTREE,
+  INDEX `find_collect_by_user_id`(`user_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收藏表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for comment
 -- ----------------------------
 DROP TABLE IF EXISTS `comment`;
@@ -140,7 +161,7 @@ CREATE TABLE `comment`  (
   INDEX `find_comment_by_article_id`(`article_id`) USING BTREE,
   INDEX `find_comment_by_user_id`(`author_id`) USING BTREE,
   INDEX `find_comment_by_comment_id`(`comment_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 55 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 63 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for course_tag
@@ -178,7 +199,7 @@ CREATE TABLE `courseware`  (
   `status` int NULL DEFAULT NULL COMMENT '文件转换状态',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_courseware_by_course_id`(`course_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for curriculum
@@ -229,6 +250,24 @@ CREATE TABLE `danmaku`  (
   INDEX `find_danmaku_by_courseware_id`(`courseware_id`) USING BTREE,
   INDEX `find_danmaku_by_userID`(`courseware_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '弹幕表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for follow_user
+-- ----------------------------
+DROP TABLE IF EXISTS `follow_user`;
+CREATE TABLE `follow_user`  (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `target_user_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '被关注对象ID',
+  `user_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '发起关注的用户',
+  `create_time` bigint NOT NULL COMMENT '创建时间',
+  `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `ua` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `group` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '关注分组',
+  `type` int NOT NULL DEFAULT 0 COMMENT '关注0 公开， 1 私密关注',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `find_follow_by_target_id`(`target_user_id`) USING BTREE,
+  INDEX `find_follow_by_user_id`(`user_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户关注表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for history
@@ -323,6 +362,27 @@ CREATE TABLE `invite_code_use_log`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '邀请码使用列表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
+-- Table structure for like_or_unlike
+-- ----------------------------
+DROP TABLE IF EXISTS `like_or_unlike`;
+CREATE TABLE `like_or_unlike`  (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `target_id` bigint NOT NULL COMMENT '帖子或评论',
+  `target_user_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '通知的用户',
+  `receiver_user` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '发起点赞的用户',
+  `type` int NOT NULL COMMENT '类型评论点赞还是帖子点赞，还是点了踩',
+  `create_time` bigint NOT NULL,
+  `status` int NOT NULL DEFAULT 0 COMMENT '0 未读，1已读',
+  `text` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '描述信息',
+  `update_time` bigint NOT NULL COMMENT '更新时间',
+  `receiver_user_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '缓存点赞人名称',
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `find_click_by_target_id`(`target_id`) USING BTREE,
+  INDEX `find_click_by_target_user`(`target_user_id`) USING BTREE,
+  INDEX `find_click_by_receiver_user`(`receiver_user`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '点赞或点踩表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
 -- Table structure for notification
 -- ----------------------------
 DROP TABLE IF EXISTS `notification`;
@@ -343,7 +403,7 @@ CREATE TABLE `notification`  (
   INDEX `find_notification_by_notifier`(`notifier`) USING BTREE,
   INDEX `find_notification_by_receiver`(`receiver`) USING BTREE,
   INDEX `find_notification_by_outer_id`(`outer_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 164 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通知表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 295 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通知表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for questions
@@ -491,7 +551,7 @@ CREATE TABLE `user_login_log`  (
   `login_city` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '登陆城市',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_login_user_by_id_index`(`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 52 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户登陆记录' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 63 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户登陆记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user_role
@@ -510,6 +570,7 @@ CREATE TABLE `user_role`  (
 ) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色表' ROW_FORMAT = DYNAMIC;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
 
 
 INSERT INTO `course_tag` VALUES (1, '计算机', 0, NULL, NULL, 0);

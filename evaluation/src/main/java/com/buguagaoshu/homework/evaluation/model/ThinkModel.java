@@ -1,9 +1,6 @@
 package com.buguagaoshu.homework.evaluation.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
-import com.buguagaoshu.homework.evaluation.entity.ThinkEntity;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import lombok.Data;
 

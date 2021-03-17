@@ -3,7 +3,7 @@ spring:
     gateway:
       routes:
         # 弹幕服务
-        - id: danmaku_route
+        - id: Danmaku_route
           uri: lb://Danmaku
           predicates:
             - Path=/api/danmaku/**
@@ -14,6 +14,13 @@ spring:
           uri: lb://OSS
           predicates:
             - Path=/api/uploads/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*), /$\{segment}
+        # 点赞收藏关注服务
+        - id: Click_router
+          uri: lb://Click
+          predicates:
+            - Path=/api/click/**
           filters:
             - RewritePath=/api/(?<segment>/?.*), /$\{segment}
         # 核心服务
