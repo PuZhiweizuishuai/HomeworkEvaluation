@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.buguagaoshu.homework.common.domain.CustomPage;
 import com.buguagaoshu.homework.common.enums.*;
 import com.buguagaoshu.homework.evaluation.cache.CourseTagCache;
@@ -115,6 +116,7 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
             curriculumEntity.setPassword(encoder.encode(curriculumModel.getPassword()));
         }
         // 保存
+        curriculumEntity.setId(IdWorker.getId());
         this.save(curriculumEntity);
 
         // 将课程与老师在学生-课程表进行关联，方便后期查找

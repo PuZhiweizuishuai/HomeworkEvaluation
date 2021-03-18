@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.buguagaoshu.homework.common.domain.CustomPage;
 import com.buguagaoshu.homework.common.enums.*;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
@@ -91,13 +92,15 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
         ArticleEntity article = articleService.getById(commentVo.getArticleId());
         CommentEntity commentEntity = new CommentEntity();
         commentEntity.initComment();
+
+        commentEntity.setId(IdWorker.getId());
         CommentModel commentModel = new CommentModel();
         NotificationTypeEnum type = null;
         CommentEntity father = null;
         // 如果帖子状态是正常的
         if (article != null && article.getStatus() == ArticleTypeEnum.NORMAL.getCode()) {
             // 如果是课程内的帖子，学生必须在课程内
-            if (article.getType() == ArticleTypeEnum.COURSE.getCode()) {
+            if (ArticleTypeEnum.checkCourseArticle(article.getType())) {
                 StudentsCurriculumEntity studentsCurriculumEntity = studentsCurriculumService.selectStudentByCurriculumId(user.getId(), article.getCourseId());
                 if (studentsCurriculumEntity == null) {
                     return null;
@@ -139,14 +142,14 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
             commentEntity.setAuthorId(user.getId());
             commentEntity.setIp(IpUtil.getIpAddr(request));
             commentEntity.setUa(IpUtil.getUa(request));
-            this.save(commentEntity);
-
             // @用户处理
             String atStr = atUserService.atUser(commentVo.getAtUsers(), AtUserTypeEnum.COMMENT_AT, article, commentEntity, user.getId(), user.getSubject());
             if (!"".equals(atStr)) {
                 commentEntity.setAtUser(atStr);
-                this.updateById(commentEntity);
             }
+            this.save(commentEntity);
+
+
 
             BeanUtils.copyProperties(commentEntity, commentModel);
             UserEntity userEntity = userService.getById(user.getId());

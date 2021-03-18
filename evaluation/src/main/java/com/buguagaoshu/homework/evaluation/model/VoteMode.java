@@ -1,6 +1,10 @@
 package com.buguagaoshu.homework.evaluation.model;
 
 import com.buguagaoshu.homework.common.valid.ListValue;
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -14,6 +18,8 @@ import java.util.Map;
 public class VoteMode {
     private String id;
 
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long articleId;
 
     @Max(value = 50, message = "标题过长，最大不超过50个字！")

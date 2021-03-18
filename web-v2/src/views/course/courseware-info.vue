@@ -182,14 +182,14 @@ export default {
     initData() {
       for (let i = 0; i < this.coursewareList.length; i++) {
         this.coursewareMap.Set(this.coursewareList[i].id, this.coursewareList[i])
-        if (this.coursewareList[i].id === parseInt(this.coursewareId)) {
+        if (this.coursewareList[i].id === this.coursewareId) {
           this.father = this.coursewareList[i]
           this.courseware = this.coursewareList[i]
           this.selectFather = this.coursewareList[i].id
           this.childrenList = this.coursewareList[i].children
         } else {
           for (let j = 0; j < this.coursewareList[i].children.length; j++) {
-            if (this.coursewareList[i].children[j].id === parseInt(this.coursewareId)) {
+            if (this.coursewareList[i].children[j].id === this.coursewareId) {
               this.father = this.coursewareList[i]
               this.courseware = this.coursewareList[i].children[j]
               this.childrenList = this.coursewareList[i].children

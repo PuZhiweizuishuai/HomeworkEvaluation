@@ -81,7 +81,7 @@
       max-width="800"
     >
       <v-card outlined>
-        <Comment :artice="think" />
+        <Comment :artice="think" :vditorheight="200" />
       </v-card>
     </v-dialog>
   </v-card>

@@ -1,6 +1,10 @@
 package com.buguagaoshu.homework.evaluation.model;
 
 import com.buguagaoshu.homework.common.valid.ListValue;
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 
@@ -18,6 +22,8 @@ public class HomeworkAnswer {
      * 作业ID
      * */
     @NotNull(message = "提交的作业数据有误")
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long homeworkId;
 
     @ListValue(value = {0, 1, 2}, message = "提交格式错误")

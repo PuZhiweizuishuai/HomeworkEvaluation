@@ -17,6 +17,7 @@
         <result property="teacherComment" column="teacher_comment"/>
         <result property="type" column="type"/>
         <result property="score" column="max_score"/>
+        <result property="version" column="version" />
     </resultMap>
 
 

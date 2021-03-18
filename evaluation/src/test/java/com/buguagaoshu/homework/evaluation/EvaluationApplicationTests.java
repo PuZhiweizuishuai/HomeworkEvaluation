@@ -1,12 +1,10 @@
 package com.buguagaoshu.homework.evaluation;
 
 import com.buguagaoshu.homework.common.domain.ConvertOfficeInfo;
+import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
 import com.buguagaoshu.homework.evaluation.entity.VoteEntity;
 import com.buguagaoshu.homework.evaluation.entity.VoteLogEntity;
-import com.buguagaoshu.homework.evaluation.service.StudentsCurriculumService;
-import com.buguagaoshu.homework.evaluation.service.UserRoleService;
-import com.buguagaoshu.homework.evaluation.service.UserService;
-import com.buguagaoshu.homework.evaluation.service.VoteService;
+import com.buguagaoshu.homework.evaluation.service.*;
 import com.buguagaoshu.homework.evaluation.vo.VoteVo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,9 +30,15 @@ class EvaluationApplicationTests {
     @Autowired
     MongoTemplate mongoTemplate;
 
+    @Autowired
+    ArticleService articleService;
+
 
     @Test
     void contextLoads() throws JsonProcessingException {
+        ArticleEntity byId = articleService.getById(1372570760855330817L);
+        byId.setUpdateTime(System.currentTimeMillis());
+        articleService.updateById(byId);
 //        VoteVo vote = new VoteVo();
 //        vote.setCreateTime(System.currentTimeMillis());
 //        vote.setId(1L);
@@ -59,11 +63,11 @@ class EvaluationApplicationTests {
 //        Update update = new Update().inc("choices.a", 1);
 //        mongoTemplate.upsert(query, update, VoteEntity.class);
 
-        Query query = new Query(Criteria.where("id").is(new ObjectId("604f37942642526c8efbf14f")));
-        Update update = new Update();
-        update.inc("choices." + "b", 1);
-        update.inc("voteCount", 1);
-        mongoTemplate.upsert(query, update, VoteEntity.class);
+//        Query query = new Query(Criteria.where("id").is(new ObjectId("604f37942642526c8efbf14f")));
+//        Update update = new Update();
+//        update.inc("choices." + "b", 1);
+//        update.inc("voteCount", 1);
+//        mongoTemplate.upsert(query, update, VoteEntity.class);
     }
 
 }

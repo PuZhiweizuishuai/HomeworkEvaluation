@@ -40,7 +40,7 @@ public class ArticleTagServiceImpl extends ServiceImpl<ArticleTagDao, ArticleTag
 
         // 组装成父子的树形结构
         List<ArticleTagEntity> level1Menus =
-                list.stream().filter((categoryEntity -> categoryEntity.getCatelogId() == 0))
+                list.stream().filter((categoryEntity -> categoryEntity.getCatelogId() == 0L))
                         .peek((menu) -> menu.setChildren(getChildren(menu, list)))
                         .sorted(Comparator.comparingInt(tag -> (tag.getSort() == null ? 0 : tag.getSort())))
                         .collect(Collectors.toList());
@@ -49,7 +49,7 @@ public class ArticleTagServiceImpl extends ServiceImpl<ArticleTagDao, ArticleTag
     }
 
     @Override
-    public Map<Integer, ArticleTagEntity> listToMap() {
+    public Map<Long, ArticleTagEntity> listToMap() {
         return baseMapper.selectList(null).stream().collect(Collectors.toMap(ArticleTagEntity::getId, t -> t));
     }
 

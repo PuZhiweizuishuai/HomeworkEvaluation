@@ -1,7 +1,11 @@
 package com.buguagaoshu.homework.evaluation.model;
 
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
 import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import java.util.List;
@@ -12,6 +16,8 @@ import java.util.List;
  */
 @Data
 public class ThinkModel {
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long id;
 
     /**
@@ -32,6 +38,8 @@ public class ThinkModel {
     /**
      * 转发ID
      */
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long forward;
 
     /**

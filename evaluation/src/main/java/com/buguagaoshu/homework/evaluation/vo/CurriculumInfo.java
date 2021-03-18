@@ -1,5 +1,9 @@
 package com.buguagaoshu.homework.evaluation.vo;
 
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import java.util.List;
@@ -11,6 +15,8 @@ import java.util.List;
  */
 @Data
 public class CurriculumInfo {
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long id;
     /**
      * 创建的老师
@@ -99,11 +105,15 @@ public class CurriculumInfo {
     /**
      * 父级分类
      * */
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long fatherCourseTag;
 
     /**
      * 课程所属分类
      * */
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long courseTag;
 
     /**

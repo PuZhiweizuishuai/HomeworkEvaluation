@@ -38,12 +38,13 @@ export default {
   },
   methods: {
     getThinkList() {
-      this.httpGet(`/article/thinks/list?page=${this.page}&limit=${this.size}`, (json) => {
+      this.httpGet(`/article/thinks/list?page=${this.pageMode}&limit=${this.size}`, (json) => {
         this.thinkList = json.data.list
         this.totalCount = json.data.totalCount
         this.length = json.data.totalPage
         this.page = json.data.page
         this.$route.query.page = this.page
+        this.$vuetify.goTo(0)
       })
     },
     pageChange(value) {

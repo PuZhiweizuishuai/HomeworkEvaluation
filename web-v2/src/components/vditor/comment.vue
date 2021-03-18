@@ -14,11 +14,15 @@ export default {
     uploadurl: {
       type: String,
       default: 'http://127.0.0.1:8080/uploads/file'
+    },
+    idname: {
+      type: String,
+      default: 'two-comment-vditor'
     }
   },
   data() {
     return {
-      idName: 'two-comment-vditor',
+      idName: this.idname,
       defaultPlaceholder: '请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。',
       emojis: {
         '0': '😀',

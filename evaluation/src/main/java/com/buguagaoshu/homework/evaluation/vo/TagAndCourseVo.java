@@ -1,6 +1,10 @@
 package com.buguagaoshu.homework.evaluation.vo;
 
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
 import com.buguagaoshu.homework.evaluation.entity.CourseTagEntity;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import java.util.List;
@@ -22,6 +26,8 @@ public class TagAndCourseVo {
     /**
      * 标签 ID
      */
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long id;
 
 

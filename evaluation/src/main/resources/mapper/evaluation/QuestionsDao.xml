@@ -19,6 +19,7 @@
         <result property="options" column="options"/>
         <result property="difficulty" column="difficulty"/>
         <result property="tag" column="tag"/>
+        <result property="version" column="version" />
     </resultMap>
 
 

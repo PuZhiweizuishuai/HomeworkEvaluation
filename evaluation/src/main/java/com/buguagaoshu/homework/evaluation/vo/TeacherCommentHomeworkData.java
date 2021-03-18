@@ -1,6 +1,10 @@
 package com.buguagaoshu.homework.evaluation.vo;
 
 import com.buguagaoshu.homework.common.valid.ListValue;
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -17,6 +21,8 @@ public class TeacherCommentHomeworkData {
      * 作业ID
      */
     @NotNull(message = "作业ID不能为空")
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long id;
 
     /**

@@ -38,6 +38,7 @@
         <result property="simpleContent" column="simple_content"/>
         <result property="forward" column="forward" />
         <result property="forwardCount" column="forward_count" />
+        <result property="version" column="version" />
     </resultMap>
 
     <update id="countAdd">

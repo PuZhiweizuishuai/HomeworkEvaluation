@@ -39,5 +39,6 @@
         <result property="firstLoginStatus" column="first_login_status"/>
         <result property="resetPasswordStatus" column="reset_password_status"/>
         <result property="title" column="title"/>
+        <result property="version" column="version" />
     </resultMap>
 </mapper>

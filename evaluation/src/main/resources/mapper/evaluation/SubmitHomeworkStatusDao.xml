@@ -15,6 +15,7 @@
         <result property="teacherComment" column="teacher_comment"/>
         <result property="studentName" column="student_name"/>
         <result property="submitTime" column="submit_time"/>
+        <result property="version" column="version" />
     </resultMap>
     <update id="addCount">
         update submit_homework_status set ${col} = ${col} + #{count} where id = #{submitId}

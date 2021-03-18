@@ -53,6 +53,7 @@ export default {
         this.length = json.data.totalPage
         this.page = json.data.page
         this.$route.query.page = this.page
+        this.$vuetify.goTo(0)
       })
     },
     setType(type) {

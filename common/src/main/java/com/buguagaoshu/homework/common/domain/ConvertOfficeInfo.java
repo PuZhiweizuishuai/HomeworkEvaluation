@@ -1,5 +1,10 @@
 package com.buguagaoshu.homework.common.domain;
 
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
  * create          2021-03-10 15:49
@@ -25,6 +30,8 @@ public class ConvertOfficeInfo {
     /**
      * 课件ID
      * */
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long coursewareId;
 
 

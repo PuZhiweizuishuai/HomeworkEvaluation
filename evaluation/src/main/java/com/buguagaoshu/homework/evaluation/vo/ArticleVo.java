@@ -2,6 +2,10 @@ package com.buguagaoshu.homework.evaluation.vo;
 
 import com.buguagaoshu.homework.common.domain.AtUser;
 import com.buguagaoshu.homework.common.valid.ListValue;
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -20,7 +24,9 @@ public class ArticleVo {
     @Length(min = 1, max = 50, message = "帖子标题最长不能超过50个字符！")
     private String title;
 
-    private Integer tagId;
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
+    private Long tagId;
 
 
     private List<String> tag;
@@ -34,6 +40,8 @@ public class ArticleVo {
     private Integer type;
 
 
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long courseId;
 
     @Max(value = 50, message = "简介不能超过50个字！")
@@ -67,6 +75,8 @@ public class ArticleVo {
     /**
      * 转发
      * */
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long forward;
 
     private Long forwardCount;

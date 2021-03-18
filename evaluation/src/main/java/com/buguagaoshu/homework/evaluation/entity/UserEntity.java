@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import com.baomidou.mybatisplus.annotation.Version;
 import com.buguagaoshu.homework.common.valid.ListValue;
 import com.buguagaoshu.homework.common.valid.OnlyNumber;
 import lombok.Data;
@@ -182,6 +183,9 @@ public class UserEntity {
      * 教师职称
      */
     private String title;
+
+    @Version
+    private Integer version;
 
     @TableField(exist = false)
     private String role;

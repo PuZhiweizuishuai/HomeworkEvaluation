@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.buguagaoshu.homework.common.domain.MultipleReturnValues;
 import com.buguagaoshu.homework.common.enums.*;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
@@ -127,8 +128,8 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         homeworkEntity.setCreateTeacher(nowLoginUser.getId());
         homeworkEntity.setStatus(calculationStatus(homeworkEntity));
         int score = 0;
-        // 存储作业获得主键 ID
-        this.save(homeworkEntity);
+        // 获得主键 ID
+        homeworkEntity.setId(IdWorker.getId());
         // 校验问题
         // 新建的问题列表
         List<QuestionsEntity> questionsEntityList = new ArrayList<>();
@@ -172,7 +173,9 @@ public class HomeworkServiceImpl extends ServiceImpl<HomeworkDao, HomeworkEntity
         // 写入成绩
         homeworkEntity.setScore(score);
         // 更新作业数据
-        this.updateById(homeworkEntity);
+
+
+        this.save(homeworkEntity);
         // 保存新建的题目
         if (questionsEntityList.size() != 0) {
             questionsService.saveBatch(questionsEntityList);

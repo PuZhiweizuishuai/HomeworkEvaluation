@@ -5,7 +5,11 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import java.util.List;
@@ -20,8 +24,10 @@ import java.util.List;
 @Data
 @TableName("article_tag")
 public class ArticleTagEntity {
-	@TableId(type = IdType.AUTO)
-	private Integer id;
+	@TableId(type = IdType.ASSIGN_ID)
+	@JsonSerialize(using = LongJsonSerializer.class)
+	@JsonDeserialize(using = LongJsonDeserializer.class)
+	private Long id;
 
 	/**
 	 * 标题
@@ -46,7 +52,10 @@ public class ArticleTagEntity {
 	/**
 	 * 0 父分类， 其它数字为该数字下的子 子分类
 	 */
-	private Integer catelogId;
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
+	@JsonSerialize(using = LongJsonSerializer.class)
+	@JsonDeserialize(using = LongJsonDeserializer.class)
+	private Long catelogId;
 
 	/**
 	 * 0 话题， 1 分类

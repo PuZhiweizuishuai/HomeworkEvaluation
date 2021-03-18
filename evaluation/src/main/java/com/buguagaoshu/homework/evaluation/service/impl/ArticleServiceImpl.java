@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.buguagaoshu.homework.common.domain.CustomPage;
 import com.buguagaoshu.homework.common.enums.ArticleTypeEnum;
 import com.buguagaoshu.homework.common.enums.AtUserTypeEnum;
@@ -100,6 +101,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         ArticleEntity articleEntity = new ArticleEntity();
         articleEntity.initData();
+        articleEntity.setId(IdWorker.getId());
         // 处理课程内帖子
         if (articleVo.getCourseId() != null) {
             StudentsCurriculumEntity studentsCurriculumEntity = studentsCurriculumService.selectStudentByCurriculumId(user.getId(), articleVo.getCourseId());
@@ -149,20 +151,17 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 articleEntity.setSimpleContent(articleEntity.getContent());
             }
         }
-        // 保存数据
-        this.save(articleEntity);
-
         // 检查投票
         if (ArticleTypeEnum.isVote(articleVo.getType())) {
             voteService.save(articleVo.getVotes(), articleEntity.getId());
         }
-
         // 处理@用户
         String atUser = atUserService.atUser(articleVo.getAtUsers(), AtUserTypeEnum.ARTICLE_AT, articleEntity, null, user.getId(), user.getSubject());
         if (!"".equals(atUser)) {
             articleEntity.setAtUser(atUser);
-            this.updateById(articleEntity);
         }
+        // 保存数据
+        this.save(articleEntity);
         return articleEntity;
     }
 
@@ -522,7 +521,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         ArticleEntity articleEntity = new ArticleEntity();
         articleEntity.initData();
         articleEntity.setTag("[]");
-        articleEntity.setTagId(0);
+        articleEntity.setTagId(0L);
         completionArticleData(articleEntity, user, request);
         BeanUtils.copyProperties(thinkVo, articleEntity);
         if (thinkVo.getContent().length() > 50) {

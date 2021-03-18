@@ -291,7 +291,7 @@ export default {
         title: '',
         content: '',
         tag: [],
-        tagId: 0,
+        tagId: '0',
         type: 0,
         courseId: null,
         verifyCode: '',
@@ -338,8 +338,12 @@ export default {
       })
     },
     getChildTag(value) {
+      // 采用雪花算法后的ID测试
+
+      // console.log(typeof value)
       for (let i = 0; i < this.fatherTags.length; i++) {
-        if (this.fatherTags[i].id === parseInt(value)) {
+        // console.log(typeof this.fatherTags[i].id)
+        if (this.fatherTags[i].id === value) {
           this.childTags = this.fatherTags[i].children
         }
       }

@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.evaluation.config;
 
+import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
@@ -19,8 +20,10 @@ public class MybatisPlusConfig {
         PaginationInnerInterceptor paginationInnerInterceptor = new PaginationInnerInterceptor();
         paginationInnerInterceptor.setMaxLimit(50L);
         paginationInnerInterceptor.setOverflow(true);
+        OptimisticLockerInnerInterceptor lockerInnerInterceptor = new OptimisticLockerInnerInterceptor();
         MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
         mybatisPlusInterceptor.addInnerInterceptor(paginationInnerInterceptor);
+        mybatisPlusInterceptor.addInnerInterceptor(lockerInnerInterceptor);
         return mybatisPlusInterceptor;
     }
 }

@@ -1,5 +1,9 @@
 package com.buguagaoshu.homework.danmaku.damain;
 
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import org.bson.types.ObjectId;
@@ -20,6 +24,8 @@ public class Danmaku {
     /**
      * 课件ID
      */
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long coursewareId;
 
     /**

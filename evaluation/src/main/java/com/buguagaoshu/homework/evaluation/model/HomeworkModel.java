@@ -2,6 +2,10 @@ package com.buguagaoshu.homework.evaluation.model;
 
 
 import com.buguagaoshu.homework.common.valid.ListValue;
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import javax.validation.constraints.Min;
@@ -16,6 +20,8 @@ import java.util.List;
  */
 @Data
 public class HomeworkModel {
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long id;
     /**
      * 作业标题
@@ -49,6 +55,8 @@ public class HomeworkModel {
      */
     @NotNull(message = "班级号不能为空")
     @Min(value = 0, message = "班级号错误")
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long classNumber;
 
 

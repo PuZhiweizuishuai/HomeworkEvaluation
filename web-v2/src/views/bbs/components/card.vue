@@ -89,6 +89,7 @@
                 {{ this.$store.state.tagMap.Get(item.tagId).title }}
               </v-btn>
             </v-col>
+
           </v-row>
         </v-col>
       </v-row>

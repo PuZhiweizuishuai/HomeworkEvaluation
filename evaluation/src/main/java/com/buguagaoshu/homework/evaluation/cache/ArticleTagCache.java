@@ -17,5 +17,5 @@ public class ArticleTagCache {
     private List<ArticleTagEntity> articleTagCaches;
 
 
-    private Map<Integer, ArticleTagEntity> integerArticleTagEntityMap;
+    private Map<Long, ArticleTagEntity> integerArticleTagEntityMap;
 }

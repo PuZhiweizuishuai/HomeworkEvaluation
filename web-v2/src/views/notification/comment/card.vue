@@ -2,10 +2,10 @@
   <v-card>
     <v-card-title>
       去往原帖：
-      <router-link v-if="comment.articleEntity.type == 1" :to="`/course/learn/${comment.articleEntity.courseId}/bbs/${comment.articleEntity.id}#${comment.commentModel.id}`">
+      <router-link v-if="NotificatioUtil.isCourseArticle(comment.articleEntity)" :to="`/course/learn/${comment.articleEntity.courseId}/bbs/${comment.articleEntity.id}#${comment.commentModel.id}`">
         {{ comment.articleEntity.title }}
       </router-link>
-      <router-link v-if="comment.articleEntity.type != 1" :to="`/bbs/article/${comment.articleEntity.id}#${comment.commentModel.id}`">
+      <router-link v-else :to="`/bbs/article/${comment.articleEntity.id}#${comment.commentModel.id}`">
         {{ comment.articleEntity.title }}
       </router-link>
     </v-card-title>
@@ -35,6 +35,7 @@
         /> -->
           <SecondCommentVditor
             ref="secondCommentView"
+            :idname="`two-comment-${comment.articleEntity.id}`"
             :placeholder="commentPlaceholder"
             :uploadurl="uploadurl"
             @vditor-input="getSecondCommentText"
@@ -88,7 +89,7 @@
 <script>
 import CommentCard from '@/components/comment/card.vue'
 import SecondCommentVditor from '@/components/vditor/comment.vue'
-
+import NotificatioUtil from '@/utils/notificatio-util.vue'
 export default {
   name: 'NotificationCommentCard',
   components: {
@@ -103,6 +104,7 @@ export default {
   },
   data() {
     return {
+      NotificatioUtil,
       commentPlaceholder: '',
       uploadurl: this.SERVER_API_URL + '/uploads/file',
       commentData: {

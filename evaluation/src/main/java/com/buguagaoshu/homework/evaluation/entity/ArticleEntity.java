@@ -1,12 +1,17 @@
 package com.buguagaoshu.homework.evaluation.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 
+import com.baomidou.mybatisplus.annotation.Version;
 import com.buguagaoshu.homework.common.valid.ListValue;
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -25,7 +30,9 @@ public class ArticleEntity {
     /**
      * 主键
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long id;
 
     /**
@@ -38,7 +45,9 @@ public class ArticleEntity {
     /**
      * 分区ID
      */
-    private Integer tagId;
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
+    private Long tagId;
 
     /**
      * 帖子标签，英文状态逗号分隔
@@ -184,9 +193,14 @@ public class ArticleEntity {
     /**
      * 转发
      * */
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long forward;
 
     private Long forwardCount;
+
+    @Version
+    private Integer version;
 
 
     public void initData() {

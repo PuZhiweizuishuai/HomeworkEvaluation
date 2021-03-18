@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.evaluation.cache.WebsiteIndexMessageCache;
 import com.buguagaoshu.homework.evaluation.model.AdvertisementModel;
@@ -76,7 +77,7 @@ public class AdvertisementServiceImpl extends ServiceImpl<AdvertisementDao, Adve
         ad.setUpdateTime(System.currentTimeMillis());
         ad.setCreateUser(nowLoginUser);
         BeanUtils.copyProperties(advertisementModel, ad);
-        ad.setId(null);
+        ad.setId(IdWorker.getId());
         ad.setStartTime(TimeUtils.parseTime(advertisementModel.getStartTime()));
         ad.setEndTime(TimeUtils.parseTime(advertisementModel.getEndTime()));
         this.save(ad);

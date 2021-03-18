@@ -6,7 +6,15 @@ function isComment(value) {
   return false
 }
 
+function isCourseArticle(value) {
+  if (value.type === 0 || value.type === 1 || value.type === 2) {
+    return true
+  }
+  return false
+}
+
 export default {
-  isComment
+  isComment,
+  isCourseArticle
 }
 </script>

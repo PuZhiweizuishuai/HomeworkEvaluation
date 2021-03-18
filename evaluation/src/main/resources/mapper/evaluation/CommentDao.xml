@@ -23,6 +23,7 @@
         <result property="commentCount" column="comment_count"/>
         <result property="fatherId" column="father_id"/>
         <result property="rating" column="rating" />
+        <result property="version" column="version" />
     </resultMap>
     <update id="countAdd">
          update comment set ${col} = ${col} + #{count} where id = #{commentId}

@@ -63,7 +63,7 @@
           ref="commentVditor"
           :placeholder="'请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。'"
           :uploadurl="uploadurl"
-          :height="400"
+          :height="vditorheight"
           @vditor-input="setVditorInput"
         />
       </v-col>
@@ -122,6 +122,10 @@ export default {
     artice: {
       type: Object,
       default: null
+    },
+    vditorheight: {
+      type: Number,
+      default: 400
     }
   },
   data() {

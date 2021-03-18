@@ -22,6 +22,7 @@
         <result property="score" column="score"/>
         <result property="sourceType" column="source_type"/>
         <result property="evaluation" column="evaluation"/>
+        <result property="version" column="version" />
     </resultMap>
 
 

@@ -7,6 +7,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.buguagaoshu.homework.common.enums.InviteCodeTypeEnum;
 import com.buguagaoshu.homework.common.valid.ListValue;
 import com.buguagaoshu.homework.common.utils.InviteCodeUtil;
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import javax.validation.constraints.Min;
@@ -23,7 +27,9 @@ import javax.validation.constraints.NotNull;
 @TableName("invite_code")
 public class InviteCodeEntity {
 
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long id;
     /**
      * 邀请码

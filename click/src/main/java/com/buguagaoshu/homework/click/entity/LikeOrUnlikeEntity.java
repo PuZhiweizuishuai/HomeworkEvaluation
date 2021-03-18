@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.click.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -16,14 +17,11 @@ import lombok.Data;
  */
 @Data
 @TableName("like_or_unlike")
-public class LikeOrUnlikeEntity implements Serializable {
-	private static final long serialVersionUID = 1L;
-
-
+public class LikeOrUnlikeEntity {
 	/**
 	 * 
 	 */
-	@TableId
+	@TableId(type = IdType.ASSIGN_ID)
 	private Long id;
 
 	/**

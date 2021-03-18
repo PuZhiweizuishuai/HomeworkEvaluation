@@ -1,9 +1,13 @@
 package com.buguagaoshu.homework.evaluation.model;
 
 
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import com.buguagaoshu.homework.evaluation.entity.VoteEntity;
 import com.buguagaoshu.homework.evaluation.entity.VoteLogEntity;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import java.util.List;
@@ -15,6 +19,8 @@ import java.util.List;
  */
 @Data
 public class ArticleModel {
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long id;
 
     /**
@@ -25,7 +31,9 @@ public class ArticleModel {
     /**
      * 分区ID
      */
-    private Integer tagId;
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
+    private Long tagId;
 
     /**
      * 帖子标签，英文状态逗号分隔
@@ -103,6 +111,8 @@ public class ArticleModel {
     /**
      * 课程ID
      */
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long courseId;
 
     /**
@@ -174,6 +184,8 @@ public class ArticleModel {
     /**
      * 转发
      * */
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long forward;
 
     private Long forwardCount;

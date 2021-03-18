@@ -2,6 +2,10 @@ package com.buguagaoshu.homework.evaluation.vo;
 
 import com.buguagaoshu.homework.common.domain.AtUser;
 import com.buguagaoshu.homework.common.valid.ListValue;
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -17,10 +21,14 @@ public class CommentVo {
     /**
      * 帖子ID
      */
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     @NotNull(message = "目标帖子ID不能为空")
     private Long articleId;
 
 
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long fatherId;
 
     /**
@@ -43,6 +51,8 @@ public class CommentVo {
     /**
      * 回复的帖子ID
      */
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long commentId;
 
     /**

@@ -1,6 +1,10 @@
 package com.buguagaoshu.homework.evaluation.model;
 
 import com.buguagaoshu.homework.common.valid.ListValue;
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -15,6 +19,8 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 public class CurriculumModel {
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long id;
     /**
      * 创建的老师
@@ -99,12 +105,16 @@ public class CurriculumModel {
      * 父级分类
      * */
     @NotNull(message = "父分类不能为空")
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long fatherCourseTag;
 
     /**
      * 课程所属分类
      * */
     @NotNull(message = "课程所属分类不能为空")
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long courseTag;
 
 

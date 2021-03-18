@@ -1,5 +1,9 @@
 package com.buguagaoshu.homework.danmaku.damain;
 
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -18,6 +22,8 @@ public class DanmakuList {
      * 查询ID
      * 关联值为课件 ID
      * */
+    @JsonSerialize(using = LongJsonSerializer.class)
+    @JsonDeserialize(using = LongJsonDeserializer.class)
     private Long id;
 
     /**

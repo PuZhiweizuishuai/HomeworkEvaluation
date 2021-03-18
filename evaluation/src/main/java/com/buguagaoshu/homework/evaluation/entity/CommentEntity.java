@@ -5,6 +5,11 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 
+import com.baomidou.mybatisplus.annotation.Version;
+import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 /**
@@ -20,12 +25,16 @@ public class CommentEntity {
 	/**
 	 * 回帖主键ID
 	 */
-	@TableId(type = IdType.AUTO)
+	@TableId(type = IdType.ASSIGN_ID)
+	@JsonSerialize(using = LongJsonSerializer.class)
+	@JsonDeserialize(using = LongJsonDeserializer.class)
 	private Long id;
 
 	/**
 	 * 帖子ID
 	 */
+	@JsonSerialize(using = LongJsonSerializer.class)
+	@JsonDeserialize(using = LongJsonDeserializer.class)
 	private Long articleId;
 
 	/**
@@ -54,11 +63,15 @@ public class CommentEntity {
 	 * 父级评论ID
 	 * 如果没有，默认为帖子ID
 	 * */
+	@JsonSerialize(using = LongJsonSerializer.class)
+	@JsonDeserialize(using = LongJsonDeserializer.class)
 	private Long fatherId;
 
 	/**
 	 * 回复的帖子ID
 	 */
+	@JsonSerialize(using = LongJsonSerializer.class)
+	@JsonDeserialize(using = LongJsonDeserializer.class)
 	private Long commentId;
 
 	/**
@@ -105,6 +118,9 @@ public class CommentEntity {
 
 
 	private Double rating;
+
+	@Version
+	private Integer version;
 
 
 	public void initComment() {

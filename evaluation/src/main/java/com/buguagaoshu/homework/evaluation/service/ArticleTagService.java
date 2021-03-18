@@ -26,6 +26,6 @@ public interface ArticleTagService extends IService<ArticleTagEntity> {
     List<ArticleTagEntity> listTree();
 
 
-    Map<Integer,ArticleTagEntity> listToMap();
+    Map<Long,ArticleTagEntity> listToMap();
 }
 
