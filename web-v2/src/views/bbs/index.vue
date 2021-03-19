@@ -7,6 +7,22 @@
     </v-row>
     <v-row>
       <v-col>
+        <v-btn text color="primary" link :to="'/bbs'">
+          <v-icon color="error">
+            mdi-fire
+          </v-icon>
+          广场
+        </v-btn>
+        <v-btn text color="primary" link :to="'/bbs/tags'">
+          <v-icon>
+            mdi-tag
+          </v-icon>
+          话题分类
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
         <v-divider />
       </v-col>
     </v-row>

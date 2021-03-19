@@ -65,7 +65,7 @@
                 <UserInfoCard :user="item.user" />
               </v-menu>
 
-              <span style="color:black">更新于：{{ TimeUtil.renderTime(item.updateTime) }}
+              <span style="color:black">更新于：{{ TimeUtil.timeToNowStrning(item.updateTime) }}
                 |
                 {{ item.viewCount }} 浏览， {{ item.commentCount }} 回复，  {{ item.likeCount }} 喜欢</span>
             </v-col>

@@ -70,8 +70,8 @@ export default {
   methods: {
     headClick(value) {
       if (value === 0) {
-        // this.$router.push('/user/' + this.userInfo.id)
-        location.replace('/user/' + this.userInfo.userId)
+        this.$router.push('/user/' + this.userInfo.userId)
+        // location.replace('/user/' + this.userInfo.userId)
       } else if (value === 1) {
         if (this.$route.path === '/myclass') {
           return

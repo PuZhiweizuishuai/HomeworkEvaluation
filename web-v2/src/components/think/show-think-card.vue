@@ -26,7 +26,7 @@
 
     </v-card-title>
     <v-card-subtitle>
-      <span style="margin-left: 60px;">发布于：{{ TimeUtil.renderTime(think.createTime) }} </span>
+      <span style="margin-left: 60px;">发布于：{{ TimeUtil.timeToNowStrning(think.createTime) }} </span>
     </v-card-subtitle>
 
     <v-card-subtitle>

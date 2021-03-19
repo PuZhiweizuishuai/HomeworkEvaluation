@@ -43,7 +43,7 @@ DROP TABLE IF EXISTS `article`;
 CREATE TABLE `article`  (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '帖子标题',
-  `tag_id` int NOT NULL DEFAULT 0 COMMENT '分区ID',
+  `tag_id` bigint NOT NULL DEFAULT 0 COMMENT '分区ID',
   `tag` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '帖子标签，英文状态逗号分隔',
   `author_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '帖子作者 id',
   `comment_count` bigint NOT NULL DEFAULT 0 COMMENT '帖子回帖计数',

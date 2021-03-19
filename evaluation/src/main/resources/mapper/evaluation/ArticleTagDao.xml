@@ -12,6 +12,8 @@
         <result property="sort" column="sort"/>
         <result property="catelogId" column="catelog_id"/>
         <result property="type" column="type"/>
+        <result property="commentCount" column="comment_count" />
+        <result property="followCount" column="follow_count" />
     </resultMap>
 
 

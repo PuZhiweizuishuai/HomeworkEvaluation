@@ -5,6 +5,7 @@ import com.buguagaoshu.homework.common.domain.CustomPage;
 import com.buguagaoshu.homework.common.enums.ArticleTypeEnum;
 import com.buguagaoshu.homework.common.enums.AtUserTypeEnum;
 import com.buguagaoshu.homework.common.enums.RoleTypeEnum;
+import com.buguagaoshu.homework.evaluation.cache.ArticleTagCache;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.entity.*;
@@ -17,7 +18,6 @@ import com.buguagaoshu.homework.evaluation.utils.JwtUtil;
 import com.buguagaoshu.homework.evaluation.vo.ArticleVo;
 import com.buguagaoshu.homework.evaluation.vo.DeleteVo;
 import com.buguagaoshu.homework.evaluation.vo.ThinkVo;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +25,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -52,6 +49,8 @@ import javax.servlet.http.HttpSession;
 public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> implements ArticleService {
     private final StudentsCurriculumService studentsCurriculumService;
 
+    private final ArticleTagCache articleTagCache;
+
     private final ObjectMapper objectMapper;
 
     private final UserService userService;
@@ -65,8 +64,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     private final CurriculumService curriculumService;
 
     @Autowired
-    public ArticleServiceImpl(StudentsCurriculumService studentsCurriculumService, ObjectMapper objectMapper, UserService userService, VoteService voteService, VerifyCodeService verifyCodeService, AtUserService atUserService, CurriculumService curriculumService) {
+    public ArticleServiceImpl(StudentsCurriculumService studentsCurriculumService, ArticleTagCache articleTagCache, ObjectMapper objectMapper, UserService userService, VoteService voteService, VerifyCodeService verifyCodeService, AtUserService atUserService, CurriculumService curriculumService) {
         this.studentsCurriculumService = studentsCurriculumService;
+        this.articleTagCache = articleTagCache;
         this.objectMapper = objectMapper;
 
         this.userService = userService;
@@ -421,6 +421,17 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             if (type.equals("10") || type.equals("11") || type.equals("12")) {
                 wrapper.eq("type", type);
             }
+        }
+        String tag = (String) params.get("tagId");
+        long tagId = 0;
+        if (!StringUtils.isEmpty(tag)) {
+            try {
+                tagId = Long.parseLong(tag);
+            } catch (Exception ignored) {
+            }
+        }
+        if (tagId != 0) {
+            wrapper.in("tag_id",articleTagCache.getTagId(tagId));
         }
         wrapper.ge("type", ArticleTypeEnum.ORDINARY.getCode());
         wrapper.le("type", ArticleTypeEnum.ORDINARY_END.getCode());

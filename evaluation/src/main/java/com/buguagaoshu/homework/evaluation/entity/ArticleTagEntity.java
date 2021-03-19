@@ -62,6 +62,10 @@ public class ArticleTagEntity {
 	 */
 	private Integer type;
 
+	private Long commentCount;
+
+	private Long followCount;
+
 
 	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@TableField(exist = false)

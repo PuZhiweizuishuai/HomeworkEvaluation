@@ -1,5 +1,12 @@
 <template>
   <v-container>
+    <v-row v-if="showtab">
+      <v-col>
+        <v-tabs>
+          <v-tab>最新</v-tab>
+        </v-tabs>
+      </v-col>
+    </v-row>
     <v-row v-for="item in articleList" :key="item.id">
       <v-col>
         <Card :article="item" />
@@ -22,9 +29,17 @@ export default {
     Card
   },
   props: {
+    showtab: {
+      type: Boolean,
+      default: false
+    },
     type: {
       type: Number,
       default: 0
+    },
+    tagid: {
+      type: String,
+      default: '0'
     }
   },
   data() {
@@ -32,7 +47,7 @@ export default {
       pageMode: 1,
       page: 1,
       size: 20,
-      tagId: -1,
+      tagId: this.tagid,
       typeCode: this.type,
       totalCount: 0,
       length: 1,
@@ -40,6 +55,7 @@ export default {
     }
   },
   created() {
+    console.log('tagID', this.tagId)
     if (this.$store.state.tagsLength === 0) {
       this.getTagList()
     }

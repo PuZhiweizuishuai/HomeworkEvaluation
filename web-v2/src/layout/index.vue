@@ -64,7 +64,7 @@
       </v-btn>
     </v-app-bar>
     <v-main>
-      <router-view />
+      <router-view :key="$route.path" />
 
     </v-main>
     <BackToTop />

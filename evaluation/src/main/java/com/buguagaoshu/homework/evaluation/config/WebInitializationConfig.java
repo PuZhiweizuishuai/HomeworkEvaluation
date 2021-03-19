@@ -44,6 +44,7 @@ public class WebInitializationConfig {
                 // 初始化帖子分类
                 articleTagCache.setArticleTagCaches(articleTagService.listTree());
                 articleTagCache.setIntegerArticleTagEntityMap(articleTagService.listToMap());
+                articleTagCache.setFatherMap(articleTagCache.getArticleTagCaches());
                 log.info("初始化话题分类！");
                 // 初始化缓存
                 advertisementService.addAdCache();
