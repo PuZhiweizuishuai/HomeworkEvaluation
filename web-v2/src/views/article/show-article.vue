@@ -261,7 +261,7 @@ function initOutline() {
           currentElement.classList.remove('vditor-outline__item--current')
         }
         const index = i > 0 ? i - 1 : 0
-        document.querySelector('div[data-id="' + toc[index].id + '"]').classList.add('vditor-outline__item--current')
+        document.querySelector('span[data-target-id="' + toc[index].id + '"]').classList.add('vditor-outline__item--current')
         break
       }
     }
@@ -317,7 +317,6 @@ export default {
         this.role.role = 'NONE'
       }
     }
-
     this.getArticle()
   },
   mounted() {
@@ -372,6 +371,8 @@ export default {
             Vditor.outlineRender(output, outlineElement)
             if (outlineElement.innerText.trim() !== '') {
               outlineElement.style.display = 'block'
+              outlineElement.classList.remove('vditor-reset')
+              outlineElement.classList.add('outline')
               initOutline()
             }
           }
@@ -509,4 +510,8 @@ export default {
   margin: 10px;
 }
 
+        .outline li > span:hover {
+            color: #4285f4;
+            background-color: #f6f8fa;
+        }
 </style>

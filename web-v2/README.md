@@ -33,7 +33,7 @@ npm install
 
 与`src\store\index.js`下的web基本信息
 
-
+#### Vditor 配置
 
 因为本项目需要在局域网环境下进行访问，所以对于前端Markdown编辑器Vditor的CDN配置进行了修改，将其默认的CND地址更改为了本地地址。如果你没有局域网访问需求，可以将CDN配置删除，采用Vditor的默认CDN jsdelivr
 
@@ -68,6 +68,13 @@ npm install
 
 
 另外由于Vditor全部文件较大，所以在git提交时，我并没有提交Vditor的文件，如果没有删除Vditor本地CDN配置的情况下，请到https://www.jsdelivr.com/package/npm/vditor   下载你所需要的Vditor版本到/web-v2/public/vditor目录下然后再运行
+
+##### 注意
+
+在Vditor升级3.8.3版本之后，如果想要消除控制台的调试信息。你需要将
+
+
+`\vditor\dist\js\mermaid` 下的 `mermaid.min.js` 替换为 `https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js` 下的 `mermaid.min.js` 文件
 
 
 ### 最后

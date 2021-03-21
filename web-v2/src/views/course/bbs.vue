@@ -81,7 +81,7 @@ export default {
       articleList: [],
       page: 1,
       length: 0,
-      size: 5,
+      size: 20,
       sort: 0,
       checkTab: 0,
       key: '',
