@@ -35,7 +35,7 @@
     </v-row>
     <v-row justify="center">
       <v-col cols="11">
-        <v-tabs>
+        <v-tabs v-model="checkTab">
           <v-tab @click="setSort(0)">最新发帖</v-tab>
           <v-tab @click="setSort(1)">最新回复</v-tab>
           <v-tab @click="setSort(2)">精品</v-tab>
@@ -81,13 +81,24 @@ export default {
       articleList: [],
       page: 1,
       length: 0,
-      size: 20,
+      size: 5,
       sort: 0,
+      checkTab: 0,
       key: '',
       showBack: false
     }
   },
   created() {
+    const p = parseInt(this.$route.query.page)
+    const s = parseInt(this.$route.query.sort)
+    if (!isNaN(p)) {
+      //
+      this.page = p
+    }
+    if (!isNaN(s)) {
+      this.checkTab = s
+      this.sort = s
+    }
     this.$vuetify.goTo(0)
     document.title = '讨论区 - ' + this.course.curriculumName
     this.getArticle()
@@ -122,10 +133,18 @@ export default {
     },
     pageChange(value) {
       this.page = value
+      this.$router.push({
+        path: this.$router.path,
+        query: { page: this.page, sort: this.sort }
+      })
       this.getArticle()
     },
     setSort(value) {
       this.sort = value
+      this.$router.push({
+        path: this.$router.path,
+        query: { page: 1, sort: this.sort }
+      })
       this.getArticle()
     }
   }

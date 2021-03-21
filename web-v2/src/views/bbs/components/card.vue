@@ -9,7 +9,7 @@
           md="10"
         >
           <!-- 标题内容 -->
-          <router-link :to="`/bbs/article/${item.id}`">
+          <router-link :to="`/bbs/article/${item.id}?lastPage=${lastpage}`">
             <v-row>
               <v-col cols="12">
 
@@ -100,6 +100,7 @@
 <script>
 import TimeUtil from '@/utils/time-util.vue'
 import UserInfoCard from '@/components/user/info-card.vue'
+
 export default {
   components: {
     UserInfoCard
@@ -108,6 +109,10 @@ export default {
     article: {
       type: Object,
       default: null
+    },
+    lastpage: {
+      type: Number,
+      default: 1
     }
   },
   data() {
@@ -117,6 +122,7 @@ export default {
     }
   },
   created() {
+
   },
   methods: {
 

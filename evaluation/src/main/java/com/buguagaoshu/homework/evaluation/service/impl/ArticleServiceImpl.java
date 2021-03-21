@@ -76,6 +76,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         this.curriculumService = curriculumService;
     }
 
+
+    private CollectsService collectsService;
+
+    @Autowired
+    public void setCollectsService(CollectsService collectsService) {
+        this.collectsService = collectsService;
+    }
+
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
         IPage<ArticleEntity> page = this.page(
@@ -197,6 +205,34 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         if (!StringUtils.isEmpty(key)) {
             wrapper.like("title", key);
         }
+
+        // 设置排序信息
+        setSort(params, wrapper);
+        IPage<ArticleEntity> page = this.page(
+                new Query<ArticleEntity>().getPage(params),
+                wrapper
+        );
+        if (page.getTotal() == 0) {
+            return new PageUtils(page);
+        }
+        Set<String> userId = page.getRecords().stream().map(ArticleEntity::getAuthorId).collect(Collectors.toSet());
+        Map<String, UserEntity> maps = userService.listByIds(userId).stream().collect(Collectors.toMap(UserEntity::getUserId, u -> u));
+        List<ArticleModel> articleModels = new ArrayList<>();
+        Map<String, StudentsCurriculumEntity> teacherMap = studentsCurriculumService.teacherList(courseId).stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, t -> t));
+
+
+        page.getRecords().forEach((a) -> {
+            ArticleModel articleModel = new ArticleModel();
+            BeanUtils.copyProperties(a, articleModel);
+            articleModel.setContent(null);
+            articleModel.setAvatarUrl(maps.get(a.getAuthorId()).getUserAvatarUrl());
+            articleModel.setIsTeacher(teacherMap.get(a.getAuthorId()) != null);
+            articleModels.add(articleModel);
+        });
+        return new PageUtils(new CustomPage<>(articleModels, page.getTotal(), page.getSize(), page.getCurrent(), page.orders()));
+    }
+
+    public void setSort(Map<String, Object> params, QueryWrapper<ArticleEntity> wrapper) {
         String sort = (String) params.get("sort");
         if (!StringUtils.isEmpty(sort)) {
             switch (sort) {
@@ -222,28 +258,6 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         } else {
             wrapper.orderByDesc("update_time");
         }
-        IPage<ArticleEntity> page = this.page(
-                new Query<ArticleEntity>().getPage(params),
-                wrapper
-        );
-        if (page.getTotal() == 0) {
-            return new PageUtils(page);
-        }
-        Set<String> userId = page.getRecords().stream().map(ArticleEntity::getAuthorId).collect(Collectors.toSet());
-        Map<String, UserEntity> maps = userService.listByIds(userId).stream().collect(Collectors.toMap(UserEntity::getUserId, u -> u));
-        List<ArticleModel> articleModels = new ArrayList<>();
-        Map<String, StudentsCurriculumEntity> teacherMap = studentsCurriculumService.teacherList(courseId).stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, t -> t));
-
-
-        page.getRecords().forEach((a) -> {
-            ArticleModel articleModel = new ArticleModel();
-            BeanUtils.copyProperties(a, articleModel);
-            articleModel.setContent(null);
-            articleModel.setAvatarUrl(maps.get(a.getAuthorId()).getUserAvatarUrl());
-            articleModel.setIsTeacher(teacherMap.get(a.getAuthorId()) != null);
-            articleModels.add(articleModel);
-        });
-        return new PageUtils(new CustomPage<>(articleModels, page.getTotal(), page.getSize(), page.getCurrent(), page.orders()));
     }
 
     @Override
@@ -268,6 +282,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                     Map<String, StudentsCurriculumEntity> teacherMap = studentsCurriculumService.teacherList(articleEntity.getCourseId()).stream().collect(Collectors.toMap(StudentsCurriculumEntity::getStudentId, t -> t));
                     articleModel.setIsTeacher(teacherMap.get(articleEntity.getAuthorId()) != null);
                     articleModel.setTag(stringToObj(articleEntity.getTag()));
+                    // 检查收藏状态
+                    CollectsEntity collects = collectsService.findCollectsByUserIdWithArticleId(user.getId(), articleEntity.getId());
+                    articleModel.setHasCollectStatus(collects != null);
 
                     if (ArticleTypeEnum.isVote(articleEntity.getType())) {
                         articleModel.setVotes(voteService.getVoteModeList(articleEntity.getId()));
@@ -329,7 +346,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             } else {
                 articleEntity.setPerfect(0);
             }
-            if (user.get("authorities").equals(RoleTypeEnum.ADMIN.getRole())) {
+            String authorities = (String) user.get("authorities");
+            if (authorities.contains(RoleTypeEnum.ADMIN.getRole())) {
                 this.updateById(articleEntity);
                 return true;
             }
@@ -440,7 +458,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             wrapper.eq("author_id", userId);
         }
 
-        wrapper.orderByDesc("update_time");
+        setSort(params, wrapper);
+
         IPage<ArticleEntity> page = this.page(
                 new Query<ArticleEntity>().getPage(params),
                 wrapper
@@ -496,7 +515,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         try {
             user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         } catch (Exception ignored) { }
-
+        ArticleModel articleModel = new ArticleModel();
         if (articleEntity.getType() == ArticleTypeEnum.DRAFT.getCode()) {
             if (user != null) {
                 if (!user.getId().equals(articleEntity.getAuthorId())) {
@@ -504,10 +523,15 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 }
             }
         }
+        if (user != null) {
+            // 检查收藏状态
+            CollectsEntity collects = collectsService.findCollectsByUserIdWithArticleId(user.getId(), articleEntity.getId());
+            articleModel.setHasCollectStatus(collects != null);
+        }
 
         UserEntity userEntity = userService.getById(articleEntity.getAuthorId());
         userEntity.clean();
-        ArticleModel articleModel = new ArticleModel();
+
         BeanUtils.copyProperties(articleEntity, articleModel);
         articleModel.setUser(userEntity);
         if (ArticleTypeEnum.isVote(articleEntity.getType())) {

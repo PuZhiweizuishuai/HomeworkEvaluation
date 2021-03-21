@@ -131,6 +131,9 @@ public class ArticleModel {
     private Long collectCount;
 
 
+    private Boolean hasCollectStatus;
+
+
     /**
      * User-Agent
      */

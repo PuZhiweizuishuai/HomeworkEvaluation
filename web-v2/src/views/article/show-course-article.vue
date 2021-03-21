@@ -4,12 +4,7 @@
     <v-row>
       <v-col cols="10">
         <h2>
-          <v-btn
-            icon
-            @click="back"
-          >
-            <v-icon>mdi-arrow-left-thick</v-icon>
-          </v-btn>
+
           {{ article.title }}
           <v-chip
             v-if="article.isTeacher"
@@ -313,6 +308,7 @@ export default {
             this.addPerfect = '加精'
           }
           this.initRender()
+          this.$vuetify.goTo(0)
         } else {
           this.$router.push(`/course/learn/${this.$route.params.id}/bbs`)
         }

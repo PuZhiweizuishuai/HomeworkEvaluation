@@ -4,12 +4,7 @@
     <v-row>
       <v-col cols="10">
         <h2>
-          <v-btn
-            icon
-            @click="back"
-          >
-            <v-icon>mdi-arrow-left-thick</v-icon>
-          </v-btn>
+
           <span v-if="article.type == 100">想法：</span>
           {{ article.title }}
           <v-chip
@@ -75,7 +70,8 @@
         <span v-html="`&nbsp;&nbsp;`" />
         |
         <span v-html="`&nbsp;&nbsp;`" />
-        <v-btn outlined small color="primary">收藏: {{ article.collectCount }}</v-btn>
+        <v-btn v-if="article.hasCollectStatus" depressed small color="primary" @click="collectArticle">你已经收藏过了，不用再次收藏: {{ article.collectCount }}</v-btn>
+        <v-btn v-else outlined small color="primary" @click="collectArticle">收藏: {{ article.collectCount }}</v-btn>
       </v-col>
     </v-row>
     <v-row>
@@ -342,13 +338,18 @@ export default {
             this.fileList = JSON.parse(this.article.files)
           }
           this.initRender()
+          this.$vuetify.goTo(0)
         } else {
           this.$router.push(`/bbs`)
         }
       })
     },
     back() {
-      this.$router.push(`/bbs`)
+      if (this.$route.query.lastPage != null) {
+        this.$router.push(`/bbs?page=${this.$route.query.lastPage}`)
+      } else {
+        this.$router.push(`/bbs`)
+      }
     },
     initRender() {
       const output = this.$refs.articleContent
@@ -438,6 +439,20 @@ export default {
         d.style.position = 'static'
         d.style.top = '150px'
       }
+    },
+    collectArticle() {
+      const collect = {
+        articleId: this.article.id
+      }
+      this.httpPost('/collects/save', collect, (json) => {
+        if (json.status === 200) {
+          this.message = '收藏成功!'
+          this.showMessage = true
+        } else {
+          this.message = json.message
+          this.showMessage = true
+        }
+      })
     }
   }
 }

@@ -95,7 +95,8 @@ export default {
     items: [
       { icon: 'mdi-book-open-outline', text: '课程', link: '/' },
       { icon: 'mdi-facebook-messenger', text: '社区', link: '/bbs' },
-      { icon: 'mdi-book-variant', text: '我的课程', link: '/myclass' }
+      { icon: 'mdi-book-variant', text: '我的课程', link: '/myclass' },
+      { icon: 'mdi-tools', text: '工具箱', link: '/tools' }
     ],
     courseTagList: []
   }),

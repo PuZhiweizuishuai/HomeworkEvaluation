@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.buguagaoshu.homework.click.dao.CollectsDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.buguagaoshu.homework.evaluation.entity.CollectsEntity" id="collectsMap">
+        <result property="id" column="id"/>
+        <result property="articleId" column="article_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="ip" column="ip"/>
+        <result property="ua" column="ua"/>
+        <result property="text" column="text"/>
+        <result property="type" column="type"/>
+        <result property="courseId" column="course_id" />
+    </resultMap>
+</mapper>

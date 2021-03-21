@@ -34,6 +34,11 @@ export default {
     }
   },
   created() {
+    const p = parseInt(this.$route.query.page)
+    if (!isNaN(p)) {
+      this.pageMode = p
+      this.page = p
+    }
     this.getThinkList()
   },
   methods: {
@@ -50,6 +55,10 @@ export default {
     pageChange(value) {
       this.page = value
       this.pageMode = value
+      this.$router.push({
+        path: this.$router.path,
+        query: { page: this.page, type: 100 }
+      })
       this.getThinkList()
     }
   }

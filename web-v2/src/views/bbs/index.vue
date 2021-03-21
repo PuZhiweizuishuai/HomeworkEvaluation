@@ -31,6 +31,7 @@
       <v-col>
         <v-tabs v-model="checkTab">
           <v-tab @click="getList(0)">推荐</v-tab>
+          <v-tab @click="getList(-1)">精品</v-tab>
           <v-tab @click="getList(100)">想法</v-tab>
           <v-tab @click="getList(12)">投票</v-tab>
         </v-tabs>
@@ -39,7 +40,7 @@
     <v-col />
     <v-row>
       <v-col :cols="colsLift">
-        <List v-show="pageType == 10 || pageType == 12 || pageType == 0" ref="showArticleList" />
+        <List v-show="pageType == 10 || pageType == 12 || pageType == 0 || pageType == -1" ref="showArticleList" :type="pageType" />
         <ThinkList v-show="pageType == 100" ref="showThinkList" />
       </v-col>
       <v-col :cols="colsRight">
@@ -110,19 +111,20 @@ export default {
     const type = parseInt(this.$route.query.type)
     if (!isNaN(type)) {
       //
-      if (type === 100 || type === 10 || type === 11 || type === 12) {
+      if (type === 100 || type === 10 || type === 11 || type === 12 || type === -1) {
         this.pageType = type
         if (type === 100) {
-          this.checkTab = 1
-        } else if (type === 12) {
           this.checkTab = 2
+        } else if (type === 12) {
+          this.checkTab = 3
+        } else if (type === -1) {
+          this.checkTab = 1
         }
       } else {
         this.pageType = 0
         this.checkTab = 0
       }
     }
-    console.log(this.pageType)
     this.getAd()
   },
   methods: {
@@ -135,13 +137,18 @@ export default {
       })
     },
     getList(value) {
-      console.log(this.pageType)
+      this.$router.push({
+        path: this.$router.path,
+        query: { type: value }
+      })
       this.pageType = value
       if (value === 10 || value === 12 || value === 0) {
         this.$refs.showArticleList.setType(value)
       } else if (value === 100) {
         //
         this.$refs.showThinkList.getThinkList()
+      } else if (value === -1) {
+        this.$refs.showArticleList.setSort(2)
       }
     },
     onResize() {

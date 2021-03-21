@@ -89,6 +89,14 @@ const routes = [
         }
       },
       {
+        path: '/tools',
+        component: () => import('@/views/tools/index.vue'),
+        name: 'Tools',
+        meta: {
+          title: '工具箱'
+        }
+      },
+      {
         path: '/course/tag/:tagId',
         component: () => import('@/views/home/tag-course.vue'),
         name: 'Tag',
