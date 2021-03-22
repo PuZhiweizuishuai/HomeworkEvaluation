@@ -97,6 +97,46 @@ const routes = [
         }
       },
       {
+        path: '/tools/notebook',
+        component: () => import('@/views/tools/notebook/index.vue'),
+        name: 'Notebook',
+        meta: {
+          title: '笔记本'
+        }
+      },
+      {
+        path: '/tools/question',
+        component: () => import('@/views/tools/question/index.vue'),
+        name: 'Question',
+        meta: {
+          title: '线上作答统计系统'
+        }
+      },
+      {
+        path: '/tools/qr-code',
+        component: () => import('@/views/tools/qr-code.vue'),
+        name: 'QrCode',
+        meta: {
+          title: '二维码生成器'
+        }
+      },
+      {
+        path: '/tools/sort',
+        component: () => import('@/views/tools/sort/sort.vue'),
+        name: 'Sort',
+        meta: {
+          title: '排顺序'
+        }
+      },
+      {
+        path: '/tools/sort/:id',
+        component: () => import('@/views/tools/sort/show-sort.vue'),
+        name: 'ShowSort',
+        meta: {
+          title: '排顺序'
+        }
+      },
+      {
         path: '/course/tag/:tagId',
         component: () => import('@/views/home/tag-course.vue'),
         name: 'Tag',

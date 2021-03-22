@@ -49,6 +49,7 @@ export default {
       headItem: [
         { icon: 'mdi-account', text: '个人主页', link: `/user/`, id: 0, show: true, admin: false },
         { icon: 'mdi-book-variant', text: '我的课程', link: `/myclass`, id: 1, show: true, admin: false },
+        { icon: 'mdi-notebook', text: '笔记本', link: `/tools/notebook`, id: 5, show: true, admin: false },
         { icon: 'mdi-wrench', text: '个人设置', link: '/user/setting', id: 2, show: true, admin: false },
         { icon: 'mdi-application-settings', text: '系统管理', link: '/admin', id: 3, show: false, admin: true },
         { icon: 'mdi-logout', text: '退出', link: '/logout', id: 4, show: true, admin: false }
@@ -87,6 +88,11 @@ export default {
           return
         }
         this.$router.push('/admin')
+      } else if (value === 5) {
+        if (this.$route.path === '/tools/notebook') {
+          return
+        }
+        this.$router.push('/tools/notebook')
       } else {
         this.logout()
       }

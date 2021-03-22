@@ -4,7 +4,12 @@
     <v-row>
       <v-col cols="10">
         <h2>
-
+          <v-btn
+            icon
+            @click="back"
+          >
+            <v-icon>mdi-arrow-left-thick</v-icon>
+          </v-btn>
           <span v-if="article.type == 100">想法：</span>
           {{ article.title }}
           <v-chip
@@ -344,11 +349,7 @@ export default {
       })
     },
     back() {
-      if (this.$route.query.lastPage != null) {
-        this.$router.push(`/bbs?page=${this.$route.query.lastPage}`)
-      } else {
-        this.$router.push(`/bbs`)
-      }
+      this.$router.go(-1)
     },
     initRender() {
       const output = this.$refs.articleContent

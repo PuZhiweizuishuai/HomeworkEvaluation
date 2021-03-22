@@ -4,7 +4,12 @@
     <v-row>
       <v-col cols="10">
         <h2>
-
+          <v-btn
+            icon
+            @click="back"
+          >
+            <v-icon>mdi-arrow-left-thick</v-icon>
+          </v-btn>
           {{ article.title }}
           <v-chip
             v-if="article.isTeacher"
@@ -318,7 +323,7 @@ export default {
       })
     },
     back() {
-      this.$router.push(`/course/learn/${this.$route.params.id}/bbs`)
+      this.$router.go(-1)
     },
     initRender() {
       const output = this.$refs.articleContent

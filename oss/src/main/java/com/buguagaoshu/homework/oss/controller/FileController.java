@@ -96,6 +96,11 @@ public class FileController {
                                       @PathVariable("date") String date,
                                       @PathVariable("filename") String filename,
                                       HttpServletRequest request) {
+        /**
+         * TODO 检查 referer
+         * */
+        String referer = request.getHeader("referer");
+
         String path = "uploads/file/" + userId + "/" + date + "/" + filename;
         String url = repository.getFileUrl(path);
         if (url.equals("")) {
