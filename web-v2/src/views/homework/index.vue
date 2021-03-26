@@ -23,7 +23,7 @@
     </v-btn>
     <v-btn
       v-if="homeworkInfo.submit"
-      depressed
+
       rounded
       color="primary"
       fixed
@@ -81,7 +81,7 @@
     <v-row v-for="(item, index) in homeworkInfo.questionsModels" :key="item.id">
 
       <v-col cols="12">
-        <a :name="index" />
+        <span :id="`question-a-${index}`" />
         <Choice v-if="item.type == 1 || item.type == 0 || item.type == 4" :index="index + 1" :question="item" :disabled="!homeworkInfo.submit" :answer="homeworkInfo.showTeacherComment" @answer="getAnswer" />
         <Discourses v-if="item.type == 2 || item.type == 3" :index="index + 1" :question="item" :disabled="!homeworkInfo.submit" :answer="homeworkInfo.showTeacherComment" @answer="getAnswer" />
         <v-divider />
@@ -146,7 +146,23 @@
         <v-card-title>
           确认提交
         </v-card-title>
-
+        <v-card-subtitle>
+          <v-row>
+            <v-col>
+              <h3>请检查有无未完成题目！</h3>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <span v-for="(item, i) in homeworkInfo.questionsModels" :key="item.id">
+                <v-btn color="primary" :outlined="hasAnswer[i]" depressed @click="goTOQuestion(i)">
+                  {{ i + 1 }}
+                </v-btn>
+                <span v-html="'&nbsp;&nbsp;'" />
+              </span>
+            </v-col>
+          </v-row>
+        </v-card-subtitle>
         <v-card-text>
           请检查无误后再提交，你只有一次提交机会，提交后将无法再次提交！
         </v-card-text>
@@ -180,12 +196,12 @@
           <v-card-subtitle>
             <v-row>
               <v-col>
-                <a v-for="(item, i) in homeworkInfo.questionsModels" :key="item.id" :href="`#${i}`">
-                  <v-btn color="primary" :outlined="hasAnswer[i]" depressed>
+                <span v-for="(item, i) in homeworkInfo.questionsModels" :key="item.id">
+                  <v-btn color="primary" :outlined="hasAnswer[i]" depressed @click="goTOQuestion(i)">
                     {{ i + 1 }}
                   </v-btn>
                   <span v-html="'&nbsp;&nbsp;'" />
-                </a>
+                </span>
               </v-col>
             </v-row>
           </v-card-subtitle>
@@ -252,6 +268,10 @@ export default {
     this.getHomework()
   },
   methods: {
+    goTOQuestion(value) {
+      const top = document.querySelector(`#question-a-${value}`).offsetTop
+      window.scrollTo(0, top)
+    },
     submitHomework(value) {
       // console.log(this.submitData)
       this.submitData.type = value

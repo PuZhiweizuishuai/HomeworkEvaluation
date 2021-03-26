@@ -30,6 +30,11 @@
           教师点评： {{ questionInfo.teacherComment }}
         </v-col>
       </v-row>
+      <v-row justify="center">
+        <v-col cols="11">
+          记笔记：
+        </v-col>
+      </v-row>
     </v-card>
   </v-container>
 </template>
