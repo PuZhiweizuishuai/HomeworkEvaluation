@@ -6,3 +6,8 @@ alibaba:
     database: homework_evaluation
     username: root
     password: 123456
+
+spring:
+  cloud:
+    nacos:
+      server-addr: 192.168.43.131:8848

@@ -16,11 +16,11 @@ spring:
             - Path=/api/uploads/**
           filters:
             - RewritePath=/api/(?<segment>/?.*), /$\{segment}
-        # 点赞收藏关注服务
-        - id: Click_router
-          uri: lb://Click
+        # 搜索
+        - id: Search_router
+          uri: lb://Search
           predicates:
-            - Path=/api/click/**
+            - Path=/api/search/**
           filters:
             - RewritePath=/api/(?<segment>/?.*), /$\{segment}
         # 核心服务
