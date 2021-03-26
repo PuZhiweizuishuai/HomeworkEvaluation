@@ -21,6 +21,19 @@
         测验结束或你已提交
       </span>
     </v-btn>
+    <v-btn
+      v-if="homeworkInfo.submit"
+      depressed
+      rounded
+      color="primary"
+      fixed
+      right
+      bottom
+      style="margin-bottom: 200px"
+      @click="questionCardSheet = true"
+    >
+      答题卡
+    </v-btn>
     <v-row justify="center">
       <v-col cols="12">
         <v-divider />
@@ -66,7 +79,9 @@
     </v-row>
     <!-- 试卷题目部分 -->
     <v-row v-for="(item, index) in homeworkInfo.questionsModels" :key="item.id">
+
       <v-col cols="12">
+        <a :name="index" />
         <Choice v-if="item.type == 1 || item.type == 0 || item.type == 4" :index="index + 1" :question="item" :disabled="!homeworkInfo.submit" :answer="homeworkInfo.showTeacherComment" @answer="getAnswer" />
         <Discourses v-if="item.type == 2 || item.type == 3" :index="index + 1" :question="item" :disabled="!homeworkInfo.submit" :answer="homeworkInfo.showTeacherComment" @answer="getAnswer" />
         <v-divider />
@@ -150,6 +165,33 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- 答题卡 -->
+    <v-bottom-sheet
+      v-if="showQuestionCard"
+      v-model="questionCardSheet"
+      inset
+    >
+      <v-sheet>
+        <v-card>
+          <v-card-title>
+            答题卡
+          </v-card-title>
+          <v-card-subtitle>
+            <v-row>
+              <v-col>
+                <a v-for="(item, i) in homeworkInfo.questionsModels" :key="item.id" :href="`#${i}`">
+                  <v-btn color="primary" :outlined="hasAnswer[i]" depressed>
+                    {{ i + 1 }}
+                  </v-btn>
+                  <span v-html="'&nbsp;&nbsp;'" />
+                </a>
+              </v-col>
+            </v-row>
+          </v-card-subtitle>
+        </v-card>
+      </v-sheet>
+    </v-bottom-sheet>
   </v-container>
 </template>
 
@@ -172,6 +214,9 @@ export default {
   },
   data() {
     return {
+      questionCardSheet: false,
+      hasAnswer: [],
+      showQuestionCard: false,
       TimeUtil,
       Constant,
       homeworkId: 0,
@@ -226,7 +271,8 @@ export default {
         this.dialog = false
       })
     },
-    getAnswer(ans, id, type) {
+    getAnswer(ans, id, type, index) {
+      this.hasAnswer[index - 1] = false
       const answer = {
         questionId: 0,
         otherAnswer: '',
@@ -256,14 +302,28 @@ export default {
           this.homeworkInfo = json.data
           this.showHomeworkContent = true
           this.autoSubmit()
+          this.hasAnswer = new Array(json.data.questionsModels.length)
           for (let i = 0; i < json.data.questionsModels.length; i++) {
             let sysAns = []
             let othAns = ''
             if (json.data.questionsModels[i].type === 0 || json.data.questionsModels[i].type === 1) {
               sysAns = json.data.questionsModels[i].answer
+              if (json.data.questionsModels[i].answer[0] !== '') {
+                this.hasAnswer[i] = false
+              } else {
+                this.hasAnswer[i] = true
+              }
             } else {
               othAns = json.data.questionsModels[i].otherAnswer
+
+              if (json.data.questionsModels[i].otherAnswer === '') {
+                this.hasAnswer[i] = true
+              } else {
+                this.hasAnswer[i] = false
+              }
             }
+            // hasAnswer
+
             const ans = {
               questionId: json.data.questionsModels[i].id,
               otherAnswer: othAns,
@@ -271,6 +331,9 @@ export default {
             }
             this.submitData.answers.push(ans)
           }
+
+          this.$vuetify.goTo(0)
+          this.showQuestionCard = true
         } else {
           this.message = json.message
           this.showMessage = true

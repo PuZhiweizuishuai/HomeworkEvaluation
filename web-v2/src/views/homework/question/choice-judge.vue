@@ -93,15 +93,14 @@ export default {
   methods: {
     changeAnswer() {
       // console.log(this.question.answer)
-      this.$emit('answer', this.question.answer, this.question.id, this.question.type)
+      this.$emit('answer', this.question.answer, this.question.id, this.question.type, this.index)
     },
     changeAnswerRadio() {
       // console.log(this.question.answer)
-      this.$emit('answer', this.question.answer, this.question.id, this.question.type)
+      this.$emit('answer', this.question.answer, this.question.id, this.question.type, this.index)
     },
     JudgeAnswer() {
-      console.log(this.judge)
-      this.$emit('answer', this.judge, this.question.id, this.question.type)
+      this.$emit('answer', this.judge, this.question.id, this.question.type, this.index)
     },
     getComment(value) {
       this.$emit('teacher', value)

@@ -79,7 +79,7 @@
               </v-col>
             </v-row>
           </v-container>
-
+          <v-col />
           <v-row justify="space-around">
             <v-btn depressed @click="e1 = 2">上一步</v-btn>
             <v-btn
@@ -91,6 +91,7 @@
             </v-btn>
 
           </v-row>
+          <v-col />
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>

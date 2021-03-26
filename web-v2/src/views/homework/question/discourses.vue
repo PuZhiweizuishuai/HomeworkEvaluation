@@ -74,7 +74,7 @@ export default {
   },
   methods: {
     getAnswer(value) {
-      this.$emit('answer', value, this.question.id)
+      this.$emit('answer', value, this.question.id, -1, this.index)
     },
     getComment(value) {
       this.$emit('teacher', value)
