@@ -1,12 +1,16 @@
 package com.buguagaoshu.homework.common.search;
 
 
+import com.buguagaoshu.homework.common.utils.DoubleDeserializer;
+import com.buguagaoshu.homework.common.utils.IntJsonDeserializer;
+import com.buguagaoshu.homework.common.utils.LongJsonDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
  * create          2021-03-31 12:57
  */
 public class ArticleSearchMapper {
-
     private Long id;
 
     /**
@@ -44,6 +48,7 @@ public class ArticleSearchMapper {
     /**
      * 帖子正文内容
      */
+
     private String content;
 
 
@@ -89,7 +94,6 @@ public class ArticleSearchMapper {
      */
     private Integer status;
 
-
     private Integer type;
 
     /**
@@ -105,6 +109,7 @@ public class ArticleSearchMapper {
     /**
      * 帖子点踩计数
      */
+
     private Long badCount;
 
     /**
@@ -157,6 +162,7 @@ public class ArticleSearchMapper {
      * 转发
      */
     private Long forward;
+
 
     private Long forwardCount;
 

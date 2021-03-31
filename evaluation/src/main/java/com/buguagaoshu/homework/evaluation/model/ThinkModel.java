@@ -1,7 +1,7 @@
 package com.buguagaoshu.homework.evaluation.model;
 
-import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
-import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.buguagaoshu.homework.common.utils.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.utils.LongJsonSerializer;
 import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

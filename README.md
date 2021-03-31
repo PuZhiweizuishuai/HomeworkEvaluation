@@ -63,6 +63,11 @@
 
 修改配置文件，设置好各个中间件地址
 
+
+使用 `homework_evaluation.sql` 创建相应数据库
+
+之后使用 `es_mapping.json` 创建好相应的ES搜索映射
+
 ### 方法一
 
 首先进入 common 中执行

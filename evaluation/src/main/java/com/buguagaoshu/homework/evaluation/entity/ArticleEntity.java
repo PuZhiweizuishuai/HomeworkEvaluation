@@ -6,12 +6,10 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 
 import com.baomidou.mybatisplus.annotation.Version;
-import com.buguagaoshu.homework.common.valid.ListValue;
-import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
-import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.buguagaoshu.homework.common.utils.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.utils.LongJsonSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 

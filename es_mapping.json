@@ -1,0 +1,304 @@
+// 帖子索引
+
+PUT /article
+{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "long"
+      },
+      "title": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart"
+      },
+      "tagId": {
+        "type": "long"
+      },
+      "tag": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "authorId": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "authorName": {
+        "type": "text",
+        "analyzer": "ik_smart",
+        "search_analyzer": "ik_smart"
+      },
+      "commentCount": {
+        "type": "long"
+      },
+      "viewCount": {
+        "type": "long"
+      },
+      "content": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart"
+      },
+      "simpleContent": {
+        "type": "text",
+        "index": false
+      },
+      "atUser": {
+        "type": "text"
+      },
+      "permaLink": {
+        "type": "text",
+        "index": false
+      },
+      "createTime": {
+        "type": "long"
+      },
+      "updateTime": {
+        "type": "long"
+      },
+      "latestCommentTime": {
+        "type": "long"
+      },
+      "latestCommentName": {
+        "type": "text"
+      },
+      "commentable": {
+        "type": "integer"
+      },
+      "status": {
+        "type": "integer"
+      },
+      "type": {
+        "type": "integer"
+      },
+      "courseId": {
+        "type": "long"
+      },
+      "likeCount": {
+        "type": "long"
+      },
+      "badCount": {
+        "type": "long"
+      },
+      "collectCount": {
+        "type": "long"
+      },
+      "ip": {
+        "type": "ip",
+        "index": false
+      },
+      "ua": {
+        "type": "text",
+        "index": false
+      },
+      "articlestick": {
+        "type": "long"
+      },
+      "anonymous": {
+        "type": "integer"
+      },
+      "perfect": {
+        "type": "integer"
+      },
+      "qAOfferPoint": {
+        "type": "integer"
+      },
+      "files": {
+        "type": "text"
+      },
+      "courseRating": {
+        "type": "double"
+      },
+      "forward": {
+        "type": "long"
+      },
+      "forwardCount": {
+        "type": "long"
+      }
+    }
+  }
+}
+
+// 课程索引
+
+PUT /curriculum
+{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "long"
+      },
+      "createTeacher": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
+      "teacherName":{
+        "type": "text", 
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
+      "curriculumName": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
+      "openingTime": {
+        "type": "long"
+      },
+      "closeTime": {
+        "type": "long"
+      },
+      "createTime": {
+        "type": "long"
+      },
+      "simpleInfo": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
+      "curriculumInfo": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
+      "curriculumImageUrl": {
+        "type": "text",
+        "index": false
+      },
+      "studentNumber": {
+        "type": "long",
+        "index": false
+      },
+      "updateTime": {
+        "type": "long"
+      },
+      "fatherCourseTag": {
+        "type": "long"
+      },
+      "courseTag": {
+        "type": "long"
+      },
+      "score": {
+        "type": "double"
+      },
+      "ratingUserNumber": {
+        "type": "integer"
+      }
+    }
+  }
+}
+
+
+// 题目索引
+PUT /questions
+{
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "long"
+      },
+      "question": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart"
+      },
+      "type": {
+        "type": "integer"
+      },
+      "answer": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
+      "otherAnswer": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart"
+      },
+      "options": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart"
+      },
+      "tips": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart"
+      },
+      "shareStatus": {
+        "type": "integer"
+      },
+      "createTeacher": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
+      "createTime": {
+        "type": "long"
+      },
+      "submitCount": {
+        "type": "long"
+      },
+      "rightCount": {
+        "type": "long"
+      },
+      "difficulty": {
+        "type": "integer"
+      },
+      "tag": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart"
+      }
+    }
+  }
+}

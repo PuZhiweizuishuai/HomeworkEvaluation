@@ -1,4 +1,4 @@
-package com.buguagaoshu.homework.common.valid;
+package com.buguagaoshu.homework.common.utils;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;

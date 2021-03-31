@@ -2,8 +2,8 @@ package com.buguagaoshu.homework.evaluation.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.buguagaoshu.homework.common.valid.LongJsonDeserializer;
-import com.buguagaoshu.homework.common.valid.LongJsonSerializer;
+import com.buguagaoshu.homework.common.utils.LongJsonDeserializer;
+import com.buguagaoshu.homework.common.utils.LongJsonSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
