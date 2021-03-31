@@ -123,10 +123,7 @@ public class ArticleEntity {
      */
     private Integer status;
 
-    /**
-     * 0：普通帖子，1：课程讨论贴，2，问答贴， 3，想法
-     */
-    @ListValue(value = {0, 1, 2, 3}, message = "帖子类型取值不对！")
+
     private Integer type;
 
     /**

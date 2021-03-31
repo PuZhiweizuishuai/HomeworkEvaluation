@@ -80,8 +80,8 @@ export default {
     if (!isNaN(s)) {
       if (s === 2) {
         this.sort = s
-        this.checkTab = 1
       }
+      this.checkTab = s
     }
     this.getList()
   },

@@ -7,7 +7,15 @@ alibaba:
     username: root
     password: 123456
 
+
 spring:
   cloud:
     nacos:
       server-addr: 192.168.43.131:8848
+  kafka:
+    bootstrap-servers:
+      - 192.168.43.131:9092
+    consumer:
+      group-id: BinlogCanal
+    listener:
+      missing-topics-fatal: false

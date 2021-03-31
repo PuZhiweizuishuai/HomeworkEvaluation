@@ -1,6 +1,8 @@
 package com.buguagaoshu.homework.search.listener;
 
+import com.buguagaoshu.homework.search.serivce.SynchronizeDataService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -13,12 +15,20 @@ import java.util.Optional;
  */
 @Component
 public class SaveDataToEsListener {
-    @KafkaListener(topics = {"Search"})
+    private final SynchronizeDataService synchronizeDataService;
+
+    @Autowired
+    public SaveDataToEsListener(SynchronizeDataService synchronizeDataService) {
+        this.synchronizeDataService = synchronizeDataService;
+    }
+
+    @KafkaListener(topics = {"searchDataSynchronize"})
     public void receiver(ConsumerRecord<?, ?> record) {
         Optional<?> kafkaMessage = Optional.ofNullable(record.value());
         // 具体操作
         if (kafkaMessage.isPresent()) {
-
+            Object message = kafkaMessage.get();
+            synchronizeDataService.save(message.toString());
         }
     }
 }

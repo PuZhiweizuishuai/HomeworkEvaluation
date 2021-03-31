@@ -2,6 +2,7 @@ package com.buguagaoshu.homework.binlogcanal.client;
 
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.protocol.Message;
+import com.buguagaoshu.homework.binlogcanal.service.BinLogService;
 import org.slf4j.MDC;
 import org.springframework.util.Assert;
 
@@ -10,13 +11,16 @@ import org.springframework.util.Assert;
  * create          2021-02-27 23:41
  */
 public class AbstractCanalClient extends BaseCanalClient {
-    public AbstractCanalClient(String destination){
-        this(destination, null);
+    private final BinLogService binLogService;
+
+    public AbstractCanalClient(String destination, BinLogService binLogService) {
+        this(destination, null, binLogService);
     }
 
-    public AbstractCanalClient(String destination, CanalConnector connector){
+    public AbstractCanalClient(String destination, CanalConnector connector, BinLogService binLogService) {
         this.destination = destination;
         this.connector = connector;
+        this.binLogService = binLogService;
     }
 
     public void start() {
@@ -57,16 +61,15 @@ public class AbstractCanalClient extends BaseCanalClient {
                     long batchId = message.getId();
                     int size = message.getEntries().size();
                     if (batchId == -1 || size == 0) {
-                        // try {
-                        // Thread.sleep(1000);
-                        // } catch (InterruptedException e) {
-                        // }
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ignored) { }
                     } else {
-                        // TODO 业务逻辑，推送到Kafka
-                        printSummary(message, batchId, size);
-                        printEntry(message.getEntries());
-                    }
 
+                        printSummary(message, batchId, size);
+                        // 推送到Kafka, 让ES同步数据库数据
+                        binLogService.sendMessage(message.getEntries());
+                    }
                     if (batchId != -1) {
                         // 提交确认
                         connector.ack(batchId);

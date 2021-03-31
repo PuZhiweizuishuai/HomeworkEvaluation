@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.search.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,12 @@ public class ElasticsearchConfig {
 //                new HttpAsyncResponseConsumerFactory
 //                        .HeapBufferedResponseConsumerFactory(30 * 1024 * 1024 * 1024));
         COMMON_OPTIONS = builder.build();
+    }
+
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 
     @Bean

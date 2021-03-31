@@ -96,10 +96,10 @@ public class BaseCanalClient {
                     }
                     // 打印事务头信息，执行的线程id，事务耗时
                     logger.info(transaction_format,
-                            new Object[]{entry.getHeader().getLogfileName(),
-                                    String.valueOf(entry.getHeader().getLogfileOffset()),
-                                    String.valueOf(entry.getHeader().getExecuteTime()), simpleDateFormat.format(date),
-                                    entry.getHeader().getGtid(), String.valueOf(delayTime)});
+                            entry.getHeader().getLogfileName(),
+                            entry.getHeader().getLogfileOffset(),
+                            entry.getHeader().getExecuteTime(), simpleDateFormat.format(date),
+                            entry.getHeader().getGtid(), delayTime);
                     logger.info(" BEGIN ----> Thread id: {}", begin.getThreadId());
                     printXAInfo(begin.getPropsList());
                 } else if (entry.getEntryType() == CanalEntry.EntryType.TRANSACTIONEND) {
@@ -114,10 +114,10 @@ public class BaseCanalClient {
                     logger.info(" END ----> transaction id: {}", end.getTransactionId());
                     printXAInfo(end.getPropsList());
                     logger.info(transaction_format,
-                            new Object[]{entry.getHeader().getLogfileName(),
-                                    String.valueOf(entry.getHeader().getLogfileOffset()),
-                                    String.valueOf(entry.getHeader().getExecuteTime()), simpleDateFormat.format(date),
-                                    entry.getHeader().getGtid(), String.valueOf(delayTime)});
+                            entry.getHeader().getLogfileName(),
+                            entry.getHeader().getLogfileOffset(),
+                            entry.getHeader().getExecuteTime(), simpleDateFormat.format(date),
+                            entry.getHeader().getGtid(), delayTime);
                 }
 
                 continue;
@@ -134,16 +134,17 @@ public class BaseCanalClient {
                 CanalEntry.EventType eventType = rowChage.getEventType();
 
                 logger.info(row_format,
-                        new Object[]{entry.getHeader().getLogfileName(),
-                                String.valueOf(entry.getHeader().getLogfileOffset()), entry.getHeader().getSchemaName(),
-                                entry.getHeader().getTableName(), eventType,
-                                String.valueOf(entry.getHeader().getExecuteTime()), simpleDateFormat.format(date),
-                                entry.getHeader().getGtid(), String.valueOf(delayTime)});
+                        entry.getHeader().getLogfileName(),
+                        entry.getHeader().getLogfileOffset(), entry.getHeader().getSchemaName(),
+                        entry.getHeader().getTableName(), eventType,
+                        entry.getHeader().getExecuteTime(), simpleDateFormat.format(date),
+                        entry.getHeader().getGtid(), delayTime);
 
                 if (eventType == CanalEntry.EventType.QUERY || rowChage.getIsDdl()) {
                     logger.info(" sql ----> " + rowChage.getSql() + SEP);
                     continue;
                 }
+                // System.out.println("getSchemaName: "+entry.getHeader().getSchemaName() + "   getTableName:" + entry.getHeader().getTableName());
 
                 printXAInfo(rowChage.getPropsList());
                 for (CanalEntry.RowData rowData : rowChage.getRowDatasList()) {

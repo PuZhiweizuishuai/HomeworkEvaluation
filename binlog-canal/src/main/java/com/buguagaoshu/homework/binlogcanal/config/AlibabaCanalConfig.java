@@ -3,6 +3,7 @@ package com.buguagaoshu.homework.binlogcanal.config;
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalConnectors;
 import com.buguagaoshu.homework.binlogcanal.client.ClusterCanalClient;
+import com.buguagaoshu.homework.binlogcanal.service.BinLogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +25,12 @@ import java.util.List;
 public class AlibabaCanalConfig {
     private final AlibabaCanalProperties properties;
 
+    private final BinLogService binLogService;
+
     @Autowired
-    public AlibabaCanalConfig(AlibabaCanalProperties properties) {
+    public AlibabaCanalConfig(AlibabaCanalProperties properties, BinLogService binLogService) {
         this.properties = properties;
+        this.binLogService = binLogService;
     }
 
     /**
@@ -50,7 +54,7 @@ public class AlibabaCanalConfig {
                         properties.getUsername(),
                         properties.getPassword()
                 );
-                final ClusterCanalClient client = new ClusterCanalClient(properties.getDestination(), connector);
+                final ClusterCanalClient client = new ClusterCanalClient(properties.getDestination(), connector, binLogService);
                 client.start();
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                     try {
