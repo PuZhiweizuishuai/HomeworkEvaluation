@@ -54,11 +54,13 @@
 
       </v-toolbar-title>
       <v-text-field
+        v-model="searchText"
         flat
         solo-inverted
         hide-details
         prepend-inner-icon="mdi-magnify"
         label="搜索"
+        @keydown="search"
       />
       <v-spacer />
 
@@ -77,7 +79,7 @@
     </v-app-bar>
     <v-main>
 
-      <router-view :course="courseInfo" :role="userRole" />
+      <router-view ref="mainRoutrView" :course="courseInfo" :role="userRole" />
 
     </v-main>
     <BackToTop />
@@ -103,6 +105,7 @@ export default {
   data: () => ({
     mini: false,
     drawer: true,
+    searchText: '',
     id: 0,
     items: [
       { icon: 'mdi-alert-circle-outline', text: '公告', link: `/course/learn/`, type: '', teacher: false, show: true },
@@ -122,6 +125,20 @@ export default {
     this.getCourseInfo()
   },
   methods: {
+    search(e) {
+      if (e.key === 'Enter') {
+        if (this.searchText === '') {
+          return
+        }
+        if (this.$route.path === '/search') {
+          this.$refs.mainRoutrView.setKey(this.searchText)
+          this.$refs.mainRoutrView.getSearchData()
+        } else {
+          this.$router.push({ path: '/search', query: { key: this.searchText }})
+        }
+        this.searchText = ''
+      }
+    },
     goToLoginPage() {
       this.$router.push('/login')
     },

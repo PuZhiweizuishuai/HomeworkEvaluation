@@ -1,10 +1,7 @@
 package com.buguagaoshu.homework.search.serivce;
 
 import com.buguagaoshu.homework.common.enums.TableEventType;
-import com.buguagaoshu.homework.common.search.ArticleSearchMapper;
-import com.buguagaoshu.homework.common.search.CurriculumSearchMapper;
-import com.buguagaoshu.homework.common.search.QuestionsSearchMapper;
-import com.buguagaoshu.homework.common.search.SearchTableNameConstant;
+import com.buguagaoshu.homework.common.search.*;
 import com.buguagaoshu.homework.common.utils.DoubleDeserializer;
 import com.buguagaoshu.homework.common.utils.IntJsonDeserializer;
 import com.buguagaoshu.homework.common.utils.LongJsonDeserializer;
@@ -78,7 +75,7 @@ public class SynchronizeDataService {
             case SearchTableNameConstant.ARTICLE:
                 ArticleSearchMapper article = jsonToObjectEntity(json, ArticleSearchMapper.class);
                 if (article == null) {
-                    log.error("位于SynchronizeDataService类下77行的数据序列化失败！");
+                    log.error("位于SynchronizeDataService类下77行的ArticleSearchMapper数据序列化失败！");
                     return "";
                 }
                 message = objToJson(article);
@@ -86,7 +83,7 @@ public class SynchronizeDataService {
             case SearchTableNameConstant.QUESTIONS:
                 QuestionsSearchMapper question = jsonToObjectEntity(json, QuestionsSearchMapper.class);
                 if (question == null) {
-                    log.error("位于SynchronizeDataService类下86行的数据序列化失败！");
+                    log.error("位于SynchronizeDataService类下86行的QuestionsSearchMapper数据序列化失败！");
                     return "";
                 }
                 message = objToJson(question);
@@ -94,10 +91,18 @@ public class SynchronizeDataService {
             case SearchTableNameConstant.CURRICULUM:
                 CurriculumSearchMapper curr = jsonToObjectEntity(json, CurriculumSearchMapper.class);
                 if (curr == null) {
-                    log.error("位于SynchronizeDataService类下94行的数据序列化失败！");
+                    log.error("位于SynchronizeDataService类下94行的CurriculumSearchMapper数据序列化失败！");
                     return "";
                 }
                 message = objToJson(curr);
+                break;
+            case SearchTableNameConstant.USER:
+                UserSearchMapper user = jsonToObjectEntity(json, UserSearchMapper.class);
+                if (user == null) {
+                    log.error("位于SynchronizeDataService类下102行的UserSearchMapper数据序列化失败！");
+                    return "";
+                }
+                message = objToJson(user);
                 break;
             default:
                 break;
@@ -112,7 +117,12 @@ public class SynchronizeDataService {
             return;
         }
         IndexRequest indexRequest = new IndexRequest(tableName);
-        indexRequest.id(map.get("id"));
+        if (tableName.equals(SearchTableNameConstant.USER)) {
+            indexRequest.id(map.get("userId"));
+        } else {
+            indexRequest.id(map.get("id"));
+        }
+
         indexRequest.source(message, XContentType.JSON);
         try {
             IndexResponse index = restHighLevelClient.index(indexRequest, ElasticsearchConfig.COMMON_OPTIONS);

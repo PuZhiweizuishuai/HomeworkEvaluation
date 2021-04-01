@@ -3,6 +3,7 @@ function renderTime(date) {
   if (date === '' || date == null) {
     return ''
   }
+  date = parseInt(date)
   const da = new Date(date)
   return da.getFullYear() + '-' + (da.getMonth() + 1) + '-' + da.getDate() + ' ' + da.getHours() + ':' + da.getMinutes() + ':' + da.getSeconds()
 }
@@ -11,6 +12,7 @@ function formateTimeToChinese(date) {
   if (date === '' || date == null) {
     return ''
   }
+  date = parseInt(date)
   const da = new Date(date)
   return da.getFullYear() + '年' + (da.getMonth() + 1) + '月' + da.getDate() + '日 ' + da.getHours() + '时' + da.getMinutes() + '分'
 }
@@ -19,6 +21,7 @@ function formateNoHours(date) {
   if (date === '' || date == null) {
     return ''
   }
+  date = parseInt(date)
   const da = new Date(date)
   return da.getFullYear() + '-' + (da.getMonth() + 1) + '-' + da.getDate()
 }
@@ -27,6 +30,7 @@ function formateHours(date) {
   if (date === '' || date == null) {
     return ''
   }
+  date = parseInt(date)
   const da = new Date(date)
   return da.getHours() + ':' + da.getMinutes()
 }
@@ -40,6 +44,7 @@ function formateTime(strat, end) {
 }
 
 function timeToNowStrning(date) {
+  date = parseInt(date)
   const now = new Date().getTime()
   let t = now - date
   t = Math.trunc(t / 1000)

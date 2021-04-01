@@ -302,3 +302,116 @@ PUT /questions
     }
   }
 }
+
+
+// 用户索引
+PUT /user
+{
+  "mappings": {
+    "properties": {
+      "userId": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
+      "username": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above" : 256
+          }
+        }
+      },
+      "sex": {
+        "type": "integer"
+      },
+      "birthday": {
+        "type": "text",
+        "index": false
+      },
+      "userAvatarUrl": {
+        "type": "text",
+        "index": false
+      },
+      "topImgUrl": {
+        "type": "text",
+        "index": false
+      },
+      "userIntro": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart"
+      },
+      "createTime": {
+        "type": "long"
+      },
+      "followerCount": {
+        "type": "long"
+      },
+      "fansCount": {
+        "type": "long"
+      },
+      "school": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "major": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "grade": {
+        "type": "text",
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      },
+      "curriculumCount": {
+        "type": "integer",
+        "index": false
+      },
+      "status": {
+        "type": "integer",
+        "index": false
+      },
+      "startLockTime": {
+        "type": "long",
+        "index": false
+      },
+      "lockTime": {
+        "type": "long",
+        "index": false
+      },
+      "title": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}

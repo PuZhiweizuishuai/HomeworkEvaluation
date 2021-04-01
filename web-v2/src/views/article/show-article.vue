@@ -192,6 +192,13 @@
             <h3>相关讨论：</h3>
           </v-col>
         </v-row>
+        <v-row v-for="item in relevantArticle" :key="item.id">
+          <v-col v-if="item.id != article.id">
+            <router-link :to="`/bbs/article/${item.id}`">
+              <h5>{{ item.title }}</h5>
+            </router-link>
+          </v-col>
+        </v-row>
         <div id="catalog-anchor" />
       </v-col>
     </v-row>
@@ -310,7 +317,9 @@ export default {
       deleteDialog: false,
       addPerfect: '加精',
       page: 1,
-      fileList: null
+      fileList: null,
+      // 相关帖子
+      relevantArticle: []
     }
   },
   created() {
@@ -333,6 +342,7 @@ export default {
         if (json.status === 200) {
           this.article = json.data
           document.title = json.data.title
+          this.getRelevantList(json.data.title)
           if (this.article.perfect === 1) {
             this.addPerfect = '取消加精'
           } else {
@@ -346,6 +356,11 @@ export default {
         } else {
           this.$router.push(`/bbs`)
         }
+      })
+    },
+    getRelevantList(value) {
+      this.httpGet(`/search/public?key=${value}&index=article&size=10`, (json) => {
+        this.relevantArticle = json.data.list || []
       })
     },
     back() {
@@ -432,7 +447,7 @@ export default {
       // this.fab = top > 200
       // style="position: fixed; top: 100px"
       const d = document.querySelector('#catalog-view')
-      if (top > anchorTop + 64 && this.windowSize.x > 900) {
+      if (top > anchorTop + 400 && this.windowSize.x > 900) {
         // console.log(e.style)
 
         d.style.position = 'fixed'

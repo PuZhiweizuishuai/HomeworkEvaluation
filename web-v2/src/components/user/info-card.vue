@@ -3,7 +3,7 @@
     <!-- 个人简介卡片 -->
     <v-img
       :aspect-ratio="5.98"
-      :width="500"
+
       :src="user.topImgUrl"
     />
     <v-card-title>

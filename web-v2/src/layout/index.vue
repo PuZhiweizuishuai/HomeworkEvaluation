@@ -43,11 +43,13 @@
 
       </v-toolbar-title>
       <v-text-field
+        v-model="searchText"
         flat
         solo-inverted
         hide-details
         prepend-inner-icon="mdi-magnify"
         label="搜索"
+        @keydown="search"
       />
       <v-spacer />
 
@@ -64,7 +66,7 @@
       </v-btn>
     </v-app-bar>
     <v-main>
-      <router-view :key="$route.path" />
+      <router-view :key="$route.path" ref="mainRoutrView" />
 
     </v-main>
     <BackToTop />
@@ -92,6 +94,7 @@ export default {
   data: () => ({
     mini: false,
     drawer: false,
+    searchText: '',
     items: [
       { icon: 'mdi-book-open-outline', text: '课程', link: '/' },
       { icon: 'mdi-facebook-messenger', text: '社区', link: '/bbs' },
@@ -113,6 +116,20 @@ export default {
     },
     goToLoginPage() {
       this.$router.push('/login')
+    },
+    search(e) {
+      if (e.key === 'Enter') {
+        if (this.searchText === '') {
+          return
+        }
+        if (this.$route.path === '/search') {
+          this.$refs.mainRoutrView.setKey(this.searchText)
+          this.$refs.mainRoutrView.getSearchData()
+        } else {
+          this.$router.push({ path: '/search', query: { key: this.searchText }})
+        }
+        this.searchText = ''
+      }
     }
   }
 }

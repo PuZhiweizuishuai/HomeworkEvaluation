@@ -46,6 +46,7 @@
               <!-- <router-link :to="`/user/${item.authorId}`">{{ item.authorName }} </router-link> -->
               <!-- 悬停显示个人信息卡片 -->
               <v-menu
+                v-if="showcard"
                 open-on-hover
                 top
                 offset-y
@@ -64,12 +65,22 @@
                 </template>
                 <UserInfoCard :user="item.user" />
               </v-menu>
-
+              <v-btn
+                v-if="!showcard"
+                text
+                color="primary"
+                depressed
+                link
+                :to="`/user/${item.authorId}`"
+              >
+                {{ item.authorName }}
+              </v-btn>
               <span style="color:black">更新于：{{ TimeUtil.timeToNowStrning(item.updateTime) }}
                 |
                 {{ item.viewCount }} 浏览， {{ item.commentCount }} 回复，  {{ item.likeCount }} 喜欢</span>
             </v-col>
           </v-row>
+
         </v-col>
         <!-- 右边 -->
         <v-col
@@ -113,6 +124,10 @@ export default {
     lastpage: {
       type: Number,
       default: 1
+    },
+    showcard: {
+      type: Boolean,
+      default: true
     }
   },
   data() {

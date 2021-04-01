@@ -14,7 +14,7 @@ public class PageUtils implements Serializable {
     /**
      * 总记录数
      */
-    private int totalCount;
+    private long totalCount;
     /**
      * 每页记录数
      */
@@ -33,15 +33,28 @@ public class PageUtils implements Serializable {
     private List<?> list;
 
     /**
+     * 查询时间
+     * */
+    private long took;
+
+    /**
      * 分页
      * @param list        列表数据
      * @param totalCount  总记录数
      * @param pageSize    每页记录数
      * @param currPage    当前页数
      */
-    public PageUtils(List<?> list, int totalCount, int pageSize, int currPage) {
+    public PageUtils(List<?> list, long totalCount, int pageSize, int currPage) {
         this.list = list;
         this.totalCount = totalCount;
+        this.pageSize = pageSize;
+        this.currPage = currPage;
+        this.totalPage = (int)Math.ceil((double)totalCount/pageSize);
+    }
+
+    public PageUtils(List<?> list, int totalCount, int pageSize, int currPage) {
+        this.list = list;
+        this.totalCount = Long.parseLong(String.valueOf(totalCount));
         this.pageSize = pageSize;
         this.currPage = currPage;
         this.totalPage = (int)Math.ceil((double)totalCount/pageSize);
@@ -58,12 +71,16 @@ public class PageUtils implements Serializable {
         this.totalPage = (int)page.getPages();
     }
 
-    public int getTotalCount() {
+    public long getTotalCount() {
         return totalCount;
     }
 
-    public void setTotalCount(int totalCount) {
+    public void setTotalCount(long totalCount) {
         this.totalCount = totalCount;
+    }
+
+    public void setTotalCount(int totalCount) {
+        this.totalCount = Long.parseLong(String.valueOf(totalCount));
     }
 
     public int getPageSize() {
@@ -96,5 +113,13 @@ public class PageUtils implements Serializable {
 
     public void setList(List<?> list) {
         this.list = list;
+    }
+
+    public long getTook() {
+        return took;
+    }
+
+    public void setTook(long took) {
+        this.took = took;
     }
 }

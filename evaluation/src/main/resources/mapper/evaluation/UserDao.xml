@@ -12,11 +12,11 @@
         <result property="phoneNumber" column="phone_number"/>
         <result property="sex" column="sex"/>
         <result property="birthday" column="birthday"/>
-        <result property="userAvatarUrl" column="user_avatar_URL"/>
+        <result property="userAvatarUrl" column="user_avatar_url"/>
         <result property="topImgUrl" column="top_img_url" />
         <result property="userQq" column="user_qq"/>
         <result property="userWechat" column="user_wechat"/>
-        <result property="userIntro" column="user_Intro"/>
+        <result property="userIntro" column="user_intro"/>
         <result property="createTime" column="create_time"/>
         <result property="latestLoginTime" column="latest_login_time"/>
         <result property="latestLoginIp" column="latest_login_IP"/>

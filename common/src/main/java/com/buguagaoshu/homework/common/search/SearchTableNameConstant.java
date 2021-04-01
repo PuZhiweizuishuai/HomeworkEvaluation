@@ -15,13 +15,19 @@ public class SearchTableNameConstant {
 
     public static final String CURRICULUM = "curriculum";
 
+    public static final String USER = "user";
+
     private static final String[] tableName = {
             "article",
-            "curriculum",
             "questions",
+            "curriculum",
             "user"
     };
 
+
+    public static boolean notLoginSearch(String index) {
+        return CURRICULUM.equals(index) || ARTICLE.equals(index) || USER.equals(index);
+    }
 
 
     public static boolean hasTable(String name) {

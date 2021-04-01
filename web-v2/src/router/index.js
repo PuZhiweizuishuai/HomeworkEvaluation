@@ -21,6 +21,14 @@ const routes = [
         component: Home,
         meta: { title: store.state.webInfo.name }
       },
+      {
+        path: '/search',
+        name: 'Search',
+        component: () => import('@/views/search/index.vue'),
+        meta: {
+          title: '搜索'
+        }
+      },
       // 社区
       {
         path: '/bbs',

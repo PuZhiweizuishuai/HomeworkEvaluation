@@ -1,6 +1,7 @@
 package com.buguagaoshu.homework.search;
 
 import com.buguagaoshu.homework.search.config.ElasticsearchConfig;
+import com.buguagaoshu.homework.search.serivce.SearchService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.elasticsearch.action.index.IndexRequest;
@@ -13,13 +14,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 @SpringBootTest
 class SearchApplicationTests {
 
     @Autowired
-    RestHighLevelClient restHighLevelClient;
+    private SearchService searchService;
+
+    @Test
+    void searchTest() {
+        Map<String, Object> map = new HashMap<>(2);
+        map.put("index", "article");
+        map.put("key", "测试");
+        System.out.println(searchService.notLoginSearchAll(map, null).getList());
+    }
+
 
     @Test
     void contextLoads() throws IOException {
