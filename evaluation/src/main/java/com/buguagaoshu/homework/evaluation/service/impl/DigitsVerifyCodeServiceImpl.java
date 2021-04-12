@@ -1,6 +1,7 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.buguagaoshu.homework.common.utils.VerifyCodeUtil;
+import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import com.buguagaoshu.homework.evaluation.exception.VerifyFailedException;
 import com.buguagaoshu.homework.evaluation.repository.VerifyCodeRepository;
 import com.buguagaoshu.homework.evaluation.service.GenerateImageService;
@@ -39,7 +40,8 @@ public class DigitsVerifyCodeServiceImpl implements VerifyCodeService {
         this.verifyCodeUtil = verifyCodeUtil;
     }
 
-    private static String randomDigitString(int length) {
+    @Override
+    public String randomDigitString(int length) {
         StringBuilder stringBuilder = new StringBuilder();
         SecureRandom random = new SecureRandom();
         for (int i = 0; i < length; i++) {
@@ -59,12 +61,12 @@ public class DigitsVerifyCodeServiceImpl implements VerifyCodeService {
     }
 
     @Override
-    public void send(String key) {
+    public void send(String key, UserEntity userEntity) {
         String verifyCode = randomDigitString(verifyCodeUtil.getLen());
         String verifyCodeWithTimestamp = appendTimestamp(verifyCode, "S");
 
         verifyCodeRepository.save(key, verifyCodeWithTimestamp, SEND_VERIFY_CODE_EXPIRE_TIMEOUT);
-        sendMessageService.send(key, verifyCode);
+        sendMessageService.send(key, verifyCode, userEntity);
     }
 
     @Override

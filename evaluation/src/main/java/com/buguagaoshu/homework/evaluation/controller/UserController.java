@@ -164,6 +164,13 @@ public class UserController {
     }
 
 
+    @PostMapping("/user/update/forget")
+    public ResponseDetails forgePassword(@Valid @RequestBody ForgetPasswordVo forgetPasswordVo,
+                                         HttpServletRequest request) {
+        return ResponseDetails.ok(userService.forgetPassword(forgetPasswordVo));
+    }
+
+
     /**
      *
      * 更新首页大图

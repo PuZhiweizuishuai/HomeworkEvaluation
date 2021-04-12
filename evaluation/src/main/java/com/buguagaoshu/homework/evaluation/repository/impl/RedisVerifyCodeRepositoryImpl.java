@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.evaluation.repository.impl;
 
+import com.buguagaoshu.homework.common.config.CustomConstant;
 import com.buguagaoshu.homework.evaluation.repository.VerifyCodeRepository;
 import com.buguagaoshu.homework.evaluation.service.impl.DigitsVerifyCodeServiceImpl;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,6 +19,8 @@ public class RedisVerifyCodeRepositoryImpl implements VerifyCodeRepository {
 
     private static final int DEFAULT_VERIFY_CODE_LENGTH = 4;
 
+
+
     private final RedisTemplate<String, String> redisTemplate;
 
     public RedisVerifyCodeRepositoryImpl(RedisTemplate<String, String> redisTemplate) {
@@ -31,7 +34,7 @@ public class RedisVerifyCodeRepositoryImpl implements VerifyCodeRepository {
 
     @Override
     public void save(String key, String code, Long time) {
-        redisTemplate.opsForValue().set(key, code, time, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(CustomConstant.VERIFY_HASH_KEY + key, code, time, TimeUnit.MINUTES);
     }
 
     @Override

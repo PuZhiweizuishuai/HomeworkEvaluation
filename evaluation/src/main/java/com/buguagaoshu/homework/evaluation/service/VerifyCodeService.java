@@ -1,5 +1,7 @@
 package com.buguagaoshu.homework.evaluation.service;
 
+import com.buguagaoshu.homework.evaluation.entity.UserEntity;
+
 import java.awt.*;
 
 /**
@@ -9,7 +11,9 @@ import java.awt.*;
  */
 public interface VerifyCodeService {
 
-    void send(String key);
+    String randomDigitString(int length);
+
+    void send(String key, UserEntity userEntity);
 
     void verify(String key, String code);
 

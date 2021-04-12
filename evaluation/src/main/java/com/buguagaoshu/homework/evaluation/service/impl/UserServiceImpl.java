@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
+import com.buguagaoshu.homework.common.config.CustomConstant;
 import com.buguagaoshu.homework.common.domain.CustomPage;
 import com.buguagaoshu.homework.common.enums.PasswordStatusEnum;
 import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
@@ -537,6 +538,25 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         userRoleEntity.setOperator("system_create");
         userRoleService.save(userRoleEntity);
         return ReturnCodeEnum.SUCCESS;
+    }
+
+    @Override
+    public ReturnCodeEnum forgetPassword(ForgetPasswordVo forgetPasswordVo) {
+        verifyCodeService.verify(CustomConstant.VERIFY_HASH_KEY + forgetPasswordVo.getEmail(),
+                forgetPasswordVo.getCode());
+        UserEntity userEntity = this.findByEmail(forgetPasswordVo.getEmail());
+        if (userEntity == null) {
+            throw new UserDataFormatException("邮箱不存在！");
+        }
+        if (forgetPasswordVo.getPassword().equals(forgetPasswordVo.getNewPassword())) {
+            UserEntity user = new UserEntity();
+            user.setUserId(userEntity.getUserId());
+            user.setPassword(bCryptPasswordEncoder.encode(forgetPasswordVo.getPassword()));
+            this.updateById(user);
+            return ReturnCodeEnum.SUCCESS;
+        } else {
+            throw new UserDataFormatException("两次密码不一致！");
+        }
     }
 
     /**

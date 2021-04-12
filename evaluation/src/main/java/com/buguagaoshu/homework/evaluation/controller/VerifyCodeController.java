@@ -1,16 +1,18 @@
 package com.buguagaoshu.homework.evaluation.controller;
 
+import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.evaluation.config.WebConstant;
+import com.buguagaoshu.homework.evaluation.entity.UserEntity;
+import com.buguagaoshu.homework.evaluation.service.UserService;
 import com.buguagaoshu.homework.evaluation.service.VerifyCodeService;
+import com.buguagaoshu.homework.evaluation.vo.ForgetPasswordVo;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.awt.*;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
@@ -25,11 +27,14 @@ import java.io.IOException;
 public class VerifyCodeController {
     private final VerifyCodeService verifyCodeService;
 
+    private final UserService userService;
+
     private static final String IMAGE_FORMAT = "png";
 
 
-    public VerifyCodeController(VerifyCodeService verifyCodeService) {
+    public VerifyCodeController(VerifyCodeService verifyCodeService, UserService userService) {
         this.verifyCodeService = verifyCodeService;
+        this.userService = userService;
     }
 
     private static InputStreamResource imageToInputStreamResource(Image image, String format) throws IOException {
@@ -38,6 +43,21 @@ public class VerifyCodeController {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         return new InputStreamResource(byteArrayInputStream);
     }
+
+    @PostMapping("/verify/email")
+    public ResponseDetails sendEmail(@RequestBody ForgetPasswordVo forgetPasswordVo,
+                                     HttpSession session) {
+        // 检查验证码
+        verifyCodeService.verify(session.getId(), forgetPasswordVo.getVerifyCode());
+        // 发送验证码
+        UserEntity userEntity = userService.findByEmail(forgetPasswordVo.getEmail());
+        if (userEntity == null) {
+            return ResponseDetails.ok(404, "邮箱错误或者该邮箱暂未绑定账号，请联系管理员。");
+        }
+        verifyCodeService.send(forgetPasswordVo.getEmail(), userEntity);
+        return ResponseDetails.ok();
+    }
+
 
     @GetMapping("/verifyImage")
     public HttpEntity image(HttpSession session) throws IOException {

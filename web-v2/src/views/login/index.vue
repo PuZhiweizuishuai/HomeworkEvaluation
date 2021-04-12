@@ -36,7 +36,7 @@
             <RegisterFrom v-show="showLogin == false" @register="register" />
             <v-row justify="center">
               <v-col cols="5">
-                <v-btn text color="primary">忘记密码</v-btn>
+                <v-btn text color="primary" @click="showForgetPas = true">忘记密码</v-btn>
 
               </v-col>
               <v-col cols="5" style="text-align:right">
@@ -48,6 +48,10 @@
         </v-col>
 
       </v-row>
+      <v-dialog v-model="showForgetPas" max-width="600">
+        <ForgetPassword @success="forgetSuccess()" />
+      </v-dialog>
+
       <v-snackbar
         v-model="showMessage"
         :top="true"
@@ -73,12 +77,14 @@
 <script>
 import LoginFrom from '@/components/form/login-form.vue'
 import RegisterFrom from '@/components/form/register-form.vue'
+import ForgetPassword from '@/components/user/forget-password.vue'
 
 export default {
   name: 'Login',
   components: {
     LoginFrom,
-    RegisterFrom
+    RegisterFrom,
+    ForgetPassword
   },
   data() {
     return {
@@ -88,13 +94,19 @@ export default {
       moveMessage: '没有账号，创建账号',
       showLogin: true,
       message: '',
-      showMessage: false
+      showMessage: false,
+      showForgetPas: false
     }
   },
   created() {
 
   },
   methods: {
+    forgetSuccess() {
+      this.showForgetPas = false
+      this.message = '密码重置成功！请尝试登录！'
+      this.showMessage = true
+    },
     userLogin(value) {
       this.httpPost(`/login`, value, this.loginCallBack)
     },

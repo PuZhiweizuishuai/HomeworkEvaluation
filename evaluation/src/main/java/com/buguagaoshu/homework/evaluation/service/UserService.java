@@ -137,5 +137,10 @@ public interface UserService extends IService<UserEntity> {
      * 注册用户
      */
     ReturnCodeEnum register(RegisterUserVo registerUserVo, HttpServletRequest request);
+
+    /**
+     * 忘记密码，重置密码
+     * */
+    ReturnCodeEnum forgetPassword(ForgetPasswordVo forgetPasswordVo);
 }
 
