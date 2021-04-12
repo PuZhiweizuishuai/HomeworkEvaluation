@@ -63,6 +63,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
 
     private final CurriculumService curriculumService;
 
+    private ViewCountService viewCountService;
+
     @Autowired
     public ArticleServiceImpl(StudentsCurriculumService studentsCurriculumService, ArticleTagCache articleTagCache, ObjectMapper objectMapper, UserService userService, VoteService voteService, VerifyCodeService verifyCodeService, AtUserService atUserService, CurriculumService curriculumService) {
         this.studentsCurriculumService = studentsCurriculumService;
@@ -82,6 +84,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     @Autowired
     public void setCollectsService(CollectsService collectsService) {
         this.collectsService = collectsService;
+    }
+
+    @Autowired
+    public void setViewCountService(ViewCountService viewCountService) {
+        this.viewCountService = viewCountService;
     }
 
     @Override
@@ -290,9 +297,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                         articleModel.setVotes(voteService.getVoteModeList(articleEntity.getId()));
                         articleModel.setVoteLog(voteService.voteLogEntity(articleEntity.getId(), user.getId()));
                     }
-                    articleEntity.setViewCount(articleEntity.getViewCount() + 1);
-                    // TODO Redis 缓存
-                    this.baseMapper.countAdd("view_count", articleEntity.getId(), 1);
+                    viewCountService.viewCountAdd(request, articleEntity.getId());
+                    articleModel.setViewCount(articleModel.getViewCount() + viewCountService.getViewCount(articleEntity.getId()));
                     return articleModel;
                 }
             } catch (Exception e) {
@@ -464,7 +470,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 new Query<ArticleEntity>().getPage(params),
                 wrapper
         );
-        return getArticleMode(page, 1);
+        return getArticleMode(page, 0);
     }
 
     public PageUtils getArticleMode(IPage<ArticleEntity> page, int type) {
@@ -474,6 +480,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
         Set<String> userIds = page.getRecords().stream().map(ArticleEntity::getAuthorId).collect(Collectors.toSet());
         Map<String, UserEntity> maps = userService.listByIds(userIds).stream().collect(Collectors.toMap(UserEntity::getUserId, u -> u));
         List<ArticleModel> articleModels = new ArrayList<>();
+        // 查询浏览量
+        Map<Long, Long> viewCountMap = viewCountService.multiGetViewCount(page.getRecords());
         if (type == 0) {
             page.getRecords().forEach((a) -> {
                 ArticleModel articleModel = new ArticleModel();
@@ -482,6 +490,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 // 数据脱敏
                 UserEntity userEntity = maps.get(a.getAuthorId());
                 userEntity.clean();
+                articleModel.setViewCount(articleModel.getViewCount() + viewCountMap.get(articleModel.getId()));
                 articleModel.setUser(userEntity);
                 articleModels.add(articleModel);
             });
@@ -492,6 +501,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 // 数据脱敏
                 UserEntity userEntity = maps.get(a.getAuthorId());
                 userEntity.clean();
+                articleModel.setViewCount(articleModel.getViewCount() + viewCountMap.get(articleModel.getId()));
                 articleModel.setUser(userEntity);
                 articleModels.add(articleModel);
             });
@@ -545,8 +555,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
             }
         }
         articleModel.setTag(stringToObj(articleEntity.getTag()));
-
-        // TODO 阅读量加 1
+        // 增加阅读量
+        viewCountService.viewCountAdd(request, articleEntity.getId());
+        articleModel.setViewCount(articleModel.getViewCount() + viewCountService.getViewCount(articleEntity.getId()));
         return articleModel;
     }
 
@@ -585,6 +596,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
                 new Query<ArticleEntity>().getPage(params),
                 wrapper
         );
+        viewCountService.viewCountAdd(request, page.getRecords());
         return getArticleMode(page, 1);
     }
 

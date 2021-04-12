@@ -36,9 +36,9 @@ class EvaluationApplicationTests {
 
     @Test
     void contextLoads() throws JsonProcessingException {
-        ArticleEntity byId = articleService.getById(1372570760855330817L);
-        byId.setUpdateTime(System.currentTimeMillis());
-        articleService.updateById(byId);
+       // ArticleEntity byId = articleService.getById(1372570760855330817L);
+        //byId.setUpdateTime(System.currentTimeMillis());
+        //articleService.updateById(byId);
 //        VoteVo vote = new VoteVo();
 //        vote.setCreateTime(System.currentTimeMillis());
 //        vote.setId(1L);

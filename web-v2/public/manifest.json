@@ -1,0 +1,14 @@
+{
+    "name": "作业互评-不挂高数",
+    "short_name": "作业互评",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#fff",
+    "description": "这是一个基于Spring Boot搭建的仿中国大学MOOC的网课系统，拥有完整的课程与论坛系统。目前已经完成一部分功能，正在开发中",
+    "icons": [ {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }],
+    "lang": "zh-CN"
+  }

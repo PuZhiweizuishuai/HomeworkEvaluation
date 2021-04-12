@@ -94,6 +94,7 @@ public class CoursewareServiceImpl extends ServiceImpl<CoursewareDao, Courseware
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         StudentsCurriculumEntity student =
                 studentsCurriculumService.selectStudentByCurriculumId(user.getId(), courseId);
+
         if (student == null) {
             return null;
         }

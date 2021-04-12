@@ -100,7 +100,7 @@ public class FileController {
          * TODO 检查 referer
          * */
         String referer = request.getHeader("referer");
-
+        // System.out.println(referer);
         String path = "uploads/file/" + userId + "/" + date + "/" + filename;
         String url = repository.getFileUrl(path);
         if (url.equals("")) {
