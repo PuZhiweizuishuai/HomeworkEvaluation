@@ -42,6 +42,8 @@ public class RegisterUserVo {
     @ListValue(value = {0, 1}, message = "性别填写错误！")
     private Integer sex;
 
+    private String code;
+
 
     private String birthday;
 }

@@ -29,17 +29,22 @@ public class KafkaSendMessageServiceImpl implements SendMessageService {
 
 
     @Override
-    public void send(String key, String message, UserEntity userEntity) {
+    public void send(String key, String message, UserEntity userEntity, String email) {
         log.info("Send to key:[{}] with message:[{}]", key, message);
         MailDetails mailDetails = new MailDetails();
         mailDetails.setCode(message);
         mailDetails.setTitle("作业互评验证码");
-        mailDetails.setTo(userEntity.getEmail());
-        mailDetails.setName(userEntity.getUsername());
+        if (userEntity != null) {
+            mailDetails.setTo(userEntity.getEmail());
+            mailDetails.setName(userEntity.getUsername());
+        } else {
+            mailDetails.setTo(email);
+            mailDetails.setName(email);
+        }
         mailDetails.setText("");
         mailDetails.setType(CustomConstant.VERIFY_CODE_MAIL);
         try {
-            kafkaTemplate.send("mail", objectMapper.writeValueAsString(mailDetails));
+           // kafkaTemplate.send("mail", objectMapper.writeValueAsString(mailDetails));
         } catch (Exception e) {
             log.error("Kafka发送消息失败： {}", e.getMessage());
             throw new UserDataFormatException("邮件发送失败，请联系管理员或者稍后再试！");

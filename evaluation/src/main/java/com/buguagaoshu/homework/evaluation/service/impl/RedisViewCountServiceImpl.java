@@ -122,7 +122,7 @@ public class RedisViewCountServiceImpl implements ViewCountService {
             public Set<Object> doInRedis(RedisConnection connection) throws DataAccessException {
                 Map<Long, Long> count = new HashMap<>(100);
                 // 一次返回1000个
-                Cursor<byte[]> cursor = connection.scan(new ScanOptions.ScanOptionsBuilder().match(CustomConstant.VIEW_COUNT_KEY + "*").count(5).build());
+                Cursor<byte[]> cursor = connection.scan(new ScanOptions.ScanOptionsBuilder().match(CustomConstant.VIEW_COUNT_KEY + "*").count(1000).build());
                 if (!cursor.hasNext()) {
                     log.info("此次共完成 {} 个数据同步！！！浏览量同步结束！！！", dataNumber.get());
                     return null;

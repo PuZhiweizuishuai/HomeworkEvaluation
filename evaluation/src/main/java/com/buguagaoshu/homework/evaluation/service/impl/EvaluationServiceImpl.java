@@ -196,9 +196,7 @@ public class EvaluationServiceImpl implements EvaluationService {
 
     @Override
     public CommentModel saveComment(EvaluationCommentVo evaluationCommentVo, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        String verifyCodeKey = (String) session.getAttribute(WebConstant.VERIFY_CODE_KEY);
-        verifyCodeService.verify(verifyCodeKey, evaluationCommentVo.getVerifyCode());
+        verifyCodeService.verify(WebConstant.VERIFY_CODE_KEY, evaluationCommentVo.getVerifyCode(), request.getSession());
         long time = System.currentTimeMillis();
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         SubmitHomeworkStatusEntity userSubmit = submitHomeworkStatusService.getById(evaluationCommentVo.getSubmitId());

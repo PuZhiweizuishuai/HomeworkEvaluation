@@ -82,12 +82,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
     @Override
     @Transactional(rollbackFor = {})
     public CommentModel saveArticleComment(CommentVo commentVo, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        String verifyCodeKey = (String) session.getAttribute(WebConstant.VERIFY_CODE_KEY);
-        if (StringUtils.isEmpty(verifyCodeKey)) {
-            throw new UserDataFormatException("验证码错误，刷新验证码后重试！");
-        }
-        verifyCodeService.verify(verifyCodeKey, commentVo.getVerifyCode());
+
+        verifyCodeService.verify(WebConstant.VERIFY_CODE_KEY, commentVo.getVerifyCode(), request.getSession());
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         ArticleEntity article = articleService.getById(commentVo.getArticleId());
         CommentEntity commentEntity = new CommentEntity();

@@ -19,8 +19,6 @@ public class RedisVerifyCodeRepositoryImpl implements VerifyCodeRepository {
 
     private static final int DEFAULT_VERIFY_CODE_LENGTH = 4;
 
-
-
     private final RedisTemplate<String, String> redisTemplate;
 
     public RedisVerifyCodeRepositoryImpl(RedisTemplate<String, String> redisTemplate) {

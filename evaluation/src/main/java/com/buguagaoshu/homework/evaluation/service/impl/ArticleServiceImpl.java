@@ -104,9 +104,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     @Override
     @Transactional(rollbackFor = {})
     public ArticleEntity saveArticle(ArticleVo articleVo, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        String verifyCodeKey = (String) session.getAttribute(WebConstant.VERIFY_CODE_KEY);
-        verifyCodeService.verify(verifyCodeKey, articleVo.getVerifyCode());
+        verifyCodeService.verify(WebConstant.VERIFY_CODE_KEY, articleVo.getVerifyCode(), request.getSession());
         if (articleVo.getTag() != null && articleVo.getTag().size() > 6) {
             throw new UserDataFormatException("标签不能超过6个！");
         }
@@ -403,7 +401,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, ArticleEntity> i
     @Override
     public ArticleEntity updateUserCourseRating(ArticleVo articleVo, HttpServletRequest request) {
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
-        verifyCodeService.verify((String) request.getSession().getAttribute(WebConstant.VERIFY_CODE_KEY), articleVo.getVerifyCode());
+        verifyCodeService.verify(WebConstant.VERIFY_CODE_KEY, articleVo.getVerifyCode(), request.getSession());
         StudentsCurriculumEntity studentsCurriculumEntity = studentsCurriculumService.selectStudentByCurriculumId(user.getId(), articleVo.getCourseId());
         if (studentsCurriculumEntity == null) {
             return null;

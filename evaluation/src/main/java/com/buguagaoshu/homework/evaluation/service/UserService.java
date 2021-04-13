@@ -141,6 +141,14 @@ public interface UserService extends IService<UserEntity> {
     /**
      * 忘记密码，重置密码
      * */
-    ReturnCodeEnum forgetPassword(ForgetPasswordVo forgetPasswordVo);
+    ReturnCodeEnum forgetPassword(ForgetPasswordVo forgetPasswordVo, HttpServletRequest request);
+
+    /**
+     * 绑定邮箱
+     * */
+    ReturnCodeEnum updateEmail(ForgetPasswordVo forgetPasswordVo, HttpServletRequest request);
+
+
+    ReturnCodeEnum cancelEmail(ForgetPasswordVo forgetPasswordVo, HttpServletRequest request);
 }
 

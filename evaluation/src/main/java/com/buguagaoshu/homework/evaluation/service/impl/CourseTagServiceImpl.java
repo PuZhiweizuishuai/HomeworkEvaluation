@@ -118,9 +118,7 @@ public class CourseTagServiceImpl extends ServiceImpl<CourseTagDao, CourseTagEnt
     @Override
     @Transactional(rollbackFor = {})
     public boolean deleteTag(Long tagId, String verifyCode, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        String key = (String) session.getAttribute(WebConstant.VERIFY_CODE_KEY);
-        verifyCodeService.verify(key, verifyCode);
+        verifyCodeService.verify(WebConstant.VERIFY_CODE_KEY, verifyCode, request.getSession());
         CourseTagEntity id = getById(tagId);
         if (id == null) {
             return false;

@@ -167,7 +167,21 @@ public class UserController {
     @PostMapping("/user/update/forget")
     public ResponseDetails forgePassword(@Valid @RequestBody ForgetPasswordVo forgetPasswordVo,
                                          HttpServletRequest request) {
-        return ResponseDetails.ok(userService.forgetPassword(forgetPasswordVo));
+        return ResponseDetails.ok(userService.forgetPassword(forgetPasswordVo, request));
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
+    @PostMapping("/user/update/email")
+    public ResponseDetails updateEmail(@RequestBody ForgetPasswordVo forgetPasswordVo,
+                                       HttpServletRequest request) {
+        return ResponseDetails.ok(userService.updateEmail(forgetPasswordVo, request));
+    }
+
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN', 'STUDENT', 'USER')")
+    @PostMapping("/user/update/cancel/email")
+    public ResponseDetails cancelEmail(@RequestBody ForgetPasswordVo forgetPasswordVo,
+                                       HttpServletRequest request) {
+        return ResponseDetails.ok(userService.cancelEmail(forgetPasswordVo, request));
     }
 
 

@@ -71,7 +71,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     private final BaseWebInfoConfig baseWebInfoConfig;
 
-    private  InviteCodeService inviteCodeService;
+    private InviteCodeService inviteCodeService;
 
     @Autowired
     public void setInviteCodeService(InviteCodeService inviteCodeService) {
@@ -333,7 +333,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
             return new PageUtils(new CustomPage<>(userAndRoles, page.getTotal(), page.getSize(), page.getCurrent(), page.orders()));
 
         } else {
-            return  null;
+            return null;
         }
     }
 
@@ -425,9 +425,7 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     @Override
     public ReturnCodeEnum updatePassword(PasswordVo passwordVo, HttpServletRequest request, HttpServletResponse response) {
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
-        HttpSession session = request.getSession();
-        String verifyCodeKey = (String) session.getAttribute(WebConstant.VERIFY_CODE_KEY);
-        verifyCodeService.verify(verifyCodeKey, passwordVo.getVerifyCode());
+        verifyCodeService.verify(WebConstant.VERIFY_CODE_KEY, passwordVo.getVerifyCode(), request.getSession());
         UserEntity userEntity = getById(user.getId());
         if (userEntity == null) {
             return ReturnCodeEnum.USER_NOT_FIND;
@@ -507,8 +505,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     @Transactional(rollbackFor = {})
     public ReturnCodeEnum register(RegisterUserVo registerUserVo, HttpServletRequest request) {
         // 验证验证码
-        verifyCodeService.verify(request.getSession().getId(), registerUserVo.getVerifyCode());
+        // verifyCodeService.verify(request.getSession().getId(), registerUserVo.getVerifyCode());
         //
+
+
         UserEntity sysUser = getById(registerUserVo.getUserId());
         if (sysUser != null) {
             throw new UserDataFormatException("你已经注册过了，请直接登录！如果忘记密码，请点击忘记密码！");
@@ -517,6 +517,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         if (byEmail != null) {
             throw new UserDataFormatException("该邮箱已被绑定，请更换邮箱或直接登录！");
         }
+        /**
+         * TODO 判断是否开启邮箱验证
+         * */
+        verifyCodeService.verify(registerUserVo.getEmail(), registerUserVo.getCode(), request.getSession());
         UserEntity byPhoneNumber = findByPhoneNumber(registerUserVo.getPhoneNumber());
         if (byPhoneNumber != null) {
             throw new UserDataFormatException("该手机号已被绑定，请更换手机号或直接登录！");
@@ -541,9 +545,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Override
-    public ReturnCodeEnum forgetPassword(ForgetPasswordVo forgetPasswordVo) {
-        verifyCodeService.verify(CustomConstant.VERIFY_HASH_KEY + forgetPasswordVo.getEmail(),
-                forgetPasswordVo.getCode());
+    public ReturnCodeEnum forgetPassword(ForgetPasswordVo forgetPasswordVo, HttpServletRequest request) {
+        verifyCodeService.verify(forgetPasswordVo.getEmail(), forgetPasswordVo.getCode(), request.getSession());
         UserEntity userEntity = this.findByEmail(forgetPasswordVo.getEmail());
         if (userEntity == null) {
             throw new UserDataFormatException("邮箱不存在！");
@@ -557,6 +560,38 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         } else {
             throw new UserDataFormatException("两次密码不一致！");
         }
+    }
+
+    @Override
+    public ReturnCodeEnum updateEmail(ForgetPasswordVo forgetPasswordVo, HttpServletRequest request) {
+        Claims nowLoginUser = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        verifyCodeService.verify(forgetPasswordVo.getEmail(), forgetPasswordVo.getCode(), request.getSession());
+
+        UserEntity userEntity = this.findByEmail(forgetPasswordVo.getEmail());
+        if (userEntity != null) {
+            throw new UserDataFormatException("该邮箱已被其它账号绑定！");
+        }
+        userEntity = this.getById(nowLoginUser.getId());
+        if (!StringUtils.isEmpty(userEntity.getEmail())) {
+            throw new UserDataFormatException("请先取消绑定当前邮箱，然后再尝试绑定新邮箱！");
+        }
+        userEntity.setEmail(forgetPasswordVo.getEmail());
+        this.updateById(userEntity);
+        return ReturnCodeEnum.SUCCESS;
+    }
+
+    @Override
+    public ReturnCodeEnum cancelEmail(ForgetPasswordVo forgetPasswordVo, HttpServletRequest request) {
+        Claims nowLoginUser = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
+        verifyCodeService.verify(forgetPasswordVo.getEmail(), forgetPasswordVo.getCode(), request.getSession());
+
+        UserEntity userEntity = this.getById(nowLoginUser.getId());
+        if (userEntity.getEmail().equals(forgetPasswordVo.getEmail())) {
+            userEntity.setEmail("");
+            this.updateById(userEntity);
+            return ReturnCodeEnum.SUCCESS;
+        }
+        return ReturnCodeEnum.NO_POWER;
     }
 
     /**

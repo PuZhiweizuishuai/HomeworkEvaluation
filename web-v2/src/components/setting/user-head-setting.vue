@@ -5,6 +5,7 @@
         class="mx-auto"
         outlined
       >
+        <v-col />
         <v-row justify="center">
           <v-col cols="10">
             <h2>头像修改</h2>

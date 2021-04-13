@@ -2,6 +2,7 @@ package com.buguagaoshu.homework.evaluation.filter;
 
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.evaluation.config.TokenAuthenticationHelper;
+import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.model.User;
 import com.buguagaoshu.homework.evaluation.service.UserLoginLogService;
 import com.buguagaoshu.homework.evaluation.service.VerifyCodeService;
@@ -59,7 +60,7 @@ public class JwtLoginFilter extends AbstractAuthenticationProcessingFilter {
         // readValue 第一个参数 输入流，第二个参数 要转换的对象
         User user = new ObjectMapper().readValue(httpServletRequest.getInputStream(), User.class);
         // 验证码验证
-        verifyCodeService.verify(httpServletRequest.getSession().getId(), user.getVerifyCode());
+        verifyCodeService.verify(WebConstant.VERIFY_CODE_KEY, user.getVerifyCode(), httpServletRequest.getSession());
         // 对 html 标签进行转义，防止 XSS 攻击
         String userId = user.getUserId();
         userId = HtmlUtils.htmlEscape(userId);

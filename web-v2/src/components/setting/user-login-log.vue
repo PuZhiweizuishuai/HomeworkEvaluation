@@ -5,6 +5,7 @@
         class="mx-auto"
         outlined
       >
+        <v-col />
         <v-row justify="center">
           <v-col cols="10">
             <span><h2>登录历史</h2>如果发现不熟悉设备，请及时修改密码</span>

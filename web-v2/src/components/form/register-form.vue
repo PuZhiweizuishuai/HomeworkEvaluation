@@ -23,6 +23,7 @@
         />
       </v-col>
     </v-row>
+
     <v-row justify="center">
       <v-col cols="10">
         <v-text-field
@@ -101,6 +102,23 @@
       </v-col>
     </v-row>
     <v-row justify="center">
+      <v-col cols="7">
+        <v-text-field
+          v-model="registerUser.code"
+          placeholder="邮箱验证码"
+          label="邮箱验证码"
+          :rules="[() => registerUser.code != null || '收到的验证码不能为空！']"
+          clearable
+        />
+      </v-col>
+      <v-col cols="3">
+        <v-btn color="primary" :disabled="emailBtnDisabled" @click="sendEmail()">
+          {{ emailBtn }}
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <v-row justify="center">
       <v-btn color="primary" @click="submitRegister">注册</v-btn>
     </v-row>
     <v-snackbar
@@ -143,13 +161,50 @@ export default {
         username: '',
         userId: '',
         sex: null,
-        birthday: ''
+        birthday: '',
+        code: ''
       },
       showMessage: false,
-      message: ''
+      message: '',
+      emailBtnDisabled: false,
+      emailBtn: '发送验证码'
+
     }
   },
   methods: {
+    sendEmail() {
+      if (!this.registerUser.email.includes('@')) {
+        this.message = '邮箱格式错误！'
+        this.showMessage = true
+        return
+      }
+      if (this.registerUser.verifyCode === '' || this.registerUser.verifyCode == null) {
+        this.message = '验证码不能为空！'
+        this.showMessage = true
+        return
+      }
+
+      this.httpPost('/verify/register/email', this.registerUser, (json) => {
+        if (json.status === 200) {
+          this.message = '邮件发送成功，，请注意查收！'
+          this.showMessage = true
+          this.countDown = window.setInterval(() => {
+            this.emailBtn = (this.maxTime - 1000) / 1000
+            this.maxTime = this.maxTime - 1000
+            this.emailBtnDisabled = true
+            if (this.maxTime < 0) {
+              this.maxTime = 60000
+              this.emailBtn = '再发送一遍'
+              this.emailBtnDisabled = false
+              window.clearInterval(this.countDown)
+            }
+          }, 1000)
+        } else {
+          this.message = json.message
+          this.showMessage = true
+        }
+      })
+    },
     getTime(value) {
       this.registerUser.birthday = value
     },

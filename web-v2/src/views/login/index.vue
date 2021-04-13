@@ -123,7 +123,6 @@ export default {
       }
     },
     register(value) {
-      console.log(value)
       this.httpPost(`/user/register`, value, (json) => {
         if (json.status === 200) {
           this.json = '注册成功,请登录'

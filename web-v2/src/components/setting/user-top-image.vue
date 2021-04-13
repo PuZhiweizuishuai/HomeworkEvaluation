@@ -5,6 +5,7 @@
         class="mx-auto"
         outlined
       >
+        <v-col />
         <v-row justify="center">
           <v-col cols="10">
             <h2>首页顶部大图修改</h2>

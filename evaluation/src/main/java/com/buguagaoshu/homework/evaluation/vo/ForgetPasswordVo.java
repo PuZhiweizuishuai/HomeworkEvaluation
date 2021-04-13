@@ -14,6 +14,8 @@ public class ForgetPasswordVo {
     @Email(message = "邮箱格式错误")
     private String email;
 
+    private String oldEmailCode;
+
     private String verifyCode;
 
     private String code;

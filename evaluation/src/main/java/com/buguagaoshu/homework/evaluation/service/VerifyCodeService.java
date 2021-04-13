@@ -2,6 +2,7 @@ package com.buguagaoshu.homework.evaluation.service;
 
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 
+import javax.servlet.http.HttpSession;
 import java.awt.*;
 
 /**
@@ -13,9 +14,9 @@ public interface VerifyCodeService {
 
     String randomDigitString(int length);
 
-    void send(String key, UserEntity userEntity);
+    void send(String key, UserEntity userEntity, String email, HttpSession session);
 
-    void verify(String key, String code);
+    void verify(String key, String code, HttpSession session);
 
-    Image image(String key);
+    Image image(HttpSession session);
 }

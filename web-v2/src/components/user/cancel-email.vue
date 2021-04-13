@@ -1,21 +1,9 @@
 <template>
   <v-card>
     <v-card-title>
-      忘记密码
+      取消绑定当前邮箱，取消后你将不能使用邮箱登录与找回密码功能，请慎重！
     </v-card-title>
     <v-card-subtitle>
-      <v-row justify="center">
-        <v-col cols="10">
-          <v-text-field
-            v-model="user.email"
-            placeholder="请输入你的邮箱"
-            label="邮箱"
-            type="email"
-            :rules="[() => user.email != null || '邮箱不能为空！']"
-            clearable
-          />
-        </v-col>
-      </v-row>
       <v-row justify="center">
         <v-col cols="5">
           <img :src="verifyImageUrl" alt="验证码" title="点击刷新" style="cursor:pointer;" @click="getVerifyImage">
@@ -44,30 +32,6 @@
           <v-btn color="primary" :disabled="emailBtnDisabled" @click="sendEmail()">
             {{ emailBtn }}
           </v-btn>
-        </v-col>
-      </v-row>
-      <v-row justify="center">
-        <v-col cols="10">
-          <v-text-field
-            v-model="user.newPassword"
-            placeholder="新密码"
-            label="新密码"
-            type="password"
-            :rules="[() => user.newPassword != null || '新密码不能为空！']"
-            clearable
-          />
-        </v-col>
-      </v-row>
-      <v-row justify="center">
-        <v-col cols="10">
-          <v-text-field
-            v-model="user.password"
-            placeholder="请再输入一遍密码"
-            label="请再输入一遍密码"
-            type="password"
-            :rules="[() => user.password != null || '密码不能为空！']"
-            clearable
-          />
         </v-col>
       </v-row>
       <v-col />
@@ -107,9 +71,7 @@ export default {
       user: {
         email: '',
         verifyCode: '',
-        code: '',
-        newPassword: '',
-        password: ''
+        code: ''
       },
       showMessage: false,
       message: '',
@@ -120,7 +82,9 @@ export default {
     }
   },
   methods: {
+
     sendEmail() {
+      this.user.email = this.$store.state.userInfo.email
       if (!this.user.email.includes('@')) {
         this.message = '邮箱格式错误！'
         this.showMessage = true
@@ -172,30 +136,17 @@ export default {
         this.showMessage = true
         return
       }
-      if (this.user.newPassword === '' || this.user.newPassword == null) {
-        this.message = '新密码不能为空！'
-        this.showMessage = true
-        return
-      }
-      if (this.user.newPassword.length < 6) {
-        this.message = '密码必须大于6个字符'
-        this.showMessage = true
-        return
-      }
-      if (this.user.newPassword !== this.user.password) {
-        this.message = '两次输入密码不相同！'
-        this.showMessage = true
-        return
-      }
     },
     submit() {
       this.check()
-      this.httpPost('/user/update/forget', this.user, (json) => {
+      this.httpPost('/user/update/cancel/email', this.user, (json) => {
         //
         if (json.status === 200) {
-          this.message = '密码重置成功！'
+          this.message = '取消绑定成功！'
           this.showMessage = true
-          this.$emit('success', true)
+          this.$store.state.userInfo.email = null
+          // 更新本地用户数据
+          this.$store.commit('setUserInfo', this.$store.state.userInfo)
         } else {
           this.message = json.message
           this.showMessage = true

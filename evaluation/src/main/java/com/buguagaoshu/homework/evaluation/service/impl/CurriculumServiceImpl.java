@@ -136,10 +136,8 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
 
     @Override
     public CurriculumEntity updateCurriculum(CurriculumModel curriculumModel, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        String verifyCodeKey = (String) session.getAttribute(WebConstant.VERIFY_CODE_KEY);
         // 验证码校验
-        verifyCodeService.verify(verifyCodeKey, curriculumModel.getVerifyCode());
+        verifyCodeService.verify(WebConstant.VERIFY_CODE_KEY, curriculumModel.getVerifyCode(), request.getSession());
         Claims teacher = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         CurriculumEntity curriculumEntity = this.getById(curriculumModel.getId());
         if (curriculumEntity == null) {
@@ -296,10 +294,8 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
 
     @Override
     public ReturnCodeEnum join(Long id, HttpServletRequest request, JoinCourseCode code) {
-        HttpSession session = request.getSession();
-        String verifyCodeKey = (String) session.getAttribute(WebConstant.VERIFY_CODE_KEY);
         // 验证码校验
-        verifyCodeService.verify(verifyCodeKey, code.getVerifyCode());
+        verifyCodeService.verify(WebConstant.VERIFY_CODE_KEY, code.getVerifyCode(), request.getSession());
         // 获取当前用户
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
         long time = System.currentTimeMillis();

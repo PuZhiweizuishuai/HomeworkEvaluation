@@ -5,6 +5,7 @@
         class="mx-auto"
         outlined
       >
+        <v-col />
         <v-row justify="center">
           <v-col cols="10">
             <h2>密码修改</h2>
@@ -68,8 +69,25 @@
             说明： 修改密码后需要重新登录
           </v-col>
         </v-row>
+        <v-col />
+        <v-row justify="center">
+          <v-col cols="10">
+            {{ getNowEmail() }}
+          </v-col>
+        </v-row>
+
+        <v-row justify="center">
+          <v-col cols="10">
+            <BindingEmail v-if="showBindingEmail" />
+            <CancelEmail v-if="!showBindingEmail" />
+          </v-col>
+        </v-row>
+
+        <v-col />
       </v-card>
+
     </v-col>
+
     <v-snackbar
       v-model="showMessage"
       :top="true"
@@ -88,12 +106,19 @@
         </v-btn>
       </template>
     </v-snackbar>
+
   </v-row>
 </template>
 
 <script>
+import BindingEmail from '@/components/user/binding-email.vue'
+import CancelEmail from '@/components/user/cancel-email.vue'
 export default {
   name: 'UserSetting',
+  components: {
+    BindingEmail,
+    CancelEmail
+  },
   data() {
     return {
       passoword: {
@@ -104,12 +129,32 @@ export default {
       temp: '',
       verifyImageUrl: '/api/verifyImage',
       showMessage: false,
-      message: ''
+      message: '',
+      showEmailDialog: false,
+      emailBtn: '取消绑定邮箱',
+      showBindingEmail: false
     }
   },
   created() {
+    this.getNowEmail()
+    this.showEmailDialog = true
   },
   methods: {
+    clickShowEmail() {
+      this.showEmailDialog = true
+    },
+    getNowEmail() {
+      if (this.$store.state.userInfo.email != null) {
+        this.showEmailDialog = false
+        this.emailBtn = '取消绑定邮箱'
+        this.showBindingEmail = false
+        return '当前绑定邮箱：' + this.$store.state.userInfo.email
+      }
+      this.showBindingEmail = true
+      this.showEmailDialog = true
+      this.emailBtn = '绑定邮箱'
+      return '暂未绑定邮箱，请立即绑定！'
+    },
     getVerifyImage() {
       this.verifyImageUrl = '/api/verifyImage?t=' + new Date().getTime()
     },

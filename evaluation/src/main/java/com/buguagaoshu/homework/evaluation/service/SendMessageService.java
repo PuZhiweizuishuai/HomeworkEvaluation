@@ -8,5 +8,5 @@ import com.buguagaoshu.homework.evaluation.entity.UserEntity;
  * */
 public interface SendMessageService {
 
-    void send(String key, String message, UserEntity userEntity);
+    void send(String key, String message, UserEntity userEntity, String email);
 }

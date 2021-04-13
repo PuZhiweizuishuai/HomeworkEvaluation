@@ -1,6 +1,7 @@
 package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.buguagaoshu.homework.common.utils.VerifyCodeUtil;
+import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import com.buguagaoshu.homework.evaluation.exception.VerifyFailedException;
 import com.buguagaoshu.homework.evaluation.repository.VerifyCodeRepository;
@@ -9,6 +10,7 @@ import com.buguagaoshu.homework.evaluation.service.SendMessageService;
 import com.buguagaoshu.homework.evaluation.service.VerifyCodeService;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpSession;
 import java.awt.*;
 import java.security.SecureRandom;
 import java.util.Objects;
@@ -61,17 +63,17 @@ public class DigitsVerifyCodeServiceImpl implements VerifyCodeService {
     }
 
     @Override
-    public void send(String key, UserEntity userEntity) {
+    public void send(String key, UserEntity userEntity, String email, HttpSession session) {
         String verifyCode = randomDigitString(verifyCodeUtil.getLen());
         String verifyCodeWithTimestamp = appendTimestamp(verifyCode, "S");
-
-        verifyCodeRepository.save(key, verifyCodeWithTimestamp, SEND_VERIFY_CODE_EXPIRE_TIMEOUT);
-        sendMessageService.send(key, verifyCode, userEntity);
+        session.setAttribute(email, verifyCodeWithTimestamp);
+        // verifyCodeRepository.save(key, verifyCodeWithTimestamp, SEND_VERIFY_CODE_EXPIRE_TIMEOUT);
+        sendMessageService.send(key, verifyCode, userEntity, email);
     }
 
     @Override
-    public void verify(String key, String code) {
-        String lastVerifyCodeWithTimestamp = verifyCodeRepository.find(key);
+    public void verify(String key, String code, HttpSession session) {
+        String lastVerifyCodeWithTimestamp = (String) session.getAttribute(key);
         // 如果没有验证码，则随机生成一个
         if (lastVerifyCodeWithTimestamp == null) {
             lastVerifyCodeWithTimestamp = appendTimestamp(randomDigitString(verifyCodeUtil.getLen()), "W");
@@ -91,11 +93,12 @@ public class DigitsVerifyCodeServiceImpl implements VerifyCodeService {
     }
 
     @Override
-    public Image image(String key) {
+    public Image image(HttpSession session) {
         String verifyCode = randomDigitString(verifyCodeUtil.getLen());
         String verifyCodeWithTimestamp = appendTimestamp(verifyCode, "W");
         Image image = generateImageService.imageWithDisturb(verifyCode);
-        verifyCodeRepository.save(key, verifyCodeWithTimestamp);
+        // verifyCodeRepository.save(WebConstant.VERIFY_CODE_KEY, verifyCodeWithTimestamp);
+        session.setAttribute(WebConstant.VERIFY_CODE_KEY, verifyCodeWithTimestamp);
         return image;
     }
 }

@@ -1,18 +1,22 @@
 package com.buguagaoshu.homework.evaluation.controller;
 
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
+import com.buguagaoshu.homework.common.enums.ReturnCodeEnum;
 import com.buguagaoshu.homework.evaluation.config.WebConstant;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import com.buguagaoshu.homework.evaluation.service.UserService;
 import com.buguagaoshu.homework.evaluation.service.VerifyCodeService;
 import com.buguagaoshu.homework.evaluation.vo.ForgetPasswordVo;
+import com.buguagaoshu.homework.evaluation.vo.RegisterUserVo;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 import java.awt.*;
 import java.awt.image.RenderedImage;
 import java.io.ByteArrayInputStream;
@@ -44,29 +48,41 @@ public class VerifyCodeController {
         return new InputStreamResource(byteArrayInputStream);
     }
 
+    @PostMapping("/verify/register/email")
+    public ResponseDetails registerEmail(@RequestBody RegisterUserVo registerUserVo,
+                                         HttpSession session) {
+        // 检查验证码
+        verifyCodeService.verify(WebConstant.VERIFY_CODE_KEY, registerUserVo.getVerifyCode(), session);
+        // 发送验证码
+        UserEntity userEntity = userService.findByEmail(registerUserVo.getEmail());
+        if (userEntity != null) {
+            return ResponseDetails.ok(ReturnCodeEnum.USER_ALREADY_EXISTS);
+        }
+        verifyCodeService.send(registerUserVo.getEmail(), null, registerUserVo.getEmail(), session);
+        return ResponseDetails.ok();
+    }
+
     @PostMapping("/verify/email")
     public ResponseDetails sendEmail(@RequestBody ForgetPasswordVo forgetPasswordVo,
                                      HttpSession session) {
         // 检查验证码
-        verifyCodeService.verify(session.getId(), forgetPasswordVo.getVerifyCode());
+        System.out.println(session.getAttribute(WebConstant.VERIFY_CODE_KEY));
+        System.out.println(forgetPasswordVo.getVerifyCode());
+
+        verifyCodeService.verify(WebConstant.VERIFY_CODE_KEY, forgetPasswordVo.getVerifyCode(), session);
         // 发送验证码
         UserEntity userEntity = userService.findByEmail(forgetPasswordVo.getEmail());
         if (userEntity == null) {
             return ResponseDetails.ok(404, "邮箱错误或者该邮箱暂未绑定账号，请联系管理员。");
         }
-        verifyCodeService.send(forgetPasswordVo.getEmail(), userEntity);
+        verifyCodeService.send(forgetPasswordVo.getEmail(), userEntity, forgetPasswordVo.getEmail(), session);
         return ResponseDetails.ok();
     }
 
 
     @GetMapping("/verifyImage")
-    public HttpEntity image(HttpSession session) throws IOException {
-        // TODO 此处是为了解决 Session ID 一致性的问题，在采用 Spring Session Redis后，保存的验证码使用的 Session ID
-        // TODO 与之后验证时获取到的 Session ID 不同，导致验证码始终错误，暂时先采用这种方式，后期直接将 验证码保存到 Session 中
-        // 反正采用 Spring Session Redis 后，Session也是保存在 Redis 中的
-        // 造成这种问题的可能原因 ： https://www.cnblogs.com/imyjy/p/9187168.html
-        session.setAttribute(WebConstant.VERIFY_CODE_KEY, session.getId());
-        Image image = verifyCodeService.image(session.getId());
+    public ResponseEntity<?> image(HttpSession session) throws IOException {
+        Image image = verifyCodeService.image(session);
         InputStreamResource inputStreamResource = imageToInputStreamResource(image, IMAGE_FORMAT);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Pragma", "No-cache");
