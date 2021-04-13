@@ -517,10 +517,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         if (byEmail != null) {
             throw new UserDataFormatException("该邮箱已被绑定，请更换邮箱或直接登录！");
         }
-        /**
-         * TODO 判断是否开启邮箱验证
-         * */
-        verifyCodeService.verify(registerUserVo.getEmail(), registerUserVo.getCode(), request.getSession());
+
+        if (baseWebInfoConfig.getRegisterEmailCheck() == 1) {
+            verifyCodeService.verify(registerUserVo.getEmail(), registerUserVo.getCode(), request.getSession());
+        }
         UserEntity byPhoneNumber = findByPhoneNumber(registerUserVo.getPhoneNumber());
         if (byPhoneNumber != null) {
             throw new UserDataFormatException("该手机号已被绑定，请更换手机号或直接登录！");

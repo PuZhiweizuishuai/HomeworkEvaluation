@@ -72,6 +72,14 @@ const routes = [
         }
       },
       {
+        path: '/bbs/topic/:topic',
+        name: 'showTopic',
+        component: () => import('@/views/bbs/topic.vue'),
+        meta: {
+
+        }
+      },
+      {
         path: '/bbs/draft/box',
         name: 'Draft',
         component: () => import('@/views/bbs/draft.vue'),
@@ -455,6 +463,24 @@ const routes = [
           admin: true,
           requireAuth: true
         }
+      },
+      {
+        path: '/admin/webSetting',
+        name: 'WebSetting',
+        component: () => import('@/views/admin/web-setting.vue'),
+        meta: {
+          admin: true,
+          requireAuth: true
+        }
+      },
+      {
+        path: '/admin/log',
+        name: 'WebLog',
+        component: () => import('@/views/admin/web-log.vue'),
+        meta: {
+          admin: true,
+          requireAuth: true
+        }
       }
     ]
   },
@@ -488,6 +514,19 @@ const router = new VueRouter({
 
 // 路由导航守卫
 router.beforeEach((to, from, next) => {
+  // 初始化网站信息
+  if (store.state.webInfo.status === 0) {
+    fetch(`/api/index/info`, {
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      method: 'GET'
+    }).then(response => response.json())
+      .then(json => {
+        store.state.webInfo = json.data
+        store.state.webInfo.status = 1
+      })
+  }
   // 路由发生变化修改页面title
   if (to.meta.title) {
     document.title = to.meta.title

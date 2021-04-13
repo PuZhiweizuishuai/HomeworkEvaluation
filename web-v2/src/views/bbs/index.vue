@@ -103,12 +103,13 @@ export default {
         y: 0
       },
       showPostCard: true,
-      pageType: 10,
+      pageType: 0,
       checkTab: 0
     }
   },
   created() {
     const type = parseInt(this.$route.query.type)
+
     if (!isNaN(type)) {
       //
       if (type === 100 || type === 10 || type === 11 || type === 12 || type === -1) {
@@ -124,7 +125,11 @@ export default {
         this.pageType = 0
         this.checkTab = 0
       }
+    } else {
+      this.pageType = 0
+      this.checkTab = 0
     }
+
     this.getAd()
   },
   methods: {

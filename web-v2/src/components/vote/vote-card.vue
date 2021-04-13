@@ -144,12 +144,18 @@ export default {
       }
     },
     getProgrss(item) {
+      if (this.votelog == null) {
+        return 0
+      }
       if (this.vote.voteCount === 0) {
         return 0
       }
       return (this.vote.choices[item] / this.vote.voteCount) * 100
     },
     getTextValue(item) {
+      if (this.votelog == null) {
+        return ''
+      }
       if (this.vote.voteCount === 0) {
         return 0
       }

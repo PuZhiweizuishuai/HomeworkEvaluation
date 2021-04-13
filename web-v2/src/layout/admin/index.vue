@@ -101,7 +101,9 @@ export default {
       { icon: 'mdi-book-open-outline', text: '课程列表', link: '/admin/course' },
       { icon: 'mdi-tag', text: '课程分类管理', link: '/admin/coursetag' },
       { icon: 'mdi-facebook-messenger', text: '社区管理', link: '/admin/bbs' },
-      { icon: 'mdi-tune', text: '首页轮播图', link: '/admin/topimg' }
+      { icon: 'mdi-tune', text: '首页轮播图', link: '/admin/topimg' },
+      { icon: 'mdi-wrench', text: '网站设置', link: '/admin/webSetting' },
+      { icon: 'mdi-calendar-today', text: '日志', link: '/admin/log' }
     ],
     courseTagList: []
   }),

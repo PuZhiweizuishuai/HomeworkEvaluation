@@ -24,6 +24,11 @@ public class SearchController {
         this.searchService = searchService;
     }
 
+    @GetMapping("/search/topic")
+    public ResponseDetails topic(@RequestParam Map<String, Object> params) {
+        return ResponseDetails.ok().put("data", searchService.searchTopic(params));
+    }
+
     @GetMapping("/search/public")
     public ResponseDetails search(@RequestParam Map<String, Object> params,
                                   HttpServletRequest request) {

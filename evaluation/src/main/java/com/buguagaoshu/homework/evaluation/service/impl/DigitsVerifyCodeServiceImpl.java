@@ -68,7 +68,7 @@ public class DigitsVerifyCodeServiceImpl implements VerifyCodeService {
         String verifyCodeWithTimestamp = appendTimestamp(verifyCode, "S");
         session.setAttribute(email, verifyCodeWithTimestamp);
         // verifyCodeRepository.save(key, verifyCodeWithTimestamp, SEND_VERIFY_CODE_EXPIRE_TIMEOUT);
-        sendMessageService.send(key, verifyCode, userEntity, email);
+        sendMessageService.sendVerifyCode(key, verifyCode, userEntity, email);
     }
 
     @Override
@@ -86,8 +86,10 @@ public class DigitsVerifyCodeServiceImpl implements VerifyCodeService {
             expTime = VERIFY_CODE_EXPIRE_TIMEOUT * SEND_VERIFY_CODE_EXPIRE_TIMEOUT;
         }
         if (timestamp + expTime < System.currentTimeMillis()) {
+            session.removeAttribute(key);
             throw new VerifyFailedException("验证码已过期！");
         } else if (!Objects.equals(code, lastVerifyCode)) {
+            session.removeAttribute(key);
             throw new VerifyFailedException("验证码错误！");
         }
     }

@@ -77,7 +77,7 @@
         />
       </v-col>
     </v-row>
-    <v-row v-if="this.$store.state.webInfo.openInvitationRegister == 1" justify="center">
+    <v-row v-if="showInvitationCode" justify="center">
       <v-col cols="10">
         <v-text-field
           v-model="registerUser.invitationCode"
@@ -101,7 +101,7 @@
         />
       </v-col>
     </v-row>
-    <v-row justify="center">
+    <v-row v-if="showEmailCheck" justify="center">
       <v-col cols="7">
         <v-text-field
           v-model="registerUser.code"
@@ -164,12 +164,33 @@ export default {
         birthday: '',
         code: ''
       },
+      webInfo: {
+        registerInvitationCode: 1,
+        registerEmailCheck: 1
+      },
+      showEmailCheck: true,
+      showInvitationCode: true,
       showMessage: false,
       message: '',
       emailBtnDisabled: false,
       emailBtn: '发送验证码'
 
     }
+  },
+  created() {
+    this.httpGet('/index/info', (json) => {
+      this.webInfo = json.data
+      if (this.webInfo.registerInvitationCode === 1) {
+        this.showInvitationCode = true
+      } else {
+        this.showInvitationCode = false
+      }
+      if (this.webInfo.registerEmailCheck === 1) {
+        this.showEmailCheck = true
+      } else {
+        this.showEmailCheck = false
+      }
+    })
   },
   methods: {
     sendEmail() {

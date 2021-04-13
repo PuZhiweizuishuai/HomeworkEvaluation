@@ -1,8 +1,6 @@
 package com.buguagaoshu.homework.evaluation.config;
 
 import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,24 +9,22 @@ import org.springframework.stereotype.Component;
  * 网站基础信息
  */
 @Component
-@ConfigurationProperties(prefix = "web.base-info")
 @Data
-@RefreshScope
 public class BaseWebInfoConfig {
     /**
      * 网站名
      * */
-    private String webName;
+    private String name = "作业互评";
 
     /**
      * 网站 Logo 地址
      * */
-    private String logoUrl;
+    private String logo = "/logo.png";
 
     /**
      * 网站 favicon 图标地址
      * */
-    private String faviconUrl;
+    private String faviconUrl = "/logo.png";
 
     /**
      * 文件上传服务商
@@ -40,7 +36,16 @@ public class BaseWebInfoConfig {
 
     private String website = "http://127.0.0.1:8080";
 
+
     private String fileSuffix;
 
-    private Integer registerInvitationCode = 1;
+    /**
+     * 是否开启邀请码注册
+     * */
+    private Integer registerInvitationCode = 0;
+
+    /**
+     * 是否开启邮箱验证
+     * */
+    private Integer registerEmailCheck = 1;
 }

@@ -9,7 +9,7 @@
           md="10"
         >
           <!-- 标题内容 -->
-          <router-link :to="`/bbs/article/${item.id}?lastPage=${lastpage}`">
+          <router-link :to="`/bbs/article/${item.id}`">
             <v-row>
               <v-col cols="12">
 

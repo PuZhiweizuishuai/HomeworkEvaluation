@@ -7,9 +7,12 @@ export default new Vuex.Store({
   state: {
     // 网站基本信息
     webInfo: {
+      status: 0,
       name: '作业互评系统',
       logo: '/logo.png',
-      openInvitationRegister: 1
+      registerInvitationCode: 1,
+      registerEmailCheck: 1,
+      faviconUrl: '/logo.png'
     },
     // 用户信息
     userInfo: (localStorage.getItem('user') != null &&

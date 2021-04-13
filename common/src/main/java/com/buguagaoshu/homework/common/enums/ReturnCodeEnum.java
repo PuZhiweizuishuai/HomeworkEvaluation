@@ -22,6 +22,7 @@ public enum ReturnCodeEnum {
     USER_LOCK_TYPE_BAD(1004, "账号锁定或禁言类型错误"),
     NOT_LOGGED_IN(1005, "未登陆"),
     NO_POWER(1006, "没有权限"),
+    EMAIL_ALREADY_EXISTS(1007, "此邮箱已被注册，请尝试登录或更换邮箱！"),
 
 
     CANNOT_BE_ALTER_YOUR_ROLE(2000, "不能自己修改自己的角色"),

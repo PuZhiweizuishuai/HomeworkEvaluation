@@ -220,6 +220,52 @@ public class SearchService {
     }
 
 
+    public PageUtils searchTopic(Map<String, Object> params) {
+        int page = getInt((String) params.get("page"));
+        int size = getInt((String) params.get("size"));
+        if (page != 0) {
+            page = page - 1;
+        }
+        int sort = getInt((String) params.get("sort"));
+        if (size >= 50) {
+            size = 50;
+        } else if (size <= 0) {
+            size = 20;
+        }
+        if (page >= 1) {
+            page = page * size;
+        }
+        SearchRequest searchRequest = new SearchRequest();
+        searchRequest.indices(SearchTableNameConstant.ARTICLE);
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        // 分页
+        sourceBuilder.from(page);
+        sourceBuilder.size(size);
+
+        // 查询条件
+        String key = (String) params.get("key");
+        if (StringUtils.isEmpty(key)) {
+            return null;
+        }
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        // 构造复合查询
+        MultiMatchQueryBuilder queryBuilder = QueryBuilders.multiMatchQuery(key, "tag");
+        RangeQueryBuilder rangeQueryBuilder = QueryBuilders
+                .rangeQuery("type")
+                .gte(ArticleTypeEnum.ORDINARY.getCode())
+                .lt(ArticleTypeEnum.ORDINARY_END.getCode());
+        boolQueryBuilder.must().add(queryBuilder);
+        sourceBuilder.query(boolQueryBuilder);
+        boolQueryBuilder.must().add(rangeQueryBuilder);
+        if (sort == 1) {
+            sourceBuilder.sort(new FieldSortBuilder("updateTime").order(SortOrder.DESC));
+        }
+        searchRequest.source(sourceBuilder);
+        SearchResponse searchResponse = sendSearch(searchRequest);
+        return createPageData(searchResponse, params, SearchTableNameConstant.ARTICLE);
+    }
+
+
     public int getInt(String code) {
         int page = 0;
         if (!StringUtils.isEmpty(code)) {

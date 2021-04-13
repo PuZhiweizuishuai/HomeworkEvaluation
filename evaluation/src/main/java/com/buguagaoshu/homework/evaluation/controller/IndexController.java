@@ -2,12 +2,11 @@ package com.buguagaoshu.homework.evaluation.controller;
 
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.evaluation.cache.WebsiteIndexMessageCache;
+import com.buguagaoshu.homework.evaluation.config.BaseWebInfoConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Arrays;
 
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
@@ -19,9 +18,12 @@ import java.util.Arrays;
 public class IndexController {
     private final WebsiteIndexMessageCache indexMessageCache;
 
+    private final BaseWebInfoConfig baseWebInfoConfig;
+
     @Autowired
-    public IndexController(WebsiteIndexMessageCache indexMessageCache) {
+    public IndexController(WebsiteIndexMessageCache indexMessageCache, BaseWebInfoConfig baseWebInfoConfig) {
         this.indexMessageCache = indexMessageCache;
+        this.baseWebInfoConfig = baseWebInfoConfig;
     }
 
     /**
@@ -39,5 +41,10 @@ public class IndexController {
     @GetMapping("/bbs/ad")
     public ResponseDetails bbsPageCarousel() {
         return ResponseDetails.ok().put("data", indexMessageCache.getIndexAdList().values());
+    }
+
+    @GetMapping("/info")
+    public ResponseDetails baseInfo() {
+        return ResponseDetails.ok().put("data", baseWebInfoConfig);
     }
 }

@@ -56,7 +56,7 @@ public class VerifyCodeController {
         // 发送验证码
         UserEntity userEntity = userService.findByEmail(registerUserVo.getEmail());
         if (userEntity != null) {
-            return ResponseDetails.ok(ReturnCodeEnum.USER_ALREADY_EXISTS);
+            return ResponseDetails.ok(ReturnCodeEnum.EMAIL_ALREADY_EXISTS);
         }
         verifyCodeService.send(registerUserVo.getEmail(), null, registerUserVo.getEmail(), session);
         return ResponseDetails.ok();
@@ -66,9 +66,6 @@ public class VerifyCodeController {
     public ResponseDetails sendEmail(@RequestBody ForgetPasswordVo forgetPasswordVo,
                                      HttpSession session) {
         // 检查验证码
-        System.out.println(session.getAttribute(WebConstant.VERIFY_CODE_KEY));
-        System.out.println(forgetPasswordVo.getVerifyCode());
-
         verifyCodeService.verify(WebConstant.VERIFY_CODE_KEY, forgetPasswordVo.getVerifyCode(), session);
         // 发送验证码
         UserEntity userEntity = userService.findByEmail(forgetPasswordVo.getEmail());

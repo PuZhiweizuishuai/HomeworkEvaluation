@@ -1,5 +1,6 @@
 package com.buguagaoshu.homework.evaluation.service;
 
+import com.buguagaoshu.homework.common.domain.MailDetails;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 
 /**
@@ -8,5 +9,7 @@ import com.buguagaoshu.homework.evaluation.entity.UserEntity;
  * */
 public interface SendMessageService {
 
-    void send(String key, String message, UserEntity userEntity, String email);
+    void sendVerifyCode(String key, String message, UserEntity userEntity, String email);
+
+    void send(MailDetails mailDetails);
 }
