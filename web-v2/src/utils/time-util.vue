@@ -60,7 +60,7 @@ function timeToNowStrning(date) {
     return t + '小时前'
   }
   t = Math.trunc(t / 24)
-  if (t < 30) {
+  if (t < 7) {
     return t + '天前'
   }
   return renderTime(date)
