@@ -11,7 +11,7 @@
  Target Server Version : 80023
  File Encoding         : 65001
 
- Date: 01/04/2021 18:47:12
+ Date: 14/04/2021 14:14:11
 */
 
 SET NAMES utf8mb4;
@@ -34,7 +34,7 @@ CREATE TABLE `advertisement`  (
   `type` int NOT NULL COMMENT '类型，显示位置【\r\n0 首页顶部大图，\r\n1 课程页顶部大图\r\n2 首页广告\r\n3 课程页广告\r\n】',
   `view_count` bigint NOT NULL DEFAULT 0 COMMENT '点击次数',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1379033426627133442 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for article
@@ -62,7 +62,7 @@ CREATE TABLE `article`  (
   `bad_count` bigint NOT NULL DEFAULT 0 COMMENT '帖子点踩计数',
   `collect_count` bigint NOT NULL DEFAULT 0 COMMENT '帖子收藏计数',
   `ip` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '发帖 IP',
-  `ua` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'User-Agent',
+  `ua` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'User-Agent',
   `articleStick` bigint NOT NULL COMMENT '帖子置顶时间',
   `anonymous` int NOT NULL DEFAULT 0 COMMENT '0：公开，1：匿名',
   `perfect` int NOT NULL DEFAULT 0 COMMENT '0：非精品，1：精品',
@@ -80,7 +80,7 @@ CREATE TABLE `article`  (
   INDEX `find_article_by_course_id`(`course_id`) USING BTREE,
   INDEX `find_article_by_type`(`type`) USING BTREE,
   INDEX `find_article_by_status`(`status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1377270673545682946 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '帖子表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1381923593650294786 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '帖子表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for article_tag
@@ -112,12 +112,12 @@ CREATE TABLE `bulletin`  (
   `create_time` bigint NOT NULL COMMENT '发布时间',
   `update_time` bigint NOT NULL COMMENT '更新时间',
   `status` int NOT NULL DEFAULT 0 COMMENT '更新状态[0 正常， 1 删除]',
-  `ua` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '发布设备',
+  `ua` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '发布设备',
   `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '发布IP',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_bulletin_by_user_id`(`user_id`) USING BTREE,
   INDEX `find_bulletin_by_class_Id`(`curriculum_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '课程公告表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1379035789064667138 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '课程公告表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for collects
@@ -151,7 +151,7 @@ CREATE TABLE `comment`  (
   `comment_id` bigint NULL DEFAULT NULL COMMENT '回复的帖子ID',
   `status` int NOT NULL DEFAULT 0 COMMENT '状态 0 正常， 1 删除',
   `ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'IP地址',
-  `ua` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '回复设备UA',
+  `ua` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '回复设备UA',
   `like_count` bigint NOT NULL DEFAULT 0 COMMENT '喜欢数',
   `bad_count` bigint NOT NULL DEFAULT 0 COMMENT '不喜欢数',
   `q_a_offered` int NULL DEFAULT 0 COMMENT '回复是否被采纳，用于问答贴，0 未采纳， 1被采纳',
@@ -410,7 +410,7 @@ CREATE TABLE `notification`  (
   INDEX `find_notification_by_notifier`(`notifier`) USING BTREE,
   INDEX `find_notification_by_receiver`(`receiver`) USING BTREE,
   INDEX `find_notification_by_outer_id`(`outer_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1375428044512083970 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通知表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1379037223239811074 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通知表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for questions
@@ -477,7 +477,7 @@ CREATE TABLE `submit_homework_status`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_user_homework_by_user_id`(`user_id`) USING BTREE,
   INDEX `find_user_homework_by_homework_id`(`homework_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1375428326608388098 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户作业提交状态' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1379036648863432707 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户作业提交状态' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for submit_questions
@@ -501,7 +501,7 @@ CREATE TABLE `submit_questions`  (
   INDEX `find_question_by_user_id`(`user_id`) USING BTREE,
   INDEX `find_question_by_question_id`(`question_id`) USING BTREE,
   INDEX `find_question_by_homework_id`(`homework_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1375428326646136839 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户提交的答案保存' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1379036648922152967 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户提交的答案保存' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user
@@ -558,11 +558,11 @@ CREATE TABLE `user_login_log`  (
   `user_id` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '用户ID',
   `login_time` bigint NOT NULL COMMENT '登陆时间',
   `login_ip` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '登陆IP',
-  `login_UA` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'User-Agent 浏览器信息',
+  `login_UA` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'User-Agent 浏览器信息',
   `login_city` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '登陆城市',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_login_user_by_id_index`(`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1377121148168364035 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户登陆记录' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1381923152745058306 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户登陆记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user_role
@@ -578,9 +578,10 @@ CREATE TABLE `user_role`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_role_by_userID_index`(`user_id`) USING BTREE COMMENT '查找当前用户拥有的权限列表',
   INDEX `find_role_operator_index`(`operator`) USING BTREE COMMENT '查找用户创建的权限'
-) ENGINE = InnoDB AUTO_INCREMENT = 31 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1381913277969219587 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色表' ROW_FORMAT = DYNAMIC;
 
 SET FOREIGN_KEY_CHECKS = 1;
+
 
 
 
