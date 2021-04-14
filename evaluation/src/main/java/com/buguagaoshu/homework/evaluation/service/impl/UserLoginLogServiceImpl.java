@@ -33,6 +33,10 @@ public class UserLoginLogServiceImpl extends ServiceImpl<UserLoginLogDao, UserLo
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private IpUtil ipUtil;
+
+
     @Override
     public PageUtils queryPage(Map<String, Object> params, HttpServletRequest request) {
         Claims user = JwtUtil.getNowLoginUser(request, TokenAuthenticationHelper.SECRET_KEY);
@@ -57,6 +61,7 @@ public class UserLoginLogServiceImpl extends ServiceImpl<UserLoginLogDao, UserLo
         userLoginLogEntity.setLoginTime(time);
         userLoginLogEntity.setLoginUa(ua);
         userLoginLogEntity.setUserId(userId);
+        userLoginLogEntity.setLoginCity(ipUtil.getCity(ip));
         UserEntity userEntity = new UserEntity();
         userEntity.setUserId(userId);
         userEntity.setLatestLoginIp(ip);

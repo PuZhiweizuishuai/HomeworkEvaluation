@@ -31,6 +31,7 @@
             </v-data-table>
           </v-col>
         </v-row>
+        <v-col />
         <v-row justify="center">
           <v-pagination
             v-model="page"
@@ -38,6 +39,7 @@
             @input="pageChange"
           />
         </v-row>
+        <v-col />
       </v-card>
     </v-col>
   </v-row>
@@ -62,6 +64,7 @@ export default {
           value: 'loginTime'
         },
         { text: 'IP', sortable: false, value: 'loginIp' },
+        { text: '地点', sortable: false, value: 'loginCity' },
         { text: '登录设备', sortable: false, value: 'loginUa' }
       ]
     }

@@ -1,12 +1,16 @@
 package com.buguagaoshu.homework.evaluation.controller;
 
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
+import com.buguagaoshu.homework.evaluation.utils.IpUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
@@ -18,6 +22,19 @@ public class TestController {
 
     @Value("${JWT.SecretKey}")
     private String key;
+
+    private final IpUtil ipUtil;
+
+    @Autowired
+    public TestController(IpUtil ipUtil) {
+        this.ipUtil = ipUtil;
+    }
+
+    @GetMapping("/test/ip")
+    public ResponseDetails test(HttpServletRequest request) {
+        String ip = IpUtil.getIpAddr(request);
+        return ResponseDetails.ok().put("data", ipUtil.getCity(ip));
+    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/test/admin")

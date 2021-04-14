@@ -83,6 +83,14 @@ mvn clean install
 
 直接导入 IDEA 运行
 
+### IP地址数据库配置
+
+在 MinIO 中，在此项目所需要的存储桶目录下，创建目录 `/ip2region`
+
+然后
+
+将 https://gitee.com/lionsoul/ip2region 此项目下`data` 目录下 `ip2region.db` 放进此目录，系统将自动读取此目录加载IP数据库，判断用户IP地址。
+
 
 ### 构建前端
 

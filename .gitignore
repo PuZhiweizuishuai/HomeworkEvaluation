@@ -4,6 +4,7 @@ target/
 !**/src/main/**
 !**/src/test/**
 
+ip2region/
 
 /web/.vscode/
 /web/.DS_Store

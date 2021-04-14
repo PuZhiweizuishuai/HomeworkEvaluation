@@ -33,6 +33,8 @@
             <artifactId>jjwt</artifactId>
             <version>${jjwt.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.lionsoul/ip2region -->
+
         <!-- Java11 下 jjwt 版本依赖 , Java8 可以忽略 -->
         <dependency>
             <groupId>javax.xml.bind</groupId>

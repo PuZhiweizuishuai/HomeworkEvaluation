@@ -18,12 +18,13 @@
 
           </v-col>
         </v-row>
+        <v-col />
         <v-row justify="center">
           <v-col cols="10">
             <Upload :fixednumber="[6, 1]" :uploadurl="uploadurl" @success-file="getUrl" />
           </v-col>
         </v-row>
-
+        <v-col />
       </v-card>
     </v-col>
     <v-snackbar

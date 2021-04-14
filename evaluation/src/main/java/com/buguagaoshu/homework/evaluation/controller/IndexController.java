@@ -3,10 +3,15 @@ package com.buguagaoshu.homework.evaluation.controller;
 import com.buguagaoshu.homework.common.domain.ResponseDetails;
 import com.buguagaoshu.homework.evaluation.cache.WebsiteIndexMessageCache;
 import com.buguagaoshu.homework.evaluation.config.BaseWebInfoConfig;
+import com.buguagaoshu.homework.evaluation.utils.IpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
@@ -20,10 +25,13 @@ public class IndexController {
 
     private final BaseWebInfoConfig baseWebInfoConfig;
 
+    private final IpUtil ipUtil;
+
     @Autowired
-    public IndexController(WebsiteIndexMessageCache indexMessageCache, BaseWebInfoConfig baseWebInfoConfig) {
+    public IndexController(WebsiteIndexMessageCache indexMessageCache, BaseWebInfoConfig baseWebInfoConfig, IpUtil ipUtil) {
         this.indexMessageCache = indexMessageCache;
         this.baseWebInfoConfig = baseWebInfoConfig;
+        this.ipUtil = ipUtil;
     }
 
     /**
@@ -46,5 +54,14 @@ public class IndexController {
     @GetMapping("/info")
     public ResponseDetails baseInfo() {
         return ResponseDetails.ok().put("data", baseWebInfoConfig);
+    }
+
+
+    @GetMapping("/ip")
+    public ResponseDetails getIpCity(@RequestParam(value = "ip", required = false) String ip, HttpServletRequest request) {
+        if (StringUtils.isEmpty(ip)) {
+            ip = IpUtil.getIpAddr(request);
+        }
+        return ResponseDetails.ok().put("data", ipUtil.getCity(ip));
     }
 }

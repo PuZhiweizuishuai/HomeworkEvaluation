@@ -102,6 +102,7 @@
             <v-btn color="primary" @click="userQQAlter = !userQQAlter">修改</v-btn>
           </v-col>
         </v-row>
+        <v-col />
         <v-row justify="center">
           <v-col cols="2">
             <v-btn color="primary" @click="save">保存</v-btn>
@@ -110,6 +111,7 @@
             说明： 点击保存后才会最终修改成功
           </v-col>
         </v-row>
+        <v-col />
       </v-card>
     </v-col>
     <v-snackbar

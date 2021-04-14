@@ -5,6 +5,7 @@ import com.buguagaoshu.homework.evaluation.entity.ArticleEntity;
 import com.buguagaoshu.homework.evaluation.entity.VoteEntity;
 import com.buguagaoshu.homework.evaluation.entity.VoteLogEntity;
 import com.buguagaoshu.homework.evaluation.service.*;
+import com.buguagaoshu.homework.evaluation.utils.IpUtil;
 import com.buguagaoshu.homework.evaluation.vo.VoteVo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +37,7 @@ class EvaluationApplicationTests {
 
     @Test
     void contextLoads() throws JsonProcessingException {
+       // System.out.println(IpUtil.getCity("111.18.166.149"));
        // ArticleEntity byId = articleService.getById(1372570760855330817L);
         //byId.setUpdateTime(System.currentTimeMillis());
         //articleService.updateById(byId);
