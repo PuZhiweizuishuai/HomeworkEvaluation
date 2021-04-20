@@ -8,21 +8,23 @@ import com.buguagaoshu.homework.oss.config.TokenAuthenticationHelper;
 import com.buguagaoshu.homework.oss.repository.FileStorageRepository;
 import com.buguagaoshu.homework.oss.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
+import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
+import io.minio.http.Method;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
@@ -99,7 +101,11 @@ public class MinIoRepository implements FileStorageRepository {
             String pathName = fileModel.getPath() + "/" + fileModel.getFilename();
             try {
                 // 保存
-                minioClient.putObject(minIOConfigProperties.getBucketName(), pathName, file.getInputStream(), file.getSize(), file.getContentType());
+                minioClient.putObject(
+                        PutObjectArgs.builder().bucket(minIOConfigProperties.getBucketName()).object(pathName).stream(
+                                file.getInputStream(), file.getSize(), -1)
+                                .contentType(file.getContentType())
+                                .build());
                 succMap.put(fileName, "/api/" + pathName);
             } catch (Exception e) {
                 errFiles.add(fileName);
@@ -126,7 +132,11 @@ public class MinIoRepository implements FileStorageRepository {
             return null;
         }
         try {
-            minioClient.putObject(minIOConfigProperties.getBucketName(), pathName, file.getInputStream(), file.getSize(), file.getContentType());
+            minioClient.putObject(
+                    PutObjectArgs.builder().bucket(minIOConfigProperties.getBucketName()).object(pathName).stream(
+                            file.getInputStream(), file.getSize(), -1)
+                            .contentType(file.getContentType())
+                            .build());
             map.put("filename", file.getOriginalFilename());
             map.put("path", "/api/" + pathName);
         } catch (Exception e) {
@@ -139,7 +149,15 @@ public class MinIoRepository implements FileStorageRepository {
     @Override
     public String getFileUrl(String path) {
         try {
-            return minioClient.presignedGetObject(minIOConfigProperties.getBucketName(), path, 86400);
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(minIOConfigProperties.getBucketName())
+                            .object(path)
+                            .expiry(6, TimeUnit.HOURS)
+                            .build()
+
+            );
         } catch (Exception e) {
             // 返回 404
             return "";
@@ -149,7 +167,11 @@ public class MinIoRepository implements FileStorageRepository {
     @Override
     public Boolean delete(String path) {
         try {
-            minioClient.removeObject(minIOConfigProperties.getBucketName(), path);
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(minIOConfigProperties.getBucketName())
+                            .object(path)
+                            .build());
             return true;
         } catch (Exception e) {
             return false;

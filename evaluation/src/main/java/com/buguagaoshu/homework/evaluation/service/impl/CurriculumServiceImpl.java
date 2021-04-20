@@ -338,7 +338,7 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
                         user.getSubject(),
                         entity.getCreateTeacher(),
                         NotificationTypeEnum.COURSE_JOIN,
-                        "学生: " + user.getId() + " " + user.getSubject() + "进入了课程！",
+                        "学生: " + user.getId() + " " + user.getSubject() + "进入了课程《" + entity.getCurriculumName() + "》",
                         "/user/" + user.getId(),
                         entity.getId());
                 return ReturnCodeEnum.SUCCESS;
@@ -351,7 +351,7 @@ public class CurriculumServiceImpl extends ServiceImpl<CurriculumDao, Curriculum
                     user.getSubject(),
                     entity.getCreateTeacher(),
                     NotificationTypeEnum.COURSE_JOIN,
-                    "学生: " + user.getId() + " " + user.getSubject() + "进入了课程！",
+                    "学生: " + user.getId() + " " + user.getSubject() + "进入了课程《" + entity.getCurriculumName() + "》",
                     "/user/" + user.getId(),
                     entity.getId());
             return ReturnCodeEnum.SUCCESS;

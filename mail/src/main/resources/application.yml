@@ -13,7 +13,7 @@ spring:
       missing-topics-fatal: false
   mail:
     host: smtp.qq.com
-    username: 
-    password: 
+    username: 948805382@qq.com
+    password: knqxouosdpepbbea
     protocol: smtp
 

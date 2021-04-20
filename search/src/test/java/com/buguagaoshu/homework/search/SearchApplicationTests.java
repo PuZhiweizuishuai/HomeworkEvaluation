@@ -1,6 +1,6 @@
 package com.buguagaoshu.homework.search;
 
-import com.buguagaoshu.homework.common.utils.GetIPCityUtil;
+
 import com.buguagaoshu.homework.search.serivce.SearchService;
 import lombok.Data;
 

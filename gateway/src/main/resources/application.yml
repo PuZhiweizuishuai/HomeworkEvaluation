@@ -1,5 +1,11 @@
+server:
+  port: 88
+
+
 spring:
   cloud:
+    nacos:
+      server-addr: 192.168.43.131:8848
     gateway:
       routes:
         # 弹幕服务

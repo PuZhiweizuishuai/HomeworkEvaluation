@@ -189,6 +189,7 @@
         </v-card-title>
 
         <v-card-text>
+          <v-col />
           <div v-if="courseInfo.accessMethod == 0">
             该课程进入需要邀请码,请输入课程邀请码： <v-text-field
               v-model="code.code"
@@ -216,6 +217,7 @@
               clearable
             />
           </v-row>
+          <v-col />
         </v-card-text>
 
         <v-divider />
@@ -414,7 +416,7 @@ export default {
           this.$router.push(`/course/learn/${this.id}`)
           this.dialog = false
         } else {
-          this.message = json.message + '  ' + json.error
+          this.message = json.message
           this.showMessage = true
         }
       })

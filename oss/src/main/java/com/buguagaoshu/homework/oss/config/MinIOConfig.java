@@ -1,15 +1,19 @@
 package com.buguagaoshu.homework.oss.config;
 
 import com.buguagaoshu.homework.common.utils.FileUtil;
+import io.minio.BucketExistsArgs;
+import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
-import io.minio.errors.InvalidEndpointException;
-import io.minio.errors.InvalidPortException;
+import io.minio.errors.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * @author Pu Zhiwei {@literal puzhiweipuzhiwei@foxmail.com}
@@ -31,8 +35,18 @@ public class MinIOConfig {
     }
 
     @Bean
-    public MinioClient minioClient() throws InvalidPortException, InvalidEndpointException {
-        return new MinioClient(minIOConfigProperties.getServer(), minIOConfigProperties.getAccessKey(), minIOConfigProperties.getSecretKey());
+    public MinioClient minioClient() throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+        MinioClient minioClient =
+                MinioClient.builder()
+                        .endpoint(minIOConfigProperties.getServer())
+                        .credentials(minIOConfigProperties.getAccessKey(), minIOConfigProperties.getSecretKey())
+                        .build();
+        boolean found =
+                minioClient.bucketExists(BucketExistsArgs.builder().bucket(minIOConfigProperties.getBucketName()).build());
+        if (!found) {
+            minioClient.makeBucket(MakeBucketArgs.builder().bucket(minIOConfigProperties.getBucketName()).build());
+        }
+        return minioClient;
     }
 
 
@@ -41,12 +55,7 @@ public class MinIOConfig {
         return new CommandLineRunner() {
             @Override
             public void run(String... args) throws Exception {
-                // 初始化检查
-                boolean found = minioClient.bucketExists(minIOConfigProperties.getBucketName());
-                // 如果不存在，则创建一个存储桶
-                if (!found) {
-                    minioClient.makeBucket(minIOConfigProperties.getBucketName());
-                }
+                //
             }
         };
     }

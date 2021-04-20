@@ -521,10 +521,14 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         if (baseWebInfoConfig.getRegisterEmailCheck() == 1) {
             verifyCodeService.verify(registerUserVo.getEmail(), registerUserVo.getCode(), request.getSession());
         }
-        UserEntity byPhoneNumber = findByPhoneNumber(registerUserVo.getPhoneNumber());
-        if (byPhoneNumber != null) {
-            throw new UserDataFormatException("该手机号已被绑定，请更换手机号或直接登录！");
+
+        if (!StringUtils.isEmpty(registerUserVo.getPassword())) {
+            UserEntity byPhoneNumber = findByPhoneNumber(registerUserVo.getPhoneNumber());
+            if (byPhoneNumber != null) {
+                throw new UserDataFormatException("该手机号已被绑定，请更换手机号或直接登录！");
+            }
         }
+
         UserEntity userEntity = new UserEntity();
         // 注册数据初始化
         userEntity.initData();

@@ -9,7 +9,6 @@ import org.lionsoul.ip2region.DbSearcher;
 import org.lionsoul.ip2region.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.*;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
