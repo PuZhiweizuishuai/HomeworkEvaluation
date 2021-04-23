@@ -121,6 +121,14 @@ const routes = [
         }
       },
       {
+        path: '/tvlive',
+        component: () => import('@/views/tools/live.vue'),
+        name: 'TVLive',
+        meta: {
+          title: '电视直播-了解国家大事'
+        }
+      },
+      {
         path: '/tools/question',
         component: () => import('@/views/tools/question/index.vue'),
         name: 'Question',

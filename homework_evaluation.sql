@@ -34,7 +34,7 @@ CREATE TABLE `advertisement`  (
   `type` int NOT NULL COMMENT '类型，显示位置【\r\n0 首页顶部大图，\r\n1 课程页顶部大图\r\n2 首页广告\r\n3 课程页广告\r\n】',
   `view_count` bigint NOT NULL DEFAULT 0 COMMENT '点击次数',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1379033426627133442 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for article
@@ -80,7 +80,7 @@ CREATE TABLE `article`  (
   INDEX `find_article_by_course_id`(`course_id`) USING BTREE,
   INDEX `find_article_by_type`(`type`) USING BTREE,
   INDEX `find_article_by_status`(`status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1381923593650294786 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '帖子表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '帖子表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for article_tag
@@ -97,7 +97,7 @@ CREATE TABLE `article_tag`  (
   `comment_count` bigint NOT NULL DEFAULT 0,
   `follow_count` bigint NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 34 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for bulletin
@@ -117,7 +117,7 @@ CREATE TABLE `bulletin`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_bulletin_by_user_id`(`user_id`) USING BTREE,
   INDEX `find_bulletin_by_class_Id`(`curriculum_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1379035789064667138 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '课程公告表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '课程公告表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for collects
@@ -136,7 +136,7 @@ CREATE TABLE `collects`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_collect_by_aeticle_id`(`article_id`) USING BTREE,
   INDEX `find_collect_by_user_id`(`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1373658660877664259 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收藏表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '收藏表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for comment
@@ -166,7 +166,7 @@ CREATE TABLE `comment`  (
   INDEX `find_comment_by_article_id`(`article_id`) USING BTREE,
   INDEX `find_comment_by_user_id`(`author_id`) USING BTREE,
   INDEX `find_comment_by_comment_id`(`comment_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1373657181634756610 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '评论' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for course_tag
@@ -181,7 +181,7 @@ CREATE TABLE `course_tag`  (
   `catelog_id` bigint NOT NULL DEFAULT 0 COMMENT '所属分类层级 【0 父分类， 其它数字为该数字下的子 子分类】',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_course_major_index`(`course_major`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '课程分类' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '课程分类' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for courseware
@@ -204,7 +204,7 @@ CREATE TABLE `courseware`  (
   `status` int NULL DEFAULT NULL COMMENT '文件转换状态',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_courseware_by_course_id`(`course_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1372582083815243778 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for curriculum
@@ -237,7 +237,7 @@ CREATE TABLE `curriculum`  (
   INDEX `find_teacher_create_class_index`(`create_teacher`) USING BTREE COMMENT '查找该老师创建的课程',
   INDEX `find_curriculum_name_index`(`curriculum_name`) USING BTREE COMMENT '通过课程名查找课程',
   INDEX `find_teacher_by_name_index`(`teacher_name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1372581752716886018 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '课程表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '课程表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for danmaku
@@ -255,7 +255,7 @@ CREATE TABLE `danmaku`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_danmaku_by_courseware_id`(`courseware_id`) USING BTREE,
   INDEX `find_danmaku_by_userID`(`courseware_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 27 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '弹幕表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '弹幕表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for follow_user
@@ -315,7 +315,7 @@ CREATE TABLE `homework`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_homework_by_class_index`(`class_number`) USING BTREE,
   INDEX `find_homeword_teacher_index`(`create_teacher`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1375428044319145987 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '作业表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '作业表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for homework_with_questions
@@ -331,7 +331,7 @@ CREATE TABLE `homework_with_questions`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_homework_question_index`(`homework_id`) USING BTREE,
   INDEX `find_question_use_homework_index`(`question_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1375428044432392199 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '问题-作业关联表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '问题-作业关联表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for invite_code
@@ -353,7 +353,7 @@ CREATE TABLE `invite_code`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_invitecode_index`(`code`) USING BTREE COMMENT '查找邀请码',
   INDEX `find_invitecode_teacher_index`(`generator_id`) USING BTREE COMMENT '查找当前教师生成的邀请码'
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '邀请码' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '邀请码' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for invite_code_use_log
@@ -366,7 +366,7 @@ CREATE TABLE `invite_code_use_log`  (
   `use_time` bigint NOT NULL COMMENT '使用时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_use_invitecode_use_index`(`invitecode_id`) USING BTREE COMMENT '邀请码使用列表'
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '邀请码使用列表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '邀请码使用列表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for like_or_unlike
@@ -410,7 +410,7 @@ CREATE TABLE `notification`  (
   INDEX `find_notification_by_notifier`(`notifier`) USING BTREE,
   INDEX `find_notification_by_receiver`(`receiver`) USING BTREE,
   INDEX `find_notification_by_outer_id`(`outer_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1379037223239811074 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通知表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '通知表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for questions
@@ -436,7 +436,7 @@ CREATE TABLE `questions`  (
   INDEX `find_question_type_index`(`type`) USING BTREE,
   INDEX `find_question_teacher_index`(`create_teacher`) USING BTREE,
   INDEX `find_question_share_index`(`share_status`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '问题表，需要与作业表关联' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '问题表，需要与作业表关联' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for students_curriculum
@@ -453,7 +453,7 @@ CREATE TABLE `students_curriculum`  (
   INDEX `find_student_curriculum_index`(`student_id`) USING BTREE COMMENT '查找学生选择的课程',
   INDEX `find_curriculum_student_index`(`curriculum_id`) USING BTREE COMMENT '查找选择该课程的学生列表',
   INDEX `find_curriculum_user_role_index`(`role`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1372581752758829059 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '学生-课程关系列表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '学生-课程关系列表' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for submit_homework_status
@@ -477,7 +477,7 @@ CREATE TABLE `submit_homework_status`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_user_homework_by_user_id`(`user_id`) USING BTREE,
   INDEX `find_user_homework_by_homework_id`(`homework_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1379036648863432707 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户作业提交状态' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户作业提交状态' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for submit_questions
@@ -501,7 +501,7 @@ CREATE TABLE `submit_questions`  (
   INDEX `find_question_by_user_id`(`user_id`) USING BTREE,
   INDEX `find_question_by_question_id`(`question_id`) USING BTREE,
   INDEX `find_question_by_homework_id`(`homework_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1379036648922152967 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户提交的答案保存' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户提交的答案保存' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user
@@ -562,7 +562,7 @@ CREATE TABLE `user_login_log`  (
   `login_city` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '登陆城市',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_login_user_by_id_index`(`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1381923152745058306 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户登陆记录' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '用户登陆记录' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for user_role
@@ -578,10 +578,17 @@ CREATE TABLE `user_role`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `find_role_by_userID_index`(`user_id`) USING BTREE COMMENT '查找当前用户拥有的权限列表',
   INDEX `find_role_operator_index`(`operator`) USING BTREE COMMENT '查找用户创建的权限'
-) ENGINE = InnoDB AUTO_INCREMENT = 1381913277969219587 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色表' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '角色表' ROW_FORMAT = DYNAMIC;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
+DROP TABLE IF EXISTS `tv_live_link`;
+CREATE TABLE `tv_live_link`  (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) CHARACTER SET utf8mb4 NOT NULL COMMENT '电视台名',
+  `link` varchar(255) CHARACTER SET utf8mb4 NOT NULL COMMENT '播放链接',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 ROW_FORMAT = Dynamic;
 
 
 
@@ -643,3 +650,38 @@ INSERT INTO `article_tag` VALUES (30, '\r\nIntelliJ IDEA', NULL, NULL, 0, 5, 0);
 INSERT INTO `article_tag` VALUES (31, '\r\nEclipse', NULL, NULL, 0, 5, 0);
 INSERT INTO `article_tag` VALUES (32, '娱乐八卦', NULL, NULL, 0, 7, 0);
 INSERT INTO `article_tag` VALUES (33, '闲聊', NULL, NULL, 0, 7, 0);
+
+
+
+
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (1, 'CCTV1', 'http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (2, 'CCTV2', 'http://ivi.bupt.edu.cn/hls/cctv2hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (3, 'CCTV3', 'http://ivi.bupt.edu.cn/hls/cctv3hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (4, 'CCTV4', 'http://ivi.bupt.edu.cn/hls/cctv4hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (5, 'CCTV5', 'http://ivi.bupt.edu.cn/hls/cctv5hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (6, 'CCTV6', 'http://ivi.bupt.edu.cn/hls/cctv6hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (7, 'CCTV7', 'http://ivi.bupt.edu.cn/hls/cctv7hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (8, 'CCTV8', 'http://ivi.bupt.edu.cn/hls/cctv8hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (9, 'CCTV9', 'http://ivi.bupt.edu.cn/hls/cctv9hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (10, 'CCTV10', 'http://ivi.bupt.edu.cn/hls/cctv10hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (11, 'CCTV11', 'http://ivi.bupt.edu.cn/hls/cctv11hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (12, 'CCTV12', 'http://ivi.bupt.edu.cn/hls/cctv12hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (13, 'CCTV13', 'http://ivi.bupt.edu.cn/hls/cctv13hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (14, 'CCTV14', 'http://ivi.bupt.edu.cn/hls/cctv14hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (15, 'CHC高清电影', 'http://ivi.bupt.edu.cn/hls/chchd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (16, '北京卫视高清', 'http://ivi.bupt.edu.cn/hls/btv1hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (17, '北京文艺高清', 'http://ivi.bupt.edu.cn/hls/btv2hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (18, '北京体育高清', 'http://ivi.bupt.edu.cn/hls/btv6hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (19, '北京纪实高清', 'http://ivi.bupt.edu.cn/hls/btv11hd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (20, '湖南卫视高清', 'http://ivi.bupt.edu.cn/hls/hunanhd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (21, '浙江卫视高清', 'http://ivi.bupt.edu.cn/hls/zjhd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (22, '江苏卫视高清', 'http://ivi.bupt.edu.cn/hls/jshd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (23, '东方卫视高清', 'http://ivi.bupt.edu.cn/hls/dfhd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (24, '安徽卫视高清', 'http://ivi.bupt.edu.cn/hls/ahhd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (25, '黑龙江卫视高清', 'http://ivi.bupt.edu.cn/hls/hljhd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (26, '辽宁卫视高清', 'http://ivi.bupt.edu.cn/hls/lnhd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (27, '深圳卫视高清', 'http://ivi.bupt.edu.cn/hls/szhd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (28, '广东卫视高清', 'http://ivi.bupt.edu.cn/hls/gdhd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (29, '天津卫视高清', 'http://ivi.bupt.edu.cn/hls/tjhd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (30, '湖北卫视高清', 'http://ivi.bupt.edu.cn/hls/hbhd.m3u8');
+INSERT INTO `homework_evaluation`.`tv_live_link`(`id`, `title`, `link`) VALUES (31, '山东卫视高清', 'http://ivi.bupt.edu.cn/hls/sdhd.m3u8');

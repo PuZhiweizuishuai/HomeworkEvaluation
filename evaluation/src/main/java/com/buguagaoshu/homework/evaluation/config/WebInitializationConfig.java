@@ -2,12 +2,10 @@ package com.buguagaoshu.homework.evaluation.config;
 
 import com.buguagaoshu.homework.evaluation.cache.ArticleTagCache;
 import com.buguagaoshu.homework.evaluation.cache.CourseTagCache;
+import com.buguagaoshu.homework.evaluation.cache.TVLiveLinkCache;
 import com.buguagaoshu.homework.evaluation.cache.WebsiteIndexMessageCache;
 import com.buguagaoshu.homework.evaluation.entity.CourseTagEntity;
-import com.buguagaoshu.homework.evaluation.service.AdvertisementService;
-import com.buguagaoshu.homework.evaluation.service.ArticleService;
-import com.buguagaoshu.homework.evaluation.service.ArticleTagService;
-import com.buguagaoshu.homework.evaluation.service.CourseTagService;
+import com.buguagaoshu.homework.evaluation.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -31,7 +29,9 @@ public class WebInitializationConfig {
                                         CourseTagService courseTagService,
                                         ArticleTagCache articleTagCache,
                                         ArticleTagService articleTagService,
-                                        AdvertisementService advertisementService) {
+                                        AdvertisementService advertisementService,
+                                        TVLiveLinkCache tvLiveLinkCache,
+                                        TVLiveLinkService tvLiveLinkService) {
         return new CommandLineRunner() {
             @Override
             public void run(String... args) throws Exception {
@@ -49,6 +49,9 @@ public class WebInitializationConfig {
                 // 初始化缓存
                 advertisementService.addAdCache();
                 log.info("初始化广告以及大图缓存");
+                log.info("开始缓存电视直播地址！");
+                tvLiveLinkCache.setTvList(tvLiveLinkService.list());
+                log.info("缓存电视直播地址成功！");
             }
         };
     }
