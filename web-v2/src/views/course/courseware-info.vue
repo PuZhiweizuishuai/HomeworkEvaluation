@@ -78,6 +78,15 @@
       </v-col>
     </v-row>
 
+    <!-- 图片 -->
+    <v-row v-if="courseware.fileType == 5" :key="voiceKey" justify="center">
+      <v-col cols="10">
+        <viewer>
+          <img class="show-tink-img" width="500" :src="courseware.fileUrl +'?key=' + encodeURIComponent(courseware.key)">
+        </viewer>
+      </v-col>
+    </v-row>
+
     <!-- 下载框 -->
     <v-row v-if="courseware.fileType != null" justify="center">
       <v-col cols="11">
@@ -114,6 +123,7 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-col />
   </v-container>
 </template>
 
@@ -240,6 +250,9 @@ export default {
       }
     },
     back() {
+      if (this.$refs.voicePlayer != null) {
+        this.$refs.voicePlayer.destroy()
+      }
       this.$router.push({ path: `/course/learn/${this.$route.params.id}/courseware` })
     }
   }
@@ -248,4 +261,8 @@ export default {
 
 <style>
 
+.show-tink-img {
+  cursor: pointer;
+  margin: 10px;
+}
 </style>

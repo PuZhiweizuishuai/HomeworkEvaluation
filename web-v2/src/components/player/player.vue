@@ -40,6 +40,12 @@ export default {
           url: this.videoData.fileUrl + '?key=' + encodeURIComponent(this.videoData.key) // 'https://api.dogecloud.com/player/get.mp4?vcode=5ac682e6f8231991&userId=17&ext=.mp4',
         },
         logo: '/logo.png',
+        contextmenu: [
+          {
+            text: '不挂高数',
+            link: 'https://www.buguagaoshu.com'
+          }
+        ],
         danmaku: {
           id: this.videoData.id,
           api: '/api/danmaku/',

@@ -11,9 +11,9 @@ spring:
       group-id: Email
     listener:
       missing-topics-fatal: false
-  mail:
-    host: smtp.qq.com
-    username: 948805382@qq.com
-    password: knqxouosdpepbbea
-    protocol: smtp
+#  mail:
+#    host: smtp.qq.com
+#    username:
+#    password:
+#    protocol: smtp
 

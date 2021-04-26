@@ -230,6 +230,14 @@
           标题图上传：（你可以输入图片地址或上传图片）
         </v-col>
       </v-row>
+      <v-row v-if="course.curriculumImageUrl != null || course.curriculumImageUrl != ''" justify="center">
+        <v-col cols="2">
+          当前标题图：
+        </v-col>
+        <v-col cols="8">
+          <img class="show-tink-img" width="300" :src="course.curriculumImageUrl">
+        </v-col>
+      </v-row>
       <v-row justify="center">
         <v-col cols="10">
           <Upload :uploadurl="uploadurl" @success-file="showMessageFromChild" />

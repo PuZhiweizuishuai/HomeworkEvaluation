@@ -22,8 +22,6 @@ public class FileUtil {
 
     public final static Long MAX_FILE_SIZE = 20971520L;
 
-    private String website = "";
-
     public FileUtil() {
     }
 
@@ -118,6 +116,12 @@ public class FileUtil {
             }
         }
 
+        for (String s: PHOTO_TYPE) {
+            if (s.equals(suffix)) {
+                return 5;
+            }
+        }
+
         // 不支持预览，需要下载的文件格式
         return 0;
     }
@@ -145,7 +149,4 @@ public class FileUtil {
         return url.substring(4, url.lastIndexOf("/"));
     }
 
-    public String getWebsite() {
-        return website;
-    }
 }

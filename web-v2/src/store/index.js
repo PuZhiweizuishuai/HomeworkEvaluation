@@ -8,7 +8,7 @@ export default new Vuex.Store({
     // 网站基本信息
     webInfo: {
       status: 0,
-      name: '作业互评系统',
+      name: '作业互评',
       logo: '/logo.png',
       registerInvitationCode: 1,
       registerEmailCheck: 1,

@@ -2,6 +2,7 @@ package com.buguagaoshu.homework.evaluation.service.impl;
 
 import com.buguagaoshu.homework.common.config.CustomConstant;
 import com.buguagaoshu.homework.common.domain.MailDetails;
+import com.buguagaoshu.homework.evaluation.config.BaseWebInfoConfig;
 import com.buguagaoshu.homework.evaluation.entity.UserEntity;
 import com.buguagaoshu.homework.evaluation.exception.UserDataFormatException;
 import com.buguagaoshu.homework.evaluation.service.SendMessageService;
@@ -17,12 +18,15 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class KafkaSendMessageServiceImpl implements SendMessageService {
+    private final BaseWebInfoConfig baseWebInfoConfig;
+
     private final KafkaTemplate<String, String> kafkaTemplate;
 
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public KafkaSendMessageServiceImpl(KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
+    public KafkaSendMessageServiceImpl(BaseWebInfoConfig baseWebInfoConfig, KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
+        this.baseWebInfoConfig = baseWebInfoConfig;
         this.kafkaTemplate = kafkaTemplate;
         this.objectMapper = objectMapper;
     }
@@ -33,7 +37,7 @@ public class KafkaSendMessageServiceImpl implements SendMessageService {
         log.info("Send to verify code key:[{}] with message:[{}]", key, message);
         MailDetails mailDetails = new MailDetails();
         mailDetails.setCode(message);
-        mailDetails.setTitle("作业互评验证码");
+        mailDetails.setTitle(baseWebInfoConfig.getName() + "验证码");
         if (userEntity != null) {
             mailDetails.setTo(userEntity.getEmail());
             mailDetails.setName(userEntity.getUsername());

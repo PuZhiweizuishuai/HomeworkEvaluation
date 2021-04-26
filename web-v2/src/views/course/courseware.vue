@@ -34,6 +34,9 @@
               <v-icon v-if="item.fileType == 4">
                 mdi-music
               </v-icon>
+              <v-icon v-if="item.fileType == 5">
+                mdi-image
+              </v-icon>
               <v-icon v-if="item.fileType == 0 || item.fileType == null">
                 mdi-file
               </v-icon>

@@ -75,7 +75,7 @@
         <span v-html="`&nbsp;&nbsp;`" />
         |
         <span v-html="`&nbsp;&nbsp;`" />
-        <v-btn v-if="article.hasCollectStatus" depressed small color="primary" @click="collectArticle">你已经收藏过了，不用再次收藏: {{ article.collectCount }}</v-btn>
+        <v-btn v-if="article.hasCollectStatus" depressed small color="primary" @click="collectArticle">取消收藏: {{ article.collectCount }}</v-btn>
         <v-btn v-else outlined small color="primary" @click="collectArticle">收藏: {{ article.collectCount }}</v-btn>
       </v-col>
     </v-row>

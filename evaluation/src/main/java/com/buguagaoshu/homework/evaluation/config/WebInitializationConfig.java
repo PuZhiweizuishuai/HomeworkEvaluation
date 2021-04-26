@@ -49,6 +49,7 @@ public class WebInitializationConfig {
                 // 初始化缓存
                 advertisementService.addAdCache();
                 log.info("初始化广告以及大图缓存");
+                // 直播地址缓存
                 log.info("开始缓存电视直播地址！");
                 tvLiveLinkCache.setTvList(tvLiveLinkService.list());
                 log.info("缓存电视直播地址成功！");

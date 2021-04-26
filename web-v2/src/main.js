@@ -15,6 +15,8 @@ Vue.use(Viewer)
 
 Vue.prototype.SERVER_API_URL = '/api' // 'http://127.0.0.1:8080/api'
 
+console.log('%c不挂高数出品 https://www.buguagaoshu.com', 'color: #1976d2;font-size:2em')
+console.log('%cPowered by buguagaoshu 1.0.0 bete', 'color: #1976d2;font-size:1em')
 new Vue({
   router,
   store,

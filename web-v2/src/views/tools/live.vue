@@ -102,7 +102,13 @@ export default {
         video: {
           //
         },
-        logo: '/logo.png'
+        logo: '/logo.png',
+        contextmenu: [
+          {
+            text: '不挂高数',
+            link: 'https://www.buguagaoshu.com'
+          }
+        ]
       })
     },
     changeTV(item) {
