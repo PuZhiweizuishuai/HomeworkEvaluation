@@ -56,6 +56,7 @@
               icon
               v-bind="attrs"
               v-on="on"
+              @click="like()"
             >
               <v-icon>mdi-thumb-up</v-icon>
             </v-btn>
@@ -64,7 +65,7 @@
         </v-tooltip>
         {{ article.likeCount }}
         <span v-html="`&nbsp;&nbsp;`" />
-        |
+        <!-- |
         <span v-html="`&nbsp;&nbsp;`" />
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -78,7 +79,7 @@
           </template>
           <span>踩</span>
         </v-tooltip>
-        {{ article.badCount }}
+        {{ article.badCount }} -->
         <span v-html="`&nbsp;&nbsp;`" />
         |
         <span v-html="`&nbsp;&nbsp;`" />
@@ -412,6 +413,24 @@ export default {
           this.$router.push(`/course/learn/${this.$route.params.id}/bbs`)
         } else {
           this.message = json.message
+          this.showMessage = true
+        }
+      })
+    },
+    like() {
+      const likeInfo = {
+        targetId: this.article.id,
+        targetType: 0,
+        type: 0
+      }
+      this.httpPost('/click/like', likeInfo, (json) => {
+        if (json.status === 200) {
+          this.message = '点赞成功'
+          this.article.likeCount = this.article.likeCount + 1
+          this.showMessage = true
+        } else {
+          this.message = json.message
+          this.article.likeCount = this.article.likeCount - 1
           this.showMessage = true
         }
       })

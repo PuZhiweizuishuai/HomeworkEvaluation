@@ -6,9 +6,12 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import com.buguagaoshu.homework.common.utils.LongJsonDeserializer;
 import com.buguagaoshu.homework.common.utils.LongJsonSerializer;
+import com.buguagaoshu.homework.common.valid.ListValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * 点赞或点踩表
@@ -33,7 +36,14 @@ public class LikeOrUnlikeEntity {
 	 */
 	@JsonSerialize(using = LongJsonSerializer.class)
 	@JsonDeserialize(using = LongJsonDeserializer.class)
+	@NotNull
 	private Long targetId;
+
+	/**
+	 * 0 帖子， 1 评论
+	 * */
+	@ListValue(value = {0, 1}, message = "点赞类型只能为1或0")
+	private Integer targetType;
 
 	/**
 	 * 通知的用户
@@ -48,6 +58,7 @@ public class LikeOrUnlikeEntity {
 	/**
 	 * 类型评论点赞还是帖子点赞，还是点了踩
 	 */
+	@ListValue(value = {0, 1})
 	private Integer type;
 
 	/**

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.buguagaoshu.homework.common.utils.PageUtils;
 import com.buguagaoshu.homework.evaluation.entity.LikeOrUnlikeEntity;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -16,5 +17,8 @@ import java.util.Map;
 public interface LikeOrUnlikeService extends IService<LikeOrUnlikeEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+
+    boolean clickLick(LikeOrUnlikeEntity likeOrUnlikeEntity, HttpServletRequest request);
 }
 

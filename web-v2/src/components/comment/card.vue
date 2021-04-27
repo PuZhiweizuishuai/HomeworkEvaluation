@@ -69,6 +69,7 @@
             v-bind="attrs"
             small
             v-on="on"
+            @click="like()"
           >
             <v-icon>mdi-thumb-up</v-icon>
           </v-btn>
@@ -78,7 +79,7 @@
       {{ comment.likeCount }}
       <span v-html="`&nbsp;&nbsp;`" />
 
-      <span v-html="`&nbsp;&nbsp;`" />
+      <!-- <span v-html="`&nbsp;&nbsp;`" />
       <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
           <v-btn
@@ -92,7 +93,7 @@
         </template>
         <span>踩</span>
       </v-tooltip>
-      {{ comment.badCount }}
+      {{ comment.badCount }} -->
       <span v-html="`&nbsp;&nbsp;`" />
 
     </v-row>
@@ -107,6 +108,24 @@
         <SecondComment :key="secondCommendKey" :father="comment" :type="type" />
       </v-card>
     </v-dialog>
+    <v-snackbar
+      v-model="showMessage"
+      :top="true"
+      :timeout="3000"
+    >
+      {{ message }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="showMessage = false"
+        >
+          关闭
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -159,7 +178,9 @@ export default {
     return {
       TimeUtil,
       showSecond: false,
-      secondCommendKey: 0
+      secondCommendKey: 0,
+      showMessage: false,
+      message: ''
     }
   },
   created() {
@@ -169,6 +190,24 @@ export default {
     openSecond() {
       this.secondCommendKey += 1
       this.showSecond = true
+    },
+    like() {
+      const likeInfo = {
+        targetId: this.comment.id,
+        targetType: 1,
+        type: 0
+      }
+      this.httpPost('/click/like', likeInfo, (json) => {
+        if (json.status === 200) {
+          this.message = '点赞成功'
+          this.comment.likeCount = this.comment.likeCount + 1
+          this.showMessage = true
+        } else {
+          this.message = json.message
+          this.comment.likeCount = this.comment.likeCount - 1
+          this.showMessage = true
+        }
+      })
     }
   }
 }
