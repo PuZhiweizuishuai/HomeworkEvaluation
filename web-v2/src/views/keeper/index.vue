@@ -91,9 +91,11 @@
               <!-- 基本数据 -->
               <v-row no-gutters>
                 <v-col cols="6">
+                  <Pie v-if="showSubmitPie" :id="'charts-pie1'" :option="submitOptionPie" />
                   <!-- <ve-pie :data="submitWithNoSubmitChart" :settings="chartSettings" /> -->
                 </v-col>
                 <v-col cols="6">
+                  <Pie v-if="showSubmitPie" :id="'charts-pie2'" :option="teacherOptionPie" />
                   <!-- <ve-pie :data="commentChart" :settings="chartSettings" /> -->
                 </v-col>
               </v-row>
@@ -105,10 +107,11 @@
               </v-row>
             </v-col>
           </v-row>
+          <v-col />
         </v-card>
       </v-col>
     </v-row>
-
+    <v-col />
     <!-- 待批改列表 -->
 
     <v-card outlined>
@@ -157,11 +160,12 @@ import TimeUtil from '@/utils/time-util.vue'
 import Constant from '@/utils/constant.vue'
 import TimeForm from '@/components/form/time-form.vue'
 import UserList from '@/views/keeper/user-list.vue'
-
+import Pie from '@/components/charts/pie.vue'
 export default {
   components: {
     TimeForm,
-    UserList
+    UserList,
+    Pie
   },
   data() {
     return {
@@ -181,6 +185,9 @@ export default {
       // 完成批改的列表
       completeList: [],
       teacherSubmitList: [],
+      submitOptionPie: {},
+      teacherOptionPie: {},
+      showSubmitPie: false,
       commentComplete: 0,
       submitWithNoSubmitChart: {
         columns: ['提交情况', '人数'],
@@ -226,9 +233,9 @@ export default {
     },
     initSubmitCount() {
       // 设置学生提交数据
-      this.submitWithNoSubmitChart.rows[0].人数 = this.dashboardData.homework.submitCount
+      this.submitWithNoSubmitChart.rows[0].人数 = this.dashboardData.submitList.length
       this.submitWithNoSubmitChart.rows[1].人数 = this.dashboardData.studentCount - this.dashboardData.homework.submitCount
-      this.commentComplete = this.dashboardData.homework.submitCount
+      this.commentComplete = this.dashboardData.submitList.length
 
       for (let i = 0; i < this.commentComplete; i++) {
         if (this.dashboardData.submitList[i].status === 2) {
@@ -248,6 +255,72 @@ export default {
       }
       this.commentChart.rows[0].人数 = this.completeList.length
       this.commentChart.rows[1].人数 = this.userSubmitList.length
+
+      this.submitOptionPie = {
+        title: {
+          text: '提交情况',
+          left: 'center'
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'left'
+        },
+        series: [
+          {
+            name: '提交情况',
+            type: 'pie',
+            radius: '50%',
+            data: [
+              { value: this.submitWithNoSubmitChart.rows[0].人数, name: '已提交' },
+              { value: this.submitWithNoSubmitChart.rows[1].人数, name: '未提交' }
+            ],
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      }
+
+      this.teacherOptionPie = {
+        title: {
+          text: '批改情况',
+          left: 'center'
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'left'
+        },
+        series: [
+          {
+            name: '批改情况',
+            type: 'pie',
+            radius: '50%',
+            data: [
+              { value: this.commentChart.rows[0].人数, name: '已批改' },
+              { value: this.commentChart.rows[1].人数, name: '未批改' }
+            ],
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      }
+
+      this.showSubmitPie = true
     },
     setEvaluation() {
       if (this.dashboardData.homework.evaluation === 0) {
