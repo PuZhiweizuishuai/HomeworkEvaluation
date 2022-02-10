@@ -21,7 +21,7 @@
     "less-loader": "^7.3.0",
     "qrcode": "^1.4.4",
     "v-viewer": "^1.5.1",
-    "vditor": "^3.8.3",
+    "vditor": "^3.8.11",
     "vue": "^2.6.11",
     "vue-cookies": "^1.7.4",
     "vue-cropper": "^0.5.6",
