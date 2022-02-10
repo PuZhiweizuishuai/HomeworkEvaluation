@@ -22,7 +22,7 @@ export default {
       items: [
         { id: 0, title: '笔记本', icon: '🗺️', src: '/tools/notebook', type: true, color: '#75cfb8', text: '在线云笔记本，做笔记才能学的更好', btn: '进入' },
         { id: 1, title: '在线答题统计', icon: 'mdi-sort', src: '/tools/question', type: true, color: '#a4ebf3', text: '线上做题，实时分析题目正确率，帮助教师发现学生的薄弱点，当堂解决！', btn: '进入' },
-        { id: 2, title: '来排序', icon: 'mdi-sort', src: '/tools/sort', type: true, color: '#845ec2', text: '输入主题并选择人数，分享页面给学生，系统随机分配各个同学的顺序。', btn: '进入' },
+        { id: 2, title: '来排序', icon: 'mdi-sort', src: 'https://tools.buguagaoshu.com/tools/sort', type: false, color: '#845ec2', text: '输入主题并选择人数，分享页面给学生，系统随机分配各个同学的顺序。', btn: '进入' },
         { id: 3, title: '生成二维码', icon: 'mdi-qrcode-edit', src: '/tools/qr-code', type: true, color: '#f9f871', text: '输入文本信息，生成对应的二维码。', btn: '进入' },
         { id: 4, title: '电视直播', icon: 'mdi-tv', src: '/tvlive', type: true, color: '#e7e6e1', text: '观看电视直播，了解家国大事。', btn: '进入' },
         // { id: 9, title: '图片与Base64编码互转', icon: 'mdi-image', src: '/tools/image-to-base64', type: true, color: '#ffc478', text: '将图片转成Base64编码形式或将Base64编码图片进行复原。', btn: '进入' },

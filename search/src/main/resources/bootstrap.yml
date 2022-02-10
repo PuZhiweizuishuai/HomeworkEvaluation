@@ -11,4 +11,5 @@ spring:
         extension-configs:
           - dataId: JWT.yml
             group: DEFAULT_GROUP
+      server-addr: 192.168.43.131:8848
 
