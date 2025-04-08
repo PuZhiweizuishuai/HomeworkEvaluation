@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="https://ae02.alicdn.com/kf/Ucb82b4a9aa6d4c56861beccc4937996aF.jpg" alt="logo" title="logo" width="50%" style="text-align:center;">
+    <img src="/img/logo.png" alt="logo" title="logo" width="50%" style="text-align:center;">
 </div>
 
 # 作业互评系统
@@ -10,35 +10,37 @@
 
 <br/>
 
-<img src="https://sc01.alicdn.com/kf/U172cad775dba41939405f72dc9b40e13m.jpg" alt="首页" title="首页" >
+<img src="/img/home.png" alt="首页" title="首页" >
+
+
 
 <br/>
 
-<img src="https://ae02.alicdn.com/kf/Uef44f1f1d31c444cba59a85fd45dc048O.jpg" alt="首页" title="首页" >
+<img src="/img/home2.png" alt="首页" title="首页" >
 
 
 ### 课程
 
 <br/>
 
-<img src="https://ae04.alicdn.com/kf/Uf53214d8d72b48e6a99da974aec1e580q.jpg" alt="课程页" title="课程页" >
+<img src="/img//英语视听.png" alt="课程页" title="课程页" >
 
 
 
-<img src="https://ae04.alicdn.com/kf/U5fadf7a31c464f1193988038a88310a1D.jpg" alt="课程页" title="课程页" >
+<img src="/img/英文科技论文写作1.png" alt="课程页" title="课程页" >
 
 <br/>
 
-<img src="https://ae03.alicdn.com/kf/U072fea0605e94698b16aeb3247f75506f.jpg" alt="课程页" title="课程页" >
+<img src="/img/测验-英文科技论文写作.png" alt="课程页" title="课程页" >
 
 <br/>
 
 ### 社区
 
-<img src="https://ae04.alicdn.com/kf/Ub1a8c85144214e0294b1dbc53b9da43fG.jpg" alt="社区" title="社区" >
+<img src="/img/bbs.png" alt="社区" title="社区" >
 
 
-<img src="https://sc04.alicdn.com/kf/Uc627a8a16bb84c139431353bf8635efbq.jpg" alt="社区" title="社区" >
+<img src="/img/bbs2.png" alt="社区" title="社区" >
 
 
 
